@@ -1,0 +1,393 @@
+/********* General settings *********/
+
+/*General******** Hero *********/
+#hero-section {
+    background-color: var(--middle);
+    width: 100%;
+    padding-top: 200px;
+    overflow: hidden;
+}
+.hero-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+.hero-spacer {
+    background-color: var(--middle);
+    height: 175px;
+}
+.hero-spacer-small {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 75px;
+    background-color: var(--middle);
+}
+
+/*Header******** Hero *********/
+.hero-title-container {
+    width: 500px;
+    height: 300px;
+    margin-right: 4%;
+}
+.hero-vline {
+    height: 110px;
+    width: 5px;
+    margin-right: 20px;
+    background-color: var(--orange);
+}
+.hero-title-div {
+    display: flex;
+}
+.hero-subtitle-div {
+    position: relative;
+    bottom: 20px;
+    left: 50px;
+    font-size: 0.9rem;
+    color: var(--dark);
+    opacity: 0.6;
+}
+.hero-title,
+.hero-subtitle {
+    color: var(--light);
+}
+/*Anchors******** Hero *********/
+.hero-anchor-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.hero-anchor-container a i {
+    color: var(--light);
+    opacity: 0.6;
+}
+.hero-anchor-container a i:hover {
+    color: var(--orange);
+    opacity: 0.8;
+}
+.hero-anchor-container-small {
+    display: none;
+    margin: 40px 0 60px;
+}
+.hero-anchor-container-small a i {
+    color: var(--light);
+    opacity: 0.6;
+}
+.hero-anchor-container-small a i:hover {
+    color: var(--orange);
+    opacity: 0.8;
+}
+
+/*Cards******** Hero *********/
+.hero-profile-card {
+    height: 140px;
+    position: relative;
+    border-bottom: 2px solid var(--orange);
+}
+.profile-card-text {
+    color: var(--light);
+    height: 140px;
+    position: relative;
+    opacity: 1;
+    transition: opacity 0.7s;
+    line-height: 1.7rem;
+}
+.hero-icon-card {
+    height: 140px;
+    position: relative;
+    border-bottom: 2px solid var(--orange);
+}
+.icon-card-text {
+    color: var(--light);
+    opacity: 0;
+    transition: opacity 0.7s;
+    padding-left: 45px;
+    padding-top: 10px;
+    line-height: 1.7rem;
+}
+/*Media******** Hero *********/
+@media screen and (max-width: 768px) {
+    #hero-section { padding-top: 150px }
+    .hero-container { text-align: center }
+    .hero-anchor-container { display: none }
+    .hero-anchor-container-small { display: flex }
+    .hero-anchor-container-small { justify-content: space-between }
+    .hero-title-container { width: 400px }
+    .hero-title-container { height: 385px }
+    .hero-title-container { margin-right: 0 }
+    .hero-vline {height: 85px }
+    .hero-vline { margin-top: 5px }
+    .hero-vline { margin-right: 15px }
+    .hero-vline { width: 4px }
+    h1 { font-size: 5rem }
+    .hero-subtitle-div { font-size: 0.8rem }
+    .hero-subtitle-div { left: 0 }
+    .hero-subtitle-div { bottom: 13px }
+    .icon-card-text { padding-left: 0 }
+    .profile-card-text { width: 375px }
+    .hero-spacer { height: 150px }
+
+}
+@media screen and (max-width: 576px) {
+    .hero-spacer-small { display: block }
+    .hero-spacer-small { bottom: 164px }
+    #hero-section { height: 550px }
+    .hero-container { text-align: center }
+    .hero-anchor-container { display: none }
+    .hero-anchor-container-small { display: flex }
+    .hero-anchor-container-small { justify-content: space-between }
+    .hero-anchor-container-small { margin-bottom: 40px }
+    .hero-title-container { width: 280px }
+    .hero-title-container { height: 355px }
+    .hero-title-container { margin-right: 0 }
+    .hero-vline {height: 60px }
+    .hero-vline { margin-right: 10px }
+    .hero-vline { width: 3px }
+     h1 { font-size: 3.5rem }
+    .hero-subtitle-div { font-size: 0.7rem }
+    .hero-subtitle-div { left: 0 }
+    .hero-subtitle-div { bottom: 12px }
+    .hero-profile-card { height: 130px }
+    .hero-profile-card { top }
+    .icon-card-text { padding-left: 0 }
+    .icon-card-text { padding-top: 0 }
+    .profile-card-text { width: 275px }
+    .hero-spacer { height: 100px }
+
+}
+
+/*General******** Skill *********/
+#skill-section {
+    background-color: var(--light);
+    width: 100%;
+    padding: 150px 0;
+}
+.skill-section-container {
+    padding: 0 9%;
+}
+
+/*Header******** Skill *********/
+.skill-header {
+    text-align: center;
+    padding-bottom: 75px;
+}
+.skill-header h2,
+.skill-header p {
+    color: var(--dark);
+}
+
+/*Content******** Skill *********/
+.skill-div {
+    text-align: center;
+    height: 225px;
+}
+.skill-logo {
+    position: relative;
+    bottom: 10px;
+    transition: bottom 0.3s;
+    width: 120px;
+    filter: invert(21%) sepia(25%) saturate(283%) hue-rotate(177deg) brightness(94%) contrast(87%);
+}
+.skill-logo:hover {
+    bottom: 0px;
+}
+.skill-div h4 {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    color: var(--black);
+}
+.skill-div p {
+    color: var(--black);
+}
+.skill-card-h4,
+.skill-card-p1,
+.skill-card-p2,
+.skill-card-p3,
+.skill-card-p4 {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.skill-card-h4 {
+    font-weight: 600;
+}
+.skill-card-p4 {
+    font-weight: 300;
+}
+.skill-sect-link {
+    text-decoration: none;
+    font-weight: 600;
+    color: inherit;
+}
+.skill-sect-link:hover {
+    color: inherit;
+    opacity: 0.7;
+    font-weight: 800;
+}
+.skill-card {
+    position: relative;
+    height: 3px;
+    width: 100%;
+    background-color: var(--orange);
+}
+.skill-spacer {
+    background-color: var(--light);
+    height: 100px;
+}
+
+/*Media******** Skill *********/
+@media screen and (max-width: 768px) {
+    #skill-section { padding-bottom: 50px }
+    .skill-div { height: 380px }
+    .skill-spacer { display: none }
+}
+
+
+/*General******** Data *********/
+#data-section {
+    background-color: var(--dark);
+    width: 100%;
+    padding: 150px 0 75px;
+}
+.data-section-container {
+    padding: 0 9%;
+}
+
+/*Header******** Data *********/
+.data-header {
+    color: var(--light);
+    text-align: center;
+    padding-bottom: 75px;
+}
+.data-subtitle {
+    opacity: 0.8;
+}
+
+/*Content******** Data *********/
+.data-content-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.data-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 100px;
+}
+.data-carousel {
+    width: 350px;
+}
+.data-content-subtitle {
+    padding-left: 15px;
+    padding-bottom: 35px;
+    text-decoration: underline;
+    color: var(--light);
+}
+.data-content-subtitle a {
+    color: inherit;
+}
+.data-list {
+    color: var(--light);
+}
+/*Media******** Data *********/
+@media screen and (max-width: 576px) {
+    .data-content-container { justify-content: center }
+    .data-content-container { align-items: center }
+    .data-content { display: block }
+    .data-content { text-align: center }
+    .data-content { margin-bottom: 35px }
+    .data-content-subtitle { padding: 25px 0 20px }
+    .data-section-image { height: 80% }
+    .data-info ul { padding-left: 0 }
+    .data-info ul li { list-style: none }
+}
+
+
+/*General******** Game *********/
+#game-section {
+    background-color: var(--light);
+    width: 100%;
+    padding: 150px 0 75px;
+}
+.game-section-container {
+    padding: 0 9%;
+}
+
+/*Header******** Game *********/
+.game-header {
+    text-align: center;
+    padding-bottom: 75px;
+}
+
+/*Content******** Game *********/
+.game-content-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.game-game-link {
+    color: var(--middle);
+}
+.game-content {
+    display: inline-grid;
+    text-align: center;
+    margin-bottom: 100px;
+    text-decoration: underline;
+}
+.game-content-subtitle {
+    padding-left: 15px;
+    padding-bottom: 35px;
+    text-decoration: underline;
+    color: var(--light);
+}
+.game-content-subtitle a {
+    color: inherit;
+}
+.game-link {
+    margin-bottom: 25px;
+}
+.game-image {
+    width: 400px;
+    border-radius: 35px;
+}
+
+/*Media******** Games *********/
+@media screen and (max-width: 576px) {
+    .game-image { width: 300px }
+}
+
+
+/*General******** Tools *********/
+#tools-section {
+    background-color: var(--middle);
+    width: 100%;
+}
+.tools-section-container {
+    background-color: var(--orange);
+    opacity: 0.8;
+    padding: 75px 9%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/*Content******** Tools *********/
+.tools-header {
+    text-align: center;
+    padding-bottom: 25px;
+}
+.tools-image {
+    width: 200px;
+    margin-bottom: 40px;
+}
+.tools-sneak-peak {
+    color: var(--light);
+    text-decoration: underline;
+}
+/*Media******** Tools *********/
+@media screen and (max-width: 576px) {
+    .tools-image { width: 275px }
+}

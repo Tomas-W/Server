@@ -1,0 +1,39 @@
+.gradient-custom {
+background: #6a11cb;
+background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+}
+
+.login-height {
+    min-height: 100vh;
+}
+
+.card-items {
+    padding-top: 5%;
+}
+
+.fast-card-items {
+    padding-top: 1%;
+}
+
+#login-card {
+    height: 850px;
+    display: inline-block;
+    opacity: 1;
+    -webkit-transition: all 2s ease-in-out;
+    -moz-transition: all 2s ease-in-out;
+    -ms-transition: all 2s ease-in-out;
+    -o-transition: all 2s ease-in-out;
+    transition: all 2s ease-in-out;
+}
+
+#register-card {
+    height: 850px;
+    display: none;
+    opacity: 0.2;
+    -webkit-transition: all 2s ease-in-out;
+    -moz-transition: all 2s ease-in-out;
+    -ms-transition: all 2s ease-in-out;
+    -o-transition: all 2s ease-in-out;
+    transition: all 2s ease-in-out;
+}

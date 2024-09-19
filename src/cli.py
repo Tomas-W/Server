@@ -112,6 +112,34 @@ def _auth_cli(app_: Flask) -> None:
             else:
                 click.echo(f"Set 'fast_code' to '{fast_code}'.")
 
+    @auth.command("set_f_name")
+    @click.argument("id_", type=int)
+    @click.argument("fast_name", type=str)
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def set_f_code(id_: int, fast_name: str, v: bool) -> None:
+        """
+        Takes a User id and a 5-digit number, then sets the fast_code of the user.
+        Verbose adds __repr__
+        usage: flask auth set_f_code <user id> <5-digit fast_code>
+        """
+        if not fast_name.isalpha() or not 4 < len(fast_name) < 17:
+            click.echo("Fast name length must be between 4 and 17.")
+            return
+
+        user: User = User.query.get(id_)
+        if not user:
+            click.echo(f"No User with id {id_} found.")
+        else:
+            hashed_code = argon2_.hash(fast_name)
+            setattr(user, "fast_code", hashed_code)
+            server_db_.session.commit()
+            if v:
+                click.echo(repr(user))
+                click.echo(
+                    f"Set 'fast_code' to '{fast_name}'.")
+            else:
+                click.echo(f"Set 'fast_code' to '{fast_name}'.")
+
     app_.cli.add_command(auth)
 
 

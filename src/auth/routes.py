@@ -1,14 +1,13 @@
 import os
 
 import requests
-from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 from flask import Blueprint, redirect, url_for, request, render_template, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from google.oauth2 import id_token
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests
 
-from src.extensions import argon2_, flow_
+from src.extensions import argon2_, flow_, server_db_
 from src.auth.forms import (LoginForm, RegisterForm, EmailForm, PasswordForm,
                             FastLoginForm)
 from src.auth.route_utils import (add_new_user, change_password, confirm_reset_token,
@@ -34,7 +33,6 @@ def base():
         email="test@gmail.com",
         username="test",
         hashed_password=hashed_password,
-        fast_name="test",
     )
     return redirect(url_for("auth.login"))
 
@@ -105,7 +103,6 @@ def callback():
         add_new_user(
             email=email,
             username=email[:8],
-            fast_name=email[:5],
             hashed_password=hashed_password,
         )
         user = User.query.filter_by(email=email).first()
@@ -118,7 +115,11 @@ def callback():
 @login_required
 def logout():
     """Logs out user, clean up session and redirect to login page."""
+    current_user.remember_me = False
+    server_db_.session.commit()
     logout_user()
+
+    session.remember = False
     flash('You have been logged out.')
     return redirect(url_for("auth.login"))
 
@@ -137,7 +138,6 @@ def register():
             email=register_form.email.data,
             username=register_form.username.data,
             hashed_password=hashed_password,
-            fast_name=register_form.email.data[:5],
         )
         return redirect(url_for("auth.login"))
 

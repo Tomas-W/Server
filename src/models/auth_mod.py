@@ -1,6 +1,4 @@
-from secrets import randbelow
 
-from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Boolean
 
@@ -25,7 +23,8 @@ class User(server_db_.Model, UserMixin):
     fast_name = server_db_.Column(server_db_.String(16), unique=True)
     fast_code = server_db_.Column(server_db_.String(5), unique=False)
 
-    email_verified = server_db_.Column(Boolean, default=False, nullable=True)
+    email_verified = server_db_.Column(Boolean)
+    remember_me = server_db_.Column(Boolean)
 
     def __repr__(self):
         return (f"User: "
@@ -33,8 +32,3 @@ class User(server_db_.Model, UserMixin):
                 f" username={self.username},"
                 f" email={self.email},"
                 f" fast_name={self.fast_name})")
-
-    @staticmethod
-    def generate_fast_name(context):
-        email = context.get_current_parameters()['email']
-        return email[:5] if email else None

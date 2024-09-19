@@ -17,7 +17,7 @@ class BaseConfig(object):
 
     REMEMBER_COOKIE_DURATION = timedelta(days=21)
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_PERMANENT = True
+    SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     MAIL_SERVER = "smtp.gmail.com"

@@ -30,5 +30,4 @@ class User(server_db_.Model, UserMixin):
         return (f"User: "
                 f"(id={self.id},"
                 f" username={self.username},"
-                f" email={self.email},"
-                f" fast_name={self.fast_name})")
+                f" email={self.email}")

@@ -91,24 +91,45 @@ def callback():
     cached_session = cachecontrol.CacheControl(request_session)
     token_request = google.auth.transport.requests.Request(session=cached_session)
     id_info = id_token.verify_oauth2_token(
-        id_token=credentials._id_token,  # noqa
+        id_token=credentials.id_token,
         request=token_request,
         audience=os.environ.get("GOOGLE_CLIENT_ID"),
     )
     email = id_info.get("email")
     user: User = User.query.filter_by(email=email).first()
-    # New user, add to database
+    # New user, ask for password
     if not user:
-        hashed_password = argon2_.hash("Test123!")
+        session["email"] = email
+        return redirect(url_for("auth.set_password"))
+
+    login_user(user=user)
+    return redirect(url_for("home.home"))
+
+
+@auth_bp.route("/set_password", methods=["GET", "POST"])
+def set_password():
+    password_form = PasswordForm()
+
+    if password_form.validate_on_submit():
+        email = session["email"]
+        session.pop("email")
+        hashed_password = argon2_.hash(password_form.password.data)
         add_new_user(
             email=email,
             username=email[:8],
             hashed_password=hashed_password,
         )
-        user = User.query.filter_by(email=email).first()
-
-    login_user(user=user)
-    return redirect(url_for("home.home"))
+        user: User = User.query.filter_by(email=email).first()
+        if user:
+            login_user(user)
+            return redirect(url_for("home.home"))
+        else:
+            flash("Unexpected error, try again")
+            return redirect(url_for("auth.set_password"))
+    return render_template(
+        "/auth/set_password.html",
+        password_form=password_form,
+    )
 
 
 @auth_bp.route("/logout", methods=["GET"])

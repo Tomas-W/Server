@@ -1,36 +1,82 @@
 import click
 from flask import Flask, current_app
+from sqlalchemy import inspect
 
 from src.extensions import server_db_, argon2_
 from src.models.auth_mod import User
 
 
 def _auth_cli(app_: Flask) -> None:
+    """Configures authentication CLI commands."""
+
     @click.group()
     def auth() -> None:
-        """Contains all cli functionality for the auth table"""
+        """CLI functionality for the User table"""
         pass
 
     @auth.command("info")
     @click.argument("id_", type=int)
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def info(id_, v) -> None:
+    def info(id_: int, v: bool) -> None:
         """
-        Takes a User id and returns its __repr__.
-        Verbose adds columns.
+        Takes a User ID and returns its __repr__.
+
+        Usage: flask auth info <id_> [--v]
+        :param id_: User ID
+        :param v: Enables verbose mode (optional)
         """
         user: User = User.query.get(id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
-        else:
-            if not v:
-                click.echo(repr(user))
-            else:
-                click.echo(f"{'__repr__':<15}: {repr(user)}")
-                click.echo(f"{'ID':<15}: {user.id}")
-                click.echo(f"{'Username':<15}: {user.username}")
-                click.echo(f"{'Email':<15}: {user.email}")
-                click.echo(f"{'Email Verified':<15}: {user.email_verified}")
+            return
+
+        if v:
+            user_info = {
+                "__repr__": repr(user),
+                "ID": user.id,
+                "Username": user.username,
+                "Email": user.email,
+                "Email Verified": user.email_verified,
+                "Remember me": user.remember_me
+            }
+            for key, value in user_info.items():
+                click.echo(f"{key:<15}: {value}")
+            return
+
+        click.echo(repr(user))
+
+    @auth.command("delete_user")
+    @click.argument("id_", type=int)
+    @click.option("--c", is_flag=True,
+                  help="Confirm User deletion without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def delete_user(id_: int, c: bool, v: bool) -> None:
+        """
+        Takes a User ID and deletes the record from the table.
+
+        Usage: flask auth delete_user <user id> [--c] [--v]
+        :param id_: User ID.
+        :param c: Confirm without prompt (optional)
+        :param v: Enables verbose mode (optional)
+        """
+        user: User = User.query.get(id_)
+        if not user:
+            click.echo(f"No User with id {id_} found.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to delete User: {repr(user)}?"):
+            click.echo("User deletion cancelled.")
+            return
+
+        if v:
+            click.echo(f"Deleting user: {repr(user)}")
+
+        server_db_.session.delete(user)
+        server_db_.session.commit()
+
+        click.echo(f"User: {repr(user)} has been removed from the table.")
+        return
 
     @auth.command("get_col_by_id")
     @click.argument("id_", type=int)
@@ -38,107 +84,148 @@ def _auth_cli(app_: Flask) -> None:
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
     def get_col_by_id(id_: int, col_name: str, v: bool) -> None:
         """
-        Takes a User id and a column name and returns its value.
-        Verbose adds __repr__
-        usage: flask auth get_col_by_id <user id> <column name>
+        Takes a User ID and column name and returns the value.
+
+        Usage: flask auth get_col_by_id <user id> [--v]
+        :param id_: User ID
+        :param col_name: Name of the column
+        :param v: Enables verbose mode (optional)
         """
         user = User.query.get(id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
-        else:
-            column_value = getattr(user, col_name, None)
-            if column_value is None:
-                click.echo(f"Column '{col_name}' does not exist in auth table.")
-            else:
-                if v:
-                    click.echo(repr(user))
-                    click.echo(f"{col_name}: {column_value}")
-                else:
-                    click.echo(f"{col_name}: {column_value}")
+            return
+
+        if not hasattr(user, col_name):
+            click.echo(f"'{col_name}' does not exist in User table.")
+            if v:
+                columns = [column.key for column in inspect(User).attrs]
+                click.echo("Available columns are:")
+                for col in columns:
+                    click.echo(f"- {col}")
+            return
+
+        col_value = getattr(user, col_name)
+        if v:
+            click.echo(repr(user))
+
+        click.echo(f"Column name: '{col_name}'.")
+        click.echo(f"Column value: '{col_value}'.")
+        return
 
     @auth.command("set_email_verified")
     @click.argument("id_", type=int)
     @click.argument("new_val", type=bool)
+    @click.option("--c", is_flag=True,
+                  help="Confirm setting value without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_email_verified(id_: int, new_val: bool, v: bool) -> None:
+    def set_email_verified(id_: int, new_val: bool, c: bool, v: bool) -> None:
         """
-        Takes a User id and a column name and returns its value.
-        Verbose adds __repr__
-        usage: flask auth col_val <user id> <column name>
-        """
-        if new_val not in [0, 1]:
-            click.echo(f"Param status must be of type bool "
-                       f"but got '{new_val}'.")
-        user: User = User.query.get(id_)
-        col_name = "email_verified"
-        if not user:
-            click.echo(f"No User with id {id_} found.")
-        else:
-            old_val = getattr(user, "email_verified")
-            setattr(user, "email_verified", new_val)
-            server_db_.session.commit()
-            if v:
-                click.echo(repr(user))
-                click.echo(f"Changed '{col_name}' column"
-                           f" from '{old_val}' to '{new_val}'.")
-            else:
-                click.echo(f"Changed '{col_name}' to '{new_val}'.")
+        Takes a User id and a bool and sets the email_verified column accordingly.
 
-    @auth.command("set_f_code")
-    @click.argument("id_", type=int)
-    @click.argument("fast_code", type=str)
-    @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_f_code(id_: int, fast_code: str, v: bool) -> None:
+        Usage: flask auth set_email_verified <id_> <new_val> [--c] [--v]
+        :param id_: User ID
+        :param new_val: New value of the email_verified column
+        :param c: Confirm without prompt (optional)
+        :param v: Enables verbose mode (optional)
         """
-        Takes a User id and a 5-digit number, then sets the fast_code of the user.
-        Verbose adds __repr__
-        usage: flask auth set_f_code <user id> <5-digit fast_code>
-        """
-        if not fast_code.isdigit() or len(fast_code) != 5:
-            click.echo("Fast code must be a 5-digit number.")
+        col_name = "email_verified"
+        if new_val not in [0, 1]:
+            click.echo(f"Param new_val must be of type bool but got '{new_val}'.")
             return
 
         user: User = User.query.get(id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
-        else:
-            hashed_code = argon2_.hash(fast_code)
-            setattr(user, "fast_code", hashed_code)
-            server_db_.session.commit()
-            if v:
-                click.echo(repr(user))
-                click.echo(
-                    f"Set 'fast_code' to '{fast_code}'.")
-            else:
-                click.echo(f"Set 'fast_code' to '{fast_code}'.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to set '{col_name}' to {new_val}?"):
+            click.echo("Setting value cancelled.")
+            return
+
+        old_val = getattr(user, col_name)
+        setattr(user, col_name, new_val)
+        server_db_.session.commit()
+        if v:
+            click.echo(repr(user))
+
+        click.echo(f"Changed '{col_name}' from '{old_val}' to '{new_val}'.")
+        return
 
     @auth.command("set_f_name")
     @click.argument("id_", type=int)
     @click.argument("fast_name", type=str)
+    @click.option("--c", is_flag=True,
+                  help="Confirm User deletion without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_f_code(id_: int, fast_name: str, v: bool) -> None:
+    def set_f_code(id_: int, fast_name: str, c: bool, v: bool) -> None:
         """
-        Takes a User id and a 5-digit number, then sets the fast_code of the user.
-        Verbose adds __repr__
-        usage: flask auth set_f_code <user id> <5-digit fast_code>
+        Takes a User id and a string (4 < len < 17) and sets the fast_name of the User.
+
+        Usage: flask auth set_f_name <user id> <fast_name> [--c] [--v]
+        :param id_: User ID
+        :param fast_name: Users fast_name
+        :param c: Confirm without prompt (optional)
+        :param v: Enables verbose mode (optional)
         """
-        if not fast_name.isalpha() or not 4 < len(fast_name) < 17:
-            click.echo("Fast name length must be between 4 and 17.")
+        col_name = "fast_name"
+        if not 4 < len(fast_name) < 17:
+            click.echo(f"'{col_name}' length must be between 4 and 17 characters.")
             return
 
         user: User = User.query.get(id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
-        else:
-            hashed_code = argon2_.hash(fast_name)
-            setattr(user, "fast_code", hashed_code)
-            server_db_.session.commit()
-            if v:
-                click.echo(repr(user))
-                click.echo(
-                    f"Set 'fast_code' to '{fast_name}'.")
-            else:
-                click.echo(f"Set 'fast_code' to '{fast_name}'.")
+            return
+
+        hashed_code = argon2_.hash(fast_name)
+        setattr(user, col_name, hashed_code)
+        server_db_.session.commit()
+        if v:
+            click.echo(repr(user))
+
+        click.echo(f"Set '{col_name}' to '{fast_name}'.")
+
+    @auth.command("set_f_code")
+    @click.argument("id_", type=int)
+    @click.argument("fast_code", type=str)
+    @click.option("--c", is_flag=True,
+                  help="Confirm setting value without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def set_f_code(id_: int, fast_code: str, c: bool, v: bool) -> None:
+        """
+        Takes a User id and a 5-digit number and sets the fast_code of the user.
+
+        Usage: flask auth set_f_code <user id> <5-digit fast_code>
+        :param id_: User ID
+        :param fast_code: 5 digit login code
+        :param c: Confirm without prompt (optional)
+        :param v: Enables verbose mode (optional)
+        """
+        col_name = "fast_code"
+        if not fast_code.isdigit() or len(fast_code) != 5:
+            click.echo(f"'{col_name}' must be a 5-digit number.")
+            return
+
+        user: User = User.query.get(id_)
+        if not user:
+            click.echo(f"No User with id {id_} found.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to set '{col_name}' to '{fast_code}'?"):
+            click.echo("Setting value cancelled.")
+            return
+
+        hashed_code = argon2_.hash(fast_code)
+        setattr(user, col_name, hashed_code)
+        server_db_.session.commit()
+        if v:
+            click.echo(repr(user))
+
+        click.echo(f"Set '{col_name}' to '{fast_code}'.")
+        return
 
     app_.cli.add_command(auth)
 
@@ -146,7 +233,7 @@ def _auth_cli(app_: Flask) -> None:
 def _server_cli(app_: Flask) -> None:
     @click.group()
     def server() -> None:
-        """Custom cli commands"""
+        """CLI functionality for server settings"""
         pass
 
     @server.command("config_name")
@@ -154,11 +241,23 @@ def _server_cli(app_: Flask) -> None:
     def config_name(v: bool) -> None:
         """
         Returns the name of the active server configuration.
-        Verbose adds
+
+        Usage: flask server config [--v]
+        :param v: Enables verbose mode (optional)
         """
         config = current_app.config["INSTANCE"]
-        click.echo(config.config_name())
         if v:
-            click.echo(f"SQLAlchemy db URI: {app_.config["SQLALCHEMY_DATABASE_URI"]}")
+            app_info = {
+                "App name": current_app.name,
+                "Debug mode": current_app.debug,
+                "View functions": "\n" + "\n".join(
+                    f"{' ' * 16} {view}" for view in current_app.view_functions)
+            }
+            for key, value in app_info.items():
+                click.echo(f"{key:<15}: {value}")
+            return
+
+        click.echo(config.config_name())
+        return
 
     app_.cli.add_command(server)

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 from config.settings import (banned_username_words, required_password_symbols,
                              banned_username_chars)
-from src.auth.utils import UsernameCheck, PasswordCheck, EmailCheck
+from src.auth.form_utils import EmailCheck, UsernameCheck, PasswordCheck
 
 
 class RegisterForm(FlaskForm):

@@ -42,7 +42,7 @@ Login
                             </form>
 
                             </div>
-                            {% if fast_login %}
+                            {% if fast %}
                                 {% for message in get_flashed_messages() %}
                                     <div class="alert alert-secondary mt-3 mb-0" role="alert">
                                         {{ message }}
@@ -66,7 +66,7 @@ Login
                     <div class="card-body p-5 text-center">
 
                         <div class="container">
-                            {% if not fast_login %}
+                            {% if not fast %}
                             {% for message in get_flashed_messages() %}
                                 <div class="alert alert-secondary" role="alert">
                                     {{ message }}

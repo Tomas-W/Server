@@ -1,14 +1,13 @@
-import inspect
 import os
 from random import randint
 
-from flask import url_for
+from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
+from flask import url_for, flash, render_template, redirect
+from flask_login import login_user
 from flask_mail import Message
-from flask_wtf import FlaskForm
-from itsdangerous import URLSafeTimedSerializer
-from wtforms.fields.core import Field
-from wtforms.validators import ValidationError
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
+from src.auth.forms import FastLoginForm, LoginForm
 from src.extensions import server_db_, mail_, argon2_
 from src.models.auth_mod import User
 
@@ -61,8 +60,12 @@ def confirm_reset_token(token, expiration=3600):
     try:
         email = serializer.loads(token, salt=os.environ.get("PWD_RESET_SALT"),
                                  max_age=expiration)
-    except:
-        return False
+    except SignatureExpired:
+        flash("Code has expired, try again")
+        return render_template(url_for("request_reset"))
+    except BadSignature:
+        flash("Invalid token, try again")
+        return render_template(url_for("request_reset"))
     return email
 
 
@@ -78,56 +81,35 @@ def send_reset_password_mail(user: User) -> None:
     mail_.send(message=message)
 
 
-class UsernameCheck:
-    """Validates username by checking forbidden words and characters."""
-    def __init__(self, banned_words: list, banned_chars: list, message=None) -> None:
-        self.banned_words = banned_words
-        self.banned_chars = banned_chars
-
-        if not message:
-            message = "Invalid username and or characters"
-        self.message = message
-
-    def __call__(self, form: FlaskForm, field: Field) -> None:
-        if field.data.lower() in (word.lower() for word in self.banned_words):
-            raise ValidationError(self.message)
-        if len([x for x in list(self.banned_chars) if x in field.data]):
-            raise ValidationError(self.message)
-
-
-class PasswordCheck:
-    """Validates password by checking requirements."""
-    def __init__(self, required_symbols: list | str, message: str | None = None) -> None:
-        self.symbols = required_symbols
-
-        if not message:
-            message = "Password requirements not met"
-        self.message = message
-
-    def __call__(self, form: FlaskForm, field: Field) -> None:
-        if not any(sym in field.data for sym in self.symbols):
-            raise ValidationError("At least one special character required")
-
-        if field.data == field.data.lower() or \
-                field.data == field.data.upper():
-            raise ValidationError("At least one upper and one lower case "
-                                  "character required")
+def fast_login(login_form: FastLoginForm):
+    user = User.query.filter_by(fast_name=login_form.fast_name.data).first()
+    if user:
+        try:
+            if argon2_.verify(user.fast_code, login_form.fast_code.data):
+                login_user(user=user)
+                return redirect(url_for("home.home"))
+        except VerifyMismatchError:
+            flash("Incorrect credentials")
+        except (VerificationError, InvalidHashError):
+            flash("An error occurred during verification")
+    else:
+        flash("Incorrect credentials")
+    return None
 
 
-class EmailCheck:
-    """Validates email by checking is registered or not."""
-    def __init__(self, register: bool = False, message: str | None = None) -> None:
-        self.register = register
-
-        if not message:
-            message = "Email unknown or already registered"
-        self.message = message
-
-    def __call__(self, form: FlaskForm, field: Field) -> None:
-        user = User.query.filter_by(email=field.data).first()
-        if user:
-            if self.register:
-                raise ValidationError(self.message)
-
-        if not user and not self.register:
-            ValidationError(self.message)
+def normal_login(login_form: LoginForm):
+    user = User.query.filter_by(email=login_form.email.data).first()
+    if user:
+        try:
+            if argon2_.verify(user.password, login_form.password.data):
+                remember = login_form.remember.data
+                login_user(user=user, remember=remember, fresh=True)
+                return redirect(url_for("home.home"))
+        except VerifyMismatchError:
+            flash("Invalid credentials")
+        except (VerificationError,
+                InvalidHashError):
+            flash("An error occurred during verification")
+    else:
+        flash("Invalid credentials")
+    return None

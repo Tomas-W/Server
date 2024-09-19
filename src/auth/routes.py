@@ -50,15 +50,19 @@ def login():
     form_type = request.form.get("login_type")
     if form_type == "fast_login":
         if fast_login_form.validate_on_submit():
-            response = fast_login(fast_login_form)
+            response, message = fast_login(fast_login_form)
             if response:
                 return response
+            if message:
+                flash(message)
 
     elif form_type == "login":
         if login_form.validate_on_submit():
-            response = normal_login(login_form)
+            response, message = normal_login(login_form)
             if response:
                 return response
+            if message:
+                flash(message)
 
     return render_template(
         "/auth/login.html",
@@ -112,6 +116,9 @@ def set_password():
 
     if password_form.validate_on_submit():
         email = session["email"]
+        if not email:
+            flash("Session has expired, please try again.")
+            return redirect(url_for("auth.request-reset"))
         session.pop("email")
         hashed_password = argon2_.hash(password_form.password.data)
         add_new_user(
@@ -190,7 +197,7 @@ def reset_password(token):
     when successful or reset password page when not.
     """
     email = confirm_reset_token(token)
-    # Invalid token
+    # Invalid or expired token
     if not email:
         flash("The reset link is invalid or has expired")
         return redirect(url_for("auth.request_reset"))

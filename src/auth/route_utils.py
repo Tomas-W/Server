@@ -57,50 +57,54 @@ def generate_reset_token(email):
 def confirm_reset_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))
     try:
-        email = serializer.loads(token, salt=os.environ.get("PWD_RESET_SALT"),
-                                 max_age=expiration)
-    except SignatureExpired:
-        flash("Code has expired, try again")
-        return render_template(url_for("request_reset"))
-    except BadSignature:
-        flash("Invalid token, try again")
-        return render_template(url_for("request_reset"))
-    return email
+        email = serializer.loads(
+            token,
+            salt=os.environ.get("PWD_RESET_SALT"),
+            max_age=expiration
+        )
+        return email
+    except (SignatureExpired, BadSignature):
+        return None
+
+
+def handle_argon2_exception(e):
+    if isinstance(e, VerifyMismatchError):
+        return "Incorrect credentials"
+    elif isinstance(e, (VerificationError, InvalidHashError)):
+        return "An error occurred during verification"
+    else:
+        return "An unexpected error occurred"
 
 
 def fast_login(login_form: FastLoginForm):
     user = User.query.filter_by(fast_name=login_form.fast_name.data).first()
-    if user:
-        try:
-            if argon2_.verify(user.fast_code, login_form.fast_code.data):
-                login_user(user=user)
-                session.permanent = False
-                return redirect(url_for("home.home"))
-        except VerifyMismatchError:
-            flash("Incorrect credentials")
-        except (VerificationError, InvalidHashError):
-            flash("An error occurred during verification")
-    else:
-        flash("Incorrect credentials")
-    return None
+    if not user:
+        return None, "Incorrect credentials"
+
+    try:
+        if argon2_.verify(user.fast_code, login_form.fast_code.data):
+            login_user(user=user)
+            session.permanent = False
+            return redirect(url_for("home.home")), None
+    except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
+        return None, handle_argon2_exception(e)
+    return None, "Incorrect credentials"
 
 
 def normal_login(login_form: LoginForm):
     user = User.query.filter_by(email=login_form.email.data).first()
-    if user:
-        try:
-            if argon2_.verify(user.password, login_form.password.data):
-                remember = login_form.remember.data
-                user.remember_me = remember
-                server_db_.session.commit()
-                login_user(user=user, remember=remember, fresh=True)
-                session.permanent = remember
-                return redirect(url_for("home.home"))
-        except VerifyMismatchError:
-            flash("Invalid credentials")
-        except (VerificationError,
-                InvalidHashError):
-            flash("An error occurred during verification")
-    else:
-        flash("Invalid credentials")
-    return None
+    if not user:
+        return None, "Invalid credentials"
+
+    try:
+        if argon2_.verify(user.password, login_form.password.data):
+            remember = login_form.remember.data
+            user.remember_me = remember
+            server_db_.session.commit()
+            login_user(user=user, remember=remember, fresh=True)
+            session.permanent = remember
+            return redirect(url_for("home.home")), None
+    except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
+        return None, handle_argon2_exception(e)
+    return None, "Incorrect credentials"
+

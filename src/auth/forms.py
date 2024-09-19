@@ -37,7 +37,7 @@ class RegisterForm(FlaskForm):
         render_kw={"placeholder": "Password"},
         validators=[DataRequired(message="Password is required"),
                     Length(min=6, max=18,
-                           message="Length must be 6 - 18"),
+                           message="Length must be 8 - 24"),
                     PasswordCheck(
                         required_symbols=required_password_symbols,
                         message=None),

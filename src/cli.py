@@ -259,5 +259,26 @@ def _server_cli(app_: Flask) -> None:
 
         click.echo(config.config_name())
         return
+    
+    @server.command("init")
+    def init() -> None:
+        """
+        Sets the fast_name of the first user to 'tomas' and the fast_code to argon2_.hash("00000").
+
+        Usage: flask server set_first_user_fast_info
+        """
+        user: User = User.query.first()
+        if not user:
+            click.echo("No users found.")
+            return
+
+        user.fast_name = 'test'
+        user.fast_code = argon2_.hash("00000")
+        server_db_.session.commit()
+
+        click.echo(f"User: {repr(user)}")
+        click.echo(f"Set fast_name to 'test' and fast_code to hashed '00000'.")
+        return
+
 
     app_.cli.add_command(server)

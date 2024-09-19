@@ -16,9 +16,9 @@ class UsernameCheck:
         self.message = message
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if field.data.lower() in (word.lower() for word in self.banned_words):
+        if any(word.lower() in field.data.lower() for word in self.banned_words):
             raise ValidationError(self.message)
-        if len([x for x in list(self.banned_chars) if x in field.data]):
+        if any(char in field.data for char in self.banned_chars):
             raise ValidationError(self.message)
 
 
@@ -34,11 +34,9 @@ class PasswordCheck:
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if not any(sym in field.data for sym in self.symbols):
             raise ValidationError("At least one special character required")
+        if not (any(c.isupper() for c in field.data) and any(c.islower() for c in field.data)):
+            raise ValidationError("At least one upper and one lower case character required")
 
-        if field.data == field.data.lower() or \
-                field.data == field.data.upper():
-            raise ValidationError("At least one upper and one lower case "
-                                  "character required")
 
 
 class EmailCheck:
@@ -52,9 +50,5 @@ class EmailCheck:
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         user = User.query.filter_by(email=field.data).first()
-        if user:
-            if self.register:
-                raise ValidationError(self.message)
-
-        if not user and not self.register:
-            ValidationError(self.message)
+        if (user and self.register) or (not user and not self.register):
+            raise ValidationError(self.message)

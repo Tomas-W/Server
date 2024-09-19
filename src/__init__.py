@@ -6,11 +6,7 @@ Sets general app settings as well as private variables,
 """
 import os
 
-
-import click
-from flask import Flask, current_app
-
-from sqlalchemy import create_engine, MetaData
+from flask import Flask
 
 from src.cli import _auth_cli, _server_cli
 from src.extensions import (server_db_, mail_, bootstrap_, csrf_,

@@ -1,9 +1,8 @@
 import os
-from random import randint
 
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
-from flask import url_for, flash, render_template, redirect, session
-from flask_login import login_user
+from flask import url_for, redirect, session
+from flask_login import login_user, current_user
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
@@ -40,11 +39,11 @@ def send_password_reset_email(user):
     Generates a token and sends the user an email
     with a verification link.
     """
-    token = generate_reset_token(user.email)
+    token = generate_reset_token(user.email_or_uname)
     reset_url = url_for('auth.reset_password', token=token, _external=True)
     message = Message(subject="Password Reset",
                       sender=os.environ.get("GMAIL_EMAIL"),
-                      recipients=[user.email],
+                      recipients=[user.email_or_uname],
                       body=f"Please reset your password by visiting: {reset_url}")
     mail_.send(message)
 
@@ -84,6 +83,8 @@ def fast_login(login_form: FastLoginForm):
     try:
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
             login_user(user=user)
+            current_user.tot_logins += 1
+            server_db_.session.commit()
             session.permanent = False
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
@@ -92,7 +93,8 @@ def fast_login(login_form: FastLoginForm):
 
 
 def normal_login(login_form: LoginForm):
-    user = User.query.filter_by(email=login_form.email.data).first()
+    user = User.query.filter((User.email == login_form.email_or_uname.data) |
+                             (User.username == login_form.email_or_uname.data)).first()
     if not user:
         return None, "Invalid credentials"
 
@@ -102,9 +104,10 @@ def normal_login(login_form: LoginForm):
             user.remember_me = remember
             server_db_.session.commit()
             login_user(user=user, remember=remember, fresh=True)
+            current_user.tot_logins += 1
+            server_db_.session.commit()
             session.permanent = remember
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
     return None, "Incorrect credentials"
-

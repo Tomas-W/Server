@@ -59,21 +59,14 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     """Login form for auth page."""
-    email = EmailField(label="Email",
-                       render_kw={"placeholder": "Example@example.com",
-                                  "autofocus": False},
-                       validators=[DataRequired(message="Email is required"),
-                                   Email(message="Invalid email"),
-                                   Length(min=1, max=75,
-                                          message="Email must not exceed 75 char"),
-                                   EmailCheck(message="Email not registered"),
-                                   ])
+    email_or_uname = EmailField(label="Email or username",
+                                render_kw={"placeholder": "Email or username"},
+                                validators=[DataRequired(message="Email or username is"
+                                                                 " required"),
+                                            ])
     password = PasswordField(label="Password",
                              render_kw={"placeholder": "Password"},
-                             validators=[DataRequired(message="Password is required"),
-                                         Length(min=8, max=24,
-                                                message="Password must be 8 - 24 char"),
-                                         ])
+                             validators=[DataRequired(message="Password is required")])
     remember = BooleanField("Remember me")
 
     submit = SubmitField(label="Login")

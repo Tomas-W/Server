@@ -2,6 +2,8 @@ import os
 import pathlib
 import string
 
+import pytz
+
 # Paths
 SERVER_PATH: os.path = os.path.join(pathlib.Path(__file__).parent.parent)
 SRC_PATH: os.path = os.path.join(SERVER_PATH, "src")
@@ -14,6 +16,7 @@ LOGIN_VIEW = "auth.login"
 DATABASE_URI = f"sqlite:///{DB_PATH}"
 LIMITER_URI = "memory://"
 DEFAULT_LIMITS = ["240 per day", "60 per hour"]
+CET = pytz.timezone('CET')
 
 # Forms
 banned_username_words: list = []

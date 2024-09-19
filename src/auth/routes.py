@@ -1,12 +1,16 @@
 import os
+from datetime import datetime
 
 import requests
-from flask import Blueprint, redirect, url_for, request, render_template, flash, session
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import (Blueprint, redirect, url_for, request, render_template, flash,
+                   session, current_app)
+from flask_login import (login_user, logout_user, login_required, current_user,
+                         user_logged_in, user_logged_out)
 from google.oauth2 import id_token
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests
 
+from config.settings import CET
 from src.extensions import argon2_, flow_, server_db_
 from src.auth.forms import (LoginForm, RegisterForm, EmailForm, PasswordForm,
                             FastLoginForm)
@@ -77,6 +81,7 @@ def g_login():
     """Creates authorization link and redirect to Google login services."""
     authorization_url, state = flow_.authorization_url()
     session["state"] = state
+
     return redirect(authorization_url)
 
 
@@ -87,7 +92,7 @@ def callback():
     or login page when not.
     """
     flow_.fetch_token(authorization_response=request.url)
-    if not session.get("state") == request.args["state"]:
+    if not session.get("state") == request.args.get("state"):
         return redirect(url_for("auth.login"))
 
     credentials = flow_.credentials
@@ -212,3 +217,32 @@ def reset_password(token):
     # Unsuccessful attempt, re-serve reset page
     return render_template('auth/reset_password.html',
                            password_form=password_form)
+
+
+def set_user_online_status(user, status):
+    user.is_online = status
+    user.last_seen = datetime.now(CET)
+    server_db_.session.commit()
+
+
+@user_logged_in.connect_via(current_app)
+def when_user_logged_in(_, user):
+    set_user_online_status(user, True)
+
+
+@user_logged_out.connect_via(current_app)
+def when_user_logged_out(_, user):
+    set_user_online_status(user, False)
+
+
+@auth_bp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen_at = datetime.now(CET)
+        server_db_.session.commit()
+    else:
+        if 'user_id' in session:
+            user = User.query.get(session['user_id'])
+            if user:
+                set_user_online_status(user, False)
+                session.pop('user_id', None)

@@ -1,12 +1,11 @@
 /* ********** Variables ********** */
 :root {
-    --dark: rgba(34, 40, 46, 1);
-    --middle: rgba(57, 62, 70, 1);
-    --lightMiddle: rgba(187, 192, 200, 1);
-    --light: rgba(210, 216, 228, 1);
-    --orange: rgba(214, 90, 49, 1);
-    --black: rgba(0, 0, 0, 1);
-    --white: rgba(255, 255, 255, 1);
+    --gray1: rgba(18, 18, 18, 1);
+    --gray2: rgba(23, 23, 23, 1);
+    --gray3: rgba(42, 45, 47, 1);
+    --gray4: rgba(57, 62, 64, 1);
+    --nav_text: rgba(160, 160, 160, 1);
+    --nav_text_hover: rgba(200, 200, 200, 1);
 }
 
 /********* General settings *********/
@@ -37,23 +36,57 @@ h4 {
 }
 /* ********** Navbar ********** */
 #navbar-section {
-    background-color: var(--middle);
-    padding: 10px 9%;
+    background-color: var(--gray2);
+    padding: 10px 12%;
 }
 .navbar-collapse {
     justify-content: end;
 }
 .navbar-brand {
+    color: var(--nav_text);
     font-size: 1.8rem;
 }
+
+.navbar-brand:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;  /* Increased from 5px to 8px */
+    color: var(--nav_text_hover);
+}
+
 .nav-link {
+    color: var(--nav_text);
     font-size: 1.2rem;
 }
+
+.nav-link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    color: var(--nav_text_hover);
+}
+
+#logout {
+    color: var(--nav_text);
+    font-size: 1.2rem;
+}
+
 .nav-item {
     margin-left: 10px;
 }
 
+.home-hr {
+    opacity: 1;
+    background-color: var(--gray3);
+    border: none;
+    width: 100%;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+}
+
 /* ********** Footer ********** */
+
 #footer-section {
     background-color: var(--dark);
     width: 100%;

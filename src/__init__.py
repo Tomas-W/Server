@@ -15,6 +15,7 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
 from config.app_config import DebugConfig, DeployConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW
 from src.models.auth_mod import User
+from src.models.news_mod import News, Remark
 
 
 def _configure_server(app_: Flask) -> Flask:
@@ -54,8 +55,10 @@ def _configure_extensions(app_: Flask) -> None:
 def _configure_blueprints(app_: Flask) -> None:
     from src.home.routes import home_bp
     from src.auth.routes import auth_bp
+    from src.admin.routes import admin_bp
     app_.register_blueprint(home_bp)
     app_.register_blueprint(auth_bp)
+    app_.register_blueprint(admin_bp)
 
 
 def _configure_cli(app_: Flask) -> None:

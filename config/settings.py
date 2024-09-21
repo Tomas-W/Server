@@ -22,4 +22,7 @@ CET = pytz.timezone('CET')
 banned_username_words: list = []
 banned_username_chars: list = []
 
+banned_news_words: list = []
+banned_news_chars: list = []
+
 required_password_symbols: str = string.punctuation + string.digits

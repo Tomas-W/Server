@@ -9,7 +9,7 @@ class BaseConfig(object):
     SECRET_KEY = os.environ.get("FLASK_KEY")
 
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
-    DEFAULT_LIMITS = ["240 per day", "60 per hour"]
+    DEFAULT_LIMITS = ["9999 per day", "9999 per hour"]
 
     SESSION_TYPE = 'sqlalchemy'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

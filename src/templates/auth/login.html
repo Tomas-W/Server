@@ -6,56 +6,60 @@ Login
 
 {% block landing_content %}
 <section class="login-height gradient-custom">
-
     <div class="container card-container">
-    <div class="row justify-content-center fast-card-items">
-        <div id="fast-login-card" class="col-lg-4 col-md-8 col-sm-10 _login-div">
-            <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                <div class="card-body p-3 text-center">
-                    <div class="container">
-                        <div class="form-outline form-white">
+        <div class="row justify-content-center fast-card-items">
+            <div id="fast-login-card" class="col-lg-4 col-md-8 col-sm-10 _login-div">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-3 text-center">
+                        <div class="container">
+                            <div class="form-outline form-white">
 
-                            <form method="POST" action="" novalidate>
-                                {{ fast_login_form.hidden_tag() }}
+                                <form method="POST" action="" novalidate>
+                                    {{ fast_login_form.hidden_tag() }}
 
-                                <div class="row">
+                                    <div class="row">
 
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            {{ fast_login_form.fast_name(class="form-control form-control-sm") }}
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{
+                                                fast_login_form.fast_name(class="form-control
+                                                form-control-sm") }}
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{
+                                                fast_login_form.fast_code(class="form-control
+                                                form-control-sm") }}
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="login_type"
+                                               value="fast_login">
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <div class="form-group w-100">
+                                                {{ fast_login_form.submit(class="btn
+                                                btn-outline-light btn-sm w-100") }}
+                                            </div>
                                         </div>
 
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            {{ fast_login_form.fast_code(class="form-control form-control-sm") }}
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="login_type" value="fast_login">
-                                    <div class="col-md-4 d-flex align-items-center">
-                                        <div class="form-group w-100">
-                                            {{ fast_login_form.submit(class="btn btn-outline-light btn-sm w-100") }}
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </form>
+                                </form>
 
                             </div>
                             {% if fast %}
-                                {% for message in get_flashed_messages() %}
-                                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
+                            {% for message in get_flashed_messages() %}
+                            <div class="alert alert-secondary mt-3 mb-0" role="alert">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
                             {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
 
 
     <div class="container card-container">
@@ -68,43 +72,54 @@ Login
                         <div class="container">
                             {% if not fast %}
                             {% for message in get_flashed_messages() %}
-                                <div class="alert alert-secondary" role="alert">
-                                    {{ message }}
-                                </div>
+                            <div class="alert alert-secondary" role="alert">
+                                {{ message }}
+                            </div>
                             {% endfor %}
                             {% endif %}
 
                             <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
-                            <p class="text-white-50 mb-5">Please enter your login details!</p>
+                            <p class="text-white-50 mb-5">Please enter your login
+                                details!</p>
 
                             <div class="form-outline form-white mb-4">
                                 <form method="POST" action="" novalidate>
                                     {{ login_form.hidden_tag() }}
 
                                     <div class="form-group py-3">
-                                        {% for error in login_form.errors["email_or_uname"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                                        {% for error in
+                                        login_form.errors["email_or_uname"] %}
+                                        <p class="text-danger mb-1"><strong>{{ error
+                                            }}</strong></p>
                                         {% endfor %}
 
-                                        <p class="text-white-50 mb-1">{{ login_form.email_or_uname.label }}</p>
-                                        {{ login_form.email_or_uname(class="form-control form-control-lg") }}
+                                        <p class="text-white-50 mb-1">{{
+                                            login_form.email_or_uname.label }}</p>
+                                        {{ login_form.email_or_uname(class="form-control
+                                        form-control-lg") }}
                                     </div>
 
                                     <div class="form-group py-3">
                                         {% for error in login_form.errors["password"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                                        <p class="text-danger mb-1"><strong>{{ error
+                                            }}</strong></p>
                                         {% endfor %}
 
-                                        <p class="text-white-50 mb-1">{{ login_form.password.label }}</p>
-                                        {{ login_form.password(class="form-control form-control-lg") }}
+                                        <p class="text-white-50 mb-1">{{
+                                            login_form.password.label }}</p>
+                                        {{ login_form.password(class="form-control
+                                        form-control-lg") }}
                                     </div>
 
                                     <div class="form-group py-3">
-                                        <p class="text-white-50 mb-1">{{ login_form.remember() }}  {{ login_form.remember.label }}</p>
+                                        <p class="text-white-50 mb-1">{{
+                                            login_form.remember() }} {{
+                                            login_form.remember.label }}</p>
                                     </div>
                                     <input type="hidden" name="login_type" value="login">
                                     <div class="form-group pt-3">
-                                        {{ login_form.submit(class="btn btn-outline-light btn-lg px-5") }}
+                                        {{ login_form.submit(class="btn btn-outline-light
+                                        btn-lg px-5") }}
                                     </div>
                                 </form>
                             </div>
@@ -115,13 +130,17 @@ Login
                         </div>
 
                         <div>
-                            <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}" id="getRegister"
-                                                                      class="text-white-50 fw-bold">Sign Up</a>
+                            <p class="mb-0">Don't have an account? <a
+                                    href="{{ url_for('auth.register') }}"
+                                    id="getRegister"
+                                    class="text-white-50 fw-bold">Sign Up</a>
                             </p>
                         </div>
                         <div>
-                            <p class="mb-0">Use Google <a href="{{ url_for('auth.g_login') }}" id="google-login"
-                                                                      class="text-white-50 fw-bold">Google</a>
+                            <p class="mb-0">Use Google <a
+                                    href="{{ url_for('auth.g_login') }}"
+                                    id="google-login"
+                                    class="text-white-50 fw-bold">Google</a>
                             </p>
                         </div>
                     </div>

@@ -41,6 +41,16 @@ def base():
     return redirect(url_for("auth.login"))
 
 
+@auth_bp.route("/login2")
+def login2():
+    fast_login_form = FastLoginForm()
+    return render_template(
+        "/auth/login2.html",
+        fast_login_form=fast_login_form,
+        page="login2"
+        )
+
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     """

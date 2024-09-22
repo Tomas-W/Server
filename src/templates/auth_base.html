@@ -14,17 +14,47 @@
     <!-- jQuery scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Style sheets -->
-    <link rel="stylesheet" href="../static/css/landing_base.css">
+    <link rel="stylesheet" href="../static/css/settings.css">
+    <link rel="stylesheet" href="../static/css/auth_base.css">
+    {% if page == "login" %}
+    <link rel="stylesheet" href="../static/css/auth/login.css">
+    {% elif page == "login2" %}
+    <link rel="stylesheet" href="../static/css/auth/login2.css">
+    {% endif %}
 
     <title>
-        {% block landing_title %}
+        {% block auth_title %}
         {% endblock %}
     </title>
 
 </head>
 <body>
+    <!-- ********** Fast Login ********** -->
+    <section class="fast-login-section">
+        <div class="fast-login-container">
+            <div class="fast-login-content">
+                <form method="POST" action="" novalidate class="fast-login-form">
+                    {{ fast_login_form.hidden_tag() }}
+                    <div class="fast-login-form-row">
+                        <div class="form-group">
+                            {{ fast_login_form.fast_name(class="underline-input") }}
+                        </div>
+                        <div class="form-group">
+                            {{ fast_login_form.fast_code(class="underline-input") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="fast-side-panel">
+                <input type="hidden" name="login_type" value="fast_login">
+                <div class="form-group">
+                    {{ fast_login_form.submit(class="btn") }}
+                </div>
+            </div>
+        </div>
+    </section>
 
-{% block landing_content %}
+{% block auth_content %}
 {% endblock %}
 
 <!-- Bootstrap scripts -->

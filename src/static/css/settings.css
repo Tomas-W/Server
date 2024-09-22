@@ -1,0 +1,40 @@
+/* ********** Variables ********** */
+:root {
+    --gray1: rgba(18, 18, 18, 1);
+    --gray2: rgba(23, 23, 23, 1);
+    --gray3: rgba(42, 45, 47, 1);
+    --gray4: rgba(57, 62, 64, 1);
+
+    --nav_text: rgba(160, 160, 160, 1);
+    --nav_text_hover: rgba(200, 200, 200, 1);
+
+    --auth_text: rgba(160, 160, 160, 1);
+    --auth_text_hover: rgba(200, 200, 200, 1);
+}
+
+/********* General settings *********/
+* {
+    font-family: 'Montserrat';
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 6rem;
+}
+
+h2 {
+    font-size: 4rem;
+}
+
+h3 {
+    font-size: 2rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}

@@ -9,22 +9,26 @@ Home
 
 {% block content %}
 <section class="home-section">
-
-    {% for news in all_news %}
-
-    <div class="container card-container">
-        <div class="row justify-content-center card-items">
-            <div class="news-card col-lg-4 col-md-8 col-sm-10">
-                <div class="card shadow news-card">
-                    <div class="card-body">
-                        <p class="card-text news-title">{{ news[0] }}</p>
-                        <p class="card-text news-author"><small>{{ news[2] }} - {{ news[3] }}</small></p>
-                    </div>
-                </div>
-            </div>
+    <div class="home-container">
+        <div class="home-content">
+            <!-- Content goes here -->    
+        </div>
+        <div class="side-panel">
+            <ul class="side-panel-list">
+                <li><a href="#">Program 1</a></li>
+                <li><a href="#">Program 2</a></li>
+                <li><a href="#">Program 3</a></li>
+                <li><a href="#">Program 4</a></li>
+                <li><a href="#">Program 5</a></li>
+                <li><a href="#">Program 6</a></li>
+                <li><a href="#">Program 7</a></li>
+                <li><a href="#">Program 8</a></li>
+                <li><a href="#">Program 9</a></li>
+                <li><a href="#">Program 10</a></li>
+                <li><a href="#">Program 11</a></li>
+                <li><a href="#">Program 12</a></li>
+            </ul>
         </div>
     </div>
-    {% endfor %}
-
 </section>
 {% endblock %}

@@ -15,7 +15,7 @@ CLIENTS_SECRETS_PATH = os.path.join(CONFIG_PATH, "client_secret.json")
 LOGIN_VIEW = "auth.login"
 DATABASE_URI = f"sqlite:///{DB_PATH}"
 LIMITER_URI = "memory://"
-DEFAULT_LIMITS = ["240 per day", "60 per hour"]
+DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
 CET = pytz.timezone('CET')
 
 # Forms

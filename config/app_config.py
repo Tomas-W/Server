@@ -1,7 +1,7 @@
 from datetime import timedelta
 import os
 
-from config.settings import DATABASE_URI
+from config.settings import DATABASE_URI, DEFAULT_LIMITS
 
 
 class BaseConfig(object):
@@ -9,7 +9,7 @@ class BaseConfig(object):
     SECRET_KEY = os.environ.get("FLASK_KEY")
 
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
-    DEFAULT_LIMITS = ["9999 per day", "9999 per hour"]
+    DEFAULT_LIMITS = DEFAULT_LIMITS
 
     SESSION_TYPE = 'sqlalchemy'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

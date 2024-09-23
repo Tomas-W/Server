@@ -37,19 +37,19 @@
                     {{ fast_login_form.hidden_tag() }}
                     <div class="fast-login-form-row">
                         <div class="form-group">
-                            {{ fast_login_form.fast_name(class="underline-input") }}
+                            {{ fast_login_form.fast_name(class="fast-underline-input") }}
                         </div>
                         <div class="form-group">
-                            {{ fast_login_form.fast_code(class="underline-input") }}
+                            {{ fast_login_form.fast_code(class="fast-underline-input") }}
+                        </div>
+                    </div>
+                    <div class="fast-side-panel">
+                        {{ fast_login_form.login_type }}
+                        <div class="form-group">
+                            {{ fast_login_form.submit(class="btn fast-login-btn") }}
                         </div>
                     </div>
                 </form>
-            </div>
-            <div class="fast-side-panel">
-                <input type="hidden" name="login_type" value="fast_login">
-                <div class="form-group">
-                    {{ fast_login_form.submit(class="btn") }}
-                </div>
             </div>
         </div>
     </section>

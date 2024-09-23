@@ -10,6 +10,18 @@
 
     --auth_text: rgba(160, 160, 160, 1);
     --auth_text_hover: rgba(200, 200, 200, 1);
+
+    --auth_input_text:rgba(160, 160, 160, 1);
+    --auth_input_text_hover:rgba(220, 220, 220, 1);
+
+    --auth_border_color: var(--gray3);
+    --auth_border_color_hover: rgba(160, 160, 160, 1);
+
+    --auth_btn_text: rgba(200, 200, 200, 1);
+    --auth_btn_text_hover: rgba(255, 255, 255, 1);
+    --auth_btn_text_size: 1.1rem;
+
+    --form_error: rgba(160, 160, 160, 1);
 }
 
 /********* General settings *********/

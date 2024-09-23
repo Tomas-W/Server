@@ -41,14 +41,36 @@ def base():
     return redirect(url_for("auth.login"))
 
 
-@auth_bp.route("/login2")
+@auth_bp.route("/login2", methods=["GET", "POST"])
 def login2():
     fast_login_form = FastLoginForm()
+    login_form = LoginForm()
+    fast = False
+    form_type = request.form.get("login_type")
+
+    if form_type == "fast_login":
+        fast = True
+        if fast_login_form.validate_on_submit():
+            response, message = fast_login(fast_login_form)
+            if response:
+                return response
+            if message:
+                flash(message)
+    
+    elif form_type == "login":
+        if login_form.validate_on_submit():
+            response, message = normal_login(login_form)
+            if response:
+                return response
+            if message:
+                flash(message)
     return render_template(
         "/auth/login2.html",
         fast_login_form=fast_login_form,
-        page="login2"
-        )
+        login_form=login_form,
+        page="login2",
+        fast=fast,
+    )
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -63,6 +85,7 @@ def login():
 
     form_type = request.form.get("login_type")
     if form_type == "fast_login":
+        fast = True
         if fast_login_form.validate_on_submit():
             response, message = fast_login(fast_login_form)
             if response:

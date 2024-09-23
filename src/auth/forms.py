@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, EmailField, PasswordField
-from wtforms.fields.simple import BooleanField
+from wtforms.fields.simple import BooleanField, HiddenField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 from config.settings import (banned_username_words, required_password_symbols,
@@ -68,6 +68,7 @@ class LoginForm(FlaskForm):
                              render_kw={"placeholder": "Password"},
                              validators=[DataRequired(message="Password is required")])
     remember = BooleanField("Remember me")
+    login_type = HiddenField(default="login")
 
     submit = SubmitField(label="Login")
 
@@ -92,7 +93,8 @@ class FastLoginForm(FlaskForm):
                                           Length(min=5, max=5,
                                                  message="Code must be 5 char"),
                                           ])
-    submit = SubmitField(label="Login")
+    login_type = HiddenField(default="fast_login")
+    submit = SubmitField(label="Go")
 
 
 class EmailForm(FlaskForm):

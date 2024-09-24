@@ -47,7 +47,10 @@ def login2():
     login_form = LoginForm()
     fast = False
     form_type = request.form.get("login_type")
-
+    print(form_type)
+    print(form_type)
+    print(form_type)
+    
     if form_type == "fast_login":
         fast = True
         if fast_login_form.validate_on_submit():

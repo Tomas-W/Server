@@ -21,15 +21,15 @@
     flex-grow: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Add this line */
+    justify-content: space-between;
 }
 
 .fast-login-form {
     width: 100%;
     height: 100%;
-    display: flex; /* Add this line */
-    justify-content: space-between; /* Add this line */
-    align-items: center; /* Add this line */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .fast-login-form-row {
@@ -37,7 +37,7 @@
     gap: 50px;
     height: 100%;
     padding: 20px;
-    flex-grow: 1; /* Add this line */
+    flex-grow: 1;
 }
 
 .form-group {
@@ -56,8 +56,8 @@
 }
 
 .fast-side-panel {
-    width: auto; /* Change from 150px to auto */
-    padding: 0 15px; /* Add horizontal padding */
+    width: auto;
+    padding: 0;
     border-left: 1px solid var(--gray3);
     margin: 0;
     background-color: var(--gray2);
@@ -69,9 +69,10 @@
 
 .fast-login-btn {
     width: 100%;
-    padding: 0 0 3px 0;  /* Add 3px padding to the bottom */
+    padding-left: 15px;
+    padding-right: 15px;
     background-color: transparent;
-    color: var(--auth_btn_text); /* Use the same color as side panel links */
+    color: var(--auth_btn_text);
     border: none;
     border-bottom: 1px solid var(--underline-color);
     border-radius: 0;
@@ -79,33 +80,40 @@
     transition: border-color 0.3s ease, color 0.3s ease;
     text-decoration: none;
     outline: none;
-    height: calc(100% + 3px);  /* Increase height by 3px to compensate for padding */
-    box-sizing: content-box;  /* Ensure padding doesn't affect overall height */
+    height: calc(100% + 3px);
+    box-sizing: content-box;
 }
 
 .fast-login-btn:hover, .fast-login-btn:focus {
+    background-color: transparent;
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 5px;
     color: var(--auth_btn_text_hover);
-    border-bottom-color: transparent; /* Remove the bottom border on hover */
+    border-bottom-color: transparent;
 }
 
 .fast-underline-input {
     width: 100%;
-    padding: 7px 0 7px 0;  /* Add 3px padding to the bottom */
+    padding: 7px 0 7px 0;
     border: none;
     border-bottom: 1px solid var(--gray3);
     background-color: transparent;
     outline: none;
-    transition: border-color 0.3s ease;
-    height: calc(100% + 4px);  /* Increase height by 3px to compensate for padding */
+    transition: border-color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out;
+    height: calc(100% + 4px);
     color: var(--auth_text);
-    box-sizing: content-box;  /* Ensure padding doesn't affect overall height */
+    box-sizing: content-box;
 }
 
 .fast-underline-input:hover {
-    border-bottom-color: var(--auth_text);
+    border-bottom-color: var(--auth_border_color_hover);
+    color: var(--auth_input_text_hover);
+}
+
+.fast-login-content:hover {
+    color: var(--auth_text_hover);
 }
 
 @media (max-width: 434.98px) {}
@@ -114,7 +122,6 @@
 .fast-login-container {
     width: 98%;
 }
-
 
 /* Extra small devices (phones, 575.98px and down) */
 @media (min-width: 500px) and (max-width: 575.98px) {

@@ -9,11 +9,13 @@
     height: 550px;
     border: 1px solid var(--gray3);
     display: flex;
+    margin-bottom: 150px;
 }
 
 .login-content {
     flex-grow: 1;
     padding-top: 5%;
+    padding-bottom: 5%;
 }
 
 .login-form {
@@ -51,14 +53,14 @@
 .remember-me {
     color: var(--auth_input_text);
     opacity: 0.5;
-    gap: 10px;
     padding: 7px 0;
     cursor: pointer;
     transition: color 0.3s ease;
+    margin-right: 5px; /* Add this line to create space */
 }
 
 .remember-devider {
-    margin-bottom: 22px;
+    margin-bottom: 0px;
     border-bottom: 1px solid var(--auth_border_color);
     transition: border-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
@@ -74,7 +76,8 @@
 
 .login-btn {
     border: none;
-    padding: 0 20px 20px 10px;
+    padding-top: 35px;
+    padding-bottom: 35px;
     color: var(--auth_btn_text);
     cursor: pointer;
     width: 100%;
@@ -86,6 +89,9 @@
 
 .login-btn:hover {
     background-color: transparent;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
     color: var(--auth_btn_text_hover);
 }
 

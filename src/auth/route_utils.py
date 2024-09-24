@@ -81,6 +81,7 @@ def fast_login(login_form: FastLoginForm):
         return None, "Incorrect credentials"
 
     try:
+        
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
             login_user(user=user)
             current_user.tot_logins += 1

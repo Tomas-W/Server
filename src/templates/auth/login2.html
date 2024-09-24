@@ -11,18 +11,6 @@ Login2
 
 <section class="login-section">
     <div class="login-container">
-        <!-------- Side panel -------->
-        <!-- <div class="side-panel">
-            <ul class="side-panel-list">
-                <li><a href="#">Login</a></li>
-                <li><a href="#">Sign up</a></li>
-                <li><a href="#">Forgot email</a></li>
-                <li><a href="#">Forgot username</a></li>
-                <li><a href="#">Forgot password</a></li>
-                <li><a href="#">Login with Google</a></li>
-                <li><a href="#">Program 7</a></li>
-            </ul>
-        </div> -->
 
         <!-------- Login content -------->
         <div class="login-content">
@@ -56,7 +44,7 @@ Login2
                 </div>
 
                 <!-------- Login type -------->
-                {{ login_form.login_type }}
+                
                 <!-------- Remember me and Submit -------->
                 
                 <div class="form-item remember-devider">
@@ -64,6 +52,7 @@ Login2
                     {{ login_form.remember.label(class="remember-me") }}
                 </div>
                 <div class="form-item login-devider"> 
+                    {{ login_form.form_type }}
                     {{ login_form.submit(class="btn login-btn") }}
                 </div>
 

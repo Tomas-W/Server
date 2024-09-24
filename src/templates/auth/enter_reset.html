@@ -15,12 +15,13 @@ Login
                     <div class="card-body p-5 text-center">
 
                         <div class="mb-md-5 mt-md-4 pb-3">
-                            {% for message in get_flashed_messages() %}
-                            <div class="alert alert-secondary" role="alert">
-                                {{ message }}
-                            </div>
-
-                            {% endfor %}
+                            {% if not fast %}
+                                {% for message in get_flashed_messages() %}
+                                    <div class="alert alert-secondary" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
 
                             <h2 class="fw-bold mb-2 text-uppercase">Reset</h2>
                             <p class="text-white-50 mb-5">Please confirm your email and reset code!</p>
@@ -64,6 +65,8 @@ Login
                                         <p class="text-white-50 mb-1">{{ reset_form.password2.label }}</p>
                                         {{ reset_form.password2(class="form-control form-control-lg") }}
                                     </div>
+
+                                    {{ reset_form.form_type }}
 
                                     <div class="form-group pt-3">
                                         {{ reset_form.submit(class="btn btn-outline-light btn-lg px-5") }}

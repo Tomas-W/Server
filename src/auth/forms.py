@@ -54,6 +54,7 @@ class RegisterForm(FlaskForm):
                         required_symbols=required_password_symbols,
                         message=None),
                     ])
+    form_type = HiddenField(default="register")
     submit = SubmitField(label="Register")
 
 
@@ -68,7 +69,7 @@ class LoginForm(FlaskForm):
                              render_kw={"placeholder": "Password"},
                              validators=[DataRequired(message="Password is required")])
     remember = BooleanField("Remember me")
-    login_type = HiddenField(default="login")
+    form_type = HiddenField(default="login")
 
     submit = SubmitField(label="Login")
 
@@ -93,7 +94,7 @@ class FastLoginForm(FlaskForm):
                                           Length(min=5, max=5,
                                                  message="Code must be 5 char"),
                                           ])
-    login_type = HiddenField(default="fast_login")
+    form_type = HiddenField(default="fast_login")
     submit = SubmitField(label="Go")
 
 
@@ -108,6 +109,7 @@ class EmailForm(FlaskForm):
                                           message="Email must not exceed 75 char"),
                                    EmailCheck(message="Email not registered"),
                                    ])
+    form_type = HiddenField(default="email")
     submit = SubmitField(label="Submit")
 
 
@@ -133,4 +135,5 @@ class PasswordForm(FlaskForm):
                                               required_symbols=required_password_symbols,
                                               message=None),
                                           ])
+    form_type = HiddenField(default="password")
     submit = SubmitField(label="Reset")

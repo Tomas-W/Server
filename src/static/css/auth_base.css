@@ -152,3 +152,18 @@
         max-width: 375px;
     }
 }
+
+.fast-login-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flash-messages {
+    color: var(--auth_text);
+    width: 100%;
+    max-width: 375px; /* Match the max-width of the fast-login-container */
+    display: flex;
+    justify-content: center;
+}

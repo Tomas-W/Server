@@ -244,7 +244,7 @@ def register():
     fast_login_form = FastLoginForm()
     fast = False
     form_type = request.form.get("form_type")
-    print(form_type)
+
     if form_type == "fast_login":
         fast = True
         if fast_login_form.validate_on_submit():
@@ -257,12 +257,13 @@ def register():
     elif form_type == "register":
         if register_form.validate_on_submit():
             hashed_password = argon2_.hash(register_form.password.data)
-        add_new_user(
-            email=register_form.email.data,
-            username=register_form.username.data,
-            hashed_password=hashed_password,
-        )
-        return redirect(url_for("auth.login"))
+            add_new_user(
+                email=register_form.email.data,
+                username=register_form.username.data,
+                hashed_password=hashed_password,
+            )
+            return redirect(url_for("auth.login"))
+        flash("Form failed to validate")
 
     return render_template(
         "/auth/register.html",

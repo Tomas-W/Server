@@ -1,24 +1,25 @@
-.login-section {
+.auth-section {
     background-color: var(--gray1);
-    padding: 45px 20%;
+    padding: 0 20%;
+    display: flex; /* Add this line */
 }
 
-.login-container {
+.auth-container {
     background-color: var(--gray2);
     width: 100%;
-    height: 550px;
     border: 1px solid var(--gray3);
     display: flex;
-    margin-bottom: 150px;
+    margin-bottom: 50px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    margin-top: 50px;
 }
 
-.login-content {
+.auth-content {
     flex-grow: 1;
-    padding-top: 5%;
-    padding-bottom: 5%;
 }
 
-.login-form {
+.auth-form {
     display: flex;
     flex-direction: column;
     width: 350px;
@@ -60,7 +61,6 @@
 }
 
 .remember-devider {
-    margin-bottom: 0px;
     border-bottom: 1px solid var(--auth_border_color);
     transition: border-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
@@ -74,7 +74,11 @@
     color: var(--auth_input_text_hover);
 }
 
-.login-btn {
+.last-form-item {
+    margin-bottom: 0;
+}
+
+.auth-btn {
     border: none;
     padding-top: 35px;
     padding-bottom: 35px;
@@ -87,7 +91,7 @@
     font-size: var(--auth_btn_text_size);
 }
 
-.login-btn:hover {
+.auth-btn:hover {
     background-color: transparent;
     text-decoration: underline;
     text-decoration-thickness: 2px;
@@ -95,23 +99,23 @@
     color: var(--auth_btn_text_hover);
 }
 
-
-.login-devider {
+.auth-devider {
     margin: 0;
     border-bottom: 1px solid var(--auth_border_color);
     transition: border-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
-.login-devider:hover {
+.auth-devider:hover {
     border-bottom-color: var(--auth_border_color_hover);
 }
 
-.login-options-container {
+.auth-options-container {
     width: 350px;
     margin: 10px auto;
+    margin-bottom: 40px;
 }
 
-.login-options-content {
+.auth-options-content {
     cursor: pointer;
     color: var(--auth_text);
     opacity: 1;
@@ -121,7 +125,7 @@
     display: inline-block; /* Add this line to ensure the underline is only as wide as the text */
 }
 
-.login-options-content::after {
+.auth-options-content::after {
     content: '';
     position: absolute;
     width: 0;
@@ -132,11 +136,11 @@
     transition: width 0.3s ease-in-out;
 }
 
-.login-options-content:hover {
+.auth-options-content:hover {
     color: var(--auth_text_hover); /* Change text color on hover */
 }
 
-.login-options-content:hover::after {
+.auth-options-content:hover::after {
     width: 100%;
     background-color: var(--auth_text_hover);
     left: 0; /* Add this line to ensure the underline expands to the left */
@@ -144,51 +148,48 @@
 }
 
 @media (max-width: 434.98px) {
-    .login-section {
-        padding: 45px 5%;
+    .auth-section {
+        padding: 0 5%;
     }
-    .login-form,
-    .login-options-container {
-        width: 275px;
+    .auth-form,
+    .auth-options-container {
+        width: 260px;
     }
 }
 
 @media (min-width: 435px) and (max-width: 499.98px) {
-    .login-section {
-        padding: 45px 5%;
+    .auth-section {
+        padding: 0 4%;
     }
-    .login-form,
-    .login-options-container {
-        width: 300px;
+    .auth-form,
+    .auth-options-container {
+        width: 290px;
     }
 }
 
 @media (min-width: 500px) and (max-width: 575.98px) {
-    .login-section {
-        padding: 45px 8%;
+    .auth-section {
+        padding: 0 7%;
     }
 }
 
 @media (min-width: 576px) and (max-width: 767.98px) {
-    .login-section {
-        padding: 45px 12%;
+    .auth-section {
+        padding: 0 11%;
     }    
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-    .login-container {
-        margin-top: 15px;
+    .auth-container {
     }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
-    .login-container {
-        margin-top: 35px;
+    .auth-container {
     }
 }
 
 @media (min-width: 1200px) {
-    .login-container {
-        margin-top: 55px;
+    .auth-container {
     }
 }

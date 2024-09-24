@@ -1,93 +1,56 @@
-{% extends "auth_base.html" %}}
-
+{% extends "auth_base.html" %}
 
 {% block auth_title %}
-Login
+Reset
+{% endblock %}
+
+{% block auth_scripts %}
 {% endblock %}
 
 {% block auth_content %}
-<section class="login-height gradient-custom">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
 
-                    <div class="card-body p-5 text-center">
-
-                        <div class="mb-md-5 mt-md-4 pb-3">
-                            {% if not fast %}
-                                {% for message in get_flashed_messages() %}
-                                    <div class="alert alert-secondary" role="alert">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-
-                            <h2 class="fw-bold mb-2 text-uppercase">Reset</h2>
-                            <p class="text-white-50 mb-5">Please confirm your email and reset code!</p>
-
-                            <div class="form-outline form-white mb-4">
-
-                                <form method="POST" action="" novalidate>
-                                    {{ reset_form.hidden_tag() }}
-                                    <div class="form-group py-3">
-                                        {% for error in reset_form.errors["email"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
-                                        {% endfor %}
-
-                                        <p class="text-white-50 mb-1">{{ reset_form.email.label }}</p>
-                                        {{ reset_form.email(class="form-control form-control-lg") }}
-                                    </div>
-
-                                    <div class="form-group py-3">
-                                        {% for error in reset_form.errors["reset_code"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
-                                        {% endfor %}
-
-                                        <p class="text-white-50 mb-1">{{ reset_form.reset_code.label }}</p>
-                                        {{ reset_form.reset_code(class="form-control form-control-lg") }}
-                                    </div>
-
-                                    <div class="form-group py-3">
-                                        {% for error in reset_form.errors["password"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
-                                        {% endfor %}
-
-                                        <p class="text-white-50 mb-1">{{ reset_form.password.label }}</p>
-                                        {{ reset_form.password(class="form-control form-control-lg") }}
-                                    </div>
-
-                                    <div class="form-group py-3">
-                                        {% for error in reset_form.errors["password2"] %}
-                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
-                                        {% endfor %}
-
-                                        <p class="text-white-50 mb-1">{{ reset_form.password2.label }}</p>
-                                        {{ reset_form.password2(class="form-control form-control-lg") }}
-                                    </div>
-
-                                    {{ reset_form.form_type }}
-
-                                    <div class="form-group pt-3">
-                                        {{ reset_form.submit(class="btn btn-outline-light btn-lg px-5") }}
-                                    </div>
-
-                                </form>
-                            </div>
-
-                            <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="{{ url_for('auth.request_reset')  }}">Re-send code?</a></p>
-
-
-                        </div>
-
-                        <div>
-                            <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register')  }}"
-                                                                      class="text-white-50 fw-bold">Sign Up</a>
-                            </p>
-                        </div>
-
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-content">
+            <!-------- Flashed messages -------->
+            {% if not fast %}
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
+                        {{ message }}
                     </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-------- Reset form -------->
+            <form method="POST" action="" novalidate class="auth-form">
+                {{ reset_form.hidden_tag() }}
+                <!-------- Password -------->
+                {% for error in reset_form.errors["password"] %}
+                    <p class="form-error"><strong>{{ error }}</strong></p>
+                {% endfor %}
+                <div class="form-item">
+                    {{ reset_form.password(class="auth_input_field") }}
                 </div>
+                <!-------- Password2 -------->   
+                {% for error in reset_form.errors["password2"] %}
+                    <p class="form-error"><strong>{{ error }}</strong></p>
+                {% endfor %}
+                <div class="form-item last-form-item">
+                {{ reset_form.password2(class="auth_input_field") }}
+                </div>
+                <!-------- Login type -------->
+                {{ reset_form.form_type }}
+                <!-------- Submit -------->
+                <div class="auth-devider"> 
+                    {{ reset_form.submit(class="btn auth-btn") }}
+                </div>
+            </form>
+
+            <!-------- Auth options -------->
+            <div class="auth-options-container">
+                <div><p class="auth-options-content">Reset your password</p></div>
+                <div><p class="auth-options-content">Register a new account</p></div>
+                <div><p class="auth-options-content">Login via Google</p></div>
             </div>
         </div>
     </div>

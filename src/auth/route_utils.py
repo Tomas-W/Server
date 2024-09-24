@@ -39,11 +39,11 @@ def send_password_reset_email(user):
     Generates a token and sends the user an email
     with a verification link.
     """
-    token = generate_reset_token(user.email_or_uname)
+    token = generate_reset_token(user.email)
     reset_url = url_for('auth.reset_password', token=token, _external=True)
     message = Message(subject="Password Reset",
                       sender=os.environ.get("GMAIL_EMAIL"),
-                      recipients=[user.email_or_uname],
+                      recipients=[user.email],
                       body=f"Please reset your password by visiting: {reset_url}")
     mail_.send(message)
 

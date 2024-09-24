@@ -9,11 +9,9 @@ Login2
 
 {% block auth_content %}
 
-<section class="login-section">
-    <div class="login-container">
-
-        <!-------- Login content -------->
-        <div class="login-content">
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-content">
             <!-------- Flashed messages -------->
             {% if not fast %}
                 {% for message in get_flashed_messages() %}
@@ -24,46 +22,40 @@ Login2
             {% endif %}
 
             <!-------- Login form -------->
-            <form method="POST" action="" novalidate class="login-form">
+            <form method="POST" action="" novalidate class="auth-form">
                 {{ login_form.hidden_tag() }}
-                
                 <!-------- Email or username -------->
                 {% for error in login_form.errors["email_or_uname"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
+                    <div class="form-error"><strong>{{ error }}</strong></div>
                 {% endfor %}
                 <div class="form-item">
                     {{ login_form.email_or_uname(class="auth_input_field") }}
                 </div>
-
                 <!-------- Password -------->   
                 {% for error in login_form.errors["password"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
+                    <div class="form-error"><strong>{{ error }}</strong></div>
                 {% endfor %}
                 <div class="form-item">
                 {{ login_form.password(class="auth_input_field") }}
                 </div>
-
-                <!-------- Login type -------->
-                
-                <!-------- Remember me and Submit -------->
-                
-                <div class="form-item remember-devider">
+                <!-------- Remember me and submit -------->
+                <div class="form-item last-form-item remember-devider">
                     {{ login_form.remember(class="remember-me") }}
                     {{ login_form.remember.label(class="remember-me") }}
                 </div>
-                <div class="form-item login-devider"> 
-                    {{ login_form.form_type }}
-                    {{ login_form.submit(class="btn login-btn") }}
+                <!-------- Form type -------->
+                {{ login_form.form_type }}
+                <!-------- Submit -------->
+                <div class="auth-devider"> 
+                    {{ login_form.submit(class="btn auth-btn") }}
                 </div>
-
-
             </form>
 
-            <!-------- Additional options -------->
-            <div class="login-options-container">
-                <div><p class="login-options-content">Reset your password</p></div>
-                <div><p class="login-options-content">Register a new account</p></div>
-                <div><p class="login-options-content">Login via Google</p></div>
+            <!-------- Auth options -------->
+            <div class="auth-options-container">
+                <div><p class="auth-options-content">Reset your password</p></div>
+                <div><p class="auth-options-content">Register a new account</p></div>
+                <div><p class="auth-options-content">Login via Google</p></div>
             </div>
         </div>
     </div>

@@ -8,6 +8,7 @@ import pytz
 SERVER_PATH: os.path = os.path.join(pathlib.Path(__file__).parent.parent)
 SRC_PATH: os.path = os.path.join(SERVER_PATH, "src")
 CONFIG_PATH: os.path = os.path.join(SERVER_PATH, "config")
+DB_FOLDER: os.path = os.path.join(SERVER_PATH, "db")
 DB_PATH: os.path = os.path.join(SERVER_PATH, "db", "server.db")
 CLIENTS_SECRETS_PATH = os.path.join(CONFIG_PATH, "client_secret.json")
 

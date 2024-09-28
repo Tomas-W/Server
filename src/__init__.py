@@ -13,7 +13,7 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
                             login_manager_, migrater_, limiter_, session_)
 
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from config.settings import DATABASE_URI, LOGIN_VIEW
+from config.settings import DATABASE_URI, LOGIN_VIEW, DB_PATH
 from src.models.auth_mod import User
 from src.models.news_mod import News, Remark
 
@@ -71,6 +71,7 @@ def _configure_cli(app_: Flask) -> None:
 def _configure_database(app_: Flask) -> None:
     with app_.app_context():
         if not os.path.exists(DATABASE_URI):
+            os.mkdir(DB_PATH)
             server_db_.create_all()
 
 

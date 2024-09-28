@@ -51,6 +51,17 @@ class User(server_db_.Model, UserMixin):
                                    onupdate=lambda: datetime.now(CET))
 
     tot_logins = server_db_.Column(server_db_.Integer, default=0)
+    
+    def __init__(self, email: str, username: str, password: str):
+        self.email = email
+        self.username = username
+        self.password = self._get_hash(password)
+    
+    def _get_hash(self, plain_password: str) -> str:
+        return argon2_.hash(plain_password)
+    
+    def _set_password(self, plain_password: str) -> None:
+        self.password = self._get_hash(plain_password)
 
     def __repr__(self):
         return (f"User: "

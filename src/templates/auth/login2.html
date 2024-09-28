@@ -14,11 +14,12 @@ Login2
         <div class="auth-content">
             <!-------- Flashed messages -------->
             {% if not fast %}
-                {% for message in get_flashed_messages() %}
-                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
-                        {{ message }}
+                    {% for message in get_flashed_messages() %}
+                    <div class="auth_flash">
+                        <p>{{ message }}</p>
                     </div>
-                {% endfor %}
+                    {% endfor %}
+                
             {% endif %}
 
             <!-------- Login form -------->

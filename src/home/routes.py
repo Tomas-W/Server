@@ -8,7 +8,7 @@ home_bp = Blueprint("home", __name__)
 
 # noinspection PyArgumentList
 @home_bp.route("/home")
-# @login_required
+@login_required
 def home():
     try:
         username: str = current_user.username

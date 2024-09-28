@@ -16,7 +16,7 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = DATABASE_URI
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
-    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_HTTPONLY = False
     SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
@@ -48,6 +48,22 @@ class DeployConfig(BaseConfig):
     EXPLAIN_TEMPLATE_LOADING = False
     SESSION_COOKIE_SAMESITE = "Strict"
     SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+
+    def config_name(self):
+        return self.CONFIG_NAME
+
+
+class TestConfig(BaseConfig):
+    CONFIG_NAME = "test"
+    WTF_CSRF_ENABLED = False
+    SERVER_NAME = 'localhost'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    TEMPLATES_AUTO_RELOAD = True
+    EXPLAIN_TEMPLATE_LOADING = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = False
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Allow HTTP traffic
 
     def config_name(self):
         return self.CONFIG_NAME

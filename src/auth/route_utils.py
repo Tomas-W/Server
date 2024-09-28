@@ -12,25 +12,24 @@ from src.models.auth_mod import User
 
 
 def add_new_user(email: str, username: str,
-                 hashed_password: str) -> None:
+                 password: str) -> None:
     """Takes register_form input data and creates a new user."""
     # noinspection PyArgumentList
     new_user = User(
         email=email,
         username=username,
-        password=hashed_password,
+        password=password,
     )
     server_db_.session.add(new_user)
     server_db_.session.commit()
 
 
-def change_password(user: User, password: str) -> None:
+def change_user_password(user: User, password: str) -> None:
     """
     Takes a user_id(int) and a hashed_password(str)
     Updates the password in the database.
     """
-    hashed_password = argon2_.hash(password)
-    user.password = hashed_password
+    user._set_password(password)
     server_db_.session.commit()
 
 
@@ -108,6 +107,7 @@ def normal_login(login_form: LoginForm):
             current_user.tot_logins += 1
             server_db_.session.commit()
             session.permanent = remember
+            print("redirecting to home")
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)

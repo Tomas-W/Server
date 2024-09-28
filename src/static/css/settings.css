@@ -21,6 +21,8 @@
     --auth_btn_text_hover: rgba(255, 255, 255, 1);
     --auth_btn_text_size: 1.1rem;
 
+    --auth_flash_size: 1.1rem;
+
     --form_error: rgba(160, 160, 160, 1);
 }
 

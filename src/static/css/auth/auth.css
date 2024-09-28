@@ -1,7 +1,7 @@
 .auth-section {
     background-color: var(--gray1);
     padding: 0 20%;
-    display: flex; /* Add this line */
+    display: flex;
 }
 
 .auth-container {
@@ -17,6 +17,19 @@
 
 .auth-content {
     flex-grow: 1;
+}
+
+.auth_flash {
+    width: 350px;
+    margin: 0 auto 30px;
+    padding: 15px;
+    text-align: center;
+}
+
+.auth_flash p {
+    margin: 0;
+    color: var(--auth_text);
+    font-size: var(--auth_flash_size);
 }
 
 .auth-form {
@@ -57,7 +70,7 @@
     padding: 7px 0;
     cursor: pointer;
     transition: color 0.3s ease;
-    margin-right: 5px; /* Add this line to create space */
+    margin-right: 5px;
 }
 
 .remember-devider {
@@ -191,5 +204,17 @@
 
 @media (min-width: 1200px) {
     .auth-container {
+    }
+}
+
+@media (max-width: 434.98px) {
+    .flashed-messages {
+        width: 260px;
+    }
+}
+
+@media (min-width: 435px) and (max-width: 499.98px) {
+    .flashed-messages {
+        width: 290px;
     }
 }

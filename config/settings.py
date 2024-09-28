@@ -12,7 +12,7 @@ DB_PATH: os.path = os.path.join(SERVER_PATH, "db", "server.db")
 CLIENTS_SECRETS_PATH = os.path.join(CONFIG_PATH, "client_secret.json")
 
 # Server
-LOGIN_VIEW = "auth.login"
+LOGIN_VIEW = "auth.login2"
 DATABASE_URI = f"sqlite:///{DB_PATH}"
 LIMITER_URI = "memory://"
 DEFAULT_LIMITS = ["9999 per day", "999 per hour"]

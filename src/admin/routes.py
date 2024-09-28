@@ -7,7 +7,7 @@ from src.admin.route_utils import add_news_message
 admin_bp = Blueprint("admin", __name__)
 
 
-@admin_bp.route("/add_news", methods=["GET", "POST"])
+@admin_bp.route("/add-news", methods=["GET", "POST"])
 @login_required
 def add_news():
     news_form: NewsForm = NewsForm()

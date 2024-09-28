@@ -12,16 +12,18 @@ from src.cli import _auth_cli, _server_cli
 from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
                             login_manager_, migrater_, limiter_, session_)
 
-from config.app_config import DebugConfig, DeployConfig
+from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW
 from src.models.auth_mod import User
 from src.models.news_mod import News, Remark
 
 
-def _configure_server(app_: Flask) -> Flask:
+def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     environment = os.environ.get("FLASK_ENV", "debug").lower()
 
-    if environment == "debug":
+    if testing:
+        config_obj = TestConfig()
+    elif environment == "debug":
         config_obj = DebugConfig()
     elif environment == "deploy":
         config_obj = DeployConfig()
@@ -72,7 +74,7 @@ def _configure_database(app_: Flask) -> None:
             server_db_.create_all()
 
 
-def get_app() -> Flask:
+def get_app(testing: bool = False) -> Flask:
     app_: Flask = Flask(__name__.split('.')[0])
-    app_ = _configure_server(app_)
+    app_ = _configure_server(app_, testing=testing)
     return app_

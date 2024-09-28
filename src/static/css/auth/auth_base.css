@@ -123,12 +123,17 @@
     color: var(--auth_text_hover);
 }
 
-.flash-messages {
-    color: var(--auth_text);
+.auth_fast_flash {
     width: 100%;
     max-width: var(--max-login-width, 375px);
     display: flex;
     justify-content: center;
+}
+
+.auth_fast_flash p {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: var(--auth_text);
 }
 
 @media (max-width: 434.98px) {}

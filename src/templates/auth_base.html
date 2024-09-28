@@ -47,12 +47,12 @@
                     </form>
                 </div>
             </div>
-            <div class="flash-messages">
+            
                 {% if fast %}
                 {% for message in get_flashed_messages() %}
-                    <!-- <div class="alert alert-secondary mt-3 mb-0" role="alert"> -->
-                        {{ message }}
-                    <!-- </div> -->
+                <div class="auth_fast_flash">
+                        <p>{{ message }}</p>
+                    </div>
                 {% endfor %}
                 {% endif %}
             </div>

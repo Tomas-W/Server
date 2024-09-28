@@ -13,12 +13,13 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
                             login_manager_, migrater_, limiter_, session_)
 
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from config.settings import DATABASE_URI, LOGIN_VIEW, DB_PATH
+from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER
 from src.models.auth_mod import User
 from src.models.news_mod import News, Remark
 
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
+    _configure_paths()
     environment = os.environ.get("FLASK_ENV", "debug").lower()
 
     if testing:
@@ -39,6 +40,11 @@ def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     _configure_database(app_)
 
     return app_
+
+
+def _configure_paths() -> None:
+    if not os.path.exists(DB_FOLDER):
+        os.mkdir(DB_FOLDER)
 
 
 def _configure_extensions(app_: Flask) -> None:
@@ -71,7 +77,7 @@ def _configure_cli(app_: Flask) -> None:
 def _configure_database(app_: Flask) -> None:
     with app_.app_context():
         if not os.path.exists(DATABASE_URI):
-            os.mkdir(DB_PATH)
+
             server_db_.create_all()
 
 

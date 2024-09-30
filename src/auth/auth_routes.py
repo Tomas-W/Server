@@ -1,25 +1,60 @@
+from functools import wraps
 import os
 from datetime import datetime
 
 import requests
 from flask import (Blueprint, redirect, url_for, request, render_template, flash,
                    session)
-from flask_login import login_user, logout_user, login_required, current_user
-from google.oauth2 import id_token
+from flask_login import logout_user, login_required, current_user
+from google.oauth2 import id_token  # noqa
 from pip._vendor import cachecontrol  # noqa
-import google.auth.transport.requests
+import google.auth.transport.requests  # noqa
 from sqlalchemy import select
 
 from config.settings import CET
 from src.extensions import flow_, server_db_
-from src.auth.forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
-                            SetPasswordForm, ResetPasswordForm)
-from src.auth.route_utils import (add_new_user, change_user_password, confirm_reset_token,
-                                  send_password_reset_email, fast_login, normal_login)
+from src.auth.auth_forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
+                                 SetPasswordForm, ResetPasswordForm)
+from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_email,
+                                       fast_login, normal_login, handle_user_login)
 from src.models.auth_mod import User
-from src.models.state_mod import State
+from src.utils.db_utils import (get_user_by_email, save_oauth_state,
+                                get_and_delete_oauth_state, update_user_last_seen,
+                                add_new_user, get_new_user, change_user_password)
 
 auth_bp = Blueprint("auth", __name__)
+SESSION_FORM_ERRORS = "form_errors"
+SESSION_LAST_FORM_TYPE = "last_form_type"
+FAST_FORM_TYPE = "fast_login"
+
+
+@auth_bp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        update_user_last_seen(current_user, datetime.now(CET))
+
+
+def handle_fast_login(view_func):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if request.method == "POST":
+            form_type = request.form.get("form_type")
+            if form_type == FAST_FORM_TYPE:
+                form = FastLoginForm()
+                if form.validate_on_submit():
+                    response, message = fast_login(form)
+                    if response:
+                        return response
+                    if message:
+                        flash(message)
+                        return redirect(url_for(f"auth.{view_func.__name__}", fast=True))
+                session[SESSION_FORM_ERRORS] = form.errors
+                session[SESSION_LAST_FORM_TYPE] = FAST_FORM_TYPE
+                return redirect(url_for(f"auth.{view_func.__name__}", fast=True))
+
+        return view_func(*args, **kwargs)
+
+    return wrapper
 
 
 @auth_bp.route("/")
@@ -42,6 +77,7 @@ def base():
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
+@handle_fast_login
 def login():
     login_form = LoginForm()
     fast_login_form = FastLoginForm()
@@ -49,20 +85,7 @@ def login():
     fast = request.args.get("fast", "false").lower() == "true"
 
     if request.method == "POST":
-        if form_type == "fast_login":
-            if fast_login_form.validate_on_submit():
-                response, message = fast_login(fast_login_form)
-                if response:
-                    return response
-                if message:
-                    flash(message)
-                    return redirect(url_for("auth.login", fast=True))
-            # Store form errors in session
-            session['form_errors'] = fast_login_form.errors
-            session['last_form_type'] = 'fast_login'
-            return redirect(url_for("auth.login", fast=True))
-        
-        elif form_type == "login":
+        if form_type == "login":
             if login_form.validate_on_submit():
                 response, message = normal_login(login_form)
                 if response:
@@ -70,22 +93,22 @@ def login():
                 if message:
                     flash(message)
                     return redirect(url_for("auth.login"))
-            # Store form errors in session
-            session['form_errors'] = login_form.errors
-            session['last_form_type'] = 'login'
+            # Store form errors and type
+            session["form_errors"] = login_form.errors
+            session["last_form_type"] = "login"
             return redirect(url_for("auth.login"))
-    
-    # Retrieve stored errors and form type from session
-    form_errors = session.pop('form_errors', None)
-    last_form_type = session.pop('last_form_type', None)
+
+    # Retrieve form errors and type
+    form_errors = session.pop("form_errors", None)
+    last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Please correct the errors in the form.")
-        # Re-populate the appropriate form with the submitted data
-        if last_form_type == 'fast_login':
+        flash("Incorrect input")
+        # Re-populatedata
+        if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
-        elif last_form_type == 'login':
+        elif last_form_type == "login":
             login_form = LoginForm(formdata=None)
             login_form.process(request.form)
 
@@ -104,12 +127,7 @@ def login():
 def g_login():
     """Creates authorization link and redirect to Google login services."""
     authorization_url, state = flow_.authorization_url()
-
-    # Store state in database
-    oauth_state = State(state=state)
-    server_db_.session.add(oauth_state)
-    server_db_.session.commit()
-
+    save_oauth_state(state)
     return redirect(authorization_url)
 
 
@@ -118,102 +136,80 @@ def callback():
     try:
         flow_.fetch_token(authorization_response=request.url)
     except Exception as e:
-        flash("Authentication failed. Please try again.")
+        flash("Token authentication failed")
         return redirect(url_for("auth.login"))
 
     state_in_request = request.args.get("state")
-    
-    oauth_state = server_db_.session.execute(
-        select(State).filter_by(state=state_in_request)
-    ).scalar_one_or_none()
-    
+    oauth_state = get_and_delete_oauth_state(state_in_request)
+
     if not oauth_state:
-        flash("Invalid state. Please try again.")
+        flash("State authentication failed")
         return redirect(url_for("auth.login"))
-    
-    server_db_.session.delete(oauth_state)
-    server_db_.session.commit()
 
     credentials = flow_.credentials
     request_session = requests.session()
     cached_session = cachecontrol.CacheControl(request_session)
     token_request = google.auth.transport.requests.Request(session=cached_session)
-    
+
     id_info = id_token.verify_oauth2_token(
         id_token=credentials.id_token,
         request=token_request,
         audience=os.environ.get("GOOGLE_CLIENT_ID"),
     )
-    
     email = id_info.get("email")
-    user = server_db_.session.execute(
-        select(User).filter_by(email=email)
-    ).scalar_one_or_none()
-    
+    user = get_user_by_email(email)
+
     if not user:
         session["email"] = email
         return redirect(url_for("auth.set_password"))
 
-    login_user(user=user)
+    handle_user_login(user, permanent=False)
     return redirect(url_for("home.home"))
 
 
 @auth_bp.route("/set_password", methods=["GET", "POST"])
+@handle_fast_login
 def set_password():
     set_password_form = SetPasswordForm()
     fast_login_form = FastLoginForm()
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
-    
+
     if request.method == "POST":
-        if form_type == "fast_login":
-            if fast_login_form.validate_on_submit():
-                response, message = fast_login(fast_login_form)
-                if response:
-                    return response
-                if message:
-                    flash(message)
-                    return redirect(url_for("auth.set_password", fast=True))
-            # Store form errors in session
-            session['form_errors'] = fast_login_form.errors
-            session['last_form_type'] = 'fast_login'
-            return redirect(url_for("auth.set_password", fast=True))
-        
-        elif form_type == "password":
+        if form_type == "password":
             if set_password_form.validate_on_submit():
                 email = session.get("email")
                 if not email:
-                    flash("Session has expired, please try again.")
+                    flash("Session authentication failed")
                     return redirect(url_for("auth.request-reset"))
                 session.pop("email")
-                add_new_user(
+                user: User = get_new_user(
                     email=email,
                     username=email[:8],
                     password=set_password_form.password.data,
                 )
-                user: User = server_db_.session.execute(select(User).filter_by(email=email)).scalar_one_or_none()
                 if user:
-                    login_user(user)
+                    handle_user_login(user, permanent=False)
                     return redirect(url_for("home.home"))
                 else:
-                    flash("Unexpected error, try again")
+                    flash("Unexpected db error")
                     return redirect(url_for("auth.set_password"))
-            # Store form errors in session
-            session['form_errors'] = set_password_form.errors
-            session['last_form_type'] = 'password'
+            # Store form errors and type
+            session["form_errors"] = set_password_form.errors
+            session["last_form_type"] = "password"
             return redirect(url_for("auth.set_password"))
-    
-    # Retrieve stored errors and form type from session
-    form_errors = session.pop('form_errors', None)
-    last_form_type = session.pop('last_form_type', None)
+
+    # Retrieve form errors and type
+    form_errors = session.pop("form_errors", None)
+    last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Please correct the errors in the form.")
-        # Re-populate the appropriate form with the submitted data
-        if last_form_type == 'fast_login':
+        flash("Incorrect input")
+        # Re-populate the data
+        if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
-        elif last_form_type == 'password':
+        elif last_form_type == "password":
             set_password_form = SetPasswordForm(formdata=None)
             set_password_form.process(request.form)
 
@@ -228,21 +224,8 @@ def set_password():
     )
 
 
-@auth_bp.route("/logout", methods=["GET"])
-@login_required
-def logout():
-    """Logs out user, clean up session and redirect to login page."""
-    print("* ")
-    current_user.remember_me = False
-    server_db_.session.commit()
-    logout_user()
-
-    session.remember = False
-    flash('You have been logged out.')
-    return redirect(url_for("auth.login"))
-
-
 @auth_bp.route("/register", methods=["GET", "POST"])
+@handle_fast_login
 def register():
     """
     Serves register form and redirects to login page
@@ -254,20 +237,7 @@ def register():
     fast = request.args.get("fast", "false").lower() == "true"
 
     if request.method == "POST":
-        if form_type == "fast_login":
-            if fast_login_form.validate_on_submit():
-                response, message = fast_login(fast_login_form)
-                if response:
-                    return response
-                if message:
-                    flash(message)
-                    return redirect(url_for("auth.register", fast=True))
-            # Store form errors in session
-            session['form_errors'] = fast_login_form.errors
-            session['last_form_type'] = 'fast_login'
-            return redirect(url_for("auth.register", fast=True))
-
-        elif form_type == "register":
+        if form_type == "register":
             if register_form.validate_on_submit():
                 add_new_user(
                     email=register_form.email.data,
@@ -275,22 +245,22 @@ def register():
                     password=register_form.password.data,
                 )
                 return redirect(url_for("auth.login"))
-            # Store form errors in session
-            session['form_errors'] = register_form.errors
-            session['last_form_type'] = 'register'
+            # Store form errors and type
+            session["form_errors"] = register_form.errors
+            session["last_form_type"] = "register"
             return redirect(url_for("auth.register"))
 
-    # Retrieve stored errors and form type from session
-    form_errors = session.pop('form_errors', None)
-    last_form_type = session.pop('last_form_type', None)
+    # Retrieve form errors and type
+    form_errors = session.pop("form_errors", None)
+    last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Please correct the errors in the form.")
-        # Re-populate the appropriate form with the submitted data
-        if last_form_type == 'fast_login':
+        flash("Incorrect input")
+        # Re-populate the data
+        if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
-        elif last_form_type == 'register':
+        elif last_form_type == "register":
             register_form = RegisterForm(formdata=None)
             register_form.process(request.form)
 
@@ -306,6 +276,7 @@ def register():
 
 
 @auth_bp.route("/request-reset", methods=["GET", "POST"])
+@handle_fast_login
 def request_reset():
     """
     Serves request reset form and redirects to request reset page
@@ -315,44 +286,32 @@ def request_reset():
     fast_login_form = FastLoginForm()
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
-    
-    if request.method == "POST":
-        if form_type == "fast_login":
-            if fast_login_form.validate_on_submit():
-                response, message = fast_login(fast_login_form)
-                if response:
-                    return response
-                if message:
-                    flash(message)
-                    return redirect(url_for("auth.request_reset", fast=True))
-            # Store form errors in session
-            session['form_errors'] = fast_login_form.errors
-            session['last_form_type'] = 'fast_login'
-            return redirect(url_for("auth.request_reset", fast=True))
 
-        elif form_type == "request_reset":
+    if request.method == "POST":
+        if form_type == "request_reset":
             if request_reset_form.validate_on_submit():
-                user: User = server_db_.session.execute(select(User).filter_by(email=request_reset_form.email.data)).scalar_one_or_none()
+                user: User = server_db_.session.execute(select(User).filter_by(
+                    email=request_reset_form.email.data)).scalar_one_or_none()
                 if user:
                     send_password_reset_email(user)
                 flash("If user exists, code has been sent")
                 return redirect(url_for("auth.request_reset"))
-            # Store form errors in session
-            session['form_errors'] = request_reset_form.errors
-            session['last_form_type'] = 'request_reset'
+            # Store form errors and type
+            session["form_errors"] = request_reset_form.errors
+            session["last_form_type"] = "request_reset"
             return redirect(url_for("auth.request_reset"))
 
-    # Retrieve stored errors and form type from session
-    form_errors = session.pop('form_errors', None)
-    last_form_type = session.pop('last_form_type', None)
+    # Retrieve form errors and type
+    form_errors = session.pop("form_errors", None)
+    last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Please correct the errors in the form.")
-        # Re-populate the appropriate form with the submitted data
-        if last_form_type == 'fast_login':
+        flash("Incorrect input")
+        # Re-populate the data
+        if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
-        elif last_form_type == 'request_reset':
+        elif last_form_type == "request_reset":
             request_reset_form = RequestResetForm(formdata=None)
             request_reset_form.process(request.form)
 
@@ -368,6 +327,7 @@ def request_reset():
 
 
 @auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+@handle_fast_login
 def reset_password(token):
     """
     Serves reset password form and redirects to login page
@@ -377,50 +337,38 @@ def reset_password(token):
     fast_login_form = FastLoginForm()
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
-    
+
     email = confirm_reset_token(token)
-    
+
     if not email:
-        flash("The reset link is invalid or has expired")
+        flash("Reset link invalid or expired")
         return redirect(url_for("auth.request_reset"))
 
-    user: User = server_db_.session.execute(select(User).filter_by(email=email)).scalar_one_or_none()
+    user: User = server_db_.session.execute(
+        select(User).filter_by(email=email)).scalar_one_or_none()
 
     if request.method == "POST":
-        if form_type == "fast_login":
-            if fast_login_form.validate_on_submit():
-                response, message = fast_login(fast_login_form)
-                if response:
-                    return response
-                if message:
-                    flash(message)
-                    return redirect(url_for("auth.reset_password", token=token, fast=True))
-            # Store form errors in session
-            session['form_errors'] = fast_login_form.errors
-            session['last_form_type'] = 'fast_login'
-            return redirect(url_for("auth.reset_password", token=token, fast=True))
-                
-        elif form_type == "password":
+        if form_type == "password":
             if reset_password_form.validate_on_submit():
                 change_user_password(user, reset_password_form.password.data)
                 flash("Your password has been updated!")
                 return redirect(url_for('auth.login'))
-            # Store form errors in session
-            session['form_errors'] = reset_password_form.errors
-            session['last_form_type'] = 'password'
+            # Store form errors and type
+            session["form_errors"] = reset_password_form.errors
+            session["last_form_type"] = "password"
             return redirect(url_for("auth.reset_password", token=token))
-    
-    # Retrieve stored errors and form type from session
-    form_errors = session.pop('form_errors', None)
-    last_form_type = session.pop('last_form_type', None)
+
+    # Retrieve form errors and type
+    form_errors = session.pop("form_errors", None)
+    last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Please correct the errors in the form.")
-        # Re-populate the appropriate form with the submitted data
-        if last_form_type == 'fast_login':
+        flash("Incorrect input")
+        # Re-populate the data
+        if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
-        elif last_form_type == 'password':
+        elif last_form_type == "password":
             reset_password_form = ResetPasswordForm(formdata=None)
             reset_password_form.process(request.form)
 
@@ -433,10 +381,17 @@ def reset_password(token):
         form_errors=form_errors,
         last_form_type=last_form_type
     )
+    
+    
+@auth_bp.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    """Logs out user, clean up session and redirect to login page."""
+    print("* ")
+    current_user.remember_me = False
+    server_db_.session.commit()
+    logout_user()
 
-
-@auth_bp.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_seen_at = datetime.now(CET)
-        server_db_.session.commit()
+    session.remember = False
+    flash("You are logged out")
+    return redirect(url_for("auth.login"))

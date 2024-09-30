@@ -13,7 +13,7 @@ class SessionModel(server_db_.Model):
     - MODIFIED: Timestamp of when the session was last modified
     """
 
-    __tablename__ = 'sessions'
+    __tablename__ = "sessions"
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)
     data: Mapped[Optional[bytes]] = mapped_column(LargeBinary)

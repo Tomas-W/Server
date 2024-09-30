@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
 
-from src.home.route_utils import get_all_news
+from src.home.home_route_utils import get_all_news
 
 home_bp = Blueprint("home", __name__)
 

@@ -1,7 +1,7 @@
 from flask_login import current_user
 
 from src import server_db_
-from src.models.news_mod import News, Remark
+from src.models.news_mod import News
 
 
 def add_news_message(title, content):

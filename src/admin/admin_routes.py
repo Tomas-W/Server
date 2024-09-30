@@ -1,8 +1,8 @@
 from flask import render_template, Blueprint, url_for, redirect
 from flask_login import login_required
 
-from src.admin.forms import NewsForm
-from src.admin.route_utils import add_news_message
+from src.admin.admin_forms import NewsForm
+from src.admin.admin_route_utils import add_news_message
 
 admin_bp = Blueprint("admin", __name__)
 

@@ -27,3 +27,6 @@ banned_news_words: list = []
 banned_news_chars: list = []
 
 required_password_symbols: str = string.punctuation + string.digits
+
+# Errors
+

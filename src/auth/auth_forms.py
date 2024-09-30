@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, EmailField, PasswordField, BooleanField, HiddenField
+from wtforms import (StringField, SubmitField, EmailField, PasswordField, BooleanField,
+                     HiddenField)
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 from config.settings import required_password_symbols
-from src.auth.form_utils import EmailCheck, PasswordCheck, ForbiddenCheck
+from src.utils.form_utils import EmailCheck, PasswordCheck, ForbiddenCheck
 
 
 class RegisterForm(FlaskForm):

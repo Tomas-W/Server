@@ -19,7 +19,7 @@ class ForbiddenCheck:
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self._contains_banned_word(field.data):
             raise ValidationError(self.word_message)
-        
+
         if self._contains_banned_char(field.data):
             raise ValidationError(self.char_message)
 
@@ -32,6 +32,7 @@ class ForbiddenCheck:
 
 class PasswordCheck:
     """Validates password by checking requirements."""
+
     def __init__(self, required_symbols: list | str, message: str | None = None) -> None:
         self.symbols = required_symbols
         self.message = message or "Password requirements not met"
@@ -47,6 +48,7 @@ class PasswordCheck:
 
 class EmailCheck:
     """Validates email by checking if it's registered or not."""
+
     def __init__(self, register: bool = False, message: str | None = None) -> None:
         self.register = register
         self.message = message or "Email unknown or already registered"

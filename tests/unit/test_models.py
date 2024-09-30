@@ -1,6 +1,6 @@
 from src.models.auth_mod import User
 from tests.settings import correct_user_data, false_user_data
-from src.auth.forms import RegistrationForm
+from src.auth.auth_forms import RegistrationForm
 
 def test_new_user() -> None:
     """

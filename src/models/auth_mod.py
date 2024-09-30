@@ -43,9 +43,13 @@ class User(server_db_.Model, UserMixin):
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET), onupdate=lambda: datetime.now(CET))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime,
+                                                   default=lambda: datetime.now(CET))
+    created_at: Mapped[datetime] = mapped_column(DateTime,
+                                                 default=lambda: datetime.now(CET))
+    updated_at: Mapped[datetime] = mapped_column(DateTime,
+                                                 default=lambda: datetime.now(CET),
+                                                 onupdate=lambda: datetime.now(CET))
 
     tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     
@@ -58,8 +62,16 @@ class User(server_db_.Model, UserMixin):
     def _get_hash(plain_password: str) -> str:
         return argon2_.hash(plain_password)
     
-    def _set_password(self, plain_password: str) -> None:
+    def set_password(self, plain_password: str) -> None:
         self.password = self._get_hash(plain_password)
+
+    def increment_tot_logins(self):
+        self.tot_logins += 1
+        server_db_.session.commit()
+    
+    def set_remember_me(self, remember: bool) -> None:
+        self.remember_me = remember
+        server_db_.session.commit()
 
     def __repr__(self):
         return (f"User: "

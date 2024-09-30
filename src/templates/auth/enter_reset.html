@@ -25,18 +25,22 @@ Reset
             <form method="POST" action="" novalidate class="auth-form">
                 {{ reset_form.hidden_tag() }}
                 <!-------- Password -------->
-                {% if reset_form.errors["password"] %}
-                    <p class="form-error"><strong>{{ reset_form.errors["password"][0] }}</strong></p>
-                {% endif %}
                 <div class="form-item">
-                    {{ reset_form.password(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ reset_form.password(class="auth_input_field") }}
+                        {% if form_errors["password"] %}
+                            <div class="form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Password2 -------->   
-                {% if reset_form.errors["password2"] %}
-                    <p class="form-error"><strong>{{ reset_form.errors["password2"][0] }}</strong></p>
-                {% endif %}
                 <div class="form-item last-form-item">
-                {{ reset_form.password2(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ reset_form.password2(class="auth_input_field") }}
+                        {% if form_errors["password2"] %}
+                            <div class="form-error"><strong>{{ form_errors["password2"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Login type -------->
                 {{ reset_form.form_type }}

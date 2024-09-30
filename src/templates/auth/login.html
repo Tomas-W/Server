@@ -28,18 +28,18 @@ Login
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ login_form.email_or_uname(class="auth_input_field") }}
-                        {% for error in login_form.errors["email_or_uname"] %}
-                            <div class="form-error"><strong>{{ error }}</strong></div>
-                        {% endfor %}
+                        {% if form_errors["email_or_uname"] %}
+                            <div class="form-error"><strong>{{ form_errors["email_or_uname"][0] }}</strong></div>
+                        {% endif %}
                     </div>
                 </div>
                 <!-------- Password -------->   
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ login_form.password(class="auth_input_field") }}
-                        {% for error in login_form.errors["password"] %}
-                            <div class="form-error"><strong>{{ error }}</strong></div>
-                        {% endfor %}
+                        {% if form_errors["password"] %}
+                            <div class="form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
+                        {% endif %}
                     </div>
                 </div>
                 <!-------- Remember me and submit -------->

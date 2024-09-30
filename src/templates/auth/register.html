@@ -28,8 +28,8 @@ Register
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.email(class="auth_input_field") }}
-                        {% if register_form.errors["email"] %}
-                            <div class="form-error"><strong>{{ register_form.errors["email"][0] }}</strong></div>
+                        {% if form_errors["email"] %}
+                            <div class="form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
                         {% endif %}
                     </div>
                 </div>
@@ -37,8 +37,8 @@ Register
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.username(class="auth_input_field") }}
-                        {% if register_form.errors["username"] %}
-                            <div class="form-error"><strong>{{ register_form.errors["username"][0] }}</strong></div>
+                        {% if form_errors["username"] %}
+                            <div class="form-error"><strong>{{ form_errors["username"][0] }}</strong></div>
                         {% endif %}
                     </div>
                 </div>
@@ -46,8 +46,8 @@ Register
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.password(class="auth_input_field") }}
-                        {% if register_form.errors["password"] %}
-                            <div class="form-error"><strong>{{ register_form.errors["password"][0] }}</strong></div>
+                        {% if form_errors["password"] %}
+                            <div class="form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
                         {% endif %}
                     </div>
                 </div>
@@ -55,8 +55,8 @@ Register
                 <div class="form-item last-form-item">
                     <div class="input-error-container">
                         {{ register_form.password2(class="auth_input_field") }}
-                        {% if register_form.errors["password2"] %}
-                            <div class="form-error"><strong>{{ register_form.errors["password2"][0] }}</strong></div>
+                        {% if form_errors["password2"] %}
+                            <div class="form-error"><strong>{{ form_errors["password2"][0] }}</strong></div>
                         {% endif %}
                     </div>
                 </div>

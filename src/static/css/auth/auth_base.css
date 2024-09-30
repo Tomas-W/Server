@@ -11,6 +11,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 .fast-login-container {
@@ -124,10 +125,16 @@
 }
 
 .auth_fast_flash {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     width: 100%;
     max-width: var(--max-login-width, 375px);
     display: flex;
     justify-content: center;
+    margin: 0 auto;
+    z-index: 10;
 }
 
 .auth_fast_flash p {

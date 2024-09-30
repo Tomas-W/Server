@@ -4,7 +4,7 @@ def test_home_redirect_to_login(client):
     assert response.status_code == 302  # Check for redirect
     
     # Check if the redirect is to the login page
-    assert "/login2" in response.location
+    assert "/login" in response.location
     
     # Follow the redirect
     response = client.get(response.location)
@@ -15,10 +15,10 @@ def test_home_redirect_to_login(client):
 
 
 # def test_fast_login(client):
-#     response = client.get("/login2")
+#     response = client.get("/login")
 #     assert response.status_code == 200
     
-    # response = client.post("/login2", data={"form_type": "fast_login",
+    # response = client.post("/login", data={"form_type": "fast_login",
     #                                         "fast_name": "testing",
     #                                         "fast_code": "00000"})
     # assert response.status_code == 302  # Check for redirect

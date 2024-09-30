@@ -1,12 +1,13 @@
-from datetime import datetime
+from sqlalchemy import select
 
 from src.models.news_mod import News
+from src.extensions import server_db_
 
 
 def get_all_news():
-    news_items = News.query.with_entities(News.title, News.content, News.author, News.created_at).all()
+    stmt = select(News.title, News.content, News.author, News.created_at)
+    news_items = server_db_.session.execute(stmt).all()
     formatted_news = []
     for item in news_items:
-        formatted_date = item[3].strftime("%d %b %H:%M")
-        formatted_news.append((item[0], item[1], item[2], formatted_date))
+        formatted_news.append((item.title, item.content, item.author, item.created_at))
     return formatted_news

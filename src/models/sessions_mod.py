@@ -1,3 +1,7 @@
+from datetime import datetime
+from typing import Optional
+from sqlalchemy import String, LargeBinary, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 from src import server_db_
 
 
@@ -11,9 +15,9 @@ class SessionModel(server_db_.Model):
 
     __tablename__ = 'sessions'
 
-    id = server_db_.Column(server_db_.String(255), primary_key=True)
-    data = server_db_.Column(server_db_.LargeBinary)
-    modified = server_db_.Column(server_db_.DateTime)
+    id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    data: Mapped[Optional[bytes]] = mapped_column(LargeBinary)
+    modified: Mapped[datetime] = mapped_column(DateTime)
 
-    def __repr__(self):
-        return f"SessionModel(id={self.id}, modified={self.modified})"
+    def __repr__(self) -> str:
+        return f"SessionModel(id={self.id!r}, modified={self.modified!r})"

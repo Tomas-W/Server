@@ -1,8 +1,9 @@
 from datetime import datetime
+from typing import Optional
 
-import pytz
 from flask_login import UserMixin
-from sqlalchemy import Boolean
+from sqlalchemy import Boolean, Integer, String, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 
 from config.settings import CET
 from src.extensions import server_db_, login_manager_, argon2_
@@ -10,7 +11,7 @@ from src.extensions import server_db_, login_manager_, argon2_
 
 @login_manager_.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return server_db_.session.get(User, user_id)
 
 
 class User(server_db_.Model, UserMixin):
@@ -32,32 +33,29 @@ class User(server_db_.Model, UserMixin):
     """
     __tablename__ = 'auth'  # noqa
 
-    id = server_db_.Column(server_db_.Integer, primary_key=True)
-    email = server_db_.Column(server_db_.String(75), unique=True, nullable=False)
-    username = server_db_.Column(server_db_.String(75), unique=True, nullable=False)
-    password = server_db_.Column(server_db_.String(128), nullable=False)
-    fast_name = server_db_.Column(server_db_.String(16), unique=True)
-    fast_code = server_db_.Column(server_db_.String(5))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(128), nullable=False)
+    fast_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
+    fast_code: Mapped[Optional[str]] = mapped_column(String(5))
 
-    email_verified = server_db_.Column(Boolean)
-    remember_me = server_db_.Column(Boolean, default=False)
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    last_seen_at = server_db_.Column(server_db_.DateTime,
-                                     default=lambda: datetime.now(CET))
-    created_at = server_db_.Column(server_db_.DateTime,
-                                   default=lambda: datetime.now(CET))
-    updated_at = server_db_.Column(server_db_.DateTime,
-                                   default=lambda: datetime.now(CET),
-                                   onupdate=lambda: datetime.now(CET))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET), onupdate=lambda: datetime.now(CET))
 
-    tot_logins = server_db_.Column(server_db_.Integer, default=0)
+    tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     
     def __init__(self, email: str, username: str, password: str):
         self.email = email
         self.username = username
         self.password = self._get_hash(password)
     
-    def _get_hash(self, plain_password: str) -> str:
+    @staticmethod
+    def _get_hash(plain_password: str) -> str:
         return argon2_.hash(plain_password)
     
     def _set_password(self, plain_password: str) -> None:

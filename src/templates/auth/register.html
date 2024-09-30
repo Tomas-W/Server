@@ -14,43 +14,51 @@ Register
         <div class="auth-content">
             <!-------- Flashed messages -------->
             {% if not fast %}
-                {% for message in get_flashed_messages() %}
-                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
-                        {{ message }}
+                    {% for message in get_flashed_messages() %}
+                    <div class="auth_flash">
+                        <p>{{ message }}</p>
                     </div>
-                {% endfor %}
+                    {% endfor %}
             {% endif %}
 
             <!-------- Login form -------->
             <form method="POST" action="" novalidate class="auth-form">
                 {{ register_form.hidden_tag() }}
                 <!-------- Email -------->
-                {% for error in register_form.errors["email"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
                 <div class="form-item">
-                    {{ register_form.email(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ register_form.email(class="auth_input_field") }}
+                        {% if register_form.errors["email"] %}
+                            <div class="form-error"><strong>{{ register_form.errors["email"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Username -------->   
-                {% for error in register_form.errors["username"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
                 <div class="form-item">
-                {{ register_form.username(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ register_form.username(class="auth_input_field") }}
+                        {% if register_form.errors["username"] %}
+                            <div class="form-error"><strong>{{ register_form.errors["username"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Password -------->   
-                {% for error in register_form.errors["password"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
                 <div class="form-item">
-                {{ register_form.password(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ register_form.password(class="auth_input_field") }}
+                        {% if register_form.errors["password"] %}
+                            <div class="form-error"><strong>{{ register_form.errors["password"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Password2 -------->   
-                {% for error in register_form.errors["password2"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
                 <div class="form-item last-form-item">
-                {{ register_form.password2(class="auth_input_field") }}
+                    <div class="input-error-container">
+                        {{ register_form.password2(class="auth_input_field") }}
+                        {% if register_form.errors["password2"] %}
+                            <div class="form-error"><strong>{{ register_form.errors["password2"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
                 </div>
                 <!-------- Form type -------->
                 {{ register_form.form_type }}
@@ -62,9 +70,8 @@ Register
 
             <!-------- Auth options -------->
             <div class="auth-options-container">
-                <div><p class="auth-options-content">Reset your password</p></div>
-                <div><p class="auth-options-content">Register a new account</p></div>
-                <div><p class="auth-options-content">Login via Google</p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for('auth.login') }}">Back to login</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for('auth.g_login') }}">Login with Google</a></p></div>
             </div>
         </div>
     </div>

@@ -15,9 +15,9 @@ Reset
             <!-------- Flashed messages -------->
             {% if not fast %}
                 {% for message in get_flashed_messages() %}
-                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
-                        {{ message }}
-                    </div>
+                <div class="auth_flash">
+                    <p>{{ message }}</p>
+                </div>
                 {% endfor %}
             {% endif %}
 
@@ -25,16 +25,16 @@ Reset
             <form method="POST" action="" novalidate class="auth-form">
                 {{ reset_form.hidden_tag() }}
                 <!-------- Password -------->
-                {% for error in reset_form.errors["password"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
+                {% if reset_form.errors["password"] %}
+                    <p class="form-error"><strong>{{ reset_form.errors["password"][0] }}</strong></p>
+                {% endif %}
                 <div class="form-item">
                     {{ reset_form.password(class="auth_input_field") }}
                 </div>
                 <!-------- Password2 -------->   
-                {% for error in reset_form.errors["password2"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
+                {% if reset_form.errors["password2"] %}
+                    <p class="form-error"><strong>{{ reset_form.errors["password2"][0] }}</strong></p>
+                {% endif %}
                 <div class="form-item last-form-item">
                 {{ reset_form.password2(class="auth_input_field") }}
                 </div>

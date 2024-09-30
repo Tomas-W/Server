@@ -10,6 +10,8 @@ from src.auth.forms import FastLoginForm, LoginForm
 from src.extensions import server_db_, mail_, argon2_
 from src.models.auth_mod import User
 
+from sqlalchemy import or_
+
 
 def add_new_user(email: str, username: str,
                  password: str) -> None:
@@ -29,7 +31,7 @@ def change_user_password(user: User, password: str) -> None:
     Takes a user_id(int) and a hashed_password(str)
     Updates the password in the database.
     """
-    user._set_password(password)
+    user._set_password(password)  # noqa
     server_db_.session.commit()
 
 
@@ -52,7 +54,7 @@ def generate_reset_token(email):
     return serializer.dumps(email, salt=os.environ.get("PWD_RESET_SALT"))
 
 
-def confirm_reset_token(token, expiration=3600):
+def confirm_reset_token(token: str, expiration: int = 3600) -> str | None:
     serializer = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))
     try:
         email = serializer.loads(
@@ -65,22 +67,25 @@ def confirm_reset_token(token, expiration=3600):
         return None
 
 
-def handle_argon2_exception(e):
+def handle_argon2_exception(e: Exception) -> str:
     if isinstance(e, VerifyMismatchError):
         return "Incorrect credentials"
-    elif isinstance(e, (VerificationError, InvalidHashError)):
+    if isinstance(e, (VerificationError, InvalidHashError)):
         return "An error occurred during verification"
-    else:
-        return "An unexpected error occurred"
+    return "An unexpected error occurred"
 
 
 def fast_login(login_form: FastLoginForm):
-    user = User.query.filter_by(fast_name=login_form.fast_name.data).first()
+    user = server_db_.session.execute(
+        server_db_.select(User).filter_by(
+            fast_name=login_form.fast_name.data
+        )
+    ).scalar_one_or_none()
+    
     if not user:
         return None, "Incorrect credentials"
 
     try:
-        
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
             login_user(user=user)
             current_user.tot_logins += 1
@@ -89,26 +94,31 @@ def fast_login(login_form: FastLoginForm):
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
+    
     return None, "Incorrect credentials"
 
 
 def normal_login(login_form: LoginForm):
-    user = User.query.filter((User.email == login_form.email_or_uname.data) |
-                             (User.username == login_form.email_or_uname.data)).first()
+    user = server_db_.session.execute(
+        server_db_.select(User).filter(
+            or_(User.email == login_form.email_or_uname.data,
+                User.username == login_form.email_or_uname.data)
+        )
+    ).scalar_one_or_none()
+    
     if not user:
-        return None, "Invalid credentials"
+        return None, "Incorrect credentials"
 
     try:
         if argon2_.verify(user.password, login_form.password.data):
             remember = login_form.remember.data
             user.remember_me = remember
-            server_db_.session.commit()
             login_user(user=user, remember=remember, fresh=True)
             current_user.tot_logins += 1
             server_db_.session.commit()
             session.permanent = remember
-            print("redirecting to home")
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
+    
     return None, "Incorrect credentials"

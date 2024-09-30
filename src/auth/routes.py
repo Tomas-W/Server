@@ -3,17 +3,17 @@ from datetime import datetime
 
 import requests
 from flask import (Blueprint, redirect, url_for, request, render_template, flash,
-                   session, current_app)
-from flask_login import (login_user, logout_user, login_required, current_user,
-                         user_logged_in, user_logged_out)
+                   session)
+from flask_login import login_user, logout_user, login_required, current_user
 from google.oauth2 import id_token
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests
+from sqlalchemy import select
 
 from config.settings import CET
-from src.extensions import argon2_, flow_, server_db_
-from src.auth.forms import (LoginForm, RegisterForm, EmailForm, PasswordForm,
-                            FastLoginForm)
+from src.extensions import flow_, server_db_
+from src.auth.forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
+                            SetPasswordForm, ResetPasswordForm)
 from src.auth.route_utils import (add_new_user, change_user_password, confirm_reset_token,
                                   send_password_reset_email, fast_login, normal_login)
 from src.models.auth_mod import User
@@ -27,7 +27,7 @@ def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
         return redirect(url_for("home.home"))
-    return redirect(url_for("auth.login2"))
+    return redirect(url_for("auth.login"))
 
 
 @auth_bp.route("/fresh")
@@ -38,15 +38,15 @@ def base():
         username="test",
         password="Test123$",
     )
-    return redirect(url_for("auth.login2"))
+    return redirect(url_for("auth.login"))
 
 
-@auth_bp.route("/login2", methods=["GET", "POST"])
-def login2():
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
     login_form = LoginForm()
     fast_login_form = FastLoginForm()
-    fast = False
     form_type = request.form.get("form_type")
+    fast = request.args.get("fast", "false").lower() == "true"
 
     if form_type == "fast_login":
         fast = True
@@ -56,7 +56,7 @@ def login2():
                 return response
             if message:
                 flash(message)
-                return redirect(url_for("auth.login2"))
+                return redirect(url_for("auth.login", fast=True))
     
     elif form_type == "login":
         if login_form.validate_on_submit():
@@ -65,49 +65,13 @@ def login2():
                 return response
             if message:
                 flash(message)
-                return redirect(url_for("auth.login2"))
+                return redirect(url_for("auth.login"))
             
-    return render_template(
-        "/auth/login2.html",
-        login_form=login_form,
-        fast_login_form=fast_login_form,
-        page="login2",
-        fast=fast,
-    )
-
-
-@auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-    """
-    Serves fast login form, login form and google login.
-    Redirects to home page when login is successful or to login page when not.
-    """
-    login_form = LoginForm()
-    fast_login_form = FastLoginForm()
-    fast = False
-
-    form_type = request.form.get("form_type")
-    if form_type == "fast_login":
-        fast = True
-        if fast_login_form.validate_on_submit():
-            response, message = fast_login(fast_login_form)
-            if response:
-                return response
-            if message:
-                flash(message)
-
-    elif form_type == "login":
-        if login_form.validate_on_submit():
-            response, message = normal_login(login_form)
-            if response:
-                return response
-            if message:
-                flash(message)
-
     return render_template(
         "/auth/login.html",
         login_form=login_form,
         fast_login_form=fast_login_form,
+        page="login",
         fast=fast,
     )
 
@@ -131,18 +95,18 @@ def callback():
         flow_.fetch_token(authorization_response=request.url)
     except Exception as e:
         flash("Authentication failed. Please try again.")
-        return redirect(url_for("auth.login2"))
+        return redirect(url_for("auth.login"))
 
     state_in_request = request.args.get("state")
     
-    # Retrieve state from database
-    oauth_state = State.query.filter_by(state=state_in_request).first()
+    oauth_state = server_db_.session.execute(
+        select(State).filter_by(state=state_in_request)
+    ).scalar_one_or_none()
     
     if not oauth_state:
         flash("Invalid state. Please try again.")
-        return redirect(url_for("auth.login2"))
+        return redirect(url_for("auth.login"))
     
-    # Delete the used state from the database
     server_db_.session.delete(oauth_state)
     server_db_.session.commit()
 
@@ -158,9 +122,10 @@ def callback():
     )
     
     email = id_info.get("email")
-    user: User = User.query.filter_by(email=email).first()
+    user = server_db_.session.execute(
+        select(User).filter_by(email=email)
+    ).scalar_one_or_none()
     
-    # New user, ask for password
     if not user:
         session["email"] = email
         return redirect(url_for("auth.set_password"))
@@ -171,7 +136,7 @@ def callback():
 
 @auth_bp.route("/set_password", methods=["GET", "POST"])
 def set_password():
-    password_form = PasswordForm()
+    set_password_form = SetPasswordForm()
     fast_login_form = FastLoginForm()
     fast = False
     form_type = request.form.get("form_type")
@@ -185,7 +150,7 @@ def set_password():
             if message:
                 flash(message)
     if form_type == "password":
-        if password_form.validate_on_submit():
+        if set_password_form.validate_on_submit():
             email = session["email"]
             if not email:
                 flash("Session has expired, please try again.")
@@ -194,9 +159,9 @@ def set_password():
             add_new_user(
                 email=email,
                 username=email[:8],
-                password=password_form.password.data,
+                password=set_password_form.password.data,
             )
-            user: User = User.query.filter_by(email=email).first()
+            user: User = server_db_.session.execute(select(User).filter_by(email=email)).scalar_one_or_none()
             if user:
                 login_user(user)
                 return redirect(url_for("home.home"))
@@ -206,7 +171,7 @@ def set_password():
     
     return render_template(
         "/auth/set_password.html",
-        password_form=password_form,
+        set_password_form=set_password_form,
         fast_login_form=fast_login_form,
         page="set_password",
         fast=fast,
@@ -224,7 +189,7 @@ def logout():
 
     session.remember = False
     flash('You have been logged out.')
-    return redirect(url_for("auth.login2"))
+    return redirect(url_for("auth.login"))
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -254,7 +219,7 @@ def register():
                 username=register_form.username.data,
                 password=register_form.password.data,
             )
-            return redirect(url_for("auth.login2"))
+            return redirect(url_for("auth.login"))
         flash("Form failed to validate")
 
     return render_template(
@@ -272,7 +237,7 @@ def request_reset():
     Serves request reset form and redirects to request reset page
     when successful or not.
     """
-    email_form = EmailForm()
+    request_reset_form = RequestResetForm()
     fast_login_form = FastLoginForm()
     fast = False
     form_type = request.form.get("form_type")
@@ -286,9 +251,9 @@ def request_reset():
             if message:
                 flash(message)
 
-    elif form_type == "email":
-        if email_form.validate_on_submit():
-            user = User.query.filter_by(email=email_form.email.data).first()
+    elif form_type == "request_reset":
+        if request_reset_form.validate_on_submit():
+            user: User = server_db_.session.execute(select(User).filter_by(email=request_reset_form.email.data)).scalar_one_or_none()
             if user:
                 send_password_reset_email(user)
             flash("If user exists, code has been sent")
@@ -296,7 +261,7 @@ def request_reset():
 
     return render_template(
         "/auth/request_reset.html",
-        email_form=email_form,
+        request_reset_form=request_reset_form,
         fast_login_form=fast_login_form,
         page="request_reset",
         fast=fast,
@@ -309,7 +274,7 @@ def reset_password(token):
     Serves reset password form and redirects to login page
     when successful or reset password page when not.
     """
-    password_form = PasswordForm()
+    reset_password_form = ResetPasswordForm()
     email = confirm_reset_token(token)
     fast_login_form = FastLoginForm()
     fast = False
@@ -329,22 +294,23 @@ def reset_password(token):
         flash("The reset link is invalid or has expired")
         return redirect(url_for("auth.request_reset"))
 
-    user = User.query.filter_by(email=email).first()
+    user: User = server_db_.session.execute(select(User).filter_by(email=email)).scalar_one_or_none()
 
     if form_type == "password":
-        if password_form.validate_on_submit():
-            change_user_password(user, password_form.password.data)
+        if reset_password_form.validate_on_submit():
+            change_user_password(user, reset_password_form.password.data)
             flash("Your password has been updated!")
-            return redirect(url_for('auth.login2'))
+            return redirect(url_for('auth.login'))
         
     # Unsuccessful attempt, re-serve reset page
     return render_template(
         "auth/reset_password.html",
-        password_form=password_form,
+        reset_password_form=reset_password_form,
         fast_login_form=fast_login_form,
         page="reset_password",
         fast=fast,
         )
+
 
 @auth_bp.before_request
 def before_request():

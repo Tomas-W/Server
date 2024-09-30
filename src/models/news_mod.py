@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from config.settings import CET
 from src.extensions import server_db_
 
@@ -20,21 +23,21 @@ class News(server_db_.Model):
     """
     __tablename__ = 'news'  # noqa
 
-    id = server_db_.Column(server_db_.Integer, primary_key=True)
-    title = server_db_.Column(server_db_.String(75), nullable=False)
-    content = server_db_.Column(server_db_.Text, nullable=False)
-    author = server_db_.Column(server_db_.String(25), nullable=False)
-    tot_remarks = server_db_.Column(server_db_.Integer, default=0)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(75), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    author: Mapped[str] = mapped_column(String(25), nullable=False)
+    tot_remarks: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(CET)
+    )
+    tot_views: Mapped[int] = mapped_column(Integer, default=0)
+    tot_accepted: Mapped[int] = mapped_column(Integer, default=0)
 
-    created_at = server_db_.Column(server_db_.DateTime,
-                                   default=lambda: datetime.now(CET))
-    tot_views = server_db_.Column(server_db_.Integer, default=0)
-    tot_accepted = server_db_.Column(server_db_.Integer, default=0)
+    remarks: Mapped[list["Remark"]] = relationship("Remark", back_populates="news")
 
-    remarks = server_db_.relationship("Remark", back_populates="news")
-
-    def __repr__(self):
-        return f"News(id={self.id}, title={self.title}, author={self.author})"
+    def __repr__(self) -> str:
+        return f"News(id={self.id}, title='{self.title}', author='{self.author}')"
 
 
 class Remark(server_db_.Model):
@@ -52,17 +55,16 @@ class Remark(server_db_.Model):
     """
     __tablename__ = "remarks"  # noqa
 
-    id = server_db_.Column(server_db_.Integer, primary_key=True)
-    title = server_db_.Column(server_db_.String(75), nullable=False)
-    content = server_db_.Column(server_db_.Text, nullable=False)
-    author = server_db_.Column(server_db_.String(25), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(75), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    author: Mapped[str] = mapped_column(String(25), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(CET)
+    )
+    news_id: Mapped[int] = mapped_column(ForeignKey("news.id"), nullable=False)
 
-    created_at = server_db_.Column(server_db_.DateTime,
-                                   default=lambda: datetime.now(CET))
-    news_id = server_db_.Column(server_db_.Integer, server_db_.ForeignKey("news.id"),
-                                nullable=False)
+    news: Mapped["News"] = relationship("News", back_populates="remarks")
 
-    news = server_db_.relationship("News", back_populates="remarks")
-
-    def __repr__(self):
-        return f"Remark(news_id={self.news_id}, author={self.author})"
+    def __repr__(self) -> str:
+        return f"Remark(id={self.id}, news_id={self.news_id}, author='{self.author}')"

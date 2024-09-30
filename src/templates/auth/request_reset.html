@@ -15,35 +15,34 @@ Request reset
             <!-------- Flashed messages -------->
             {% if not fast %}
                 {% for message in get_flashed_messages() %}
-                    <div class="alert alert-secondary mt-3 mb-0" role="alert">
-                        {{ message }}
-                    </div>
+                <div class="auth_flash">
+                    <p>{{ message }}</p>
+                </div>
                 {% endfor %}
             {% endif %}
 
             <!-------- Login form -------->
             <form method="POST" action="" novalidate class="auth-form">
-                {{ email_form.hidden_tag() }}
+                {{ request_reset_form.hidden_tag() }}
                 <!-------- Email or username -------->
-                {% for error in email_form.errors["email"] %}
-                    <p class="form-error"><strong>{{ error }}</strong></p>
-                {% endfor %}
+                {% if request_reset_form.errors["email"] %}
+                    <p class="form-error"><strong>{{ request_reset_form.errors["email"][0] }}</strong></p>
+                {% endif %}
                 <div class="form-item last-form-item">
-                    {{ email_form.email(class="auth_input_field") }}
+                    {{ request_reset_form.email(class="auth_input_field") }}
                 </div>
                 <!-------- Form type -------->
-                {{ email_form.form_type }}
+                {{ request_reset_form.form_type }}
                 <!-------- Submit -------->
                 <div class="auth-devider"> 
-                    {{ email_form.submit(class="btn auth-btn") }}
+                    {{ request_reset_form.submit(class="btn auth-btn") }}
                 </div>
             </form>
 
             <!-------- Auth options -------->
             <div class="auth-options-container">
-                <div><p class="auth-options-content">Reset your password</p></div>
-                <div><p class="auth-options-content">Register a new account</p></div>
-                <div><p class="auth-options-content">Login via Google</p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for('auth.login') }}">Back to login</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for('auth.g_login') }}">Login with Google</a></p></div>
             </div>
         </div>
     </div>

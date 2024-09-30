@@ -25,7 +25,7 @@ def _auth_cli(app_: Flask) -> None:
         :param id_: User ID
         :param v: Enables verbose mode (optional)
         """
-        user: User = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -59,7 +59,7 @@ def _auth_cli(app_: Flask) -> None:
         :param c: Confirm without prompt (optional)
         :param v: Enables verbose mode (optional)
         """
-        user: User = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -91,7 +91,7 @@ def _auth_cli(app_: Flask) -> None:
         :param col_name: Name of the column
         :param v: Enables verbose mode (optional)
         """
-        user = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -134,7 +134,7 @@ def _auth_cli(app_: Flask) -> None:
             click.echo(f"Param new_val must be of type bool but got '{new_val}'.")
             return
 
-        user: User = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -159,9 +159,9 @@ def _auth_cli(app_: Flask) -> None:
     @click.option("--c", is_flag=True,
                   help="Confirm User deletion without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_f_code(id_: int, fast_name: str, c: bool, v: bool) -> None:
+    def set_f_name(id_: int, fast_name: str, c: bool, v: bool) -> None:
         """
-        Takes a User id and a string (4 < len < 17) and sets the fast_name of the User.
+        Takes a User id and a string (3 < len < 17) and sets the fast_name of the User.
 
         Usage: flask auth set-f-name <user id> <fast_name> [--c] [--v]
         :param id_: User ID
@@ -170,20 +170,20 @@ def _auth_cli(app_: Flask) -> None:
         :param v: Enables verbose mode (optional)
         """
         col_name = "fast_name"
-        if not 4 < len(fast_name) < 17:
-            click.echo(f"'{col_name}' length must be between 4 and 17 characters.")
+        if not 3 < len(fast_name) < 17:
+            click.echo(f"'{col_name}' length must be between 3 and 17 characters.")
             return
 
-        user: User = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
-        
+
         if not c and not click.confirm(
                 f"Are you sure you want to set '{col_name}' to '{fast_name}'?"):
             click.echo("Setting value cancelled.")
             return
-        
+
         setattr(user, col_name, fast_name)
         server_db_.session.commit()
         if v:
@@ -213,7 +213,7 @@ def _auth_cli(app_: Flask) -> None:
             click.echo(f"'{col_name}' must be a 5-digit number.")
             return
 
-        user: User = User.query.get(id_)
+        user: User = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -222,7 +222,7 @@ def _auth_cli(app_: Flask) -> None:
                 f"Are you sure you want to set '{col_name}' to '{fast_code}'?"):
             click.echo("Setting value cancelled.")
             return
-        
+
         hashed_code = argon2_.hash(fast_code)
         setattr(user, col_name, hashed_code)
         server_db_.session.commit()
@@ -264,7 +264,7 @@ def _server_cli(app_: Flask) -> None:
 
         click.echo(config.config_name())
         return
-    
+
     @server.command("init")
     def init() -> None:
         """
@@ -272,7 +272,8 @@ def _server_cli(app_: Flask) -> None:
 
         Usage: flask server set_first_user_fast_info
         """
-        user: User = User.query.first()
+        user: User = server_db_.session.execute(
+            server_db_.select(User).limit(1)).scalar_one_or_none()
         if not user:
             click.echo("No users found.")
             return
@@ -284,6 +285,5 @@ def _server_cli(app_: Flask) -> None:
         click.echo(f"User: {repr(user)}")
         click.echo(f"Set fast_name to 'test' and fast_code to hashed '00000'.")
         return
-
 
     app_.cli.add_command(server)

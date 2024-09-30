@@ -16,7 +16,8 @@ from src.extensions import flow_, server_db_
 from src.auth.auth_forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
                                  SetPasswordForm, ResetPasswordForm)
 from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_email,
-                                       fast_login, normal_login, handle_user_login)
+                                       fast_login, normal_login, handle_user_login,
+                                       handle_user_logout)
 from src.models.auth_mod import User
 from src.utils.db_utils import (get_user_by_email, save_oauth_state,
                                 get_and_delete_oauth_state, update_user_last_seen,
@@ -84,8 +85,7 @@ def login():
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
 
-    if request.method == "POST":
-        if form_type == "login":
+    if request.method == "POST" and form_type == "login":
             if login_form.validate_on_submit():
                 response, message = normal_login(login_form)
                 if response:
@@ -175,8 +175,7 @@ def set_password():
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
 
-    if request.method == "POST":
-        if form_type == "password":
+    if request.method == "POST" and form_type == "password":
             if set_password_form.validate_on_submit():
                 email = session.get("email")
                 if not email:
@@ -236,8 +235,7 @@ def register():
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
 
-    if request.method == "POST":
-        if form_type == "register":
+    if request.method == "POST" and form_type == "register":
             if register_form.validate_on_submit():
                 add_new_user(
                     email=register_form.email.data,
@@ -287,8 +285,7 @@ def request_reset():
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
 
-    if request.method == "POST":
-        if form_type == "request_reset":
+    if request.method == "POST" and form_type == "request_reset":
             if request_reset_form.validate_on_submit():
                 user: User = server_db_.session.execute(select(User).filter_by(
                     email=request_reset_form.email.data)).scalar_one_or_none()
@@ -347,8 +344,7 @@ def reset_password(token):
     user: User = server_db_.session.execute(
         select(User).filter_by(email=email)).scalar_one_or_none()
 
-    if request.method == "POST":
-        if form_type == "password":
+    if request.method == "POST" and form_type == "password":
             if reset_password_form.validate_on_submit():
                 change_user_password(user, reset_password_form.password.data)
                 flash("Your password has been updated!")
@@ -387,11 +383,6 @@ def reset_password(token):
 @login_required
 def logout():
     """Logs out user, clean up session and redirect to login page."""
-    print("* ")
-    current_user.remember_me = False
-    server_db_.session.commit()
-    logout_user()
-
-    session.remember = False
+    handle_user_logout()
     flash("You are logged out")
     return redirect(url_for("auth.login"))

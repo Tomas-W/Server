@@ -2,28 +2,32 @@ import os
 
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 from flask import url_for, redirect, session
-from flask_login import login_user
+from flask_login import login_user, current_user, logout_user
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 from src.auth.auth_forms import FastLoginForm, LoginForm
-from src.extensions import server_db_, mail_, argon2_
+from src.extensions import mail_, argon2_
 from src.models.auth_mod import User
 from src.utils.db_utils import get_user_by_fast_name, get_user_by_email_or_username
-from sqlalchemy import or_
-
 
 
 def handle_user_login(user: User, remember: bool = False, fresh: bool = True) -> None:
     login_user(user=user, remember=remember, fresh=fresh)
-    user.increment_tot_logins()
-    user.set_remember_me(remember)
-    session.permanent = remember    
+    current_user.increment_tot_logins()
+    current_user.set_remember_me(remember)
+    session.permanent = remember
+
+
+def handle_user_logout() -> None:
+    current_user.set_remember_me(False)
+    logout_user()
+    session.pop('remember', None)
 
 
 def fast_login(login_form: FastLoginForm):
     user: User = get_user_by_fast_name(login_form.fast_name.data)
-    
+
     if not user:
         return None, "Incorrect credentials"
 
@@ -33,13 +37,13 @@ def fast_login(login_form: FastLoginForm):
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
-    
+
     return None, "Incorrect credentials"
 
 
 def normal_login(login_form: LoginForm):
     user: User = get_user_by_email_or_username(login_form.email_or_uname.data)
-    
+
     if not user:
         return None, "Incorrect credentials"
 
@@ -50,7 +54,7 @@ def normal_login(login_form: LoginForm):
             return redirect(url_for("home.home")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
-    
+
     return None, "Incorrect credentials"
 
 

@@ -2,25 +2,25 @@
 #navbar-section {
     background-color: var(--gray2);
     padding: 10px 12%;
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space between brand and links */
+    align-items: center; /* Center items vertically */
 }
+
 .navbar-collapse {
-    justify-content: end;
+    display: flex; /* Flexbox for horizontal layout */
 }
+
 .navbar-brand {
     color: var(--nav_text);
     font-size: 1.8rem;
 }
 
-.navbar-brand:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 8px;  /* Increased from 5px to 8px */
-    color: var(--nav_text_hover);
-}
-
 .nav-link {
     color: var(--nav_text);
     font-size: 1.2rem;
+    margin-left: 10px; /* Space between links */
+    text-decoration: none; /* Remove underline */
 }
 
 .nav-link:hover {
@@ -33,11 +33,17 @@
 #logout {
     color: var(--nav_text);
     font-size: 1.2rem;
+    margin-left: 10px; /* Space before logout */
 }
 
-.nav-item {
-    margin-left: 10px;
+
+.navbar-brand:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;  /* Increased from 5px to 8px */
+    color: var(--nav_text_hover);
 }
+
 
 .home-hr {
     opacity: 1;

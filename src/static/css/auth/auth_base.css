@@ -120,9 +120,6 @@
 }
 
 .fast_flash {
-    /* width: 100%; */
-    /* max-width: var(--max-login-width, 375px); */
-    /* margin: 0 auto; */
     position: absolute;
     top: 45px;
     left: 0;
@@ -133,14 +130,13 @@
 }
 
 .fast_flash p {
-    /* padding-top: 15px; */
-    /* padding-bottom: 10px; */
     color: var(--auth_text);
 }
 
 @media (max-width: 474.98px) {
     .fast-login-section {
-        padding: 15px 9% 0 9%;
+        padding-left: 9%;
+        padding-right: 9%;
     }
 }
 

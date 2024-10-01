@@ -103,11 +103,11 @@ def login():
     last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Incorrect input")
         # Re-populatedata
         if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
+            flash("Invalid input")
         elif last_form_type == "login":
             login_form = LoginForm(formdata=None)
             login_form.process(request.form)
@@ -203,11 +203,11 @@ def set_password():
     last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Incorrect input")
         # Re-populate the data
         if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
+            flash("Invalid input")
         elif last_form_type == "password":
             set_password_form = SetPasswordForm(formdata=None)
             set_password_form.process(request.form)
@@ -253,11 +253,11 @@ def register():
     last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Incorrect input")
         # Re-populate the data
         if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
+            flash("Invalid input")
         elif last_form_type == "register":
             register_form = RegisterForm(formdata=None)
             register_form.process(request.form)
@@ -303,11 +303,11 @@ def request_reset():
     last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Incorrect input")
         # Re-populate the data
         if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
+            flash("Invalid input")
         elif last_form_type == "request_reset":
             request_reset_form = RequestResetForm(formdata=None)
             request_reset_form.process(request.form)
@@ -359,11 +359,11 @@ def reset_password(token):
     last_form_type = session.pop("last_form_type", None)
 
     if form_errors:
-        flash("Incorrect input")
         # Re-populate the data
         if last_form_type == "fast_login":
             fast_login_form = FastLoginForm(formdata=None)
             fast_login_form.process(request.form)
+            flash("Invalid input")
         elif last_form_type == "password":
             reset_password_form = ResetPasswordForm(formdata=None)
             reset_password_form.process(request.form)

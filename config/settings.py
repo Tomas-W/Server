@@ -5,12 +5,22 @@ import string
 import pytz
 
 # Paths
-SERVER_PATH: os.path = os.path.join(pathlib.Path(__file__).parent.parent)
-SRC_PATH: os.path = os.path.join(SERVER_PATH, "src")
-CONFIG_PATH: os.path = os.path.join(SERVER_PATH, "config")
-DB_FOLDER: os.path = os.path.join(SERVER_PATH, "db")
-DB_PATH: os.path = os.path.join(SERVER_PATH, "db", "server.db")
-CLIENTS_SECRETS_PATH = os.path.join(CONFIG_PATH, "client_secret.json")
+SERVER_FOLDER: os.path = os.path.join(pathlib.Path(__file__).parent.parent)
+SRC_FOLDER: os.path = os.path.join(SERVER_FOLDER, "src")
+CONFIG_FOLDER: os.path = os.path.join(SERVER_FOLDER, "config")
+DB_FOLDER: os.path = os.path.join(SERVER_FOLDER, "db")
+DB_PATH: os.path = os.path.join(SERVER_FOLDER, "db", "server.db")
+CLIENTS_SECRETS_PATH = os.path.join(CONFIG_FOLDER, "client_secret.json")
+IMAGES_FOLDER = os.path.join(SRC_FOLDER, "static", "images")
+
+# Image paths
+BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
+BREAD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "bread")
+SMALL_BREAD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "small_bread")
+STOKBROOD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "stokbrood")
+SAVORY_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "savory")
+PASTRY_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "pastry")
+SWEETS_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "sweets")
 
 # Server
 LOGIN_VIEW = "auth.login"

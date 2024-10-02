@@ -5,13 +5,12 @@ from datetime import datetime
 import requests
 from flask import (Blueprint, redirect, url_for, request, render_template, flash,
                    session)
-from flask_login import logout_user, login_required, current_user
+from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests  # noqa
 from sqlalchemy import select
 
-from config.settings import CET
 from src.extensions import flow_, server_db_
 from src.auth.auth_forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
                                  SetPasswordForm, ResetPasswordForm)
@@ -20,19 +19,13 @@ from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_
                                        handle_user_logout)
 from src.models.auth_mod import User
 from src.utils.db_utils import (get_user_by_email, save_oauth_state,
-                                get_and_delete_oauth_state, update_user_last_seen,
-                                add_new_user, get_new_user, change_user_password)
+                                get_and_delete_oauth_state, add_new_user, get_new_user,
+                                change_user_password)
 
 auth_bp = Blueprint("auth", __name__)
 SESSION_FORM_ERRORS = "form_errors"
 SESSION_LAST_FORM_TYPE = "last_form_type"
 FAST_FORM_TYPE = "fast_login"
-
-
-@auth_bp.before_request
-def before_request():
-    if current_user.is_authenticated:
-        update_user_last_seen(current_user, datetime.now(CET))
 
 
 def handle_fast_login(view_func):
@@ -163,7 +156,7 @@ def callback():
         session["email"] = email
         return redirect(url_for("auth.set_password"))
 
-    handle_user_login(user, permanent=False)
+    handle_user_login(user, remember=False)
     return redirect(url_for("home.home"))
 
 
@@ -188,7 +181,7 @@ def set_password():
                     password=set_password_form.password.data,
                 )
                 if user:
-                    handle_user_login(user, permanent=False)
+                    handle_user_login(user, remember=False)
                     return redirect(url_for("home.home"))
                 else:
                     flash("Unexpected db error")

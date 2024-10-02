@@ -1,0 +1,88 @@
+from datetime import datetime
+from typing import Optional, List
+
+from sqlalchemy import Boolean, Integer, String, Float, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
+
+from config.settings import CET
+from src.extensions import server_db_
+
+
+class BakeryItem(server_db_.Model):
+    """
+    Stores the bakery item data and their attributes.
+
+    - ID: Unique identifier for the item
+    - NAME: Name of the item
+    - CATEGORY: Category of the item
+    - PROGRAM: Program number
+    - NASA: NASA code
+    - PRICE: Price of the item
+    - TYPE: Type of the item
+    - TAGS: Tags associated with the item
+    - RACK_TYPE: Type of rack
+    - PER_RACK: Quantity per rack
+    - DEFROST_TIME: Defrost time
+    - COOLDOWN_TIME: Cooldown time
+    - MAKE_HALVES: Indicates if halves can be made
+    - VEGAN: Boolean indicating if the item is vegan
+    - CONTAINS: Ingredients contained in the item
+    - MAY_CONTAIN: Possible allergens
+    - IMAGE: Path to the item's image
+    """
+    __tablename__ = "bakery_items"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(75), nullable=False)
+    category: Mapped[str] = mapped_column(String(75), nullable=False)
+    program: Mapped[int] = mapped_column(Integer, nullable=False)
+    nasa: Mapped[int] = mapped_column(Integer, nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    type: Mapped[str] = mapped_column(String(225), nullable=False)
+    tags: Mapped[str] = mapped_column(String(225), nullable=False)
+    rack_type: Mapped[Optional[str]] = mapped_column(String(75))
+    per_rack: Mapped[Optional[str]] = mapped_column(String(75))
+    defrost_time: Mapped[Optional[str]] = mapped_column(String(75))
+    cooldown_time: Mapped[Optional[str]] = mapped_column(String(75))
+    make_halves: Mapped[Optional[bool]] = mapped_column(Boolean)
+    vegan: Mapped[bool] = mapped_column(Boolean, default=False)
+    contains: Mapped[List[str]] = mapped_column(String(255), nullable=False)
+    may_contain: Mapped[List[str]] = mapped_column(String(255), nullable=False)
+    image: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime,
+                                                 default=lambda: datetime.now(CET))
+    updated_at: Mapped[datetime] = mapped_column(DateTime,
+                                                 default=lambda: datetime.now(CET),
+                                                 onupdate=lambda: datetime.now(CET))
+
+    def __init__(self, name: str, category: str, program: int, nasa: int, price: float,
+                 type: List[str], tags: List[str], rack_type: Optional[str],
+                 per_rack: Optional[str],
+                 defrost_time: Optional[str], cooldown_time: str,
+                 make_halves: Optional[bool], vegan: bool,
+                 contains: List[str], may_contain: List[str], image: str):
+        self.name = name
+        self.category = category
+        self.program = program
+        self.nasa = nasa
+        self.price = price
+        self.type = type
+        self.tags = tags
+        self.rack_type = rack_type
+        self.per_rack = per_rack
+        self.defrost_time = defrost_time
+        self.cooldown_time = cooldown_time
+        self.make_halves = make_halves
+        self.vegan = vegan
+        self.contains = contains
+        self.may_contain = may_contain
+        self.image = image
+
+    def __repr__(self):
+        return (f"BakeryItem: "
+                f"(id={self.id},"
+                f" name={self.name},"
+                f" category={self.category},"
+                f" program={self.program},"
+                f" nasa={self.nasa},")

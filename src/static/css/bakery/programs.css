@@ -1,0 +1,50 @@
+.bakery-section {
+    background-color: var(--gray1);
+    padding: 45px 12%;
+}
+
+.bakery-container {
+    background-color: var(--gray2);
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--gray3);
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.bakery-content {
+    flex-grow: 1;
+}
+
+.side-panel {
+    width: 300px;
+    padding: 0px 30px;
+    border-right: 1px solid var(--gray3);
+    margin: 30px 0;
+    background-color: var(--gray2);
+}
+
+.side-panel-list {
+    list-style-type: none;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.side-panel-list li {
+    margin-bottom: 15px;
+}
+
+.side-panel-list a {
+    color: var(--nav_text);
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+.side-panel-list a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    color: var(--nav_text_hover);
+}

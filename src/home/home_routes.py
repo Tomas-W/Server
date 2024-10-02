@@ -17,7 +17,7 @@ def home():
     all_news = get_all_news()
 
     return render_template(
-        "home.html",
+        "home/home.html",
         page="home",
         username=username,
         all_news=all_news,

@@ -2,8 +2,10 @@ import click
 from flask import Flask, current_app
 from sqlalchemy import inspect
 
+from src.bakery.bakery_items import get_bakery_dict
 from src.extensions import server_db_, argon2_
 from src.models.auth_mod import User
+from src.models.bakery_mod import BakeryItem
 
 
 def _auth_cli(app_: Flask) -> None:
@@ -13,6 +15,36 @@ def _auth_cli(app_: Flask) -> None:
     def auth() -> None:
         """CLI functionality for the User table"""
         pass
+
+    @auth.command("add-bakery")
+    def add_bakery() -> None:
+        """
+        Adds bakery items to the BakeryItems Table.
+
+        Usage: flask auth add-bakery
+        """
+        dict_ = get_bakery_dict()
+        for item_name, item_details in dict_.items():
+            bakery_item = BakeryItem(
+                name=item_name,
+                category=item_details["category"],
+                program=item_details["program"],
+                nasa=item_details["nasa"],
+                price=item_details["price"],
+                type="-".join(item_details["type"]),
+                tags="-".join(item_details["tags"]),
+                rack_type=item_details["rack_type"],
+                per_rack=item_details["per_rack"],
+                defrost_time=item_details["defrost_time"],
+                cooldown_time=item_details["cooldown_time"],
+                make_halves=item_details["make_halves"],
+                vegan=item_details["vegan"],
+                contains="-".join(item_details["contains"]),
+                may_contain="-".join(item_details["may_contain"]),
+                image=item_details["image"]
+            )
+            server_db_.session.add(bakery_item)
+        server_db_.session.commit()
 
     @auth.command("info")
     @click.argument("id_", type=int)

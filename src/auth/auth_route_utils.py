@@ -94,5 +94,5 @@ def handle_argon2_exception(e: Exception) -> str:
     if isinstance(e, VerifyMismatchError):
         return "Incorrect credentials"
     if isinstance(e, (VerificationError, InvalidHashError)):
-        return "An error occurred during verification"
+        return "Internal server error"
     return "An unexpected error occurred"

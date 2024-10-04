@@ -16,8 +16,6 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
 
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER, CET
-from src.models.auth_mod import User
-from src.models.news_mod import News, Remark
 from src.utils.db_utils import update_user_last_seen
 
 
@@ -96,5 +94,6 @@ def _configure_database(app_: Flask) -> None:
 
 def get_app(testing: bool = False) -> Flask:
     app_: Flask = Flask(__name__.split('.')[0])
-    app_ = _configure_server(app_, testing=testing)
+    app_ = _configure_server(app_, testing=testing)    
+    
     return app_

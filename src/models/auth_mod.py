@@ -53,10 +53,13 @@ class User(server_db_.Model, UserMixin):
 
     tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     
-    def __init__(self, email: str, username: str, password: str):
+    def __init__(self, email: str, username: str, password: str,
+                 fast_name: str, fast_code: str):
         self.email = email
         self.username = username
         self.password = self._get_hash(password)
+        self.fast_name = fast_name if fast_name else None
+        self.fast_code = self._get_hash(fast_code) if fast_code else None
     
     @staticmethod
     def _get_hash(plain_password: str) -> str:

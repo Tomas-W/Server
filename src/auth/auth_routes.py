@@ -62,11 +62,13 @@ def index():
 @auth_bp.route("/fresh")
 def base():
     """Creates a dummy account after db reset and serves login page."""
-    add_new_user(
-        email="test@gmail.com",
-        username="test",
-        password="Test123$",
-    )
+    new_user = User(email="100pythoncourse@gmail.com",
+                    username="tomas",
+                    password="TomasTomas1!",
+                    fast_name="tomas",
+                    fast_code="00000")
+    server_db_.session.add(new_user)
+    server_db_.session.commit()
     return redirect(url_for("auth.login"))
 
 

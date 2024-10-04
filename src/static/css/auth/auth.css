@@ -76,8 +76,8 @@
     position: absolute;
     right: 0;
     top: 50%;
-    color: var(--form_error);
-    font-size: 0.8em;
+    color: var(--auth_form_error);
+    font-size: var(--auth_form_error_size);
     white-space: nowrap;
     transform: translateY(-50%);
 }
@@ -88,7 +88,7 @@
     cursor: pointer;
     color: var(--auth_input_text);
     opacity: 0.5;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, opacity 0.3s ease; // Added opacity transition
 }
 
 .remember-devider {

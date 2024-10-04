@@ -3,6 +3,8 @@ from typing import Optional, List
 
 from sqlalchemy import Boolean, Integer, String, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import select
+from sqlalchemy.ext.declarative import declarative_base
 
 from config.settings import CET
 from src.extensions import server_db_
@@ -86,3 +88,10 @@ class BakeryItem(server_db_.Model):
                 f" category={self.category},"
                 f" program={self.program},"
                 f" nasa={self.nasa},")
+
+    @staticmethod
+    def get_all_items(program: int):
+        result = server_db_.session.execute(
+            select(BakeryItem).filter_by(program=program)
+        ).scalars().all()
+        return result

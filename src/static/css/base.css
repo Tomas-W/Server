@@ -13,12 +13,12 @@
 
 .navbar-brand {
     color: var(--nav_text);
-    font-size: 1.8rem;
+    font-size: var(--nav_brand_size);
 }
 
 .nav-link {
     color: var(--nav_text);
-    font-size: 1.2rem;
+    font-size: var(--nav_link_size);
     margin-left: 10px; /* Space between links */
     text-decoration: none; /* Remove underline */
 }
@@ -32,7 +32,7 @@
 
 #logout {
     color: var(--nav_text);
-    font-size: 1.2rem;
+    font-size: var(--nav_link_size);
     margin-left: 10px; /* Space before logout */
 }
 
@@ -74,7 +74,7 @@
 }
 .footer-list {
     color: var(--light);
-    font-size: 0.8rem;
+    font-size: var(--footer_link_size);
 }
 
 /* ********** Media ********** */

@@ -7,23 +7,26 @@
 
     --nav_text: rgba(160, 160, 160, 1);
     --nav_text_hover: rgba(200, 200, 200, 1);
+    --nav_brand_size: 1.8rem;
+    --nav_link_size: 1.2rem;
+
+    --footer_link_size: 0.8rem;
 
     --auth_text: rgba(160, 160, 160, 1);
     --auth_text_hover: rgba(200, 200, 200, 1);
-
     --auth_input_text:rgba(160, 160, 160, 1);
     --auth_input_text_hover:rgba(220, 220, 220, 1);
-
     --auth_border_color: var(--gray3);
     --auth_border_color_hover: rgba(160, 160, 160, 1);
-
     --auth_btn_text: rgba(200, 200, 200, 1);
     --auth_btn_text_hover: rgba(255, 255, 255, 1);
     --auth_btn_text_size: 1.1rem;
-
     --auth_flash_size: 1.1rem;
+    --auth_form_error: rgba(160, 160, 160, 1);
+    --auth_form_error_size: 0.8rem;
 
-    --form_error: rgba(160, 160, 160, 1);
+    --bakery_side_panel_size: 1.2rem;
+
 }
 
 /********* General settings *********/
@@ -35,6 +38,11 @@
 }
 a {
     text-decoration: none;
+    color: inherit;
+}
+.a:hover {
+    text-decoration: none;
+    color: inherit;
 }
 
 h1 {
@@ -51,4 +59,15 @@ h3 {
 
 h4 {
     font-size: 1.5rem;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }

@@ -45,6 +45,7 @@ def _auth_cli(app_: Flask) -> None:
             )
             server_db_.session.add(bakery_item)
         server_db_.session.commit()
+        click.echo("Bakery items added to the database.")
 
     @auth.command("info")
     @click.argument("id_", type=int)

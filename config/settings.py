@@ -12,15 +12,15 @@ DB_FOLDER: os.path = os.path.join(SERVER_FOLDER, "db")
 DB_PATH: os.path = os.path.join(SERVER_FOLDER, "db", "server.db")
 CLIENTS_SECRETS_PATH = os.path.join(CONFIG_FOLDER, "client_secret.json")
 IMAGES_FOLDER = os.path.join(SRC_FOLDER, "static", "images")
+BAKERY_IMAGES_FOLDER = os.path.join("IMAGES_FOLDER", "bakery")
 
-# Image paths
-BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
-BREAD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "bread")
-SMALL_BREAD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "small_bread")
-STOKBROOD_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "stokbrood")
-SAVORY_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "savory")
-PASTRY_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "pastry")
-SWEETS_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "sweets")
+# Bakery paths [relative]
+BREAD_IMAGES_FOLDER = "images/bakery/bread/"
+SMALL_BREAD_IMAGES_FOLDER = "images/bakery/small_bread/"
+STOKBROOD_IMAGES_FOLDER = "images/bakery/stokbrood/"
+SAVORY_IMAGES_FOLDER = "images/bakery/savory/"
+PASTRY_IMAGES_FOLDER = "images/bakery/pastry/"
+SWEETS_IMAGES_FOLDER = "images/bakery/sweets/"
 
 # Server
 LOGIN_VIEW = "auth.login"

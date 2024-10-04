@@ -10,24 +10,36 @@ Programs
 {% block content %}
 <section class="bakery-section">
     <div class="bakery-container">
-        <div class="bakery-content">
-        </div>
+
         <div class="side-panel">
             <ul class="side-panel-list">
-                <li><a href="#">Program 1</a></li>
-                <li><a href="#">Program 2</a></li>
-                <li><a href="#">Program 3</a></li>
-                <li><a href="#">Program 4</a></li>
-                <li><a href="#">Program 5</a></li>
-                <li><a href="#">Program 6</a></li>
-                <li><a href="#">Program 7</a></li>
-                <li><a href="#">Program 8</a></li>
-                <li><a href="#">Program 9</a></li>
-                <li><a href="#">Program 10</a></li>
-                <li><a href="#">Program 11</a></li>
-                <li><a href="#">Program 12</a></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/1">Program 1</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/2">Program 2</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/3">Program 3</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/4">Program 4</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/5">Program 5</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/6">Program 6</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/7">Program 7</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/8">Program 8</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/9">Program 9</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/13">Program 13</a></p></li>
+                <li><p class="side-panel-item"><a href="/bakery/programs/15">Program 15</a></p></li>
             </ul>
         </div>
+        
+        <div class="bakery-content">
+            <div class="image-grid">
+                {% for image in bakery_images %}
+                    <div class="grid-item">
+                        <img src="{{ url_for('static', filename=image) }}" alt="Bakery Item">  <!-- Updated to use url_for -->
+                    </div>
+                    {% if loop.index % 4 == 0 %}
+                        </div><div class="image-grid">  <!-- Start a new row after every 4 items -->
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
     </div>
 </section>
 {% endblock %}

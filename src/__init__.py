@@ -93,7 +93,7 @@ def _configure_database(app_: Flask) -> None:
 
 
 def get_app(testing: bool = False) -> Flask:
-    app_: Flask = Flask(__name__.split('.')[0])
+    app_: Flask = Flask(__name__.split('.')[0], template_folder="templates", static_folder="static")
     app_ = _configure_server(app_, testing=testing)    
     
     return app_

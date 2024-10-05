@@ -19,6 +19,9 @@ __pycache__/
 client_secret.json
 .flaskenv
 
+# Ignore backups
+backups/
+
 # Ignore databases
 db/
 

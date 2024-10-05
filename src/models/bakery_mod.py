@@ -50,7 +50,7 @@ class BakeryItem(server_db_.Model):
     vegan: Mapped[bool] = mapped_column(Boolean, default=False)
     contains: Mapped[List[str]] = mapped_column(String(255), nullable=False)
     may_contain: Mapped[List[str]] = mapped_column(String(255), nullable=False)
-    image: Mapped[str] = mapped_column(String(255), nullable=False)
+    image_400: Mapped[str] = mapped_column(String(255), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime,
                                                  default=lambda: datetime.now(CET))
@@ -63,7 +63,7 @@ class BakeryItem(server_db_.Model):
                  per_rack: Optional[str],
                  defrost_time: Optional[str], cooldown_time: str,
                  make_halves: Optional[bool], vegan: bool,
-                 contains: List[str], may_contain: List[str], image: str):
+                 contains: List[str], may_contain: List[str], image_400: str):
         self.name = name
         self.category = category
         self.program = program
@@ -79,7 +79,7 @@ class BakeryItem(server_db_.Model):
         self.vegan = vegan
         self.contains = contains
         self.may_contain = may_contain
-        self.image = image
+        self.image_400 = image_400
 
     def __repr__(self):
         return (f"BakeryItem: "
@@ -88,7 +88,7 @@ class BakeryItem(server_db_.Model):
                 f" category={self.category},"
                 f" program={self.program},"
                 f" nasa={self.nasa},")
-
+    
     @staticmethod
     def get_all_items(program: int):
         result = server_db_.session.execute(

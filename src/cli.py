@@ -41,7 +41,7 @@ def _auth_cli(app_: Flask) -> None:
                 vegan=item_details["vegan"],
                 contains="-".join(item_details["contains"]),
                 may_contain="-".join(item_details["may_contain"]),
-                image=item_details["image"]
+                image_400=item_details["image_400"]
             )
             server_db_.session.add(bakery_item)
         server_db_.session.commit()

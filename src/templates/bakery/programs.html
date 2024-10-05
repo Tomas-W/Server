@@ -13,17 +13,17 @@ Programs
 
         <div class="side-panel">
             <ul class="side-panel-list">
-                <li><p class="side-panel-item"><a href="/bakery/programs/1">Program 1</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/2">Program 2</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/3">Program 3</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/4">Program 4</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/5">Program 5</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/6">Program 6</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/7">Program 7</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/8">Program 8</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/9">Program 9</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/13">Program 13</a></p></li>
-                <li><p class="side-panel-item"><a href="/bakery/programs/15">Program 15</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=1) }}">Program 1</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=2) }}">Program 2</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=3) }}">Program 3</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=4) }}">Program 4</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=5) }}">Program 5</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=6) }}">Program 6</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=7) }}">Program 7</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=8) }}">Program 8</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=9) }}">Program 9</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=13) }}">Program 13</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=15) }}">Program 15</a></p></li>
             </ul>
         </div>
         
@@ -31,10 +31,18 @@ Programs
             <div class="image-grid">
                 {% for image in bakery_images %}
                     <div class="grid-item">
-                        <img src="{{ url_for('static', filename=image) }}" alt="Bakery Item">  <!-- Updated to use url_for -->
+                        <picture>
+                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "50.png")) }}" media="(max-width: 400px)">
+                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "100.png")) }}" media="(max-width: 600px)">
+                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "200.png")) }}" media="(max-width: 800px)">
+                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "300.png")) }}" media="(max-width: 1000px)">
+                            <img class="bakery-image" 
+                                 src="{{ url_for("static", filename=image) }}" 
+                                 alt="Bakery Item">
+                        </picture>
                     </div>
                     {% if loop.index % 4 == 0 %}
-                        </div><div class="image-grid">  <!-- Start a new row after every 4 items -->
+                        </div><div class="image-grid">
                     {% endif %}
                 {% endfor %}
             </div>

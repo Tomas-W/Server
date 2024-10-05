@@ -57,8 +57,6 @@ def remove_background_by_file(input_image_path):
         output_file.write(output_image)
 
 
-
-
 def remove_images_with_suffix(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
@@ -72,17 +70,19 @@ def rename_images_with_suffix(folder_path):
         for file in files:
             if file.endswith(".png"):  # Check for files ending with "_rem.png"
                 file_path = os.path.join(root, file)
-                new_file_name = file[:-4] + "0" + ".png"  # Remove "_rem" and keep ".png"
+                new_file_name = file[:-8] + ".png"  # Remove "_rem" and keep ".png"
                 new_file_path = os.path.join(root, new_file_name)
                 os.rename(file_path, new_file_path)  # Rename the file
 
 
 SERVER_FOLDER = r"C:\Coding\Projects\Server"
 ORI_IMAGES = os.path.join(SERVER_FOLDER, "backups", "images", "bakery", "sweets", 'neww')
-NEW_IMAGES = os.path.join(SERVER_FOLDER, "src", "static", "images", "bakery", "stokbrood")
+NEW_IMAGES = os.path.join(SERVER_FOLDER, "src", "static", "images", "bakery", "savory")
 if __name__ == "__main__":
     # rename_images_with_suffix(r'C:\Coding\Projects\Server\backups\images\bakery\sweets\New folder')
-    process_images(ORI_IMAGES)
-    print("[ ----- PROCESSING DONE ----- ]")
+    # process_images(ORI_IMAGES)
+    # print("[ ----- PROCESSING DONE ----- ]")
     # remove_background_by_folder(ORI_IMAGES)
     # print("[ ----- BACKGROUND REMOVAL DONE ----- ]")
+    # rename_images_with_suffix(NEW_IMAGES)
+    pass

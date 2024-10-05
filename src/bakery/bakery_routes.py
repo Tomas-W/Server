@@ -18,7 +18,7 @@ def programs():
 def program(program: int):
     
     bakery_items = BakeryItem.get_all_items(program)
-    bakery_images = [item.image_400 for item in bakery_items]
+    bakery_images = [item.image for item in bakery_items]
     for i, image in enumerate(bakery_images):
         print(f"{i+1}: {image}")
     return render_template(

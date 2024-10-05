@@ -48,9 +48,9 @@ class BakeryItem(server_db_.Model):
     cooldown_time: Mapped[Optional[str]] = mapped_column(String(75))
     make_halves: Mapped[Optional[bool]] = mapped_column(Boolean)
     vegan: Mapped[bool] = mapped_column(Boolean, default=False)
-    contains: Mapped[List[str]] = mapped_column(String(255), nullable=False)
-    may_contain: Mapped[List[str]] = mapped_column(String(255), nullable=False)
-    image_400: Mapped[str] = mapped_column(String(255), nullable=True)
+    contains: Mapped[str] = mapped_column(String(255), nullable=False)
+    may_contain: Mapped[str] = mapped_column(String(255), nullable=False)
+    image: Mapped[str] = mapped_column(String(255), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime,
                                                  default=lambda: datetime.now(CET))
@@ -59,11 +59,11 @@ class BakeryItem(server_db_.Model):
                                                  onupdate=lambda: datetime.now(CET))
 
     def __init__(self, name: str, category: str, program: int, nasa: int, price: float,
-                 type: List[str], tags: List[str], rack_type: Optional[str],
+                 type: str, tags: str, rack_type: Optional[str],
                  per_rack: Optional[str],
                  defrost_time: Optional[str], cooldown_time: str,
                  make_halves: Optional[bool], vegan: bool,
-                 contains: List[str], may_contain: List[str], image_400: str):
+                 contains: str, may_contain: str, image: str):
         self.name = name
         self.category = category
         self.program = program
@@ -79,7 +79,7 @@ class BakeryItem(server_db_.Model):
         self.vegan = vegan
         self.contains = contains
         self.may_contain = may_contain
-        self.image_400 = image_400
+        self.image = image
 
     def __repr__(self):
         return (f"BakeryItem: "

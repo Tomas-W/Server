@@ -64,3 +64,15 @@
     right: auto;
     background-color: var(--nav_text_hover);
 }
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ensure columns are responsive */
+    gap: 44px; /* Space between grid items */
+}
+
+.grid-item {
+    /* Ensure grid items take full width of their grid cell */
+    width: 100%; /* Change from fixed width to 100% */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}

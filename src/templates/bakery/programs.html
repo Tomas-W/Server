@@ -31,15 +31,10 @@ Programs
             <div class="image-grid">
                 {% for image in bakery_images %}
                     <div class="grid-item">
-                        <picture>
-                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "50.png")) }}" media="(max-width: 400px)">
-                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "100.png")) }}" media="(max-width: 600px)">
-                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "200.png")) }}" media="(max-width: 800px)">
-                            <source srcset="{{ url_for("static", filename=image.replace("400.png", "300.png")) }}" media="(max-width: 1000px)">
                             <img class="bakery-image" 
                                  src="{{ url_for("static", filename=image) }}" 
-                                 alt="Bakery Item">
-                        </picture>
+                                 alt="Bakery Item"
+                                 style="width: 100%;">
                     </div>
                     {% if loop.index % 4 == 0 %}
                         </div><div class="image-grid">

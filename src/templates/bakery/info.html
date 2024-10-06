@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+Info
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<section class="bakery-section">
+    <div class="bakery-container">
+
+        <div class="side-panel">
+            <ul class="side-panel-list">
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=1) }}">Program 1</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=2) }}">Program 2</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=3) }}">Program 3</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=4) }}">Program 4</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=5) }}">Program 5</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=6) }}">Program 6</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=7) }}">Program 7</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=8) }}">Program 8</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=9) }}">Program 9</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=13) }}">Program 13</a></p></li>
+                <li><p class="side-panel-item"><a href="{{ url_for('bakery.program', program=15) }}">Program 15</a></p></li>
+            </ul>
+        </div>
+        
+        <div class="info-content">
+            <div class="main-info-">
+                <p class="item-info">{{ bakery_item.name }}</p>
+                <p class="item-info">{{ bakery_item.nasa }}</p>
+                <p class="item-info">€ {{ bakery_item.price }}</p>
+            </div>
+            
+            <div class="item-health">
+                <img src="{{ url_for("static", filename="images/bakery/health/" + "nutri_" + bakery_item.nutri_score + ".png") }}" alt="Nutri image">
+                <img src="{{ url_for("static", filename="images/bakery/health/" + ("vegan.png" if bakery_item.vegan else "not_vegan.png")) }}" alt="Vegan image">
+                <img src="{{ url_for("static", filename="images/bakery/health/" + ("lactose.png" if bakery_item.lactose_free else "not_lactose.png")) }}" alt="Lactose image">
+            </div>
+
+            <div class="bakery-image-container">
+                <img class="bakery-image" 
+                     src="{{ url_for("static", filename=bakery_item.image) }}" 
+                     alt="Bakery image"
+                     style="width: 70%; height: auto;">
+            </div>
+
+            <div class="extra-info">
+                <p class="item-info">{{ bakery_item.category }}</p>
+                <p class="item-info">{{ bakery_item.type }}</p>
+                <p class="item-info">{{ bakery_item.tags }}</p>
+                <p class="item-info">{{ bakery_item.rack_type }}</p>
+                <p class="item-info">{{ bakery_item.per_rack }}</p>
+                <p class="item-info">{{ bakery_item.defrost_time }}</p>
+                <p class="item-info">{{ bakery_item.cooldown_time }}</p>
+                <p class="item-info">{{ bakery_item.make_halves }}</p>
+                <p class="item-info">{{ bakery_item.vegan }}</p>
+                <p class="item-info">{{ bakery_item.contains }}</p>
+                <p class="item-info">{{ bakery_item.may_contain }}</p>
+
+            </div>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}

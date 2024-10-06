@@ -26,6 +26,8 @@
     --auth_form_error_size: 0.8rem;
 
     --bakery_side_panel_size: 1.2rem;
+    --bakery-text: rgba(160, 160, 160, 1);
+    --bakery-text-hover: rgba(200, 200, 200, 1);
 
 }
 
@@ -59,6 +61,11 @@ h3 {
 
 h4 {
     font-size: 1.5rem;
+}
+
+p {
+    margin: 0;
+    padding: 0;
 }
 
 ul {

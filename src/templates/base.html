@@ -22,7 +22,11 @@
     {% if page == "home" %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home/home.css') }}">
     {% elif page == "programs" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/programs.css') }}">
+    {% elif page == "info" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/info.css') }}">
     {% endif %}
 
     <title>

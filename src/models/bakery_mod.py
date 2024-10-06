@@ -48,6 +48,8 @@ class BakeryItem(server_db_.Model):
     cooldown_time: Mapped[Optional[str]] = mapped_column(String(75))
     make_halves: Mapped[Optional[bool]] = mapped_column(Boolean)
     vegan: Mapped[bool] = mapped_column(Boolean, default=False)
+    lactose_free: Mapped[bool] = mapped_column(Boolean, default=False)
+    nutri_score: Mapped[str] = mapped_column(String(1), nullable=False)
     contains: Mapped[str] = mapped_column(String(255), nullable=False)
     may_contain: Mapped[str] = mapped_column(String(255), nullable=False)
     image: Mapped[str] = mapped_column(String(255), nullable=True)
@@ -62,8 +64,8 @@ class BakeryItem(server_db_.Model):
                  type: str, tags: str, rack_type: Optional[str],
                  per_rack: Optional[str],
                  defrost_time: Optional[str], cooldown_time: str,
-                 make_halves: Optional[bool], vegan: bool,
-                 contains: str, may_contain: str, image: str):
+                 make_halves: Optional[bool], vegan: bool, lactose_free: bool,
+                 nutri_score: str, contains: str, may_contain: str, image: str):
         self.name = name
         self.category = category
         self.program = program
@@ -77,6 +79,8 @@ class BakeryItem(server_db_.Model):
         self.cooldown_time = cooldown_time
         self.make_halves = make_halves
         self.vegan = vegan
+        self.lactose_free = lactose_free
+        self.nutri_score = nutri_score
         self.contains = contains
         self.may_contain = may_contain
         self.image = image
@@ -94,4 +98,11 @@ class BakeryItem(server_db_.Model):
         result = server_db_.session.execute(
             select(BakeryItem).filter_by(program=program)
         ).scalars().all()
+        return result
+    
+    @staticmethod
+    def get_item_by_id(id_: int):
+        result = server_db_.session.execute(
+            select(BakeryItem).filter_by(id=id_)
+        ).scalar_one_or_none()
         return result

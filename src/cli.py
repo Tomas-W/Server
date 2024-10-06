@@ -17,13 +17,23 @@ def _auth_cli(app_: Flask) -> None:
         pass
 
     @auth.command("add-bakery")
-    def add_bakery() -> None:
+    @click.option("--c", is_flag=True,
+                  help="Confirm User deletion without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def add_bakery(c: bool, v: bool) -> None:
         """
         Adds bakery items to the BakeryItems Table.
 
-        Usage: flask auth add-bakery
+        Usage: flask auth add-bakery [--v]
         """
         dict_ = get_bakery_dict()
+        item_count = len(dict_)
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to add {item_count} items to the BakeryItems Table?"):
+            click.echo("Adding BakeryItems cancelled.")
+            return
+
         for item_name, item_details in dict_.items():
             bakery_item = BakeryItem(
                 name=item_name,
@@ -39,14 +49,66 @@ def _auth_cli(app_: Flask) -> None:
                 cooldown_time=item_details["cooldown_time"],
                 make_halves=item_details["make_halves"],
                 vegan=item_details["vegan"],
+                lactose_free=item_details["lactose_free"],
+                nutri_score=item_details["nutri_score"],
                 contains="-".join(item_details["contains"]),
                 may_contain="-".join(item_details["may_contain"]),
                 image=item_details["image"]
             )
             server_db_.session.add(bakery_item)
         server_db_.session.commit()
-        click.echo("Bakery items added to the database.")
+        if v:
+            click.echo(f"Successfully added {item_count} items to the BakeryItems Table.")
 
+    @auth.command("remove-bakery")
+    @click.option("--c", is_flag=True,
+                  help="Confirm removal without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def remove_bakery(c: bool, v: bool) -> None:
+        """
+        Removes all bakery items from the BakeryItems Table.
+
+        Usage: flask auth remove-bakery [--c] [--v]
+        """
+        item_count = server_db_.session.query(BakeryItem).count()
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to remove {item_count} items from the BakeryItems Table?"):
+            click.echo("Removing BakeryItems cancelled.")
+            return
+
+        server_db_.session.query(BakeryItem).delete()
+        server_db_.session.commit()
+        if v:
+            click.echo(f"Successfully removed {item_count} items from the BakeryItems Table.")
+
+    @auth.command("remove-bakery-item")
+    @click.argument("id_", type=int)
+    @click.option("--c", is_flag=True,
+                  help="Confirm removal without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def remove_bakery_item(id_: int, c: bool, v: bool) -> None:
+        """
+        Removes a bakery item from the BakeryItems Table by ID.
+
+        Usage: flask auth remove-bakery-item <id_> [--c] [--v]
+        :param id_: ID of the bakery item to remove
+        """
+        bakery_item = BakeryItem.get_item_by_id(id_)
+        if not bakery_item:
+            click.echo(f"No BakeryItem with id {id_} found.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to remove BakeryItem:\n{repr(bakery_item)}?"):
+            click.echo("BakeryItem removal cancelled.")
+            return
+
+        server_db_.session.delete(bakery_item)
+        server_db_.session.commit()
+        if v:
+            click.echo(f"Successfully removed BakeryItem: {repr(bakery_item)}.")
+    
     @auth.command("info")
     @click.argument("id_", type=int)
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
@@ -264,7 +326,6 @@ def _auth_cli(app_: Flask) -> None:
 
         click.echo(f"Set '{col_name}' to '{fast_code}'.")
         return
-
     app_.cli.add_command(auth)
 
 

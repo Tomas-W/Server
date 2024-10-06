@@ -18,7 +18,6 @@ def process_images(root_folder):
                 input_path = os.path.join(foldername, filename)
                 
                 for size in sizes:                   
-                    # Construct the output filename
                     name, ext = os.path.splitext(filename)
                     output_filename = f"{name}{int(size[0]/10)}{ext}"
                     output_path = os.path.join(foldername, output_filename)
@@ -28,31 +27,25 @@ def process_images(root_folder):
 
 def remove_background_by_folder(folder_path):
     for file in os.listdir(folder_path):
-        if file.lower().endswith("5.png") or file.lower().endswith("0.png"):  # Check for image file types
-            input_image_path = os.path.join(folder_path, file)  # Construct full file path
+        if file.lower().endswith("5.png") or file.lower().endswith("0.png"):
+            input_image_path = os.path.join(folder_path, file)
             
-            # Read the input image
             with open(input_image_path, "rb") as input_file:
                 input_image = input_file.read()
 
-            # Remove the background
             output_image = remove(input_image)
 
-            # Save the output image
             output_file_path = os.path.join(folder_path, file.split(".")[0] + "0.png")
             with open(output_file_path, "wb") as output_file:
                 output_file.write(output_image)
 
 
 def remove_background_by_file(input_image_path):
-    # Read the input image
     with open(input_image_path, "rb") as input_file:
         input_image = input_file.read()
 
-    # Remove the background
     output_image = remove(input_image)
 
-    # Save the output image
     with open(os.path.join(input_image_path), "wb") as output_file:
         output_file.write(output_image)
 
@@ -62,17 +55,17 @@ def remove_images_with_suffix(folder_path):
         for file in files:
             if file.endswith("0.png"):
                 file_path = os.path.join(root, file)
-                os.remove(file_path)  # Remove the file
+                os.remove(file_path)
 
 
 def rename_images_with_suffix(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
-            if file.endswith(".png"):  # Check for files ending with "_rem.png"
+            if file.endswith(".png"):
                 file_path = os.path.join(root, file)
-                new_file_name = file[:-8] + ".png"  # Remove "_rem" and keep ".png"
+                new_file_name = file[:-8] + ".png"
                 new_file_path = os.path.join(root, new_file_name)
-                os.rename(file_path, new_file_path)  # Rename the file
+                os.rename(file_path, new_file_path)
 
 
 SERVER_FOLDER = r"C:\Coding\Projects\Server"

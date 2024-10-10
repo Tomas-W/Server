@@ -54,11 +54,11 @@ class User(server_db_.Model, UserMixin):
     tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     
     def __init__(self, email: str, username: str, password: str,
-                 fast_name: str, fast_code: str):
+                 fast_name: Optional[str] = None, fast_code: Optional[str] = None):
         self.email = email
         self.username = username
         self.password = self._get_hash(password)
-        self.fast_name = fast_name if fast_name else None
+        self.fast_name = fast_name.lower() if fast_name else None
         self.fast_code = self._get_hash(fast_code) if fast_code else None
     
     @staticmethod
@@ -67,6 +67,11 @@ class User(server_db_.Model, UserMixin):
     
     def set_password(self, plain_password: str) -> None:
         self.password = self._get_hash(plain_password)
+        server_db_.session.commit()
+    
+    def set_f_name(self, fast_name: str) -> None:
+        self.fast_name = fast_name.lower()
+        server_db_.session.commit()
 
     def increment_tot_logins(self):
         self.tot_logins += 1

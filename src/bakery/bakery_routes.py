@@ -29,15 +29,6 @@ def program(program: int):
 @bakery_bp.route("/bakery/info/<id_>")
 def info(id_: int):
     bakery_item = BakeryItem.get_item_by_id(id_)
-    nutri_a = "images/bakery/health/nutri_a.png"
-    nutri_b = "images/bakery/health/nutri_b.png"
-    nutri_c = "images/bakery/health/nutri_c.png"
-    nutri_d = "images/bakery/health/nutri_d.png"
-    nutri_e = "images/bakery/health/nutri_e.png"
-    vegan = "images/bakery/health/vegan.png"
-    not_vegan = "images/bakery/health/not_vegan.png"
-    lactose = "images/bakery/health/lactose.png"
-    not_lactose = "images/bakery/health/not_lactose.png"
 
     return render_template(
         "bakery/info.html",

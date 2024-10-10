@@ -26,7 +26,7 @@ def handle_user_logout() -> None:
 
 
 def fast_login(login_form: FastLoginForm):
-    user: User = get_user_by_fast_name(login_form.fast_name.data)
+    user: User = get_user_by_fast_name(login_form.fast_name.data.lower())
 
     if not user:
         return None, "Incorrect credentials"

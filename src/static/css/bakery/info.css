@@ -1,37 +1,165 @@
 .info-content {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
-.main-info {
+.top-info {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Center items horizontally */
-}
-
-.bakery-image-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center items horizontally */
+    justify-content: space-around;
 }
 
 .bakery-image {
-    width: 70%; /* Adjusted width to match inline style */
-    height: auto;
-    padding: 0; /* Removed padding to center the image */
+    /* width: 100%; this is inline!*/
+    /* height: 100%; this is inline!*/
+    max-width: 700px;
+    padding: 0 50px 0 50px;
+}
+
+.main-info {
+    padding: 75px 20px 35px 0;
+    padding-top: 75px;
+}
+.health-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.health-info {
+    padding-bottom: 15px;
 }
 
 .item-info {
-    text-align: center; 
+    padding: 0 20px 15px 0;
+    font-weight: 600;
+    font-size: var(--bakery_item_info_size);
+    color: var(--bakery-text);
 }
 
-.extra-info {
-    width: 100%;
+.bakery-devider {
+    margin: 0 60px 60px 75px;
+    border-bottom: 1px solid var(--auth_border_color);
+}
+
+.bottom-info {
+    margin-bottom: 50px;
+}
+
+.item-label {
+    color: var(--bakery-label);
+}
+
+.bottom-info-duo {
+    padding: 0 275px 20px 275px;
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Center items horizontally */
+    justify-content: space-between;
+}
+@media (max-width: 474.98px) {
+    .top-info {
+        display: block;
+    }
+    .main-info {
+        padding: 0 40px 0 40px;
+        display: flex;
+        justify-content: space-around;
+    }
+    .health-container {
+        order: 2;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+    }
+    .item-info {
+        padding-right: 40px;
+        font-size: calc(var(--bakery_item_info_size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 40px 40px 40px;
+    }
+    .bottom-info-duo {
+        padding: 0 0 0 45px;
+        display: block;
+    }
+    .item-label {
+        padding: 0;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .top-info {
+        display: block;
+    }
+    .main-info {
+        padding: 0 60px 0 60px;
+        display: flex;
+        justify-content: space-around;
+    }
+    .health-container {
+        order: 2;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+    }
+    .item-info {
+        padding-right: 50px;
+        font-size: calc(var(--bakery_item_info_size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 60px 40px 60px;
+    }
+    .bottom-info-duo {
+        padding: 0 20px 0 70px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .item-label {
+        padding-right: 0 0 0 60px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .top-info {
+        display: block;
+    }
+    .main-info {
+        padding: 0 60px 0 60px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .health-container {
+        display: flex;
+        flex-direction: column;
+        order: 2;
+        justify-content: space-between;
+    }
+    .item-info {
+        padding-right: 50px;
+        font-size: calc(var(--bakery_item_info_size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 60px 40px 60px;
+    }
+
+    .bottom-info-duo {
+        padding: 0 10px 20px 60px;
+        /* justify-content: space-around; */
+    }
+    .item-label {
+        padding-right: 0 0 0 60px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .item-info {
+        order: 1;
+        font-size: calc(var(--bakery_item_info_size) * 0.9);
+    }
+    .bottom-info-duo {
+        padding: 0 175px 20px 175px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1348.98px) {
+    .bottom-info-duo {
+        padding: 0 200px 20px 200px;
+    }
 }

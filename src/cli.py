@@ -274,13 +274,15 @@ def _auth_cli(app_: Flask) -> None:
             click.echo(f"No User with id {id_} found.")
             return
 
+        if v:
+            click.echo(f"Applying to: {user.username} with {col_name}: {user.fast_name}")
+        
         if not c and not click.confirm(
                 f"Are you sure you want to set '{col_name}' to '{fast_name}'?"):
             click.echo("Setting value cancelled.")
             return
 
-        setattr(user, col_name, fast_name)
-        server_db_.session.commit()
+        user.set_f_name(fast_name)
         if v:
             click.echo(repr(user))
 
@@ -312,6 +314,9 @@ def _auth_cli(app_: Flask) -> None:
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
+        
+        if v:
+            click.echo(f"Applying to: {user.username} with fast_name: {user.fast_name}")
 
         if not c and not click.confirm(
                 f"Are you sure you want to set '{col_name}' to '{fast_code}'?"):

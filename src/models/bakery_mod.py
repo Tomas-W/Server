@@ -42,6 +42,8 @@ class BakeryItem(server_db_.Model):
     price: Mapped[float] = mapped_column(Float, nullable=False)
     type: Mapped[str] = mapped_column(String(225), nullable=False)
     tags: Mapped[str] = mapped_column(String(225), nullable=False)
+    package_type: Mapped[Optional[str]] = mapped_column(String(75))
+    per_package: Mapped[Optional[str]] = mapped_column(String(75))
     rack_type: Mapped[Optional[str]] = mapped_column(String(75))
     per_rack: Mapped[Optional[str]] = mapped_column(String(75))
     defrost_time: Mapped[Optional[str]] = mapped_column(String(75))
@@ -61,11 +63,12 @@ class BakeryItem(server_db_.Model):
                                                  onupdate=lambda: datetime.now(CET))
 
     def __init__(self, name: str, category: str, program: int, nasa: int, price: float,
-                 type: str, tags: str, rack_type: Optional[str],
-                 per_rack: Optional[str],
-                 defrost_time: Optional[str], cooldown_time: str,
-                 make_halves: Optional[bool], vegan: bool, lactose_free: bool,
-                 nutri_score: str, contains: str, may_contain: str, image: str):
+                 type: str, tags: str, package_type: Optional[str],
+                 per_package: Optional[str], rack_type: Optional[str],
+                 per_rack: Optional[str], defrost_time: Optional[str],
+                 cooldown_time: str, make_halves: Optional[bool], vegan: bool,
+                 lactose_free: bool, nutri_score: str, contains: str,
+                 may_contain: str, image: str):
         self.name = name
         self.category = category
         self.program = program
@@ -73,6 +76,8 @@ class BakeryItem(server_db_.Model):
         self.price = price
         self.type = type
         self.tags = tags
+        self.package_type = package_type
+        self.per_package = per_package
         self.rack_type = rack_type
         self.per_rack = per_rack
         self.defrost_time = defrost_time

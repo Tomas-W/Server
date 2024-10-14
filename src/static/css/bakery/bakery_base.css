@@ -76,8 +76,8 @@
     user-select: none; /* Prevents text selection */
 }
 
-#toggle-top-panel:checked + .programs-link + .top-panel {
-    display: block;
+.programs-link:hover {
+    background-color: var(--bg-highlight-hover);
 }
 
 .programs-link::before {
@@ -90,6 +90,10 @@
     content: "\2193"; 
     margin-left: 15px;
     opacity: 0.6;
+}
+
+#toggle-top-panel:checked + .programs-link + .top-panel {
+    display: block;
 }
 
 #toggle-top-panel:checked + .programs-link::before {

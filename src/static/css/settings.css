@@ -6,6 +6,7 @@
     --gray4: rgba(57, 62, 64, 1);
 
     --bg-highlight: rgba(255, 255, 255, 0.03);
+    --bg-highlight-hover: rgba(255, 255, 255, 0.05);
 
     --nav_text: rgba(160, 160, 160, 1);
     --nav_text_hover: rgba(200, 200, 200, 1);

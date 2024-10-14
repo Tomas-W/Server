@@ -33,7 +33,9 @@ Info
                     </div>
                     <div class="item-container">
                         <p class="item-info">{{ bakery_item.name }}</p>
+                        {% if bakery_item.type %}
                         <p class="item-info">{{ " ".join(bakery_item.type.split("-")) }}</p>
+                        {% endif %}
                         <p class="item-info">{{ bakery_item.nasa }}</p>
                         <p class="item-info">€ {{ bakery_item.price }}</p>
                     </div>
@@ -44,29 +46,57 @@ Info
             </div>
             
             <div class="bottom-info">
+
+
+                {% if bakery_item.package_type is not none %}
+                <div class="bottom-info-duo">
+                    <p class="item-label item-info">Package type: </p>
+                    <p class="item-info">{{ bakery_item.package_type }}</p>
+                </div>
+                {% endif %}
+
+                {% if bakery_item.per_package is not none %}
+                <div class="bottom-info-duo">
+                    <p class="item-label item-info">Quantity per package: </p>
+                    <p class="item-info">{{ bakery_item.per_package }}</p>
+                </div>
+                {% endif %}
+                
+                {% if bakery_item.make_halves is not none %}
+                <div class="bottom-info-duo">
+                    <p class="item-label item-info">Make halves: </p>
+                    <p class="item-info">{{ "Yes" if bakery_item.make_halves else "No" }}</p>
+                </div>
+                {% endif %}
+
+                {% if bakery_item.rack_type is not none %}
                 <div class="bottom-info-duo">
                     <p class="item-label item-info">Baking surface: </p>
                     <p class="item-info">{{ bakery_item.rack_type }}</p>
                 </div>
-
+                {% endif %}
+                
+                {% if bakery_item.per_rack is not none %}
                 <div class="bottom-info-duo">
                     <p class="item-label item-info">Quantity per surface: </p>
                     <p class="item-info">{{ bakery_item.per_rack }}</p>
-
                 </div>
+                {% endif %}
 
+                {% if bakery_item.defrost_time is not none %}
                 <div class="bottom-info-duo">
                     <p class="item-label item-info">Defrost time: </p>
                     <p class="item-info">{{ bakery_item.defrost_time }}</p>
-
                 </div>
+                {% endif %}
 
+                {% if bakery_item.cooldown_time is not none %}
                 <div class="bottom-info-duo">
                     <p class="item-label item-info">Cooldown time: </p>
                     <p class="item-info">{{ bakery_item.cooldown_time }}</p>
-
                 </div>
-
+                {% endif %}
+                
                 <!-- <div class="bottom-info-duo">
 
                 </div> -->

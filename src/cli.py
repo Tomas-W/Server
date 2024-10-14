@@ -43,6 +43,8 @@ def _auth_cli(app_: Flask) -> None:
                 price=item_details["price"],
                 type="-".join(item_details["type"]),
                 tags="-".join(item_details["tags"]),
+                package_type=item_details["package_type"],
+                per_package=item_details["per_package"],
                 rack_type=item_details["rack_type"],
                 per_rack=item_details["per_rack"],
                 defrost_time=item_details["defrost_time"],

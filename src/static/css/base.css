@@ -1,26 +1,43 @@
-/* ********** Navbar ********** */
-#navbar-section {
+.navbar-section {
+    padding-top: 25px;
     background-color: var(--gray2);
-    padding: 10px 12%;
-    display: flex; /* Use flexbox for layout */
-    justify-content: space-between; /* Space between brand and links */
-    align-items: center; /* Center items vertically */
 }
 
-.navbar-collapse {
-    display: flex; /* Flexbox for horizontal layout */
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.navbar-brand {
-    color: var(--nav_text);
-    font-size: var(--nav_brand_size);
+.navbar-container {
+    width: calc(100% - 2*var(--container-padding));
+    padding: var(--navbar-padding);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--gray3);
+}
+
+.navbar-s-container {
+    display: none;
+    width: calc(100% - 2*var(--container-padding));
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--gray3);
+    z-index: 100;
+}
+
+.navbar-links {
+    gap: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .nav-link {
     color: var(--nav_text);
     font-size: var(--nav_link_size);
-    margin-left: 10px; /* Space between links */
-    text-decoration: none; /* Remove underline */
+    text-decoration: none;
 }
 
 .nav-link:hover {
@@ -30,22 +47,84 @@
     color: var(--nav_text_hover);
 }
 
-#logout {
+.navbar-s-link {
+    display: none;
+    padding: var(--navbar-padding);
+    background-color: var(--bg-highlight);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--bakery_side_panel_size);
+    color: var(--bakery-text);
+    user-select: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-s-link:hover {
+    background-color: var(--bg-highlight-hover);
+    color: var(--bakery-text-hover);
+}
+
+.navbar-s-menu:hover {
+    background-color: var(--bg-highlight-hover);
+}
+
+.navbar-s-menu::before {
+    content: var(--arrow-down); 
+    margin-right: 15px;
+    opacity: 0.6;
+}
+
+.navbar-s-menu::after {
+    content: var(--arrow-down); 
+    margin-left: 15px;
+    opacity: 0.6;
+}
+
+.navbar-s-content {
+    display: none;
+    width: calc(100% - 2*var(--container-padding));
+    position: absolute;
+    left: var(--container-padding);
+    border-bottom: 1px solid var(--gray3);
+    border-left: 1px solid var(--gray3);
+    border-right: 1px solid var(--gray3);
+    background-color: var(--gray2);
+}
+
+#toggle-navbar-s:checked + .navbar-s-link + .navbar-s-content {
+    display: block;
+}
+
+#toggle-navbar-s:checked + .navbar-s-link {
+    background-color: var(--bg-highlight-hover);
+}
+
+#toggle-navbar-s:checked + .navbar-s-link::before {
+    content: var(--arrow-up);
+}
+
+#toggle-navbar-s:checked + .navbar-s-link::after {
+    content: var(--arrow-up);
+}
+
+.logout {
     color: var(--nav_text);
     font-size: var(--nav_link_size);
-    margin-left: 10px; /* Space before logout */
+    margin-left: 10px;
 }
 
 
 .navbar-brand:hover {
     text-decoration: underline;
     text-decoration-thickness: 2px;
-    text-underline-offset: 8px;  /* Increased from 5px to 8px */
+    text-underline-offset: 8px;
     color: var(--nav_text_hover);
 }
 
 
-.home-hr {
+.nav-hr {
     opacity: 1;
     background-color: var(--gray3);
     border: none;
@@ -55,9 +134,8 @@
     padding: 0;
 }
 
-/* ********** Footer ********** */
 
-#footer-section {
+.footer-section {
     background-color: var(--dark);
     width: 100%;
     padding: 25px 0;
@@ -77,4 +155,38 @@
     font-size: var(--footer_link_size);
 }
 
-/* ********** Media ********** */
+@media (max-width: 474.98px) {
+    .navbar-container {
+        display: none;
+    }
+    .navbar-s-container {
+        display: block;
+    }
+    .navbar-s-link {
+        display: block;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .navbar-container {
+        display: none;
+    }
+    .navbar-s-container {
+        display: block;
+    }
+    .navbar-s-link {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+}
+
+@media (min-width: 1200px) {
+
+}

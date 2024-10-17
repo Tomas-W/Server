@@ -5,6 +5,15 @@
     --gray3: rgba(42, 45, 47, 1);
     --gray4: rgba(57, 62, 64, 1);
 
+    --arrow-up: "\2191";
+    --arrow-down: "\2193";
+
+    --container-padding: 7%;
+    --navbar-padding: 15px 55px 15px 55px;
+    --border_color: var(--gray3);
+    --border_color_hover: rgba(255, 255, 255, 1);
+    --underline_white_0: rgba(255, 255, 255, 0);
+    --underline_white_100: rgba(255, 255, 255, 1);
     --bg-highlight: rgba(255, 255, 255, 0.03);
     --bg-highlight-hover: rgba(255, 255, 255, 0.05);
 
@@ -12,23 +21,21 @@
     --nav_text_hover: rgba(200, 200, 200, 1);
     --nav_brand_size: 1.8rem;
     --nav_link_size: 1.2rem;
-
     --footer_link_size: 0.8rem;
 
     --auth_text: rgba(160, 160, 160, 1);
     --auth_text_hover: rgba(200, 200, 200, 1);
     --auth_input_text:rgba(160, 160, 160, 1);
     --auth_input_text_hover:rgba(220, 220, 220, 1);
-    --auth_border_color: var(--gray3);
-    --auth_border_color_hover: rgba(160, 160, 160, 1);
     --auth_btn_text: rgba(200, 200, 200, 1);
     --auth_btn_text_hover: rgba(255, 255, 255, 1);
-    --auth_btn_text_size: 1.1rem;
+    --auth_btn_text_size: 1.25rem;
     --auth_flash_size: 1.1rem;
     --auth_form_error: rgba(160, 160, 160, 1);
     --auth_form_error_size: 0.8rem;
 
     --bakery_side_panel_size: 1.2rem;
+    --bakery_top_panel_size: 1.1rem;
     --bakery_item_info_size: 1.1rem;
     --bakery-text: rgba(160, 160, 160, 1);
     --bakery-text-hover: rgba(200, 200, 200, 1);

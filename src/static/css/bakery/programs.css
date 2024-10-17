@@ -31,10 +31,16 @@
     color: inherit;
 }
 
+.grid-item:hover {
+    background-color: var(--bg-highlight);
+}
+
 .item-name {
     display: block;
     text-align: center;
-    padding: 15px 25px 0 25px;
+    padding: 25px 25px 0 25px;
+    font-weight: 600;
+    font-size: var(--bakery_item_info_size);
 }
 
 .bakery-image {

@@ -47,7 +47,6 @@ Info
             
             <div class="bottom-info">
 
-
                 {% if bakery_item.package_type is not none %}
                 <div class="bottom-info-duo">
                     <p class="item-label item-info">Package type: </p>
@@ -96,29 +95,56 @@ Info
                     <p class="item-info">{{ bakery_item.cooldown_time }}</p>
                 </div>
                 {% endif %}
-                
-                <!-- <div class="bottom-info-duo">
 
-                </div> -->
-
-                <!-- <div class="bottom-info-duo">
-
+                {% if bakery_item.contains is not none %}
+                <div class="bottom-info-duo allgeries">
+                    <p class="item-label item-info">Contains: </p>
+                    <div class="allergy-wrapper">
+                        {% for item in bakery_item.contains.split("-") %}
+                        <p class="item-info">{{ item }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
+                {% endif %}
 
-                <div class="bottom-info-duo">
-
+                {% if bakery_item.may_contain is not none %}
+                <div class="bottom-info-duo allgeries">
+                    <p class="item-label item-info">May contain: </p>
+                    <div class="allergy-wrapper">
+                        {% for item in bakery_item.may_contain.split("-") %}
+                        <p class="item-info">{{ item }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
-
-                <div class="bottom-info-duo">
-
-                </div>
-
-                <div class="bottom-info-duo">
-
-                </div>
-
+                {% endif %}
 
             </div>
+
+            <!-- <div class="allergies-container">
+                <div class="allergies-content">
+                    <div class="contains allergies">
+                        <p class="allergy-label">Contains</p>
+
+                        {% if bakery_item.contains is not none %}
+                            {% for item in bakery_item.contains.split("-") %}
+                                <p class="allergy-item">{{ item }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="may-contain allergies">
+                        <p class="allergy-label">May contain</p>
+
+                        {% if bakery_item.may_contain is not none %}
+                            {% for item in bakery_item.may_contain.split("-") %}
+                                <p class="allergy-item">{{ item }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+
+                </div>
+            </div> -->
 
         </div>        
     </div>

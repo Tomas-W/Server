@@ -9,13 +9,12 @@
     <!-- Fav Icon -->
     <!-- Flat Icon -->
     <!-- Font awesome -->
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-          crossorigin="anonymous">
     <!-- jQuery scripts -->
+    <!-- Attribute 
+     flaticon
+     icons8
+     -->
+
     <!-- Style sheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -40,30 +39,51 @@
 </head>
 <body>
 
-
-<section id="navbar-section">
-
-    <!-- <nav id="navbar-section">
-        <a class="navbar-brand" href="NONE">{{ username }}</a>
-        <div class="navbar-collapse">
-            <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
-            <a class="nav-link" href="#">Data</a>
-            <a class="nav-link" href="#">Games</a>
-            <a class="nav-link" href="#">Tools</a>
-            <a id="logout" class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+<section class="navbar-section">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a class="profile nav-link" href="{{ url_for('bakery.programs') }}">
+                <img class="profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
+            </a>
+            
+            <div class="navbar-links">
+                <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
+                <a class="nav-link" href="#">Data</a>
+                <a class="nav-link" href="#">Games</a>
+                <a class="nav-link" href="#">Tools</a>
+            </div>
+            
+            <div class="logout">
+                <a class="logout-link nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
         </div>
-    </nav> -->
-    
-</section>
-<hr class="home-hr">
 
+        <div class="navbar-s-container">
+
+            <input type="checkbox" id="toggle-navbar-s" style="display: none;">
+            <label class="navbar-s-link navbar-s-menu" for="toggle-navbar-s">Menu</label>
+            
+            <div class="navbar-s-content">
+                <ul class="navbar-s-links">
+                    <li><p class="navbar-s-link"><a href="{{ url_for('bakery.programs') }}">Programs</a></p></li>
+                    <li><p class="navbar-s-link"><a href="#">Data</a></p></li>
+                    <li><p class="navbar-s-link"><a href="#">Games</a></p></li>
+                    <li><p class="navbar-s-link"><a href="#">Tools</a></p></li>
+                    <li><p class="navbar-s-link"><a href="{{ url_for('auth.logout') }}">Logout</a></p></li>
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+
+</section>
 
 {% block content %}
 
 {% endblock %}
 
 
-<section id="footer-section">
+<section class="footer-section">
 
     <div class="footer-section-container">
 
@@ -79,12 +99,6 @@
 
 
 </section>
-
-<!-- Bootstrap scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
-
 
 </body>
 </html>

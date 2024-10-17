@@ -29,7 +29,7 @@
 }
 
 .item-info {
-    padding: 0 20px 15px 0;
+    padding: 0 20px 15px 0;  /* because linked*/
     font-weight: 600;
     font-size: var(--bakery_item_info_size);
     color: var(--bakery-text);
@@ -37,7 +37,7 @@
 
 .bakery-devider {
     margin: 0 60px 60px 75px;
-    border-bottom: 1px solid var(--auth_border_color);
+    border-bottom: 1px solid var(--border_color);
 }
 
 .bottom-info {
@@ -53,6 +53,11 @@
     display: flex;
     justify-content: space-between;
 }
+
+.allergy-wrapper {
+    text-align: right;
+}
+
 @media (max-width: 474.98px) {
     .top-info {
         display: block;
@@ -82,6 +87,9 @@
     .item-label {
         padding: 0;
     }
+    .allergy-wrapper {
+        text-align: left;
+    }
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
@@ -107,7 +115,7 @@
         margin: 40px 60px 40px 60px;
     }
     .bottom-info-duo {
-        padding: 0 20px 0 70px;
+        padding: 0 20px 0 60px;
         display: flex;
         justify-content: space-between;
     }
@@ -155,6 +163,8 @@
     .bottom-info-duo {
         padding: 0 155px 20px 155px;
     }
+    .allergy-wrapper {
+        order: 2;
 }
 
 @media (min-width: 1200px) and (max-width: 1348.98px) {

@@ -16,6 +16,8 @@
     --underline_white_100: rgba(255, 255, 255, 1);
     --bg-highlight: rgba(255, 255, 255, 0.03);
     --bg-highlight-hover: rgba(255, 255, 255, 0.05);
+    --test: rgba(30, 30, 30, 1);
+    --test-hover: rgba(35, 35, 35, 1);
 
     --nav_text: rgba(160, 160, 160, 1);
     --nav_text_hover: rgba(200, 200, 200, 1);

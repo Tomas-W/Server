@@ -1,6 +1,6 @@
 .navbar-section {
     padding-top: 25px;
-    background-color: var(--gray2);
+    background-color: var(--gray1);
 }
 
 .navbar {
@@ -16,6 +16,7 @@
     justify-content: space-between;
     align-items: center;
     border: 1px solid var(--gray3);
+    background-color: var(--gray2);
 }
 
 .navbar-s-container {
@@ -50,7 +51,7 @@
 .navbar-s-link {
     display: none;
     padding: var(--navbar-padding);
-    background-color: var(--bg-highlight);
+    background-color: var(--test);
     text-align: center;
     text-decoration: none;
     cursor: pointer;
@@ -62,12 +63,12 @@
 }
 
 .navbar-s-link:hover {
-    background-color: var(--bg-highlight-hover);
+    background-color: var(--test-hover);
     color: var(--bakery-text-hover);
 }
 
 .navbar-s-menu:hover {
-    background-color: var(--bg-highlight-hover);
+    /* background-color: var(--bg-highlight-hover); */
 }
 
 .navbar-s-menu::before {
@@ -91,22 +92,6 @@
     border-left: 1px solid var(--gray3);
     border-right: 1px solid var(--gray3);
     background-color: var(--gray2);
-}
-
-#toggle-navbar-s:checked + .navbar-s-link + .navbar-s-content {
-    display: block;
-}
-
-#toggle-navbar-s:checked + .navbar-s-link {
-    background-color: var(--bg-highlight-hover);
-}
-
-#toggle-navbar-s:checked + .navbar-s-link::before {
-    content: var(--arrow-up);
-}
-
-#toggle-navbar-s:checked + .navbar-s-link::after {
-    content: var(--arrow-up);
 }
 
 .logout {
@@ -154,6 +139,54 @@
     color: var(--light);
     font-size: var(--footer_link_size);
 }
+
+
+#toggle-top-panel:checked ~ .programs-content {
+    filter: blur(3px);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-top-panel:not(:checked) ~ .programs-content {
+    filter: blur(0);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-top-panel:checked ~ .top-info {
+    filter: blur(3px);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-top-panel:not(:checked) ~ .top-info {
+    filter: blur(0);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-top-panel:checked ~ .bottom-info {
+    filter: blur(3px);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-top-panel:not(:checked) ~ .bottom-info {
+    filter: blur(0);
+    transition: filter 0.2s ease-in-out;
+}
+
+#toggle-navbar-s:checked + .navbar-s-link + .navbar-s-content {
+    display: block;
+}
+
+#toggle-navbar-s:checked + .navbar-s-link {
+    background-color: var(--test-hover);
+}
+
+#toggle-navbar-s:checked + .navbar-s-link::before {
+    content: var(--arrow-up);
+}
+
+#toggle-navbar-s:checked + .navbar-s-link::after {
+    content: var(--arrow-up);
+}
+
 
 @media (max-width: 474.98px) {
     .navbar-container {

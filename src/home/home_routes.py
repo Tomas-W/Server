@@ -1,8 +1,9 @@
+from pprint import pprint
+
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
 
-from src.home.home_route_utils import get_all_news
-
+from src.models.news_mod import get_all_news
 home_bp = Blueprint("home", __name__)
 
 
@@ -14,7 +15,10 @@ def home():
         username: str = current_user.username
     except AttributeError:
         username = "NoLogin"
+        
     all_news = get_all_news()
+    
+    pprint(all_news)
 
     return render_template(
         "home/home.html",

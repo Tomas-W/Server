@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Home
+Info
 {% endblock %}
 
 {% block scripts %}
@@ -10,25 +10,33 @@ Home
 {% block content %}
 <section class="home-section">
     <div class="home-container">
+        
+        {% include "home/side_panel.html" %}
         <div class="home-content">
-            <!-- Content goes here -->    
-        </div>
-        <div class="side-panel">
-            <ul class="side-panel-list">
-                <li><a href="#">Program 1</a></li>
-                <li><a href="#">Program 2</a></li>
-                <li><a href="#">Program 3</a></li>
-                <li><a href="#">Program 4</a></li>
-                <li><a href="#">Program 5</a></li>
-                <li><a href="#">Program 6</a></li>
-                <li><a href="#">Program 7</a></li>
-                <li><a href="#">Program 8</a></li>
-                <li><a href="#">Program 9</a></li>
-                <li><a href="#">Program 10</a></li>
-                <li><a href="#">Program 11</a></li>
-                <li><a href="#">Program 12</a></li>
-            </ul>
-        </div>
+            <input type="checkbox" id="toggle-top-panel" style="display: none;">
+            <label class="news-link" for="toggle-top-panel">News</label>
+
+                {% include "home/top_panel.html" %}
+            
+            <div class="news-container">
+                
+                    {% for news in all_news %}
+                    <div class="news-item outline">
+                        <div class="news-header">
+                            <p class="news-code code-outline outline-padding {{ news.color }}">{{ news.code }}</p>
+                            <p class="news-title outline-padding">{{ news.title }}</p>
+                            <p class="read-more more-outline outline-padding">Read..</p>
+                        </div>
+
+                        <p class="news-important">{{ news.important }}</p>
+                    </div>
+                    {% endfor %}
+
+
+            </div>
+
+        </div>        
     </div>
 </section>
 {% endblock %}
+

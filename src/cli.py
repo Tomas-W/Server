@@ -6,7 +6,8 @@ from src.bakery.bakery_items import get_bakery_dict
 from src.extensions import server_db_, argon2_
 from src.models.auth_mod import User
 from src.models.bakery_mod import BakeryItem
-
+from src.home.news_items import _get_news_dict
+from src.models.news_mod import News
 
 def _auth_cli(app_: Flask) -> None:
     """Configures authentication CLI commands."""
@@ -15,6 +16,39 @@ def _auth_cli(app_: Flask) -> None:
     def auth() -> None:
         """CLI functionality for the User table"""
         pass
+    
+    @auth.command("add-news")
+    @click.option("--c", is_flag=True,
+                  help="Confirm User deletion without prompting.")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    def add_news(c: bool, v: bool) -> None:
+        """
+        Adds news items to the News Table.
+        """
+        dict_ = _get_news_dict()
+        item_count = len(dict_)
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to add {item_count} items to the News Table?"):
+            click.echo("Adding News Items cancelled.")
+            return
+
+        for item_name, item_details in dict_.items():
+            news_item = News(
+                title=item_details["title"],
+                code=item_details["code"],
+                important=item_details["important"],
+                grid_cols=item_details["grid_cols"],
+                grid_rows=item_details["grid_rows"],
+                info_cols=item_details["info_cols"],
+                info_rows=item_details["info_rows"],
+                author=item_details["author"]
+            )
+            server_db_.session.add(news_item)
+        server_db_.session.commit()
+        
+        if v:
+            click.echo(f"Successfully added {item_count} items to the News Table.")
 
     @auth.command("add-bakery")
     @click.option("--c", is_flag=True,

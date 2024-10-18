@@ -10,6 +10,20 @@ from config.settings import CET
 from src.extensions import server_db_
 
 
+def get_program_items(program: int):
+        result = server_db_.session.execute(
+            select(BakeryItem).filter_by(program=program)
+        ).scalars().all()
+        return result
+
+
+def get_item_by_id(id_: int):
+        result = server_db_.session.execute(
+            select(BakeryItem).filter_by(id=id_)
+        ).scalar_one_or_none()
+        return result
+
+
 class BakeryItem(server_db_.Model):
     """
     Stores the bakery item data and their attributes.
@@ -97,17 +111,3 @@ class BakeryItem(server_db_.Model):
                 f" category={self.category},"
                 f" program={self.program},"
                 f" nasa={self.nasa},")
-    
-    @staticmethod
-    def get_all_items(program: int):
-        result = server_db_.session.execute(
-            select(BakeryItem).filter_by(program=program)
-        ).scalars().all()
-        return result
-    
-    @staticmethod
-    def get_item_by_id(id_: int):
-        result = server_db_.session.execute(
-            select(BakeryItem).filter_by(id=id_)
-        ).scalar_one_or_none()
-        return result

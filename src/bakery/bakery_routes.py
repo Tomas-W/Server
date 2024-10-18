@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import current_user
-from src.models.bakery_mod import BakeryItem
+from src.models.bakery_mod import get_program_items, get_item_by_id
 
 
 bakery_bp = Blueprint("bakery", __name__)
@@ -17,7 +17,7 @@ def programs():
 @bakery_bp.route("/bakery/program/<program>")
 def program(program: int):
     
-    bakery_items = BakeryItem.get_all_items(program)
+    bakery_items = get_program_items(program)
 
     return render_template(
         "bakery/programs.html",
@@ -28,7 +28,7 @@ def program(program: int):
 
 @bakery_bp.route("/bakery/info/<id_>")
 def info(id_: int):
-    bakery_item = BakeryItem.get_item_by_id(id_)
+    bakery_item = get_item_by_id(id_)
 
     return render_template(
         "bakery/info.html",

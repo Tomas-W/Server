@@ -33,8 +33,8 @@
 
 .auth_flash p {
     margin: 0;
-    color: var(--auth_text);
-    font-size: var(--auth_flash_size);
+    color: var(--text-color);
+    font-size: var(--auth-flash-size);
 }
 
 .auth-form {
@@ -49,16 +49,16 @@
     padding: 7px 0;
     flex-grow: 1;
     border: none;
-    border-bottom: 1px solid var(--border_color);
+    border-bottom: 1px solid var(--border-color);
     outline: none;
     background-color: transparent;
-    color: var(--auth_input_text);
+    color: var(--text-color);
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .auth_input_field:hover {
-    border-bottom-color: var(--auth_border_color_hover);
-    color: var(--auth_input_text_hover);
+    border-bottom-color: var(--border-color-hover);
+    color: var(--text-color-hover);
 }
 
 .form-item {
@@ -76,7 +76,7 @@
     padding-right: 3px;
     right: 0;
     top: 50%;
-    color: var(--auth_form_error);
+    color: var(--text-color);
     font-size: var(--auth_form_error_size);
     white-space: nowrap;
     transform: translateY(-50%);
@@ -86,23 +86,23 @@
     margin: 0 5px 0 0;
     padding: 7px 0;
     cursor: pointer;
-    color: var(--auth_input_text);
+    color: var(--text-color);
     opacity: 0.5;
     transition: color 0.3s ease, opacity 0.3s ease; // Added opacity transition
 }
 
 .remember-devider {
-    border-bottom: 1px solid var(--border_color);
+    border-bottom: 1px solid var(--border-color);
     transition: border-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .remember-devider:hover {
-    border-bottom-color: var(--border_color_hover);
+    border-bottom-color: var(--border-color-hover);
     cursor: pointer;
 }
 
 .remember-devider:hover .remember-me {
-    color: var(--auth_input_text_hover);
+    color: var(--text-color-hover);
 }
 
 .last-form-item {
@@ -114,23 +114,23 @@
     margin: 0 auto;
     padding: 35px 0;
     cursor: pointer;
-    font-size: var(--auth_btn_text_size);
-    color: var(--auth_btn_text);
+    font-size: var(--auth-btn-text-size);
+    color: var(--button-color);
     transition: color 0.3s ease-in-out;
 }
 
 .auth-btn:hover {
-    color: var(--auth_btn_text_hover);
+    color: var(--white-100);
 }
 
 .auth-devider {
     margin: 0;
-    border-bottom: 1px solid var(--border_color);
+    border-bottom: 1px solid var(--border-color);
     transition: border-color 0.3s ease-in-out;
 }
 
 .auth-devider:hover {
-    border-bottom-color: var(--border_color_hover);
+    border-bottom-color: var(--border-color-hover);
 }
 
 .auth-options-container {
@@ -144,7 +144,7 @@
     display: inline-block;
     cursor: pointer;
     text-decoration: none;
-    color: var(--auth_text);
+    color: var(--text-color);
     transition: color 0.3s ease-in-out;
 }
 
@@ -159,19 +159,19 @@
     right: 0;
     height: 1px;
     bottom: 1px;
-    background-color: var(--auth_text);
+    background-color: var(--text-color);
     transition: width 0.3s ease-in-out;
 }
 
 .auth-options-content:hover {
-    color: var(--auth_text_hover);
+    color: var(--text-color-hover);
 }
 
 .auth-options-content:hover::after {
     width: 100%;
     left: 0;
     right: auto;
-    background-color: var(--auth_text_hover);
+    background-color: var(--text-color-hover);
 }
 
 @media (max-width: 474.98px) {

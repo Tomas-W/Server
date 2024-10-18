@@ -5,8 +5,8 @@
 .image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 40px;
-    padding: 40px;
+    gap: 50px;
+    padding: 75px;
 }
 
 .grid-item {
@@ -17,7 +17,7 @@
     align-items: center;
     box-sizing: border-box;
     border: 1px solid var(--gray3);
-    color: var(--bakery-text);
+    color: var(--text-color);
 }
 
 .grid-item a {
@@ -33,6 +33,7 @@
 
 .grid-item:hover {
     background-color: var(--bg-highlight);
+    color: var(--text-color-hover);
 }
 
 .item-name {
@@ -40,10 +41,32 @@
     text-align: center;
     padding: 25px 25px 0 25px;
     font-weight: 600;
-    font-size: var(--bakery_item_info_size);
+    font-size: var(--bakery-item-info-size);
 }
 
 .bakery-image {
     padding: 20px;
+}
 
+
+@media (max-width: 474.98px) {
+    .image-grid {
+        gap: 40px;
+        padding: 40px;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .image-grid {
+        gap: 40px;
+        padding: 40px;
+    }
+
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .image-grid {
+        gap: 50px;
+        padding: 50px;
+    }
 }

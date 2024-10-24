@@ -12,7 +12,8 @@ def random_dates(count=20):
 def _get_news_dict() -> dict:
     data = {
         1: {
-            "title": "Retourname",
+            "header": "Retourname",
+            "title": "Retourname Streeckgenoten Grillworst naturel",
             "code": 999,
             "important": "Je moet onderstaand artikel onmiddellijk uit de verkoop nemen. Zorg dat de winkelvoorraad op 0 (nul) staat. De allergenen declaratie klopt niet.",
             "grid_cols": ["Nasa", "Artikelomschrijving", "Verpakking/inhoud"],
@@ -25,12 +26,12 @@ def _get_news_dict() -> dict:
                           "Je zet de CBL-fusten op een aparte container en je doet er een rode code 999 containerhoes overheen. Je stuurt de artikelen met de eerstvolgende reguliere DC-wagen retour.",
                           "Je controleert de afleveringen de eerstvolgende 24 uur ook op bovengenoemd artikel. Als je het nog geleverd krijgt, stuur je ook deze artikelen retour en zet je de voorraad (opnieuw) op nul. Nog geleverde artikelen plaats je ook in rode zakken in 23cm fust onder een rode code 999 containerhoes. Je ontvangt in de komende 4 dagen nog 2 keer een retourafspraak voor het retoursturen van eventuele leveringen in de komende 24 uur.",
                           "Als klanten het artikel terugbrengen naar de winkel dan registreer je dat op OKG-vergoeden. Daarmee wordt het artikel automatisch administratief vernietigd. Vervolgens gooi je het artikel weg in de vuilnisbak.",
-                          "We rapporteren aan de Nederlandse Voedsel- en Waren Autoriteit (NVWA) en het Belgisch Federaal Agentschap voor de veiligheid van de voedselketen (FAVV) wat onze actuele administratieve winkelvoorraad is. Op basis van dit rapport deelt de NVWA/FAVV boetes uit als de code 999 niet juist blijkt uitgevoerd in winkels. Het is dus (naast de veiligheid voor consumenten) heel belangrijk dat de winkelvoorraad op 0 staat.",
-                          "Een extern callcenter belt alle winkels om te wijzen op dit bericht. De medewerkers van het callcenter hebben geen inhoudelijke informatie. Je kunt met vragen niet bij hen terecht. Als je inhoudelijke vragen hebt, maak hiervoor dan een case aan in Questie"],
-            "author": "Halil Suzulmus / Dionne Vonk",
+                          "We rapporteren aan de Nederlandse Voedsel- en Waren Autoriteit (NVWA) en het Belgisch Federaal Agentschap voor de veiligheid van de voedselketen (FAVV) wat onze actuele administratieve winkelvoorraad is. Op basis van dit rapport deelt de NVWA/FAVV boetes uit als de code 999 niet juist blijkt uitgevoerd in winkels. Het is dus (naast de veiligheid voor consumenten) heel belangrijk dat de winkelvoorraad op 0 staat. \nEen extern callcenter belt alle winkels om te wijzen op dit bericht. De medewerkers van het callcenter hebben geen inhoudelijke informatie. Je kunt met vragen niet bij hen terecht. Als je inhoudelijke vragen hebt, maak hiervoor dan een case aan in Questie"],
+            "author": "Halil Suzulmus & Dionne Vonk",
         },
         2: {
-            "title": "Retourname",
+            "header": "Retourname",
+            "title": "Retourname 3 varianten filet americain",
             "code": 999,
             "important": "Je moet onderstaande artikelen onmiddellijk uit de verkoop nemen. Zorg dat de winkelvoorraad op 0 (nul) staat. Er is gevaar voor de volksgezondheid.",
             "grid_cols": ["Nasa", "Artikelomschrijving", "Verpakking/inhoud"],
@@ -44,13 +45,12 @@ def _get_news_dict() -> dict:
                           "De 999 procedure is pas volledig uitgevoerd zodra de voorraad op 0 (nul) staat. Je controleert na het compleet melden van de retourafspraak of de voorraad daadwerkelijk op nul staat. Als dit niet het geval is tel je de voorraad handmatig naar nul. ",
                           "Je zet de CBL-fusten op een aparte container en je doet er een rode code 999 containerhoes overheen. Bij verschillende code 999 retourafspraken tegelijkertijd zet je de artikelen per retourafspraak op een aparte container. Je stuurt de artikelen met de eerstvolgende reguliere DC-wagen retour.",
                           "Je controleert de afleveringen de eerstvolgende 24 uur ook op bovengenoemde artikelen. Als je het nog geleverd krijgt, stuur je ook deze artikelen retour en zet je de voorraad (opnieuw) op nul. Nog geleverde artikelen plaats je ook in rode zakken in 23cm fust onder een rode code 999 containerhoes. Je ontvangt in de komende 4 dagen nog 2 keer een retourafspraak voor het retoursturen van eventuele leveringen in de komende 24 uur.",
-                          "Als klanten het artikel terugbrengen naar de winkel dan registreer je dat op OKG-vergoeden. Daarmee wordt het artikel automatisch administratief vernietigd. Vervolgens gooi je het artikel weg in de vuilnisbak. Klanten kunnen ook terugkomen met het artikel NLW Duitse biefstuk (nasanummer 60793). De winkels hebben hier geen voorraad meer van maar klanten kunnen dit artikel nog wel thuis hebben en retour brengen.",
-                          "We rapporteren aan de Nederlandse Voedsel- en Waren Autoriteit (NVWA) en het Belgisch Federaal Agentschap voor de veiligheid van de voedselketen (FAVV) wat onze actuele administratieve winkelvoorraad is. Op basis van dit rapport deelt de NVWA/FAVV boetes uit als de code 999 niet juist blijkt uitgevoerd in winkels. Het is dus (naast de veiligheid voor consumenten) heel belangrijk dat de winkelvoorraad op 0 staat.",
-                          "Een extern callcenter belt alle winkels om te wijzen op dit bericht. De medewerkers van het callcenter hebben geen inhoudelijke informatie. Je kunt met vragen niet bij hen terecht. Als je inhoudelijke vragen hebt, maak hiervoor dan een case aan in Questie."],
-            "author": "Halil Suzulmus / Fred Heijman",
+                          "Als klanten het artikel terugbrengen naar de winkel dan registreer je dat op OKG-vergoeden. Daarmee wordt het artikel automatisch administratief vernietigd. Vervolgens gooi je het artikel weg in de vuilnisbak. Klanten kunnen ook terugkomen met het artikel NLW Duitse biefstuk (nasanummer 60793). De winkels hebben hier geen voorraad meer van maar klanten kunnen dit artikel nog wel thuis hebben en retour brengen. \nEen extern callcenter belt alle winkels om te wijzen op dit bericht. De medewerkers van het callcenter hebben geen inhoudelijke informatie. Je kunt met vragen niet bij hen terecht. Als je inhoudelijke vragen hebt, maak hiervoor dan een case aan in Questie."],
+            "author": "Halil Suzulmus & Fred Heijman",
         },
         3: {
-            "title": "WORP",
+            "header": "WORP",
+            "title": "WORP week 35 Bakkerij update",
             "code": 111,
             "important": "We krijgen erg veel positieve geluiden over de nieuwe WORP van onze collega’s en klanten. Zo zien we veel verkopen van de bakkerpuntjes in de winkels waar deze goed gepresenteerd zijn! Ook Streeckgenoten laat een mooie vlucht in omzet zien.",
             "grid_cols": [],
@@ -64,7 +64,8 @@ def _get_news_dict() -> dict:
             "author": "Team bakkerij",
         },
         4: {
-            "title": "Multibuy",
+            "header": "Multibuy",
+            "title": "Permanente multibuy petit croissant en bakkersbroodjes",
             "code": 111,
             "important": "Deze week (week 38) is weer de multibuy gestart met een permanente actie op de Bakkersbroodjes en AH Petit Croissant.",
             "grid_cols": ["Nasa", "Artikel"],
@@ -76,7 +77,8 @@ def _get_news_dict() -> dict:
             "author": "Team bakkerij",
         },
         5: {
-            "title": "Bonuskorting",
+            "header": "Bonuskorting",
+            "title": "Mogelijk problemen met verrekenen bonuskorting 23-8 (3)",
             "code": 222,
             "important": "De problemen met het verrekenen van bonus(box)korting en koopzegels zijn opgelost.",
             "grid_cols": [],
@@ -94,3 +96,4 @@ def _get_news_dict() -> dict:
 def get_news_items() -> list[dict]:
     data = _get_news_dict()
     return [data[key] for key in sorted(data.keys())]
+

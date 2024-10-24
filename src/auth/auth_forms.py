@@ -85,7 +85,10 @@ class FastLoginForm(FlaskForm):
     )
     fast_code = PasswordField(
         label="Login",
-        render_kw={"placeholder": "Login"},
+        render_kw={
+            "placeholder": "Login",
+            "inputmode": "numeric",
+        },
         validators=[
             DataRequired(message="Code is required"),
             Length(min=5, max=5, message="Code must be 5 characters"),
@@ -158,4 +161,3 @@ class ResetPasswordForm(FlaskForm):
     )
     form_type = HiddenField(default="password")
     submit = SubmitField(label="Reset")
-    

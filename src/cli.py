@@ -6,7 +6,7 @@ from src.bakery.bakery_items import get_bakery_dict
 from src.extensions import server_db_, argon2_
 from src.models.auth_mod import User
 from src.models.bakery_mod import BakeryItem
-from src.home.news_items import _get_news_dict
+from src.news.news_items import _get_news_dict
 from src.models.news_mod import News
 
 def _auth_cli(app_: Flask) -> None:
@@ -35,6 +35,7 @@ def _auth_cli(app_: Flask) -> None:
 
         for item_name, item_details in dict_.items():
             news_item = News(
+                header=item_details["header"],
                 title=item_details["title"],
                 code=item_details["code"],
                 important=item_details["important"],
@@ -42,7 +43,7 @@ def _auth_cli(app_: Flask) -> None:
                 grid_rows=item_details["grid_rows"],
                 info_cols=item_details["info_cols"],
                 info_rows=item_details["info_rows"],
-                author=item_details["author"]
+                author=item_details["author"],
             )
             server_db_.session.add(news_item)
         server_db_.session.commit()

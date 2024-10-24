@@ -114,7 +114,7 @@
     margin: 0 auto;
     padding: 35px 0;
     cursor: pointer;
-    font-size: var(--auth-btn-text-size);
+    font-size: var(--btn-text-size);
     color: var(--button-color);
     transition: color 0.3s ease-in-out;
 }

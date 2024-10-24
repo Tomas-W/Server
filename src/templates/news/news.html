@@ -1,0 +1,95 @@
+{% extends "news/news_base.html" %}
+
+
+{% block title %}
+News
+{% endblock %}
+
+{% block news_content %}
+<div class="news-items-container">
+    <div class="news-item">
+
+        <div class="news-header outline-bottom news-gap">
+            <p class="news-code {{ news_item.color }}">{{ news_item.code }}</p>
+            <p class="news-title outline-left">{{ news_item.title }}</p>
+        </div>
+        
+        <div class="news-info">
+        <p class="news-important news-gap">{{ news_item.important }}</p>
+
+        {% if news_item.grid_cols %}
+            <div class="news-table-container news-gap">
+                {% for row in row_list %}
+                    <div class="row-container news-row outline-top outline-bottom">
+                        {% for item in row %}
+                            <div class="row-item">{{ item }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if info_list %}
+            <div class="news-info-container news-gap">
+                {% for i in range(info_list|length) %}
+                    <div class="info-title">
+                        {{ news_item.info_cols.split("|")[i] }}
+                    </div>
+                    <div class="info-content news-gap">
+                        {{ info_list[i]|replace('\n', '<br><br>')|safe }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="news-footer news-gap">
+
+            <div class="icon-wrapper">
+                <div class="icon-container">
+                    <p class="view-count">{{ news_item.seen_by.split("|")|length - 1 }}</p>
+                    <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
+                </div>
+                <div class="icon-container">
+                    <p class="comment-count">{{ news_item.tot_remarks }}</p>
+                    <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
+                </div>
+            </div>
+
+            
+
+            <div class="author-date-container">
+                <p class="author">{{ news_item.author }}</p>
+                <p class="date">{{ news_item.created_at.strftime("%d %b %Y @ %H:%M") }}</p>
+            </div>
+
+        </div>
+
+        <div class="comment-devider news-gap"></div>
+
+        <div class="comment-container">
+            <form method="POST" action="{{ url_for('news.news', id_=news_item.id) }}" class="comment-form" id="comment-form">
+                {{ comment_form.hidden_tag() }}
+                
+                <div class="form-item">
+                    <div class="input-error-container">
+                        {{ comment_form.comment(class="comment-input-field") }}
+                        {% if form_errors["comment"] %}
+                            <div class="form-error"><strong>{{ form_errors["comment"][0] }}</strong></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="comment-devider news-gap"> 
+                    {{ comment_form.submit(class="btn comment-btn") }}
+                </div>
+            </form>
+            {% for message in get_flashed_messages() %}
+            <div class="auth_flash">
+                <p>{{ message }}</p>
+            </div>
+                    {% endfor %}
+        </div>
+
+    </div>  
+</div>
+{% endblock %}

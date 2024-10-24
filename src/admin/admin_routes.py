@@ -14,7 +14,7 @@ def add_news():
     if news_form.validate_on_submit():
         add_news_message(news_form.title.data,
                          news_form.content.data)
-        return redirect(url_for("home.home"))
+        return redirect(url_for("news.all_news"))
 
     return render_template(
         "admin/add_news.html",

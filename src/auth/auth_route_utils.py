@@ -34,7 +34,7 @@ def fast_login(login_form: FastLoginForm):
     try:
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
             handle_user_login(user)
-            return redirect(url_for("home.home")), None
+            return redirect(url_for("news.all_news")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
 
@@ -51,7 +51,7 @@ def normal_login(login_form: LoginForm):
         if argon2_.verify(user.password, login_form.password.data):
             remember = login_form.remember.data
             handle_user_login(user, remember=remember, fresh=True)
-            return redirect(url_for("home.home")), None
+            return redirect(url_for("news.all_news")), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
 

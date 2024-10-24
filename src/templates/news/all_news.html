@@ -1,0 +1,39 @@
+{% extends "news/news_base.html" %}
+
+
+{% block title %}
+All news
+{% endblock %}
+
+{% block news_content %}
+<div class="news-items-container">
+    {% for news in all_news %}
+    <div class="news-item outline">
+        <div class="news-header-container">
+            <div class="news-header">
+                <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
+                <p class="news-title">{{ news.header }}</p>
+            </div>
+            
+            <div class="read-more-container">
+                <div class="news-info">
+                    <div class="icon-container">
+                        <span class="icon-count">{{ news.seen_by|length }}</span>
+                        <img class="news-icon views-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Views">
+                    </div>
+                    
+                    <div class="icon-container">
+                        <span class="icon-count">{{ news.tot_remarks }}</span>
+                        <img class="news-icon comments-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
+                    </div>
+                </div>
+
+                <div class="read-more outline-bot-left"><a href="{{ url_for('news.news', id_=news.id) }}">Read..</a></div>
+            </div>
+        </div>
+
+        <p class="news-important">{{ news.important }}</p>
+    </div>  
+    {% endfor %}
+</div>
+{% endblock %}

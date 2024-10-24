@@ -8,11 +8,24 @@ from src.extensions import server_db_
 from sqlalchemy import select
 
 
-def get_all_news():
+def get_all_news_dict():
         result = server_db_.session.execute(
             select(News)
         ).scalars().all()
         return [news.to_dict() for news in result]
+
+
+def get_all_unread_dict(user_id: int):
+    result = server_db_.session.execute(
+            select(News)
+        ).scalars().all()
+    
+    return [news.to_dict() for news in result if str(user_id) not in news.seen_by.split("|")]
+
+
+def get_news_by_id(id_: int):
+    result = server_db_.session.get(News, id_)
+    return result
 
 
 class News(server_db_.Model):
@@ -33,6 +46,7 @@ class News(server_db_.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(Text, nullable=False)
+    header: Mapped[str] = mapped_column(Text, nullable=False)
     code: Mapped[int] = mapped_column(Integer, nullable=False)
     color: Mapped[str] = mapped_column(String(10), nullable=True)
     important: Mapped[str] = mapped_column(Text, nullable=False)
@@ -42,17 +56,19 @@ class News(server_db_.Model):
     info_rows: Mapped[str] = mapped_column(Text, nullable=False)
     author: Mapped[str] = mapped_column(Text, nullable=False)
     
+    seen_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    accepted_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    
     tot_remarks: Mapped[int] = mapped_column(Integer, default=0)
-    tot_views: Mapped[int] = mapped_column(Integer, default=0)
-    tot_accepted: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET)
     )
 
-    remarks: Mapped[list["Remark"]] = relationship("Remark", back_populates="news")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news")
     
-    def __init__(self, title: str, code: int, important: str, grid_cols: str, grid_rows: str, info_cols: str, info_rows: str, author: str):
+    def __init__(self, title: str, header: str, code: int, important: str, grid_cols: str, grid_rows: str, info_cols: str, info_rows: str, author: str):
         self.title = title
+        self.header = header
         self.code = code
         self.color = self._get_color(code)
         self.important = important
@@ -64,6 +80,16 @@ class News(server_db_.Model):
 
     def __repr__(self) -> str:
         return f"News(id={self.id}, title='{self.title}', code='{self.code}', important='{self.important}', author='{self.author}')"
+    
+    def grid_len(self) -> int:
+        return len(self.grid_cols.split("|")) if self.grid_cols else 0
+    
+    def info_len(self) -> int:
+        return len(self.info_cols.split("|")) if self.info_cols else 0
+    
+    def set_seen_by(self, user_id: int):
+        if not str(user_id) in self.seen_by:
+            self.seen_by += f"{user_id}|"
     
     @staticmethod
     def _join(value: list[str]) -> str:
@@ -86,7 +112,9 @@ class News(server_db_.Model):
     
     def to_dict(self) -> dict:
         return {
+            "id": self.id,
             "title": self.title,
+            "header": self.header,
             "code": self.code,
             "color": self.color,
             "important": self.important,
@@ -95,23 +123,27 @@ class News(server_db_.Model):
             "info_cols": self._split(str(self.info_cols)),
             "info_rows": self._split(str(self.info_rows)),
             "author": self.author,
+            "seen_by": [num for num in self._split(str(self.seen_by)) if num],
+            "accepted_by": self._split(str(self.accepted_by)),
+            "tot_remarks": self.tot_remarks,
+            "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
         }
 
 
-class Remark(server_db_.Model):
+class Comment(server_db_.Model):
     """
-    Remarks table
+    Comments table
 
     Columns:
-    - ID: Unique identifier for the remark
-    - TITLE: Title of the remark
-    - CONTENT: Content of the remark
-    - AUTHOR: Author of the remark
-    - CREATED_AT: Timestamp of when the remark was created
+    - ID: Unique identifier for the comment
+    - TITLE: Title of the comment
+    - CONTENT: Content of the comment
+    - AUTHOR: Author of the comment
+    - CREATED_AT: Timestamp of when the comment was created
     - NEWS_ID: Foreign key referencing the associated news article
     - NEWS: Relationship to the associated News object
     """
-    __tablename__ = "remarks"  # noqa
+    __tablename__ = "comments"  # noqa
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(75), nullable=False)
@@ -122,10 +154,10 @@ class Remark(server_db_.Model):
     )
     news_id: Mapped[int] = mapped_column(ForeignKey("news.id"), nullable=False)
 
-    news: Mapped["News"] = relationship("News", back_populates="remarks")
+    news: Mapped["News"] = relationship("News", back_populates="comments")
 
     def __repr__(self) -> str:
-        return f"Remark(id={self.id}, news_id={self.news_id}, author='{self.author}')"
+        return f"Comment(id={self.id}, news_id={self.news_id}, author='{self.author}')"
 
 
 if __name__ == "__main__":

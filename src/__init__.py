@@ -63,11 +63,11 @@ def _configure_extensions(app_: Flask) -> None:
 
 
 def _configure_blueprints(app_: Flask) -> None:
-    from src.home.home_routes import home_bp
+    from src.news.news_routes import news_bp
     from src.auth.auth_routes import auth_bp
     from src.admin.admin_routes import admin_bp
     from src.bakery.bakery_routes import bakery_bp
-    app_.register_blueprint(home_bp)
+    app_.register_blueprint(news_bp)
     app_.register_blueprint(auth_bp)
     app_.register_blueprint(admin_bp)
     app_.register_blueprint(bakery_bp)

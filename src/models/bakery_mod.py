@@ -4,7 +4,6 @@ from typing import Optional, List
 from sqlalchemy import Boolean, Integer, String, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import select
-from sqlalchemy.ext.declarative import declarative_base
 
 from config.settings import CET
 from src.extensions import server_db_

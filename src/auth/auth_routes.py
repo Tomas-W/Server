@@ -55,7 +55,7 @@ def handle_fast_login(view_func):
 def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
-        return redirect(url_for("home.home"))
+        return redirect(url_for("news.all_news"))
     return redirect(url_for("auth.login"))
 
 
@@ -159,7 +159,7 @@ def callback():
         return redirect(url_for("auth.set_password"))
 
     handle_user_login(user, remember=False)
-    return redirect(url_for("home.home"))
+    return redirect(url_for("news.all_news"))
 
 
 @auth_bp.route("/set_password", methods=["GET", "POST"])
@@ -184,7 +184,7 @@ def set_password():
                 )
                 if user:
                     handle_user_login(user, remember=False)
-                    return redirect(url_for("home.home"))
+                    return redirect(url_for("news.all_news"))
                 else:
                     flash("Unexpected db error")
                     return redirect(url_for("auth.set_password"))

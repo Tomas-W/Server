@@ -18,9 +18,12 @@
     <!-- Style sheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    {% if page == "home" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/home_base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/news.css') }}">
+    {% if page == "all_news" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news_base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/all_news.css') }}">
+    {% elif page == "news" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news_base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news.css') }}">
     {% elif page == "programs" %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/programs.css') }}">
@@ -48,6 +51,7 @@
             </a>
             
             <div class="navbar-links">
+                <a class="nav-link" href="{{ url_for('news.all_news') }}">News</a>
                 <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
                 <a class="nav-link" href="#">Data</a>
                 <a class="nav-link" href="#">Games</a>
@@ -73,8 +77,8 @@
                             </div>
                         </a>
                     </li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('news.all_news') }}">news</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('bakery.programs') }}">Programs</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="#">Data</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="#">Games</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="#">Tools</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('auth.logout') }}">Logout</a></div></li>

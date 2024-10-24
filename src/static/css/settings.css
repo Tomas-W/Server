@@ -16,8 +16,13 @@
     --text-color-hover: rgba(200, 200, 200, 1);
     --label-color: rgba(120, 120, 120, 1);
     --button-color: rgba(200, 200, 200, 1);
+    --btn-text-size: 1.25rem;
     --input-color: rgba(200, 200, 200, 1);
     --input-color-hover: rgba(220, 220, 220, 1);
+
+    --red: rgba(200, 0, 0, 0.7);
+    --orange: rgba(225, 125, 0, 0.7);
+    --blue: rgba(0, 0, 200, 0.7);  
 
     --border-color: var(--gray3);
     --border-color-hover: rgba(255, 255, 255, 1);
@@ -32,18 +37,76 @@
     --s-menu-color: rgba(30, 30, 30, 1);
     --s-menu-color-hover: rgba(35, 35, 35, 1);
 
-    --auth-btn-text-size: 1.25rem;
+    --auth-btn-text-size: 3.25rem;
     --auth-flash-size: 1.1rem;
     --auth-form-error-size: 0.8rem;
 
     --news-title-size: 1.2rem;
+    --news-info-size: 1.1rem;
+    --news-author-size: 0.91rem;
 
     --bakery-side-panel-size: 1.2rem;
     --bakery-top-panel-size: 1.1rem;
     --bakery-item-info-size: 1.1rem;
 }
 
+@media (max-width: 474.98px) {
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
+
+@media (min-width: 1200px) and (max-width: 1348.98px) {
+}
+
+
 /********* General settings *********/
+.outline {
+    border: 1px solid var(--gray3);
+}
+
+.outline-bottom {
+    border-bottom: 1px solid var(--gray3);
+}
+
+.outline-right {
+    border-right: 1px solid var(--gray3);
+}
+
+.outline-left {
+    border-left: 1px solid var(--gray3);
+}
+
+.outline-top {
+    border-top: 1px solid var(--gray3);
+}
+
+.outline-bot-right {
+    border-right: 1px solid var(--gray3);
+    border-bottom: 1px solid var(--gray3);
+}
+
+.outline-bot-left {
+    border-left: 1px solid var(--gray3);
+    border-bottom: 1px solid var(--gray3);
+}
+
+.outline-top-right {
+    border-right: 1px solid var(--gray3);
+    border-top: 1px solid var(--gray3);
+}
+
+.outline-top-left {
+    border-left: 1px solid var(--gray3);
+    border-top: 1px solid var(--gray3);
+}
+
 .auth-section {
     min-height: 100vh;
 }
@@ -97,4 +160,16 @@ li {
     list-style-type: none;
     margin: 0;
     padding: 0;
+}
+
+.red {
+    color: var(--red);
+}
+
+.orange {
+    color: var(--orange);
+}
+
+.blue {
+    color: var(--blue);
 }

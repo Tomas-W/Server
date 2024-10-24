@@ -5,9 +5,7 @@ from src.models.state_mod import State
 from src.models.bakery_mod import BakeryItem
 
 def get_user_by_id(id_):
-    return server_db_.session.execute(
-        select(User).filter_by(id=id_)
-    ).scalar_one_or_none()
+    return server_db_.session.get(User, id_)
 
 
 def get_user_by_email(email):

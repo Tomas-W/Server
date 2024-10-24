@@ -28,6 +28,11 @@ def get_news_by_id(id_: int):
     return result
 
 
+def get_news_dict_by_id(id_: int):
+    result = server_db_.session.get(News, id_)
+    return result.to_dict()
+
+
 class News(server_db_.Model):
     """
     News table
@@ -87,6 +92,20 @@ class News(server_db_.Model):
     def info_len(self) -> int:
         return len(self.info_cols.split("|")) if self.info_cols else 0
     
+    def _get_grid_rows(self):
+        grid_len = self.grid_len()
+        row_list = []
+    
+        if grid_len:
+            if grid_len == len(self.grid_rows.split("|")):
+                list_ = self.grid_rows.split("|")
+                row_list.append(list_)
+            else:
+                for i in range(0, len(self.grid_rows.split("|")), grid_len):   
+                    row_list.append(self.grid_rows.split("|")[i:i + grid_len])
+
+        return row_list
+    
     def set_seen_by(self, user_id: int):
         if not str(user_id) in self.seen_by:
             self.seen_by += f"{user_id}|"
@@ -119,7 +138,7 @@ class News(server_db_.Model):
             "color": self.color,
             "important": self.important,
             "grid_cols": self._split(str(self.grid_cols)),
-            "grid_rows": self._split(str(self.grid_rows)),
+            "grid_rows": self._get_grid_rows(),
             "info_cols": self._split(str(self.info_cols)),
             "info_rows": self._split(str(self.info_rows)),
             "author": self.author,

@@ -6,21 +6,21 @@ News
 {% endblock %}
 
 {% block news_content %}
-<div class="news-items-container">
+<div class="news-item-container">
     <div class="news-item">
 
         <div class="news-header outline-bottom news-gap">
-            <p class="news-code {{ news_item.color }}">{{ news_item.code }}</p>
-            <p class="news-title outline-left">{{ news_item.title }}</p>
+            <p class="news-code {{ news_dict.color }}">{{ news_dict.code }}</p>
+            <p class="news-title outline-left">{{ news_dict.title }}</p>
         </div>
         
         <div class="news-info">
-        <p class="news-important news-gap">{{ news_item.important }}</p>
+        <p class="news-important news-gap">{{ news_dict.important }}</p>
 
-        {% if news_item.grid_cols %}
+        {% if news_dict.grid_cols %}
             <div class="news-table-container news-gap">
-                {% for row in row_list %}
-                    <div class="row-container news-row outline-top outline-bottom">
+                {% for row in news_dict.row_list %}
+                    <div class="row-container outline-top outline-bottom">
                         {% for item in row %}
                             <div class="row-item">{{ item }}</div>
                         {% endfor %}
@@ -30,14 +30,14 @@ News
             {% endif %}
         </div>
 
-        {% if info_list %}
+        {% if news_dict.info_rows %}
             <div class="news-info-container news-gap">
-                {% for i in range(info_list|length) %}
+                {% for i in range(news_dict.info_rows|length) %}
                     <div class="info-title">
-                        {{ news_item.info_cols.split("|")[i] }}
+                        {{ news_dict.info_cols[i] }}
                     </div>
                     <div class="info-content news-gap">
-                        {{ info_list[i]|replace('\n', '<br><br>')|safe }}
+                        {{ news_dict.info_rows[i]|replace('\n', '<br><br>')|safe }}
                     </div>
                 {% endfor %}
             </div>
@@ -47,11 +47,11 @@ News
 
             <div class="icon-wrapper">
                 <div class="icon-container">
-                    <p class="view-count">{{ news_item.seen_by.split("|")|length - 1 }}</p>
+                    <p class="view-count">{{ news_dict.seen_by|length }}</p>
                     <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
                 </div>
                 <div class="icon-container">
-                    <p class="comment-count">{{ news_item.tot_remarks }}</p>
+                    <p class="comment-count">{{ news_dict.tot_remarks }}</p>
                     <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
                 </div>
             </div>
@@ -59,23 +59,24 @@ News
             
 
             <div class="author-date-container">
-                <p class="author">{{ news_item.author }}</p>
-                <p class="date">{{ news_item.created_at.strftime("%d %b %Y @ %H:%M") }}</p>
+                <p class="author">{{ news_dict.author }}</p>
+                <p class="date">{{ news_dict.created_at }}</p>
             </div>
 
         </div>
 
-        <div class="comment-devider news-gap"></div>
-
         <div class="comment-container">
-            <form method="POST" action="{{ url_for('news.news', id_=news_item.id) }}" class="comment-form" id="comment-form">
+            <form method="POST" novalidate action="{{ url_for('news.news', id_=news_dict.id) }}" class="comment-form" id="comment-form">
                 {{ comment_form.hidden_tag() }}
                 
                 <div class="form-item">
+                    
+                    {{ comment_form.comment(class="comment-input-field") }}
                     <div class="input-error-container">
-                        {{ comment_form.comment(class="comment-input-field") }}
                         {% if form_errors["comment"] %}
-                            <div class="form-error"><strong>{{ form_errors["comment"][0] }}</strong></div>
+                            <div class="form-error">
+                                <strong>{{ form_errors["comment"][0] }}</strong>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -84,10 +85,15 @@ News
                 </div>
             </form>
             {% for message in get_flashed_messages() %}
-            <div class="auth_flash">
+            <div class="news-flash news-gap">
                 <p>{{ message }}</p>
             </div>
-                    {% endfor %}
+            {% endfor %}
+        </div>  
+
+        <div class="comments-container news-gap">
+            <div class="comment-seperator">
+            </div>
         </div>
 
     </div>  

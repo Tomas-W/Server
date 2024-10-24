@@ -30,11 +30,13 @@ DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
 CET = pytz.timezone('CET')
 
 # Forms
-banned_words_list: list = []
-banned_characters_list: list = []
+banned_words_list: list = ["forbidden", "word"]
+banned_characters_list: list = ["^"]
 
-banned_news_words: list = []
-banned_news_chars: list = []
+MIN_COMMENT_LENGTH: int = 10
+MAX_COMMENT_LENGTH: int = 1000
+# banned_news_words: list = []
+# banned_news_chars: list = []
 
 required_password_symbols: str = string.punctuation + string.digits
 

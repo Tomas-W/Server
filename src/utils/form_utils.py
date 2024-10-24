@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
-from config.settings import banned_words_list, banned_characters_list
+from config.settings import (banned_words_list, banned_characters_list,
+                             MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH)
 from src.models.auth_mod import User
 from src.extensions import server_db_
 
@@ -59,3 +60,11 @@ class EmailCheck:
         ).scalar_one_or_none()
         if (user and self.register) or (not user and not self.register):
             raise ValidationError(self.message)
+
+
+class LengthCheck:
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if len(field.data) < MIN_COMMENT_LENGTH:
+            raise ValidationError(f"Comment too short")
+        if len(field.data) > MAX_COMMENT_LENGTH:
+            raise ValidationError(f"Comment too long")

@@ -176,18 +176,35 @@
 }
 
 .comments-container {
-    padding: var(--news-padding);
+    padding: 40px;
+    margin: 40px;
 }
 
-
-.news-gap {
-    margin-bottom: 40px;
+.comment-item {
+    padding: 40px;
 }
 
-.comment-seperator {
-    border-bottom: 1px solid var(--border-color);
+.comment-content {
+    padding: 20px 0 40px 0;
 }
 
+.comment-author {
+    padding: 0 0 0 20px;
+    font-size: var(--news-author-size);
+}
+
+.comment-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.comment-action {
+    width: 75px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 @media (max-width: 474.98px) {
     .news-item-container {

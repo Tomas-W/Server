@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask_login import current_user
 from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -31,6 +32,22 @@ def get_news_by_id(id_: int):
 def get_news_dict_by_id(id_: int):
     result = server_db_.session.get(News, id_)
     return result.to_dict()
+
+
+def add_new_comment(news_id: int, content: str) -> None:
+    comment = Comment(
+        content=content,
+        author=current_user.username,
+        news_id=news_id
+    )
+    increment_tot_remarks(news_id)
+    server_db_.session.add(comment)
+    server_db_.session.commit()
+
+
+def increment_tot_remarks(news_id: int):
+    news = server_db_.session.get(News, news_id)
+    news.tot_remarks += 1
 
 
 class News(server_db_.Model):
@@ -69,7 +86,7 @@ class News(server_db_.Model):
         DateTime, default=lambda: datetime.now(CET)
     )
 
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news", cascade="all, delete-orphan")
     
     def __init__(self, title: str, header: str, code: int, important: str, grid_cols: str, grid_rows: str, info_cols: str, info_rows: str, author: str):
         self.title = title
@@ -146,6 +163,7 @@ class News(server_db_.Model):
             "accepted_by": self._split(str(self.accepted_by)),
             "tot_remarks": self.tot_remarks,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
+            "comments": [comment.to_dict() for comment in self.comments],
         }
 
 
@@ -165,7 +183,6 @@ class Comment(server_db_.Model):
     __tablename__ = "comments"  # noqa
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(String(75), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     author: Mapped[str] = mapped_column(String(25), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -177,7 +194,19 @@ class Comment(server_db_.Model):
 
     def __repr__(self) -> str:
         return f"Comment(id={self.id}, news_id={self.news_id}, author='{self.author}')"
+    
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "content": self.content,
+            "author": self.author,
+            "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
+        }
+
 
 
 if __name__ == "__main__":
     pass
+
+
+

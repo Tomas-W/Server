@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired
 from src.utils.form_utils import LengthCheck, ForbiddenCheck
 
 class CommentForm(FlaskForm):
-    comment = TextAreaField(
+    content = TextAreaField(
         label="Comment",
         render_kw={"placeholder": "Enter your comment here",
                    "autofocus": False},

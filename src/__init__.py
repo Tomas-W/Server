@@ -16,7 +16,7 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
 
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER, CET
-from src.utils.db_utils import update_user_last_seen
+from src.models.auth_mod import update_user_last_seen
 
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:

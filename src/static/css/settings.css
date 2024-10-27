@@ -43,7 +43,7 @@
 
     --news-title-size: 1.2rem;
     --news-info-size: 1.1rem;
-    --news-author-size: 0.91rem;
+    --news-author-size: 0.9rem;
     --news-padding: 0 40px;
 
     --bakery-side-panel-size: 1.2rem;
@@ -68,6 +68,10 @@
 
 
 /********* General settings *********/
+.italic {
+    font-style: italic;
+}
+
 .outline {
     border: 1px solid var(--gray3);
 }

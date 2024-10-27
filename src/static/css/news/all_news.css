@@ -7,6 +7,16 @@
     color: var(--text-color);
 }
 
+.no-news-container {
+    padding: 75px;
+}
+
+.no-news {
+    padding: 0 0 75px 0;
+    text-align: center;
+    font-weight: 600;
+}
+
 .news-item {
     width: 100%;
 }

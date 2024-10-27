@@ -7,33 +7,44 @@ All news
 
 {% block news_content %}
 <div class="news-items-container">
-    {% for news in all_news %}
-    <div class="news-item outline">
-        <div class="news-header-container">
-            <div class="news-header">
-                <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
-                <p class="news-title">{{ news.header }}</p>
+    {% if not all_news_dict %}
+        <div class="no-news-container outline">
+            <div class="no-news">
+                <p class="">No unread news messages.</p>
+                <p class="">You are up to date!</p>
             </div>
-            
-            <div class="read-more-container">
-                <div class="news-info">
-                    <div class="icon-container">
-                        <span class="icon-count">{{ news.seen_by|length }}</span>
-                        <img class="news-icon views-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Views">
+
+            <div class="news-seperator news-gap"></div>
+        </div>
+    {% else %}
+        {% for news in all_news_dict %}
+            <div class="news-item outline">
+                <div class="news-header-container">
+                    <div class="news-header">
+                        <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
+                        <p class="news-title">{{ news.header }}</p>
                     </div>
                     
-                    <div class="icon-container">
-                        <span class="icon-count">{{ news.tot_remarks }}</span>
-                        <img class="news-icon comments-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
+                    <div class="read-more-container">
+                        <div class="news-info">
+                            <div class="icon-container">
+                                <span class="icon-count">{{ news.seen_by|length }}</span>
+                                <img class="news-icon views-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Views">
+                            </div>
+                            
+                            <div class="icon-container">
+                                <span class="icon-count">{{ news.tot_remarks }}</span>
+                                <img class="news-icon comments-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
+                            </div>
+                        </div>
+
+                        <div class="read-more"><a href="{{ url_for('news.news', id_=news.id) }}">Read..</a></div>
                     </div>
                 </div>
 
-                <div class="read-more"><a href="{{ url_for('news.news', id_=news.id) }}">Read..</a></div>
-            </div>
-        </div>
-
-        <p class="news-important">{{ news.important }}</p>
-    </div>  
-    {% endfor %}
+                <p class="news-important">{{ news.important }}</p>
+            </div>  
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

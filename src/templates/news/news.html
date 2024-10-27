@@ -37,7 +37,7 @@ News
                         {{ news_dict.info_cols[i] }}
                     </div>
                     <div class="info-content news-gap">
-                        {{ news_dict.info_rows[i]|replace('\n', '<br><br>')|safe }}
+                        {{ news_dict.info_rows[i] }}
                     </div>
                 {% endfor %}
             </div>
@@ -71,11 +71,11 @@ News
                 
                 <div class="form-item">
                     
-                    {{ comment_form.comment(class="comment-input-field") }}
+                    {{ comment_form.content(class="comment-input-field") }}
                     <div class="input-error-container">
-                        {% if form_errors["comment"] %}
+                        {% if form_errors["content"] %}
                             <div class="form-error">
-                                <strong>{{ form_errors["comment"][0] }}</strong>
+                                <strong>{{ form_errors["content"][0] }}</strong>
                             </div>
                         {% endif %}
                     </div>
@@ -84,17 +84,35 @@ News
                     {{ comment_form.submit(class="btn comment-btn") }}
                 </div>
             </form>
-            {% for message in get_flashed_messages() %}
-            <div class="news-flash news-gap">
-                <p>{{ message }}</p>
-            </div>
-            {% endfor %}
+
         </div>  
 
-        <div class="comments-container news-gap">
-            <div class="comment-seperator">
+            <div class="comments-container news-gap">
+                {% for comment in news_dict.comments %}
+                    <div class="comment-item outline news-gap">
+                        <div class="comment-info">
+                            <p class="comment-author italic">{{ comment.author }}</p>
+                            <p class="comment-author italic">{{ comment.created_at }}</p>
+                            <p class="comment-content">{{ comment.content|safe }}</p>
+                        </div>
+                        <div class="comment-actions">
+                            <div class="comment-reply comment-action outline">
+                                Reply
+                            </div>
+                            <div class="comment-quote comment-action outline">
+                                Quote
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="news-seperator news-gap"></div> -->
+                {% endfor %}
+                {% for message in get_flashed_messages() %}
+            <div id="news-flash" class="news-flash news-gap">
+                <p>{{ message }}</p>    
             </div>
-        </div>
+            {% endfor %}
+            </div>
 
     </div>  
 </div>

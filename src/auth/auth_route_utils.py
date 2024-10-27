@@ -8,8 +8,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 from src.auth.auth_forms import FastLoginForm, LoginForm
 from src.extensions import mail_, argon2_
-from src.models.auth_mod import User
-from src.utils.db_utils import get_user_by_fast_name, get_user_by_email_or_username
+from src.models.auth_mod import User, get_user_by_fast_name, get_user_by_email_or_username
 
 
 def handle_user_login(user: User, remember: bool = False, fresh: bool = True) -> None:

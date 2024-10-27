@@ -66,16 +66,3 @@ def rename_images_with_suffix(folder_path):
                 new_file_name = file[:-8] + ".png"
                 new_file_path = os.path.join(root, new_file_name)
                 os.rename(file_path, new_file_path)
-
-
-SERVER_FOLDER = r"C:\Coding\Projects\Server"
-ORI_IMAGES = os.path.join(SERVER_FOLDER, "backups", "images", "bakery", "sweets", 'neww')
-NEW_IMAGES = os.path.join(SERVER_FOLDER, "src", "static", "images", "bakery", "savory")
-if __name__ == "__main__":
-    # rename_images_with_suffix(r'C:\Coding\Projects\Server\backups\images\bakery\sweets\New folder')
-    # process_images(ORI_IMAGES)
-    # print("[ ----- PROCESSING DONE ----- ]")
-    # remove_background_by_folder(ORI_IMAGES)
-    # print("[ ----- BACKGROUND REMOVAL DONE ----- ]")
-    # rename_images_with_suffix(NEW_IMAGES)
-    pass

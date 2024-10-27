@@ -18,9 +18,10 @@ from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_
                                        fast_login, normal_login, handle_user_login,
                                        handle_user_logout)
 from src.models.auth_mod import User
-from src.utils.db_utils import (get_user_by_email, save_oauth_state,
-                                get_and_delete_oauth_state, add_new_user, get_new_user,
+from src.models.auth_mod import (get_user_by_email, add_new_user, get_new_user,
                                 change_user_password)
+from src.models.state_mod import (save_oauth_state, get_and_delete_oauth_state)
+
 
 auth_bp = Blueprint("auth", __name__)
 SESSION_FORM_ERRORS = "form_errors"

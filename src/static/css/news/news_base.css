@@ -143,6 +143,14 @@
     justify-items: center;
 }
 
+.news-gap {
+    margin-bottom: 40px;
+}
+
+.news-seperator {
+    border-bottom: 1px solid var(--border-color);
+}
+
 #toggle-top-panel:checked + .news-link + .top-panel {
     display: block;
 }

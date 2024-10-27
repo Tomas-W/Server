@@ -34,6 +34,11 @@ def get_news_dict_by_id(id_: int):
     return result.to_dict()
 
 
+def get_comment_by_id(id_: int):
+    result = server_db_.session.get(Comment, id_)
+    return result
+
+
 def add_new_comment(news_id: int, content: str) -> None:
     comment = Comment(
         content=content,
@@ -80,13 +85,15 @@ class News(server_db_.Model):
     
     seen_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     accepted_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
     tot_remarks: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET)
     )
 
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news", cascade="all, delete-orphan")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news", cascade="all, delete-orphan, delete")
     
     def __init__(self, title: str, header: str, code: int, important: str, grid_cols: str, grid_rows: str, info_cols: str, info_rows: str, author: str):
         self.title = title
@@ -127,6 +134,22 @@ class News(server_db_.Model):
         if not str(user_id) in self.seen_by:
             self.seen_by += f"{user_id}|"
     
+    def set_liked_by(self, user_id: int):
+        self._remove_disliked_by(user_id)
+        if not str(user_id) in self.liked_by:
+            self.liked_by += f"{user_id}|"
+    
+    def set_disliked_by(self, user_id: int):
+        self._remove_liked_by(user_id)
+        if not str(user_id) in self.disliked_by:
+            self.disliked_by += f"{user_id}|"
+    
+    def _remove_liked_by(self, user_id: int):
+        self.liked_by = self.liked_by.replace(f"{user_id}|", "")
+    
+    def _remove_disliked_by(self, user_id: int):
+        self.disliked_by = self.disliked_by.replace(f"{user_id}|", "")
+    
     @staticmethod
     def _join(value: list[str]) -> str:
         return "|".join(value)
@@ -161,6 +184,8 @@ class News(server_db_.Model):
             "author": self.author,
             "seen_by": [num for num in self._split(str(self.seen_by)) if num],
             "accepted_by": self._split(str(self.accepted_by)),
+            "liked_by": [num for num in self._split(str(self.liked_by)) if num],
+            "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
             "tot_remarks": self.tot_remarks,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
             "comments": [comment.to_dict() for comment in self.comments],
@@ -188,12 +213,20 @@ class Comment(server_db_.Model):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET)
     )
-    news_id: Mapped[int] = mapped_column(ForeignKey("news.id"), nullable=False)
+    
+    liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    
+    news_id: Mapped[int] = mapped_column(ForeignKey("news.id", ondelete="CASCADE"), nullable=False)
 
     news: Mapped["News"] = relationship("News", back_populates="comments")
 
     def __repr__(self) -> str:
         return f"Comment(id={self.id}, news_id={self.news_id}, author='{self.author}')"
+    
+    @staticmethod
+    def _split(value: str) -> list[str]:
+        return value.split("|") if value else []
     
     def to_dict(self) -> dict:
         return {
@@ -201,7 +234,25 @@ class Comment(server_db_.Model):
             "content": self.content,
             "author": self.author,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
+            "liked_by": [num for num in self._split(str(self.liked_by)) if num],
+            "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
         }
+    
+    def set_liked_by(self, user_id: int):
+        self._remove_disliked_by(user_id)
+        if not str(user_id) in self.liked_by:
+            self.liked_by += f"{user_id}|"
+    
+    def set_disliked_by(self, user_id: int):
+        self._remove_liked_by(user_id)
+        if not str(user_id) in self.disliked_by:
+            self.disliked_by += f"{user_id}|"
+    
+    def _remove_liked_by(self, user_id: int):
+        self.liked_by = self.liked_by.replace(f"{user_id}|", "")
+    
+    def _remove_disliked_by(self, user_id: int):
+        self.disliked_by = self.disliked_by.replace(f"{user_id}|", "")
 
 
 

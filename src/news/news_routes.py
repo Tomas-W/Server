@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
 from src.models.news_mod import (get_all_news_dict, get_all_unread_dict, get_news_by_id,
-                                 get_news_dict_by_id, add_new_comment)
+                                 get_news_dict_by_id, get_comment_by_id, add_new_comment)
 from src.news.news_forms import CommentForm
 from src.news.news_route_utils import allow_only_styling, clean_news_session
 from src.models.news_mod import News
@@ -38,30 +38,15 @@ def news(id_: int):
 
     if request.method == "POST":
         if comment_form.validate_on_submit():
-            
-            news_item = News(
-                header="header",
-                title="title",
-                code=1,
-                important="important",
-                grid_cols="grid_cols",
-                grid_rows="grid_rows",
-                info_cols="info_cols",
-                info_rows="info_rows",
-                author="author",
-            )
-            server_db_.session.add(news_item)
-            server_db_.session.commit()
-            
             sanitized_comment = allow_only_styling(comment_form.content.data)
             add_new_comment(id_, sanitized_comment)
             clean_news_session()
             flash("Comment submitted successfully!", "success")
-            return redirect(url_for("news.news", id_=id_, _anchor="news-flash"))
+            return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
         
         session["form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for("news.news", id_=id_, _anchor="news-flash"))
+        return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
 
     form_data = session.pop("form_data", None)
     if form_data:
@@ -69,14 +54,46 @@ def news(id_: int):
 
     if form_errors is not None:
         comment_form.process(MultiDict(form_data))
-
     return render_template(
         "news/news.html",
         page="news",
         news_dict=news_dict,
         comment_form=comment_form,
         form_errors=form_errors,
+        user_id=str(current_user.id),
     )
+    
+
+@news_bp.route("/like-news/<id_>")
+@login_required
+def like_news(id_: int):
+    news_item = get_news_by_id(id_)
+    news_item.set_liked_by(current_user.id)
+    return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
+
+
+@news_bp.route("/dislike-news/<id_>")
+@login_required
+def dislike_news(id_: int):
+    news_item = get_news_by_id(id_)
+    news_item.set_disliked_by(current_user.id)
+    return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
+
+
+@news_bp.route("/like-comment/<id_>")
+@login_required
+def like_comment(id_: int):
+    comment_item = get_comment_by_id(id_)
+    comment_item.set_liked_by(current_user.id)
+    return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
+
+
+@news_bp.route("/dislike-comment/<id_>")
+@login_required
+def dislike_comment(id_: int):
+    comment_item = get_comment_by_id(id_)
+    comment_item.set_disliked_by(current_user.id)
+    return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
 
 
 @news_bp.route("/all-unread")

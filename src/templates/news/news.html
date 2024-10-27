@@ -14,12 +14,12 @@ News
             <p class="news-title outline-left">{{ news_dict.title }}</p>
         </div>
         
-        <div class="news-info">
+        <div class="news-important-container">
         <p class="news-important news-gap">{{ news_dict.important }}</p>
 
         {% if news_dict.grid_cols %}
             <div class="news-table-container news-gap">
-                {% for row in news_dict.row_list %}
+                {% for row in news_dict.grid_rows %}
                     <div class="row-container outline-top outline-bottom">
                         {% for item in row %}
                             <div class="row-item">{{ item }}</div>
@@ -27,7 +27,7 @@ News
                     </div>
                 {% endfor %}
             </div>
-            {% endif %}
+        {% endif %}
         </div>
 
         {% if news_dict.info_rows %}
@@ -56,7 +56,22 @@ News
                 </div>
             </div>
 
-            
+            <div class="like-dislike-container" id="like-dislike">
+                <div class="like-container">
+                    {% if user_id in news_dict.liked_by %}
+                        <p>{{ news_dict.liked_by|length }}</p><a href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_col_xl.png') }}" alt="Like"></a>
+                    {% else %}
+                        <p>{{ news_dict.liked_by|length }}</p><a href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_xl.png') }}" alt="Like"></a>
+                    {% endif %}
+                </div>
+                <div class="dislike-container">
+                    {% if user_id in news_dict.disliked_by %}
+                        <a href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_col_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
+                    {% else %}
+                        <a href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
+                    {% endif %}
+                </div>
+            </div>
 
             <div class="author-date-container">
                 <p class="author">{{ news_dict.author }}</p>
@@ -89,31 +104,47 @@ News
 
             <div class="comments-container news-gap">
                 {% for comment in news_dict.comments %}
-                    <div class="comment-item outline news-gap">
+                    <div class="comment-item outline news-gap" id="comment-{{ comment.id }}">
                         <div class="comment-info">
                             <p class="comment-author italic">{{ comment.author }}</p>
                             <p class="comment-author italic">{{ comment.created_at }}</p>
                             <p class="comment-content">{{ comment.content|safe }}</p>
                         </div>
                         <div class="comment-actions">
-                            <div class="comment-reply comment-action outline">
-                                Reply
+                            <a href="{{ url_for('news.like_comment', id_=comment.id) }}">
+                            <div class="comment-like outline">
+                                {% if user_id in comment.liked_by %}
+                                    <img class="like-comment-icon" src="{{ url_for('static', filename='images/like_col_xs.png') }}" alt="Like">
+                                {% else %}
+                                    <img class="like-comment-icon" src="{{ url_for('static', filename='images/like_xs.png') }}" alt="Like">
+                                {% endif %}
+                                <p class="comment-like-count">{{ comment.liked_by|length }}</p>
                             </div>
-                            <div class="comment-quote comment-action outline">
-                                Quote
-                            </div>
+                            </a>
+
+                            <a href="{{ url_for('news.dislike_comment', id_=comment.id) }}">
+                                <div class="comment-dislike outline">
+                                    {% if user_id in comment.disliked_by %}
+                                        <img class="dislike-comment-icon" src="{{ url_for('static', filename='images/dislike_col_xs.png') }}" alt="Dislike">
+                                    {% else %}
+                                        <img class="dislike-comment-icon" src="{{ url_for('static', filename='images/dislike_xs.png') }}" alt="Dislike">
+                                    {% endif %}
+                                    <p class="comment-dislike-count">{{ comment.disliked_by|length }}</p>
+                                </div>
+                            </a>
+
                         </div>
                     </div>
 
-                    <!-- <div class="news-seperator news-gap"></div> -->
                 {% endfor %}
                 {% for message in get_flashed_messages() %}
-            <div id="news-flash" class="news-flash news-gap">
+            <div id="comment-flash" class="comment-flash news-gap">
                 <p>{{ message }}</p>    
             </div>
             {% endfor %}
             </div>
 
     </div>  
+    <a href="#top" class="scroll-to-top"><img src="{{ url_for('static', filename='images/scroll_up.png') }}" alt="Go up"></a>
 </div>
 {% endblock %}

@@ -42,7 +42,9 @@ All news
                     </div>
                 </div>
 
+                <p class="news-date">{{ news.created_at }}</p>
                 <p class="news-important">{{ news.important }}</p>
+                
             </div>  
         {% endfor %}
     {% endif %}

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms import SubmitField, TextAreaField, HiddenField, EmailField
+from wtforms.validators import DataRequired, Length, Email
 
 from src.utils.form_utils import ForbiddenCheck
 
@@ -60,3 +60,17 @@ class RemarkForm(FlaskForm):
     )
     submit = SubmitField("Submit")
 
+class VerifyEmailForm(FlaskForm):
+    """Verify email form."""
+    email = EmailField(
+        label="Email",
+        render_kw={"placeholder": "Example@example.com", "autofocus": True},
+        validators=[
+            DataRequired(message="Email is required"),
+            Email(message="Invalid email"),
+            Length(min=1, max=75, message="Email too long"),
+        ]
+    )
+    form_type = HiddenField(default="verify_email")
+    submit = SubmitField(label="Verify")
+    

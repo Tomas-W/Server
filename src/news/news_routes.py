@@ -42,11 +42,12 @@ def news(id_: int):
             add_new_comment(id_, sanitized_comment)
             clean_news_session()
             flash("Comment submitted successfully!", "success")
+            session["post_comment"] = True
             return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
         
         session["form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
+        return redirect(url_for("news.news", id_=id_, _anchor="comment-container"))
 
     form_data = session.pop("form_data", None)
     if form_data:
@@ -54,6 +55,10 @@ def news(id_: int):
 
     if form_errors is not None:
         comment_form.process(MultiDict(form_data))
+    
+    news_id = session.pop("news_id", None)
+    post_comment = session.pop("post_comment", None)
+    comment_id = session.pop("comment_id", None)
     return render_template(
         "news/news.html",
         page="news",
@@ -61,6 +66,9 @@ def news(id_: int):
         comment_form=comment_form,
         form_errors=form_errors,
         user_id=str(current_user.id),
+        news_id=news_id,
+        post_comment=post_comment,
+        comment_id=comment_id,
     )
     
 
@@ -69,6 +77,7 @@ def news(id_: int):
 def like_news(id_: int):
     news_item = get_news_by_id(id_)
     news_item.set_liked_by(current_user.id)
+    session["news_id"] = int(id_)
     return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
 
 
@@ -77,6 +86,7 @@ def like_news(id_: int):
 def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
     news_item.set_disliked_by(current_user.id)
+    session["news_id"] = int(id_)
     return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
 
 
@@ -85,6 +95,7 @@ def dislike_news(id_: int):
 def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     comment_item.set_liked_by(current_user.id)
+    session["comment_id"] = int(id_)
     return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
 
 
@@ -93,6 +104,7 @@ def like_comment(id_: int):
 def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     comment_item.set_disliked_by(current_user.id)
+    session["comment_id"] = int(id_)
     return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
 
 

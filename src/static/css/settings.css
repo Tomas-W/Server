@@ -9,6 +9,9 @@
     --arrow-down: "\2193";
 
     --container-padding: 7%;
+
+    --side-panel-size: 1.2rem;
+    ---top-panel-size: 1.1rem;
     
     --white-0: rgba(255, 255, 255, 0);
     --white-100: rgba(255, 255, 255, 1);
@@ -52,11 +55,9 @@
     --news-padding-s: 0 30px;
     --news-important-padding: 0 75px;
     --news-gap: 40px;
-    --comment-padding: 40px;
+    --comment-padding: 40px 40px 20px 40px;
     --comment-padding-s: 20px;
 
-    --bakery-side-panel-size: 1.2rem;
-    --bakery-top-panel-size: 1.1rem;
     --bakery-item-info-size: 1.1rem;
 }
 
@@ -140,6 +141,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    /* border: 1px solid red; */
 }
 a {
     text-decoration: none;

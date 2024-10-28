@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="admin-container">
+        
+        {% include "admin/side_panel.html" %}
+        <div class="admin-content">
+            <input type="checkbox" id="toggle-top-panel" style="display: none;">
+            <label class="admin-link" for="toggle-top-panel">Admin</label>
+
+            {% include "admin/top_panel.html" %}
+            
+            {% block admin_content %}
+            {% endblock %}
+
+        </div>        
+    </div>
+</section>
+{% endblock %}

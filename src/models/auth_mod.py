@@ -80,6 +80,10 @@ class User(server_db_.Model, UserMixin):
     def set_remember_me(self, remember: bool) -> None:
         self.remember_me = remember
         server_db_.session.commit()
+    
+    def set_email_verified(self, verified: bool) -> None:
+        self.email_verified = verified
+        server_db_.session.commit()
 
     def __repr__(self):
         return (f"User: "

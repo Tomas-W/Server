@@ -45,17 +45,6 @@ News
 
         <div class="news-footer news-gap">
 
-            <div class="icon-wrapper">
-                <div class="icon-container">
-                    <p class="view-count">{{ news_dict.seen_by|length }}</p>
-                    <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
-                </div>
-                <div class="icon-container">
-                    <p class="comment-count">{{ news_dict.tot_remarks }}</p>
-                    <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
-                </div>
-            </div>
-
             <div class="like-dislike-container" id="like-dislike">
                 <div class="like-container">
                     {% if user_id in news_dict.liked_by %}
@@ -78,9 +67,20 @@ News
                 <p class="date">{{ news_dict.created_at }}</p>
             </div>
 
+            <div class="icon-wrapper">
+                <div class="icon-container">
+                    <p class="view-count">{{ news_dict.seen_by|length }}</p>
+                    <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
+                </div>
+                <div class="icon-container">
+                    <p class="comment-count">{{ news_dict.tot_remarks }}</p>
+                    <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
+                </div>
+            </div>
+
         </div>
 
-        <div class="comment-container">
+        <div class="comment-container" id="comment-container">
             <form method="POST" novalidate action="{{ url_for('news.news', id_=news_dict.id) }}" class="comment-form" id="comment-form">
                 {{ comment_form.hidden_tag() }}
                 
@@ -101,10 +101,11 @@ News
             </form>
 
         </div>  
-
+        
             <div class="comments-container news-gap">
                 {% for comment in news_dict.comments %}
-                    <div class="comment-item outline news-gap" id="comment-{{ comment.id }}">
+                
+                    <div class="comment-item outline news-gap {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
                         <div class="comment-info">
                             <p class="comment-author italic">{{ comment.author }}</p>
                             <p class="comment-author italic">{{ comment.created_at }}</p>
@@ -112,7 +113,7 @@ News
                         </div>
                         <div class="comment-actions">
                             <a href="{{ url_for('news.like_comment', id_=comment.id) }}">
-                            <div class="comment-like outline">
+                            <div class="comment-like {% if comment.id == comment_id and user_id in comment.liked_by %}like-dislike-comment{% endif %}">
                                 {% if user_id in comment.liked_by %}
                                     <img class="like-comment-icon" src="{{ url_for('static', filename='images/like_col_xs.png') }}" alt="Like">
                                 {% else %}
@@ -123,7 +124,7 @@ News
                             </a>
 
                             <a href="{{ url_for('news.dislike_comment', id_=comment.id) }}">
-                                <div class="comment-dislike outline">
+                                <div class="comment-dislike {% if comment.id == comment_id and user_id in comment.disliked_by %}like-dislike-comment{% endif %}">
                                     {% if user_id in comment.disliked_by %}
                                         <img class="dislike-comment-icon" src="{{ url_for('static', filename='images/dislike_col_xs.png') }}" alt="Dislike">
                                     {% else %}
@@ -145,6 +146,6 @@ News
             </div>
 
     </div>  
-    <a href="#top" class="scroll-to-top"><img src="{{ url_for('static', filename='images/scroll_up.png') }}" alt="Go up"></a>
+    <a href="#like-dislike" class="scroll-to-top"><img src="{{ url_for('static', filename='images/scroll_up.png') }}" alt="Go up"></a>
 </div>
 {% endblock %}

@@ -79,7 +79,7 @@
     text-decoration: none;
     cursor: pointer;
     font-weight: 600;
-    font-size: var(--bakery-side-panel-size);
+    font-size: var(--side-panel-size);
     color: var(--text-color);
     user-select: none;
     transition: color 0.3s ease-in-out;

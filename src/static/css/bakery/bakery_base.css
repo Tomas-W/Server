@@ -29,7 +29,7 @@
     margin-bottom: 16px;
     display: inline-block;
     cursor: pointer;
-    font-size: var(--bakery-side-panel-size);
+    font-size: var(--side-panel-size);
     text-decoration: none;
     color: var(--text-color);
     white-space: nowrap;
@@ -67,7 +67,7 @@
     text-decoration: none;
     cursor: pointer;
     font-weight: 600;
-    font-size: var(--bakery-side-panel-size);
+    font-size: var(--side-panel-size);
     color: var(--text-color);
     user-select: none;
     transition: color 0.3s ease-in-out;
@@ -111,7 +111,7 @@
     height: 100%;
     cursor: pointer;
     text-align: center;
-    font-size: var(--bakery-top-panel-size);
+    font-size: var(--top-panel-size);
     font-weight: 600;
     text-decoration: none;
     color: var(--text-color);
@@ -197,7 +197,7 @@
 
 @media (min-width: 768px) and (max-width: 991.98px) {
     .side-panel-item {
-        font-size: calc(var(--bakery-side-panel-size) * 0.9);
+        font-size: calc(var(--side-panel-size) * 0.9);
     }
     .top-panel {
         display: none;
@@ -209,7 +209,7 @@
         display: none;
     }
     .side-panel-item {
-        font-size: calc(var(--bakery-side-panel-size) * 0.9);
+        font-size: calc(var(--side-panel-size) * 0.9);
     }
 }
 

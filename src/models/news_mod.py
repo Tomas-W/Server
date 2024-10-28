@@ -218,7 +218,6 @@ class Comment(server_db_.Model):
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
     news_id: Mapped[int] = mapped_column(ForeignKey("news.id", ondelete="CASCADE"), nullable=False)
-
     news: Mapped["News"] = relationship("News", back_populates="comments")
 
     def __repr__(self) -> str:

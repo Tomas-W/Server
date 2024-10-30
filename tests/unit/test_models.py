@@ -1,4 +1,4 @@
-from src.models.auth_mod import User
+from src.models.auth_model.auth_mod import User
 from tests.settings import correct_user_data, false_user_data
 from src.auth.auth_forms import RegistrationForm
 

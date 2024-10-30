@@ -13,7 +13,12 @@ from src.utils.form_utils import (ForbiddenCheck, UsernameTakenCheck, PasswordCh
 
 class VerifyEmailForm(FlaskForm):
     """
-    User admin-page Verify Email Form.
+    Used on user_admin-page to verify email.
+    Placeholder may be overwritten in html by current_user's email.
+    Validates email by checking if it's:
+    - empty -> use current user's email
+    - valid -> regex check
+    - length -> min max
     
     Fields:
     - email
@@ -33,8 +38,10 @@ class VerifyEmailForm(FlaskForm):
 
 class AuthenticationForm(FlaskForm):
     """
-    User admin-page Authentication Form.
-    Validated individually to allow individual db updates.
+    Used on user_admin-page to update user's data.
+    Allows empty fields for individual updates.
+    Username, email and fast name placeholders
+     may be overwritten in html by current_user's data.
     
     Fields:
     - email
@@ -104,8 +111,7 @@ class AuthenticationForm(FlaskForm):
 
 class NewsForm(FlaskForm):
     """
-    Master admin-page News Form.
-    All fields are required.
+    Used on news_admin-page to add news.
     
     Fields:
     - title
@@ -135,21 +141,14 @@ class NewsForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     """
-    Master admin-page Comment Form.
-    Title field is optional.
+    Used on comment_admin-page to add comment.
+    Validates email by checking if it's:
+    - length -> min max
+    - valid -> check words & characters
     
     Fields:
-    - title
     - content
     """
-    title = TextAreaField(
-        label="Title",
-        render_kw={"placeholder": "Comment title"},
-        validators=[
-            CommentTitleLengthCheck(),
-            ForbiddenCheck(),
-        ]
-    )
     content = TextAreaField(
         label="Content",
         render_kw={"placeholder": "Content"},

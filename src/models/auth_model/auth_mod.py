@@ -1,45 +1,15 @@
 from datetime import datetime
-from typing import Optional, Callable, List
-from functools import wraps
+from typing import Optional, List
 
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from sqlalchemy import select, Boolean, Integer, String, DateTime, or_, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.exc import IntegrityError
 
-from src.extensions import server_db_, login_manager_, argon2_
+from src.extensions import server_db_, argon2_
+from src.models.mod_utils import commit_to_db, set_updated_at
 
 from config.settings import CET
-
-
-@login_manager_.user_loader
-def load_user(user_id):
-    """Load the currently logged in Users information into the session."""
-    return server_db_.session.get(User, user_id)
-
-
-def commit_to_db(func: Callable) -> Callable:
-    """Decorator to commit the session after executing the wrapped function."""
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        result = func(self, *args, **kwargs)
-        server_db_.session.commit()
-        return result
-    return wrapper
-
-
-def set_updated_at(func: Callable) -> Callable:
-    """
-    Decorator to set the updated_setting_at and last_setting_update attributes
-    after executing the wrapped function.
-    """
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        result = func(self, *args, **kwargs)
-        self.updated_setting_at = datetime.now(CET)
-        self.last_setting_update = f"{func.__name__}"
-        return result
-    return wrapper
 
 
 class AuthenticationToken(server_db_.Model):
@@ -61,36 +31,23 @@ class AuthenticationToken(server_db_.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="tokens")
-    
-
-def reset_verification_token(email: str, token: str):
-    id_ = get_user_by_email(email).id
-    existing_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type="verification").first()
-    if existing_token:
-        existing_token.token = token
-    else:
-        new_token = AuthenticationToken(user_id=id_,
-                                        token_type="verification", token=token)
-        server_db_.session.add(new_token)
-        server_db_.session.commit()
 
 
-@commit_to_db
-def delete_verification_token(id_: int):
-    server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type="verification").delete()
+# @commit_to_db
+# def delete_verification_token(id_: int):
+#     server_db_.session.query(AuthenticationToken).filter_by(
+#         user_id=id_, token_type="verification").delete()
     
     
 def reset_password_reset_token(email: str, token: str):
     id_ = get_user_by_email(email).id
     existing_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type="password_reset").first()
+        user_id=id_, token_type="password_verification").first()
     if existing_token:
         existing_token.token = token
     else:
         new_token = AuthenticationToken(user_id=id_,
-                                        token_type="password_reset", token=token)
+                                        token_type="password_verification", token=token)
         server_db_.session.add(new_token)
         server_db_.session.commit()
 
@@ -98,7 +55,7 @@ def reset_password_reset_token(email: str, token: str):
 @commit_to_db
 def delete_password_reset_token(id_: int):
     server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type="password_reset").delete()
+        user_id=id_, token_type="password_verification").delete()
 
 
 class User(server_db_.Model, UserMixin):
@@ -172,15 +129,15 @@ class User(server_db_.Model, UserMixin):
     def set_fast_name(self, fast_name: str) -> None:
         self.fast_name = fast_name.lower()
     
+    @set_updated_at
     def set_fast_code(self, fast_code: str) -> None:
         self.fast_code = self._get_hash(fast_code)
     
+    @set_updated_at
     def set_email_verified(self, verified: bool) -> None:
         self.email_verified = verified
     
-    def set_verified_at(self) -> None:
-        self.verified_at = datetime.now(CET)
-    
+    @set_updated_at
     def set_remember_me(self, remember: bool) -> None:
         self.remember_me = remember
     

@@ -8,7 +8,7 @@ from itsdangerous import SignatureExpired, BadSignature
 
 from src.auth.auth_forms import FastLoginForm, LoginForm
 from src.extensions import mail_, server_db_, serializer_, argon2_
-from src.models.auth_mod import (User, AuthenticationToken, get_user_by_fast_name,
+from src.models.auth_model.auth_mod import (User, AuthenticationToken, get_user_by_fast_name,
                                  get_user_by_email_or_username, reset_password_reset_token,
                                  delete_password_reset_token)
 
@@ -19,6 +19,7 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True,
     current_user.increment_tot_logins()
     current_user.set_remember_me(remember)
     session.permanent = remember
+    session["user_id"] = user.id
     if flash_:
         flash("Logged in successfully")
 
@@ -84,7 +85,7 @@ def send_password_reset_email(email: str, token: str):
 
 def confirm_password_reset_token(token: str, expiration: int = 3600) -> str | None:
     stored_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=current_user.id, token_type="password_reset").first()
+        user_id=current_user.id, token_type="password_verification").first()
     try:
         email = serializer_.loads(
             token,

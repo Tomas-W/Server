@@ -5,15 +5,14 @@ Sets general app settings as well as private variables,
     blueprints, databases.
 """
 import os
-
 from flask import Flask
 from flask_login import current_user
-from itsdangerous import URLSafeTimedSerializer
-from src.cli import _auth_cli, _server_cli
-from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
-                            login_manager_, migrater_, limiter_, session_,
-                            serializer_)
 
+from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
+                            login_manager_, migrater_, limiter_, session_)
+from src.models.mod_utils import load_user
+
+from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER, CET
 

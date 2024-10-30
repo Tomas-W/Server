@@ -4,7 +4,7 @@ from sqlalchemy import inspect
 
 from src.extensions import server_db_
 
-from src.models.auth_mod import User, _init_user, delete_user_by_id
+from src.models.auth_model.auth_mod import User, _init_user, delete_user_by_id
 from src.models.bakery_mod import (BakeryItem, get_item_by_id, delete_item_by_id,
                                    _init_bakery, clear_bakery_db)
 from src.models.news_mod import (News, get_news_by_id, delete_news_by_id,

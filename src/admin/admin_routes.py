@@ -1,10 +1,10 @@
 from flask import render_template, Blueprint, url_for, redirect, request, flash, session
 from flask_login import login_required
 
-from src.models.auth_mod import get_user_by_email
+from src.models.auth_model.auth_mod import get_user_by_email
+from src.models.auth_model.auth_mod_utils import confirm_authentication_token, process_verification_token
 from src.admin.admin_forms import (NewsForm, VerifyEmailForm, AuthenticationForm)
-from src.admin.admin_route_utils import (add_news_message, confirm_verification_token,
-                                          process_email_verification)
+from src.admin.admin_route_utils import (add_news_message)
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -20,7 +20,7 @@ def user_admin():
     if request.method == "POST":
         if form_type == "verify":
             if verify_email_form.validate_on_submit():
-                process_email_verification(verify_email_form.email.data)
+                process_verification_token(verify_email_form.email.data, "email_verification")
                 flash("If email exists, a verification email has been sent!")
                 session["flash_type"] = "verify"
                 return redirect(url_for("admin.user_admin"))
@@ -78,7 +78,7 @@ def add_news():
 @admin_bp.route("/admin/verify-email/<token>", methods=["GET"])
 def verify_email(token):
     """Verifies user email."""
-    email = confirm_verification_token(token)
+    email = confirm_authentication_token(token, "email_verification")
     if email:
         user = get_user_by_email(email)
         if user:

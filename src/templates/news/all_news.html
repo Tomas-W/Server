@@ -7,11 +7,14 @@ All news
 
 {% block news_content %}
 <div class="news-items-container">
-    {% for message in get_flashed_messages() %}
-                    <div class="news-flash">
-                        <p>{{ message }}</p>
-                    </div>
-                    {% endfor %}
+    {% if flash_type == "all_news" %}
+        {% for message in get_flashed_messages() %}
+            <div class="news-flash">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if not all_news_dict %}
         <div class="no-news-container outline">
             <div class="no-news">

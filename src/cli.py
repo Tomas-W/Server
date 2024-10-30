@@ -2,14 +2,20 @@ import click
 from flask import Flask, current_app
 from sqlalchemy import inspect
 
-from src.bakery.bakery_items import get_bakery_dict
-from src.extensions import server_db_, argon2_
-from src.models.auth_mod import User
-from src.models.bakery_mod import BakeryItem
-from src.news.news_items import _get_news_dict
-from src.models.news_mod import News
+from src.extensions import server_db_
 
-from config.settings import MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH
+from src.models.auth_mod import User, _init_user, delete_user_by_id
+from src.models.bakery_mod import (BakeryItem, get_item_by_id, delete_item_by_id,
+                                   _init_bakery, clear_bakery_db)
+from src.models.news_mod import (News, get_news_by_id, delete_news_by_id,
+                                 _init_news, clear_news_db)
+
+from src.bakery.bakery_items import get_bakery_dict
+from src.news.news_items import get_news_dict
+
+from config.settings import (MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
+                             FAST_CODE_LENGTH)
+
 
 def _auth_cli(app_: Flask) -> None:
     """Configures authentication CLI commands."""
@@ -19,49 +25,64 @@ def _auth_cli(app_: Flask) -> None:
         """CLI functionality for the User table"""
         pass
     
-    @auth.command("add-news")
-    @click.option("--c", is_flag=True,
-                  help="Confirm User deletion without prompting.")
+    @auth.command("init-user")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def add_news(c: bool, v: bool) -> None:
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_user(v: bool, c: bool) -> None:
+        """
+        Initializes the first user.
+
+        Usage: flask auth init-user [--v] [--c]
+        """
+        if not c and not click.confirm(
+                f"Are you sure you want to init the first user?"):
+            click.echo("User creation cancelled.")
+            return
+        
+        user_repr: str | None = _init_user()
+        if not user_repr:
+            click.echo("User creation failed.\n"
+                       "User table not empty.")
+            return
+        if v:
+            click.echo(f"User created: {user_repr}")
+
+    
+    @auth.command("init-news")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_news(c: bool, v: bool) -> None:
         """
         Adds news items to the News Table.
+        
+        Usage: flask auth init-news [--v] [--c]
         """
-        dict_ = _get_news_dict()
-        item_count = len(dict_)
+        news_dict = get_news_dict()
+        item_count = len(news_dict)
         
         if not c and not click.confirm(
                 f"Are you sure you want to add {item_count} items to the News Table?"):
             click.echo("Adding News Items cancelled.")
             return
 
-        for item_name, item_details in dict_.items():
-            news_item = News(
-                header=item_details["header"],
-                title=item_details["title"],
-                code=item_details["code"],
-                important=item_details["important"],
-                grid_cols=item_details["grid_cols"],
-                grid_rows=item_details["grid_rows"],
-                info_cols=item_details["info_cols"],
-                info_rows=item_details["info_rows"],
-                author=item_details["author"],
-            )
-            server_db_.session.add(news_item)
-        server_db_.session.commit()
+        may_init_news: bool | None = _init_news()
+        if not may_init_news:
+            click.echo("Adding News Items failed.\n"
+                       "News table not empty.")
+            return
         
         if v:
             click.echo(f"Successfully added {item_count} items to the News Table.")
 
-    @auth.command("add-bakery")
-    @click.option("--c", is_flag=True,
-                  help="Confirm User deletion without prompting.")
+
+    @auth.command("init-bakery")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def add_bakery(c: bool, v: bool) -> None:
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_bakery(c: bool, v: bool) -> None:
         """
         Adds bakery items to the BakeryItems Table.
 
-        Usage: flask auth add-bakery [--v]
+        Usage: flask auth init-bakery [--v] [--c]
         """
         dict_ = get_bakery_dict()
         item_count = len(dict_)
@@ -71,43 +92,70 @@ def _auth_cli(app_: Flask) -> None:
             click.echo("Adding BakeryItems cancelled.")
             return
 
-        for item_name, item_details in dict_.items():
-            bakery_item = BakeryItem(
-                name=item_name,
-                category=item_details["category"],
-                program=item_details["program"],
-                nasa=item_details["nasa"],
-                price=item_details["price"],
-                type=item_details["type"],
-                tags=item_details["tags"],
-                package_type=item_details["package_type"],
-                per_package=item_details["per_package"],
-                rack_type=item_details["rack_type"],
-                per_rack=item_details["per_rack"],
-                defrost_time=item_details["defrost_time"],
-                cooldown_time=item_details["cooldown_time"],
-                make_halves=item_details["make_halves"],
-                vegan=item_details["vegan"],
-                lactose_free=item_details["lactose_free"],
-                nutri_score=item_details["nutri_score"],
-                contains=item_details["contains"],
-                may_contain=item_details["may_contain"],
-                image=item_details["image"]
-            )
-            server_db_.session.add(bakery_item)
-        server_db_.session.commit()
+        may_init_bakery: bool | None = _init_bakery()
+        if not may_init_bakery:
+            click.echo("Adding BakeryItems failed.\n"
+                       "BakeryItems table not empty.")
+            return
+        
         if v:
             click.echo(f"Successfully added {item_count} items to the BakeryItems Table.")
 
-    @auth.command("remove-bakery")
-    @click.option("--c", is_flag=True,
-                  help="Confirm removal without prompting.")
+    
+    @auth.command("remove-news")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def remove_news(c: bool, v: bool) -> None:
+        """
+        Removes all news items from the News Table.
+
+        Usage: flask auth remove-news [--v] [--c]
+        """
+        item_count = server_db_.session.query(News).count()
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to remove {item_count} items from the News Table?"):
+            click.echo("Removing News Items cancelled.")
+            return
+
+        clear_news_db()
+        if v:
+            click.echo(f"Successfully removed {item_count} items from the News Table.")
+    
+    
+    @auth.command("remove-news-item")
+    @click.argument("id_", type=int)
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def remove_news_item(id_: int, c: bool, v: bool) -> None:
+        """
+        Removes a news item from the News Table by ID.
+
+        Usage: flask auth remove-news-item <id_> [--v] [--c]
+        """
+        news_item = get_news_by_id(id_)
+        if not news_item:
+            click.echo(f"No NewsItem with id {id_} found.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to remove NewsItem:\n{repr(news_item)}?"):
+            click.echo("NewsItem removal cancelled.")
+            return
+        
+        delete_news_by_id(id_)
+        if v:
+            click.echo(f"Successfully removed NewsItem: {repr(news_item)}.")
+    
+    
+    @auth.command("remove-bakery")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def remove_bakery(c: bool, v: bool) -> None:
         """
         Removes all bakery items from the BakeryItems Table.
 
-        Usage: flask auth remove-bakery [--c] [--v]
+        Usage: flask auth remove-bakery [--v] [--c]
         """
         item_count = server_db_.session.query(BakeryItem).count()
         
@@ -116,24 +164,21 @@ def _auth_cli(app_: Flask) -> None:
             click.echo("Removing BakeryItems cancelled.")
             return
 
-        server_db_.session.query(BakeryItem).delete()
-        server_db_.session.commit()
+        clear_bakery_db()
         if v:
             click.echo(f"Successfully removed {item_count} items from the BakeryItems Table.")
 
     @auth.command("remove-bakery-item")
     @click.argument("id_", type=int)
-    @click.option("--c", is_flag=True,
-                  help="Confirm removal without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def remove_bakery_item(id_: int, c: bool, v: bool) -> None:
         """
         Removes a bakery item from the BakeryItems Table by ID.
 
-        Usage: flask auth remove-bakery-item <id_> [--c] [--v]
-        :param id_: ID of the bakery item to remove
+        Usage: flask auth remove-bakery-item <id_> [--v] [--c]
         """
-        bakery_item = BakeryItem.get_item_by_id(id_)
+        bakery_item = get_item_by_id(id_)
         if not bakery_item:
             click.echo(f"No BakeryItem with id {id_} found.")
             return
@@ -143,10 +188,10 @@ def _auth_cli(app_: Flask) -> None:
             click.echo("BakeryItem removal cancelled.")
             return
 
-        server_db_.session.delete(bakery_item)
-        server_db_.session.commit()
+        delete_item_by_id(id_)
         if v:
             click.echo(f"Successfully removed BakeryItem: {repr(bakery_item)}.")
+    
     
     @auth.command("info")
     @click.argument("id_", type=int)
@@ -156,10 +201,8 @@ def _auth_cli(app_: Flask) -> None:
         Takes a User ID and returns its __repr__.
 
         Usage: flask auth info <id_> [--v]
-        :param id_: User ID
-        :param v: Enables verbose mode (optional)
         """
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -177,23 +220,19 @@ def _auth_cli(app_: Flask) -> None:
                 click.echo(f"{key:<15}: {value}")
             return
 
-        click.echo(repr(user))
+        click.echo(repr(user))            
 
     @auth.command("delete-user")
     @click.argument("id_", type=int)
-    @click.option("--c", is_flag=True,
-                  help="Confirm User deletion without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def delete_user(id_: int, c: bool, v: bool) -> None:
         """
         Takes a User ID and deletes the record from the table.
 
-        Usage: flask auth delete-user <user id> [--c] [--v]
-        :param id_: User ID.
-        :param c: Confirm without prompt (optional)
-        :param v: Enables verbose mode (optional)
+        Usage: flask auth delete-user <user id> [--v] [--c]
         """
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -203,14 +242,10 @@ def _auth_cli(app_: Flask) -> None:
             click.echo("User deletion cancelled.")
             return
 
+        delete_user_by_id(id_)
         if v:
-            click.echo(f"Deleting user: {repr(user)}")
-
-        server_db_.session.delete(user)
-        server_db_.session.commit()
-
-        click.echo(f"User: {repr(user)} has been removed from the table.")
-        return
+            click.echo(f"User: {repr(user)} has been removed from the table.")
+        
 
     @auth.command("get-col-by-id")
     @click.argument("id_", type=int)
@@ -220,12 +255,9 @@ def _auth_cli(app_: Flask) -> None:
         """
         Takes a User ID and column name and returns the value.
 
-        Usage: flask auth get-col-by-id <user id> [--v]
-        :param id_: User ID
-        :param col_name: Name of the column
-        :param v: Enables verbose mode (optional)
+        Usage: flask auth get-col-by-id <user id> <column name> [--v]
         """
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -243,32 +275,27 @@ def _auth_cli(app_: Flask) -> None:
         if v:
             click.echo(repr(user))
 
-        click.echo(f"Column name: '{col_name}'.")
+        click.echo(f"Column name : '{col_name}'.")
         click.echo(f"Column value: '{col_value}'.")
-        return
+
 
     @auth.command("set-email-verified")
     @click.argument("id_", type=int)
     @click.argument("new_val", type=bool)
-    @click.option("--c", is_flag=True,
-                  help="Confirm setting value without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def set_email_verified(id_: int, new_val: bool, c: bool, v: bool) -> None:
         """
         Takes a User id and a bool and sets the email_verified column accordingly.
 
-        Usage: flask auth set-email-verified <id_> <new_val> [--c] [--v]
-        :param id_: User ID
-        :param new_val: New value of the email_verified column
-        :param c: Confirm without prompt (optional)
-        :param v: Enables verbose mode (optional)
+        Usage: flask auth set-email-verified <id_> <new_val> [--v] [--c]
         """
         col_name = "email_verified"
         if new_val not in [0, 1]:
             click.echo(f"Param new_val must be of type bool but got '{new_val}'.")
             return
 
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -279,42 +306,32 @@ def _auth_cli(app_: Flask) -> None:
             return
 
         old_val = getattr(user, col_name)
-        setattr(user, col_name, new_val)
-        server_db_.session.commit()
+        user.set_email_verified(new_val)
         if v:
             click.echo(repr(user))
-
-        click.echo(f"Changed '{col_name}' from '{old_val}' to '{new_val}'.")
-        return
+            click.echo(f"Changed '{col_name}' from '{old_val}' to '{new_val}'.")
+            
 
     @auth.command("set-f-name")
     @click.argument("id_", type=int)
     @click.argument("fast_name", type=str)
-    @click.option("--c", is_flag=True,
-                  help="Confirm User deletion without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def set_fast_name(id_: int, fast_name: str, c: bool, v: bool) -> None:
         """
-        Takes a User id and a string (3 < len < 17) and sets the fast_name of the User.
+        Takes a User id and a string (len bound) and sets the fast_name of the User.
 
-        Usage: flask auth set-f-name <user id> <fast_name> [--c] [--v]
-        :param id_: User ID
-        :param fast_name: Users fast_name
-        :param c: Confirm without prompt (optional)
-        :param v: Enables verbose mode (optional)
+        Usage: flask auth set-f-name <user id> <fast_name> [--v] [--c]
         """
         col_name = "fast_name"
         if not MIN_FAST_NAME_LENGTH < len(fast_name) < MAX_FAST_NAME_LENGTH:
             click.echo(f"'{col_name}' length must be between {MIN_FAST_NAME_LENGTH} and {MAX_FAST_NAME_LENGTH} characters.")
             return
 
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
-
-        if v:
-            click.echo(f"Applying to: {user.username} with {col_name}: {user.fast_name}")
         
         if not c and not click.confirm(
                 f"Are you sure you want to set '{col_name}' to '{fast_name}'?"):
@@ -324,52 +341,40 @@ def _auth_cli(app_: Flask) -> None:
         user.set_fast_name(fast_name)
         if v:
             click.echo(repr(user))
+            click.echo(f"Set '{col_name}' to '{fast_name}'.")
 
-        click.echo(f"Set '{col_name}' to '{fast_name}'.")
-        return
 
     @auth.command("set-f-code")
     @click.argument("id_", type=int)
     @click.argument("fast_code", type=str)
-    @click.option("--c", is_flag=True,
-                  help="Confirm setting value without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def set_fast_code(id_: int, fast_code: str, c: bool, v: bool) -> None:
         """
         Takes a User id and a 5-digit number and sets the fast_code of the user.
 
-        Usage: flask auth set-f-code <user id> <5-digit fast_code>
-        :param id_: User ID
-        :param fast_code: 5 digit login code
-        :param c: Confirm without prompt (optional)
-        :param v: Enables verbose mode (optional)
+        Usage: flask auth set-f-code <user id> <fast_code> [--v] [--c]
         """
         col_name = "fast_code"
         if not fast_code.isdigit() or len(fast_code) != FAST_CODE_LENGTH:
             click.echo(f"'{col_name}' must be a {FAST_CODE_LENGTH}-digit number.")
             return
 
-        user: User = server_db_.session.get(User, id_)
+        user: User | None = server_db_.session.get_or_none(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
-        
-        if v:
-            click.echo(f"Applying to: {user.username} with fast_name: {user.fast_name}")
 
         if not c and not click.confirm(
                 f"Are you sure you want to set '{col_name}' to '{fast_code}'?"):
             click.echo("Setting value cancelled.")
             return
 
-        hashed_code = argon2_.hash(fast_code)
-        setattr(user, col_name, hashed_code)
-        server_db_.session.commit()
+        user.set_fast_code(fast_code)
         if v:
             click.echo(repr(user))
+            click.echo(f"Set '{col_name}' to '{fast_code}'.")
 
-        click.echo(f"Set '{col_name}' to '{fast_code}'.")
-        return
     app_.cli.add_command(auth)
 
 
@@ -386,9 +391,9 @@ def _server_cli(app_: Flask) -> None:
         Returns the name of the active server configuration.
 
         Usage: flask server config-name [--v]
-        :param v: Enables verbose mode (optional)
         """
         config = current_app.config["INSTANCE"]
+
         if v:
             app_info = {
                 "App name": current_app.name,
@@ -401,27 +406,14 @@ def _server_cli(app_: Flask) -> None:
             return
 
         click.echo(config.config_name())
-        return
 
-    @server.command("init")
-    def init() -> None:
-        """
-        Sets the fast_name of the first user to 'tomas' and the fast_code to argon2_.hash("00000").
-
-        Usage: flask server set_first_user_fast_info
-        """
-        user: User = server_db_.session.execute(
-            server_db_.select(User).limit(1)).scalar_one_or_none()
-        if not user:
-            click.echo("No users found.")
-            return
-
-        user.fast_name = 'test'
-        user.fast_code = argon2_.hash("00000")
-        server_db_.session.commit()
-
-        click.echo(f"User: {repr(user)}")
-        click.echo(f"Set fast_name to 'test' and fast_code to hashed '00000'.")
-        return
+    @server.command("init-server")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_server(v: bool, c: bool) -> None:
+        ctx = click.get_current_context()
+        ctx.invoke(app_.cli.commands["auth"].commands["init-user"], v=v, c=c)
+        ctx.invoke(app_.cli.commands["auth"].commands["init-bakery"], v=v, c=c)
+        ctx.invoke(app_.cli.commands["auth"].commands["init-news"], v=v, c=c)
 
     app_.cli.add_command(server)

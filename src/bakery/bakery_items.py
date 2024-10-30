@@ -2529,12 +2529,3 @@ def get_bakery_dict() -> dict:
     dict_.update(get_pastry_dict())
     dict_.update(get_sweets_dict())
     return dict_
-
-
-if __name__ == "__main__":
-    pass
-    # for item, details in get_bakery_dict().items():
-    #     image_path = details.get("image")
-    #     if image_path:
-    #         if not os.path.exists(image_path):
-    #             print(f"{item}: {image_path} FAILED")

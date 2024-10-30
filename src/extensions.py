@@ -1,3 +1,5 @@
+import os
+
 from flask import current_app
 from flask_mail import Mail
 from flask_login import LoginManager
@@ -10,8 +12,10 @@ from flask_limiter.util import get_remote_address
 from flask_session import Session
 from google_auth_oauthlib.flow import Flow
 from argon2 import PasswordHasher
+from itsdangerous import URLSafeTimedSerializer
 
 from config.settings import CLIENTS_SECRETS_PATH, DEFAULT_LIMITS, LIMITER_URI
+
 
 server_db_: SQLAlchemy = SQLAlchemy()
 mail_: Mail = Mail()
@@ -33,3 +37,4 @@ flow_ = Flow.from_client_secrets_file(
                 "https://www.googleapis.com/auth/userinfo.email", "openid"],
         redirect_uri="http://localhost:5000/callback"
     )
+serializer_ = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))

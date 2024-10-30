@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, SubmitField, EmailField, PasswordField, BooleanField,
                      HiddenField)
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Email, EqualTo
 
 from src.utils.form_utils import (EmailTakenCheck, PasswordCheck, ForbiddenCheck,
                                   UsernameTakenCheck, EmailLengthCheck,

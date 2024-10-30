@@ -10,14 +10,13 @@ from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests  # noqa
 from sqlalchemy import select
 
-from src.extensions import flow_, server_db_
+from src.extensions import server_db_, flow_
 from src.auth.auth_forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
                                  SetPasswordForm, ResetPasswordForm)
-from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_email,
+from src.auth.auth_route_utils import (confirm_password_reset_token, process_password_reset_verification,
                                        fast_login, normal_login, handle_user_login,
                                        handle_user_logout)
-from src.models.auth_mod import User
-from src.models.auth_mod import (get_user_by_email, get_new_user)
+from src.models.auth_mod import (User, get_user_by_email, get_new_user)
 from src.models.state_mod import (save_oauth_state, get_and_delete_oauth_state)
 
 
@@ -176,7 +175,7 @@ def set_password():
                     flash("Session authentication failed")
                     return redirect(url_for("auth.request-reset"))
                 session.pop("email")
-                user: User = get_new_user(
+                user: User | None = get_new_user(
                     email=email,
                     username=email[:8],
                     password=set_password_form.password.data,
@@ -187,7 +186,7 @@ def set_password():
                 else:
                     flash("Unexpected db error")
                     return redirect(url_for("auth.set_password"))
-            # Store form errors and type
+
             session["form_errors"] = set_password_form.errors
             session["last_form_type"] = "password"
             return redirect(url_for("auth.set_password"))
@@ -287,10 +286,7 @@ def request_reset():
 
     if request.method == "POST" and form_type == "request_reset":
             if request_reset_form.validate_on_submit():
-                user: User = server_db_.session.execute(select(User).filter_by(
-                    email=request_reset_form.email.data)).scalar_one_or_none()
-                if user:
-                    send_password_reset_email(user)
+                process_password_reset_verification(request_reset_form.email.data)
                 flash("If user exists, code has been sent")
                 return redirect(url_for("auth.request_reset"))
             # Store form errors and type
@@ -335,7 +331,7 @@ def reset_password(token):
     form_type = request.form.get("form_type")
     fast = request.args.get("fast", "false").lower() == "true"
 
-    email = confirm_reset_token(token)
+    email = confirm_password_reset_token(token)
 
     if not email:
         flash("Reset link invalid or expired")
@@ -347,8 +343,11 @@ def reset_password(token):
     if request.method == "POST" and form_type == "password":
             if reset_password_form.validate_on_submit():
                 user.set_password(reset_password_form.password.data)
+                user.email_verified = True
+                handle_user_login(user, remember=False, flash_=False)
                 flash("Your password has been updated!")
-                return redirect(url_for('auth.login'))
+                session["flash_type"] = "authentication"
+                return redirect(url_for('admin.user_admin'))
             # Store form errors and type
             session["form_errors"] = reset_password_form.errors
             session["last_form_type"] = "password"

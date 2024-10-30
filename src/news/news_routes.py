@@ -1,15 +1,15 @@
-from pprint import pprint
-
 from flask import render_template, Blueprint, request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
 from src.models.news_mod import (get_all_news_dict, get_all_unread_dict, get_news_by_id,
                                  get_news_dict_by_id, get_comment_by_id, add_new_comment)
+
+
 from src.news.news_forms import CommentForm
 from src.news.news_route_utils import allow_only_styling, clean_news_session
-from src.models.news_mod import News
-from src.extensions import server_db_
+
+
 news_bp = Blueprint("news", __name__)
 
 
@@ -18,22 +18,25 @@ news_bp = Blueprint("news", __name__)
 @login_required
 def all_news():       
     all_news_dict = get_all_news_dict()
+    flash_type = "all_news"
 
     return render_template(
         "news/all_news.html",
         page="all_news",
         all_news_dict=all_news_dict,
+        flash_type=flash_type,
     )
 
 
 @news_bp.route("/news/id/<id_>", methods=["GET", "POST"])
 @login_required
 def news(id_: int):
+    comment_form = CommentForm()
+    
     news_dict = get_news_dict_by_id(id_)
     news_item = get_news_by_id(id_)
     news_item.set_seen_by(current_user.id)
     
-    comment_form = CommentForm()
     form_errors = session.pop("form_errors", None)
 
     if request.method == "POST":
@@ -43,6 +46,7 @@ def news(id_: int):
             clean_news_session()
             flash("Comment submitted successfully!", "success")
             session["post_comment"] = True
+            session["flash_type"] = "comment"
             return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
         
         session["form_errors"] = comment_form.errors
@@ -56,9 +60,10 @@ def news(id_: int):
     if form_errors is not None:
         comment_form.process(MultiDict(form_data))
     
-    news_id = session.pop("news_id", None)
-    post_comment = session.pop("post_comment", None)
-    comment_id = session.pop("comment_id", None)
+    # news_id = session.pop("news_id", None)
+    post_comment = session.pop("post_comment", None)  # for comment bg hghlight
+    comment_id = session.pop("comment_id", None)      # for like/dislike bg hghlight
+    flash_type = session.pop("flash_type", None)      # for flash messages location
     return render_template(
         "news/news.html",
         page="news",
@@ -66,9 +71,10 @@ def news(id_: int):
         comment_form=comment_form,
         form_errors=form_errors,
         user_id=str(current_user.id),
-        news_id=news_id,
+        # news_id=news_id,
         post_comment=post_comment,
         comment_id=comment_id,
+        flash_type=flash_type,
     )
     
 

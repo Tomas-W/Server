@@ -1,10 +1,11 @@
 from datetime import datetime
-
 from flask_login import current_user
 from sqlalchemy import select, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.extensions import server_db_
+
+from src.news.news_items import get_news_dict
 from config.settings import CET
 
 
@@ -203,6 +204,37 @@ def get_news_dict_by_id(id_: int):
     result = server_db_.session.get(News, id_)
     return result.to_dict()
 
+
+def delete_news_by_id(id_: int) -> None:
+    server_db_.session.delete(server_db_.session.get(News, id_))
+    server_db_.session.commit()
+
+
+def clear_news_db() -> None:
+    server_db_.session.query(News).delete()
+    server_db_.session.commit()
+
+
+def _init_news() -> bool | None:
+    if not server_db_.session.query(News).count():
+        news_dict = get_news_dict()
+        for _, item_details in news_dict.items():
+            news_item = News(
+                header=item_details["header"],
+                title=item_details["title"],
+                code=item_details["code"],
+                important=item_details["important"],
+                grid_cols=item_details["grid_cols"],
+                grid_rows=item_details["grid_rows"],
+                info_cols=item_details["info_cols"],
+                info_rows=item_details["info_rows"],
+                author=item_details["author"],
+            )
+            server_db_.session.add(news_item)
+        server_db_.session.commit()
+        return True
+    
+    return None
     
 class Comment(server_db_.Model):
     """

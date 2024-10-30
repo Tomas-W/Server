@@ -138,11 +138,13 @@
                     </div>
 
                 {% endfor %}
-                {% for message in get_flashed_messages() %}
-            <div id="comment-flash" class="comment-flash news-gap">
-                <p>{{ message }}</p>    
-            </div>
-            {% endfor %}
+                {% if flash_type == "comment" %}
+                    {% for message in get_flashed_messages() %}
+                        <div id="comment-flash" class="comment-flash news-gap">
+                            <p>{{ message }}</p>    
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
 
     </div>  

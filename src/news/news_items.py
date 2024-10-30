@@ -9,7 +9,7 @@ def random_dates(count=20):
 
 
 
-def _get_news_dict() -> dict:
+def get_news_dict() -> dict:
     data = {
         1: {
             "header": "Retourname",
@@ -94,6 +94,6 @@ def _get_news_dict() -> dict:
 
 
 def get_news_items() -> list[dict]:
-    data = _get_news_dict()
+    data = get_news_dict()
     return [data[key] for key in sorted(data.keys())]
 

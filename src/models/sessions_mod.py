@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import String, LargeBinary, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src import server_db_
+from src.extensions import server_db_
 
 
 class SessionModel(server_db_.Model):

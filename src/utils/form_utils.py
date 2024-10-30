@@ -1,15 +1,16 @@
 import re
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
+from src.extensions import server_db_
+
+from src.models.auth_mod import User
+
 from config.settings import (banned_words_list, banned_characters_list,
                              required_password_symbols, MIN_COMMENT_LENGTH,
                              MAX_COMMENT_LENGTH)
-from src.models.auth_mod import User
-from src.extensions import server_db_
-from flask_login import current_user
-
 from config.settings import (MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH,
                              MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
                              MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH,

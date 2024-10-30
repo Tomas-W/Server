@@ -14,7 +14,7 @@ news_bp = Blueprint("news", __name__)
 
 
 # noinspection PyArgumentList
-@news_bp.route("/all-news")
+@news_bp.route("/news/all-news")
 @login_required
 def all_news():       
     all_news_dict = get_all_news_dict()
@@ -26,7 +26,7 @@ def all_news():
     )
 
 
-@news_bp.route("/news/<id_>", methods=["GET", "POST"])
+@news_bp.route("/news/id/<id_>", methods=["GET", "POST"])
 @login_required
 def news(id_: int):
     news_dict = get_news_dict_by_id(id_)
@@ -72,7 +72,7 @@ def news(id_: int):
     )
     
 
-@news_bp.route("/like-news/<id_>")
+@news_bp.route("/news/like-news/<id_>")
 @login_required
 def like_news(id_: int):
     news_item = get_news_by_id(id_)
@@ -81,7 +81,7 @@ def like_news(id_: int):
     return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
 
 
-@news_bp.route("/dislike-news/<id_>")
+@news_bp.route("/news/dislike-news/<id_>")
 @login_required
 def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
@@ -90,7 +90,7 @@ def dislike_news(id_: int):
     return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
 
 
-@news_bp.route("/like-comment/<id_>")
+@news_bp.route("/news/like-comment/<id_>")
 @login_required
 def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
@@ -99,7 +99,7 @@ def like_comment(id_: int):
     return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
 
 
-@news_bp.route("/dislike-comment/<id_>")
+@news_bp.route("/news/dislike-comment/<id_>")
 @login_required
 def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
@@ -108,9 +108,9 @@ def dislike_comment(id_: int):
     return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
 
 
-@news_bp.route("/all-unread")
+@news_bp.route("/news/unread")
 @login_required
-def all_unread():
+def unread():
     all_news_dict = get_all_unread_dict(current_user.id)
     
     return render_template(

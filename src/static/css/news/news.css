@@ -180,7 +180,7 @@
     align-items: center;
 }
 
-.form-error {
+.news-form-error {
     position: absolute;
     bottom: 100px;
 }
@@ -291,6 +291,10 @@
 .scroll-to-top:hover {
     opacity: 0.6;
     transition: opacity 0.3s ease-in-out;
+}
+
+.news-gap {
+    margin-bottom: var(--news-gap);
 }
 
 

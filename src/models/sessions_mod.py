@@ -1,16 +1,19 @@
 from datetime import datetime
 from typing import Optional
+
 from sqlalchemy import String, LargeBinary, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
+
 from src import server_db_
 
 
 class SessionModel(server_db_.Model):
-    """Represents a session in the database.
+    """
+    Represents a session in the database.
 
-    - ID: Unique identifier for the session
-    - DATA: Binary data associated with the session
-    - MODIFIED: Timestamp of when the session was last modified
+    - ID (str): Identifier [Primary Key]
+    - DATA (bytes): Binary data associated with the session
+    - MODIFIED (datetime): Timestamp of when the session was last modified
     """
 
     __tablename__ = "sessions"
@@ -20,4 +23,5 @@ class SessionModel(server_db_.Model):
     modified: Mapped[datetime] = mapped_column(DateTime)
 
     def __repr__(self) -> str:
-        return f"SessionModel(id={self.id!r}, modified={self.modified!r})"
+        return (f"SessionModel(id={self.id!r},"
+                f" modified={self.modified!r})")

@@ -5,7 +5,6 @@ Sets general app settings as well as private variables,
     blueprints, databases.
 """
 import os
-from datetime import datetime
 
 from flask import Flask
 from flask_login import current_user
@@ -16,7 +15,6 @@ from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
 
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER, CET
-from src.models.auth_mod import update_user_last_seen
 
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
@@ -77,7 +75,7 @@ def _configure_requests(app_: Flask) -> None:
     @app_.before_request
     def before_request():
         if current_user.is_authenticated:
-            update_user_last_seen(current_user, datetime.now(CET))
+            current_user.update_last_seen()
 
 
 def _configure_cli(app_: Flask) -> None:

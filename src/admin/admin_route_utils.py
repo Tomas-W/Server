@@ -7,7 +7,7 @@ import os
 from src import server_db_, mail_
 from src.models.news_mod import News
 from src.auth.auth_route_utils import generate_verification_token
-
+from src.admin.admin_forms import AuthenticationForm
 
 def add_news_message(title, content):
     # noinspection PyArgumentList
@@ -20,12 +20,12 @@ def add_news_message(title, content):
     server_db_.session.commit()
 
 
-def send_verification_email(user):
-    token = generate_verification_token(user.email)
+def send_verification_email(email: str):
+    token = generate_verification_token(email)
     verification_url = url_for('admin.verify_email', token=token, _external=True)
     message = Message(subject="Email Verification",
                       sender=os.environ.get("GMAIL_EMAIL"),
-                      recipients=[user.email],
+                      recipients=[email],
                       body=f"Please verify your email by visiting: {verification_url}")
     mail_.send(message)
 
@@ -46,4 +46,9 @@ def confirm_reset_token(token: str, expiration: int = 3600) -> str | None:
         return email
     except (SignatureExpired, BadSignature):
         return None
-    
+
+
+def process_authentication_form(authentication_form: AuthenticationForm):
+    for field in authentication_form:
+        if field.data:
+            pass

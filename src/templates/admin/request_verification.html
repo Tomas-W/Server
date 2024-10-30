@@ -1,14 +1,14 @@
 {% extends "admin/admin_base.html" %}
 
-{% block content %}
+{% block admin_content %}
 <form method="POST" action="" novalidate class="auth-form">
     {{ verify_email_form.hidden_tag() }}
     <!-------- Email or username -------->
     <div class="form-item last-form-item">
         <div class="input-error-container">
-            {{ verify_email_form.email(class="auth_input_field") }}
+            {{ verify_email_form.email(class="auth-input-field") }}
             {% if form_errors["email"] %}
-                <div class="form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
+                <div class="auth-form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
             {% endif %}
         </div>
     </div>

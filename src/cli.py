@@ -9,6 +9,8 @@ from src.models.bakery_mod import BakeryItem
 from src.news.news_items import _get_news_dict
 from src.models.news_mod import News
 
+from config.settings import MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH
+
 def _auth_cli(app_: Flask) -> None:
     """Configures authentication CLI commands."""
 
@@ -76,8 +78,8 @@ def _auth_cli(app_: Flask) -> None:
                 program=item_details["program"],
                 nasa=item_details["nasa"],
                 price=item_details["price"],
-                type="-".join(item_details["type"]),
-                tags="-".join(item_details["tags"]),
+                type=item_details["type"],
+                tags=item_details["tags"],
                 package_type=item_details["package_type"],
                 per_package=item_details["per_package"],
                 rack_type=item_details["rack_type"],
@@ -88,8 +90,8 @@ def _auth_cli(app_: Flask) -> None:
                 vegan=item_details["vegan"],
                 lactose_free=item_details["lactose_free"],
                 nutri_score=item_details["nutri_score"],
-                contains="-".join(item_details["contains"]),
-                may_contain="-".join(item_details["may_contain"]),
+                contains=item_details["contains"],
+                may_contain=item_details["may_contain"],
                 image=item_details["image"]
             )
             server_db_.session.add(bakery_item)
@@ -291,7 +293,7 @@ def _auth_cli(app_: Flask) -> None:
     @click.option("--c", is_flag=True,
                   help="Confirm User deletion without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_f_name(id_: int, fast_name: str, c: bool, v: bool) -> None:
+    def set_fast_name(id_: int, fast_name: str, c: bool, v: bool) -> None:
         """
         Takes a User id and a string (3 < len < 17) and sets the fast_name of the User.
 
@@ -302,8 +304,8 @@ def _auth_cli(app_: Flask) -> None:
         :param v: Enables verbose mode (optional)
         """
         col_name = "fast_name"
-        if not 3 < len(fast_name) < 17:
-            click.echo(f"'{col_name}' length must be between 3 and 17 characters.")
+        if not MIN_FAST_NAME_LENGTH < len(fast_name) < MAX_FAST_NAME_LENGTH:
+            click.echo(f"'{col_name}' length must be between {MIN_FAST_NAME_LENGTH} and {MAX_FAST_NAME_LENGTH} characters.")
             return
 
         user: User = server_db_.session.get(User, id_)
@@ -319,7 +321,7 @@ def _auth_cli(app_: Flask) -> None:
             click.echo("Setting value cancelled.")
             return
 
-        user.set_f_name(fast_name)
+        user.set_fast_name(fast_name)
         if v:
             click.echo(repr(user))
 
@@ -332,7 +334,7 @@ def _auth_cli(app_: Flask) -> None:
     @click.option("--c", is_flag=True,
                   help="Confirm setting value without prompting.")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
-    def set_f_code(id_: int, fast_code: str, c: bool, v: bool) -> None:
+    def set_fast_code(id_: int, fast_code: str, c: bool, v: bool) -> None:
         """
         Takes a User id and a 5-digit number and sets the fast_code of the user.
 
@@ -343,8 +345,8 @@ def _auth_cli(app_: Flask) -> None:
         :param v: Enables verbose mode (optional)
         """
         col_name = "fast_code"
-        if not fast_code.isdigit() or len(fast_code) != 5:
-            click.echo(f"'{col_name}' must be a 5-digit number.")
+        if not fast_code.isdigit() or len(fast_code) != FAST_CODE_LENGTH:
+            click.echo(f"'{col_name}' must be a {FAST_CODE_LENGTH}-digit number.")
             return
 
         user: User = server_db_.session.get(User, id_)

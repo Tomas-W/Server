@@ -3,8 +3,9 @@ from wtforms import (StringField, SubmitField, EmailField, PasswordField, Boolea
                      HiddenField)
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
-from config.settings import required_password_symbols
-from src.utils.form_utils import EmailCheck, PasswordCheck, ForbiddenCheck
+from src.utils.form_utils import (EmailTakenCheck, PasswordCheck, ForbiddenCheck,
+                                  UsernameTakenCheck, EmailLengthCheck,
+                                  UsernameLengthCheck, PasswordLengthCheck)
 
 
 class RegisterForm(FlaskForm):
@@ -13,10 +14,10 @@ class RegisterForm(FlaskForm):
         label="Email",
         render_kw={"placeholder": "Email", "autofocus": True},
         validators=[
-            DataRequired("Email is required"),
-            Email("Invalid email"),
-            Length(min=1, max=75, message="Email too long"),
-            EmailCheck(register=True, message="Email already registered"),
+            DataRequired(message="Email is required"),
+            Email(message="Invalid email"),
+            EmailTakenCheck(),
+            EmailLengthCheck(),
             ForbiddenCheck(),
         ]
     )
@@ -25,7 +26,8 @@ class RegisterForm(FlaskForm):
         render_kw={"placeholder": "Username"},
         validators=[
             DataRequired(message="Username is required"),
-            Length(min=4, max=20, message="Length must be 4 - 20"),
+            UsernameTakenCheck(),
+            UsernameLengthCheck(),
             ForbiddenCheck(),
         ]
     )
@@ -34,18 +36,19 @@ class RegisterForm(FlaskForm):
         render_kw={"placeholder": "Password"},
         validators=[
             DataRequired(message="Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            EqualTo(fieldname="confirm_password", message="Passwords must match"),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
-    password2 = PasswordField(
-        label="Re-type Password",
-        render_kw={"placeholder": "Re-type password"},
+    confirm_password = PasswordField(
+        label="Confirm password",
+        render_kw={"placeholder": "Confirm password"},
         validators=[
-            DataRequired(message="Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18"),
+            DataRequired(message="Confirm is required"),
             EqualTo(fieldname="password", message="Passwords must match"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
     form_type = HiddenField(default="register")
@@ -56,7 +59,7 @@ class LoginForm(FlaskForm):
     """Login form for auth page."""
     email_or_uname = EmailField(
         label="Email or username",
-        render_kw={"placeholder": "Email or username"},
+        render_kw={"placeholder": "Email or username", "autofocus": True},
         validators=[
             DataRequired(message="Email or username is required"),
         ]
@@ -80,7 +83,6 @@ class FastLoginForm(FlaskForm):
         render_kw={"placeholder": "Fast"},
         validators=[
             DataRequired(message="Name is required"),
-            Length(min=4, max=16, message="Length must be 4 - 16"),
         ]
     )
     fast_code = PasswordField(
@@ -91,7 +93,6 @@ class FastLoginForm(FlaskForm):
         },
         validators=[
             DataRequired(message="Code is required"),
-            Length(min=5, max=5, message="Code must be 5 characters"),
         ]
     )
     form_type = HiddenField(default="fast_login")
@@ -106,7 +107,7 @@ class RequestResetForm(FlaskForm):
         validators=[
             DataRequired(message="Email is required"),
             Email(message="Invalid email"),
-            Length(min=1, max=75, message="Email too long"),
+            EmailLengthCheck(),
         ]
     )
     form_type = HiddenField(default="request_reset")
@@ -120,18 +121,18 @@ class SetPasswordForm(FlaskForm):
         render_kw={"placeholder": "Password", "autofocus": True},
         validators=[
             DataRequired(message="Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
-    password2 = PasswordField(
+    confirm_password = PasswordField(
         label="Re-type password",
         render_kw={"placeholder": "Re-type password"},
         validators=[
             DataRequired(message="Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18"),
             EqualTo(fieldname="password"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
     form_type = HiddenField(default="password")
@@ -144,19 +145,20 @@ class ResetPasswordForm(FlaskForm):
         label="Password",
         render_kw={"placeholder": "Password", "autofocus": True},
         validators=[
-            DataRequired("Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18 characters"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            DataRequired(message="Password is required"),
+            EqualTo(fieldname="confirm_password", message="Passwords must match"),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
-    password2 = PasswordField(
+    confirm_password = PasswordField(
         label="Re-type password",
         render_kw={"placeholder": "Re-type password"},
         validators=[
             DataRequired(message="Password is required"),
-            Length(min=6, max=18, message="Length must be 6 - 18"),
             EqualTo(fieldname="password"),
-            PasswordCheck(required_symbols=required_password_symbols, message=None),
+            PasswordCheck(),
+            PasswordLengthCheck(),
         ]
     )
     form_type = HiddenField(default="password")

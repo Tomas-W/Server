@@ -15,7 +15,7 @@ Register
             <!-------- Flashed messages -------->
             {% if not fast %}
                     {% for message in get_flashed_messages() %}
-                    <div class="auth_flash">
+                    <div class="auth-flash">
                         <p>{{ message }}</p>
                     </div>
                     {% endfor %}
@@ -27,37 +27,41 @@ Register
                 <!-------- Email -------->
                 <div class="form-item">
                     <div class="input-error-container">
-                        {{ register_form.email(class="auth_input_field") }}
+                        {{ register_form.email(class="auth-input-field") }}
                         {% if form_errors["email"] %}
-                            <div class="form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
+                            <div class="auth-form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ register_form.email.label }}</div>
                     </div>
                 </div>
                 <!-------- Username -------->   
                 <div class="form-item">
                     <div class="input-error-container">
-                        {{ register_form.username(class="auth_input_field") }}
+                        {{ register_form.username(class="auth-input-field") }}
                         {% if form_errors["username"] %}
-                            <div class="form-error"><strong>{{ form_errors["username"][0] }}</strong></div>
+                            <div class="auth-form-error"><strong>{{ form_errors["username"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ register_form.username.label }}</div>
                     </div>
                 </div>
                 <!-------- Password -------->   
                 <div class="form-item">
                     <div class="input-error-container">
-                        {{ register_form.password(class="auth_input_field") }}
+                        {{ register_form.password(class="auth-input-field") }}
                         {% if form_errors["password"] %}
-                            <div class="form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
+                            <div class="auth-form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ register_form.password.label }}</div>
                     </div>
                 </div>
-                <!-------- Password2 -------->   
+                <!-------- Confirm password -------->   
                 <div class="form-item last-form-item">
                     <div class="input-error-container">
-                        {{ register_form.password2(class="auth_input_field") }}
-                        {% if form_errors["password2"] %}
-                            <div class="form-error"><strong>{{ form_errors["password2"][0] }}</strong></div>
+                        {{ register_form.confirm_password(class="auth-input-field") }}
+                        {% if form_errors["confirm_password"] %}
+                            <div class="auth-form-error"><strong>{{ form_errors["confirm_password"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ register_form.confirm_password.label }}</div>
                     </div>
                 </div>
                 <!-------- Form type -------->

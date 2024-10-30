@@ -1,7 +1,7 @@
 import os
 
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
-from flask import url_for, redirect, session
+from flask import url_for, redirect, session, flash
 from flask_login import login_user, current_user, logout_user
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -17,6 +17,7 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True) ->
     current_user.increment_tot_logins()
     current_user.set_remember_me(remember)
     session.permanent = remember
+    flash("Logged in successfully")
 
 
 def handle_user_logout() -> None:

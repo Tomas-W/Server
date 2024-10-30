@@ -1,73 +1,37 @@
 from datetime import datetime
 
 from flask_login import current_user
-from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import select, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from config.settings import CET
 from src.extensions import server_db_
-from sqlalchemy import select
-
-
-def get_all_news_dict():
-        result = server_db_.session.execute(
-            select(News)
-        ).scalars().all()
-        return [news.to_dict() for news in result]
-
-
-def get_all_unread_dict(user_id: int):
-    result = server_db_.session.execute(
-            select(News)
-        ).scalars().all()
-    
-    return [news.to_dict() for news in result if str(user_id) not in news.seen_by.split("|")]
-
-
-def get_news_by_id(id_: int):
-    result = server_db_.session.get(News, id_)
-    return result
-
-
-def get_news_dict_by_id(id_: int):
-    result = server_db_.session.get(News, id_)
-    return result.to_dict()
-
-
-def get_comment_by_id(id_: int):
-    result = server_db_.session.get(Comment, id_)
-    return result
-
-
-def add_new_comment(news_id: int, content: str) -> None:
-    comment = Comment(
-        content=content,
-        author=current_user.username,
-        news_id=news_id
-    )
-    increment_tot_remarks(news_id)
-    server_db_.session.add(comment)
-    server_db_.session.commit()
-
-
-def increment_tot_remarks(news_id: int):
-    news = server_db_.session.get(News, news_id)
-    news.tot_remarks += 1
+from config.settings import CET
 
 
 class News(server_db_.Model):
     """
-    News table
+    Stores the News data.
 
-    - ID: Unique identifier for the news article
-    - TITLE: Title of the news article
-    - CONTENT: Content of the news article
-    - AUTHOR: Author of the news article
-    - TOT_REMARKS: Total number of remarks on the news article
-    - REMARKS: String containing remarks on the news article
-    - CREATED_AT: Timestamp of when the news article was created
-    - TOT_VIEWS: Total number of views for the news article
-    - TOT_ACCEPTED: Total number of acceptances for the news article
+    - ID (int): Identifier [Primary Key]
+    - TITLE (str): News title [Required]
+    - HEADER (str): News header [Required]
+    - CODE (int): News code [Required]
+    - COLOR (str): News color [Required]
+    - IMPORTANT (str): News important [Required]
+    - GRID_COLS (str): News grid columns [Required] ['|' separated]
+    - GRID_ROWS (str): News grid rows [Required] ['|' separated]
+    - INFO_COLS (str): News info columns [Required] ['|' separated]
+    - INFO_ROWS (str): News info rows [Required] ['|' separated]
+    - AUTHOR (str): News author [Required]
+    
+    - SEEN_BY (str): User IDs [Default: ""] ['|' separated]
+    - ACCEPTED_BY (str): User IDs [Default: ""] ['|' separated]
+    - LIKED_BY (str): User IDs [Default: ""] ['|' separated]
+    - DISLIKED_BY (str): User IDs [Default: ""] ['|' separated]
+    
+    - CREATED_AT (datetime): Timestamp of when the news article was created [Default: CET]
+    
+    - COMMENTS (list[Comment]): Relationship to the associated Comment object
     """
     __tablename__ = 'news'  # noqa
 
@@ -88,14 +52,23 @@ class News(server_db_.Model):
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
-    tot_remarks: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET)
     )
 
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="news", cascade="all, delete-orphan, delete")
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment",
+        back_populates="news",
+        cascade="all, delete-orphan, delete"
+    )
     
-    def __init__(self, title: str, header: str, code: int, important: str, grid_cols: str, grid_rows: str, info_cols: str, info_rows: str, author: str):
+    def __init__(self, title: str, header: str, code: int, important: str,
+                 grid_cols: list[str], grid_rows: list[str], info_cols: list[str],
+                 info_rows: list[str], author: str):
+        """
+        _cols and _rows are lists of strings that are joined
+        with '|' to form a single string to be stored in the database.
+        """	
         self.title = title
         self.header = header
         self.code = code
@@ -107,8 +80,6 @@ class News(server_db_.Model):
         self.info_rows = self._join(info_rows)
         self.author = author
 
-    def __repr__(self) -> str:
-        return f"News(id={self.id}, title='{self.title}', code='{self.code}', important='{self.important}', author='{self.author}')"
     
     def grid_len(self) -> int:
         return len(self.grid_cols.split("|")) if self.grid_cols else 0
@@ -116,7 +87,11 @@ class News(server_db_.Model):
     def info_len(self) -> int:
         return len(self.info_cols.split("|")) if self.info_cols else 0
     
-    def _get_grid_rows(self):
+    def _get_grid_rows(self) -> list[list[str]]:
+        """
+        Sets up correct nesting for the grid rows to be
+        properly displayed in the frontend.
+        """	    
         grid_len = self.grid_len()
         row_list = []
     
@@ -170,6 +145,10 @@ class News(server_db_.Model):
             return ""
     
     def to_dict(self) -> dict:
+        """
+        Returns a dictionary representation of the News object
+        for easy frontend display.
+        """	
         return {
             "id": self.id,
             "title": self.title,
@@ -186,23 +165,58 @@ class News(server_db_.Model):
             "accepted_by": self._split(str(self.accepted_by)),
             "liked_by": [num for num in self._split(str(self.liked_by)) if num],
             "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
-            "tot_remarks": self.tot_remarks,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
             "comments": [comment.to_dict() for comment in self.comments],
         }
+    
+    def __repr__(self) -> str:
+        return (f"News:"
+                f" (id={self.id},"
+                f" title='{self.title}',"
+                f" code='{self.code}',"
+                f" important='{self.important}',"
+                f" author='{self.author}')"
+                )
 
 
+def get_all_news_dict() -> list[dict]:
+    result = server_db_.session.execute(
+        select(News)
+    ).scalars().all()
+    return [news.to_dict() for news in result]
+
+
+def get_all_unread_dict(user_id: int) -> list[dict]:
+    result = server_db_.session.execute(
+        select(News)
+    ).scalars().all()
+    return [news.to_dict() for news in result
+            if str(user_id) not in news.seen_by.split("|")]
+
+
+def get_news_by_id(id_: int):
+    result = server_db_.session.get(News, id_)
+    return result
+
+
+def get_news_dict_by_id(id_: int):
+    result = server_db_.session.get(News, id_)
+    return result.to_dict()
+
+    
 class Comment(server_db_.Model):
     """
-    Comments table
+    Stores the Comments data.
 
-    Columns:
-    - ID: Unique identifier for the comment
-    - TITLE: Title of the comment
-    - CONTENT: Content of the comment
-    - AUTHOR: Author of the comment
-    - CREATED_AT: Timestamp of when the comment was created
-    - NEWS_ID: Foreign key referencing the associated news article
+    - ID (int): Identifier [Primary Key]
+    - CONTENT (str): Content of the comment [Required]
+    - AUTHOR (str): Author of the comment [Required]
+    - CREATED_AT (datetime): Timestamp of creation [Default: CET]
+    
+    - LIKED_BY (str): User IDs [Default: ""] ['|' separated]
+    - DISLIKED_BY (str): User IDs [Default: ""] ['|' separated]
+    
+    - NEWS_ID (int): Foreign key referencing the associated news article
     - NEWS: Relationship to the associated News object
     """
     __tablename__ = "comments"  # noqa
@@ -221,13 +235,21 @@ class Comment(server_db_.Model):
     news: Mapped["News"] = relationship("News", back_populates="comments")
 
     def __repr__(self) -> str:
-        return f"Comment(id={self.id}, news_id={self.news_id}, author='{self.author}')"
+        return (f"Comment:"
+                f" (id={self.id},"
+                f" news_id={self.news_id},"
+                f" author='{self.author}')"
+                )
     
     @staticmethod
     def _split(value: str) -> list[str]:
         return value.split("|") if value else []
     
     def to_dict(self) -> dict:
+        """
+        Returns a dictionary representation of the Comment object
+        for easy frontend display.
+        """
         return {
             "id": self.id,
             "content": self.content,
@@ -237,26 +259,33 @@ class Comment(server_db_.Model):
             "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
         }
     
-    def set_liked_by(self, user_id: int):
+    def set_liked_by(self, user_id: int) -> None:
         self._remove_disliked_by(user_id)
         if not str(user_id) in self.liked_by:
             self.liked_by += f"{user_id}|"
     
-    def set_disliked_by(self, user_id: int):
+    def set_disliked_by(self, user_id: int) -> None:
         self._remove_liked_by(user_id)
         if not str(user_id) in self.disliked_by:
             self.disliked_by += f"{user_id}|"
     
-    def _remove_liked_by(self, user_id: int):
+    def _remove_liked_by(self, user_id: int) -> None:
         self.liked_by = self.liked_by.replace(f"{user_id}|", "")
     
-    def _remove_disliked_by(self, user_id: int):
+    def _remove_disliked_by(self, user_id: int) -> None:
         self.disliked_by = self.disliked_by.replace(f"{user_id}|", "")
 
 
+def get_comment_by_id(id_: int):
+    result = server_db_.session.get(Comment, id_)
+    return result
 
-if __name__ == "__main__":
-    pass
 
-
-
+def add_new_comment(news_id: int, content: str) -> None:
+    comment = Comment(
+        content=content,
+        author=current_user.username,
+        news_id=news_id
+    )
+    server_db_.session.add(comment)
+    server_db_.session.commit()

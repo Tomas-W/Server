@@ -31,6 +31,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/info.css') }}">
     {% endif %}
+    {% if page == "admin" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_base.css') }}">
+    {% endif %}
 
     <title>
         {% block title %}
@@ -51,9 +54,9 @@
             </a>
             
             <div class="navbar-links">
+                <a class="nav-link" href="{{ url_for('admin.user_admin') }}">Admin</a>
                 <a class="nav-link" href="{{ url_for('news.all_news') }}">News</a>
                 <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
-                <a class="nav-link" href="#">Data</a>
                 <a class="nav-link" href="#">Games</a>
                 <a class="nav-link" href="#">Tools</a>
             </div>

@@ -1,11 +1,16 @@
-from typing import Optional
 from sqlalchemy import String, select
 from sqlalchemy.orm import Mapped, mapped_column
+
 from src.extensions import server_db_
 
 
 class State(server_db_.Model):
-    """Represents an OAuth state in the database."""
+    """
+    Stores the model for OAuth states.
+    
+    - ID (int): Identifier [Primary Key]
+    - STATE (str): OAuth state [Unique]
+    """
 
     __tablename__ = "oauth_states"
 
@@ -16,7 +21,10 @@ class State(server_db_.Model):
         self.state = state
 
     def __repr__(self) -> str:
-        return f"State(id={self.id!r}, state={self.state!r})"
+        return (f"State:"
+                f" (id={self.id!r},"
+                f" state={self.state!r})"
+                )
 
 
 def save_oauth_state(state):

@@ -1,6 +1,5 @@
 from functools import wraps
 import os
-from datetime import datetime
 
 import requests
 from flask import (Blueprint, redirect, url_for, request, render_template, flash,
@@ -18,8 +17,7 @@ from src.auth.auth_route_utils import (confirm_reset_token, send_password_reset_
                                        fast_login, normal_login, handle_user_login,
                                        handle_user_logout)
 from src.models.auth_mod import User
-from src.models.auth_mod import (get_user_by_email, add_new_user, get_new_user,
-                                change_user_password)
+from src.models.auth_mod import (get_user_by_email, get_new_user)
 from src.models.state_mod import (save_oauth_state, get_and_delete_oauth_state)
 
 
@@ -233,12 +231,18 @@ def register():
 
     if request.method == "POST" and form_type == "register":
             if register_form.validate_on_submit():
-                add_new_user(
+                new_user = get_new_user(
                     email=register_form.email.data,
                     username=register_form.username.data,
                     password=register_form.password.data,
                 )
-                return redirect(url_for("auth.login"))
+                if new_user:
+                    handle_user_login(new_user, remember=False)
+                    # flash("Account created successfully")
+                    return redirect(url_for("news.all_news"))
+                else:
+                    flash("Unexpected error")
+                    return redirect(url_for("auth.register"))
             # Store form errors and type
             session["form_errors"] = register_form.errors
             session["last_form_type"] = "register"
@@ -342,7 +346,7 @@ def reset_password(token):
 
     if request.method == "POST" and form_type == "password":
             if reset_password_form.validate_on_submit():
-                change_user_password(user, reset_password_form.password.data)
+                user.set_password(reset_password_form.password.data)
                 flash("Your password has been updated!")
                 return redirect(url_for('auth.login'))
             # Store form errors and type

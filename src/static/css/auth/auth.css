@@ -21,7 +21,7 @@
     flex-grow: 1;
 }
 
-.auth_flash {
+.auth-flash {
     position: absolute;
     width: 450px;
     margin: 0 auto 30px;
@@ -31,7 +31,7 @@
     text-align: center;
 }
 
-.auth_flash p {
+.auth-flash p {
     margin: 0;
     color: var(--text-color);
     font-size: var(--auth-flash-size);
@@ -44,7 +44,7 @@
     flex-direction: column;
 }
 
-.auth_input_field {
+.auth-input-field {
     width: 100%;
     padding: 7px 0;
     flex-grow: 1;
@@ -56,7 +56,7 @@
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.auth_input_field:hover {
+.auth-input-field:hover {
     border-bottom-color: var(--border-color-hover);
     color: var(--text-color-hover);
 }
@@ -71,13 +71,29 @@
     align-items: center;
 }
 
-.form-error {
+.auth-form-label {
+    display: none;
+    position: absolute;
+    padding-right: 3px;
+    left: 0;
+    top: 0;
+    color: var(--label-color);
+    font-size: var(--auth-form-error-size);
+    white-space: nowrap;
+    transform: translateY(-50%);
+}
+
+.auth-input-field:not(:placeholder-shown) + .auth-form-label {
+    display: block;
+}
+
+.auth-form-error {
     position: absolute;
     padding-right: 3px;
     right: 0;
     top: 50%;
     color: var(--text-color);
-    font-size: var(--auth_form_error_size);
+    font-size: var(--auth-form-error-size);
     white-space: nowrap;
     transform: translateY(-50%);
 }
@@ -180,7 +196,7 @@
     }
     .auth-form,
     .auth-options-container,
-    .auth_flash {
+    .auth-flash {
         width: 225px;
         margin-left: auto;
         margin-right: auto;
@@ -189,7 +205,7 @@
         flex-direction: column;
         align-items: flex-start;
     }
-    .form-error {
+    .auth-form-error {
         margin-top: 5px;
         position: static;
         transform: none;
@@ -202,7 +218,7 @@
     }
     .auth-form,
     .auth-options-container,
-    .auth_flash {
+    .auth-flash {
         width: 300px;
         margin-left: auto;
         margin-right: auto;
@@ -211,7 +227,7 @@
         flex-direction: column;
         align-items: flex-start;
     }
-    .form-error {
+    .auth-form-error {
         margin-top: 5px;
         position: static;
         transform: none;

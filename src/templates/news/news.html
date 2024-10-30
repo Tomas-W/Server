@@ -2,7 +2,6 @@
 
 
 {% block title %}
-News
 {% endblock %}
 
 {% block news_content %}
@@ -73,7 +72,7 @@ News
                     <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
                 </div>
                 <div class="icon-container">
-                    <p class="comment-count">{{ news_dict.tot_remarks }}</p>
+                    <p class="comment-count">{{ news_dict.comments|length }}</p>
                     <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
                 </div>
             </div>
@@ -95,6 +94,7 @@ News
                         {% endif %}
                     </div>
                 </div>
+                {{ comment_form.form_type }}
                 <div class="comment-devider news-gap"> 
                     {{ comment_form.submit(class="btn comment-btn") }}
                 </div>

@@ -15,7 +15,7 @@ Login
             <!-------- Flashed messages -------->
             {% if not fast %}
                     {% for message in get_flashed_messages() %}
-                    <div class="auth_flash">
+                    <div class="auth-flash">
                         <p>{{ message }}</p>
                     </div>
                     {% endfor %}
@@ -27,19 +27,21 @@ Login
                 <!-------- Email or username -------->
                 <div class="form-item">
                     <div class="input-error-container">
-                        {{ login_form.email_or_uname(class="auth_input_field") }}
+                        {{ login_form.email_or_uname(class="auth-input-field") }}
                         {% if form_errors["email_or_uname"] %}
-                            <div class="form-error"><strong>{{ form_errors["email_or_uname"][0] }}</strong></div>
+                            <div class="auth-form-error"><strong>{{ form_errors["email_or_uname"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ login_form.email_or_uname.label }}</div>
                     </div>
                 </div>
                 <!-------- Password -------->   
                 <div class="form-item">
                     <div class="input-error-container">
-                        {{ login_form.password(class="auth_input_field") }}
+                        {{ login_form.password(class="auth-input-field") }}
                         {% if form_errors["password"] %}
-                            <div class="form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
+                            <div class="auth-form-error"><strong>{{ form_errors["password"][0] }}</strong></div>
                         {% endif %}
+                        <div class="auth-form-label">{{ login_form.password.label }}</div>
                     </div>
                 </div>
                 <!-------- Remember me and submit -------->

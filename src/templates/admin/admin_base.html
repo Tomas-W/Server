@@ -7,13 +7,13 @@
 {% endblock %}
 
 {% block content %}
-<section class="admin-section">
-    <div class="admin-container">
+<section class="base-section">
+    <div class="base-container">
         
         {% include "admin/side_panel.html" %}
-        <div class="admin-content">
+        <div class="base-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="admin-link" for="toggle-top-panel">Admin</label>
+            <label class="side-panel-link" for="toggle-top-panel">Admin</label>
 
             {% include "admin/top_panel.html" %}
             

@@ -270,17 +270,6 @@ class NewsContentLengthCheck:
             raise ValidationError(self.max_length_message)
 
 
-class CommentTitleLengthCheck:
-    """Validates comment title by checking length."""
-
-    def __init__(self) -> None:
-        self.max_length_message = f"Max. {MAX_COMMENT_TITLE_LENGTH} characters"
-
-    def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) > MAX_COMMENT_TITLE_LENGTH:
-            raise ValidationError(self.max_length_message)
-
-
 class CommentLengthCheck:
     """Validates comment by checking length."""
 

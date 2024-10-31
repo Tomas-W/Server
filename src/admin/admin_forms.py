@@ -8,20 +8,18 @@ from src.utils.form_utils import (ForbiddenCheck, UsernameTakenCheck, PasswordCh
                                   EmailCheck, EmailLengthCheck, FastNameLengthCheck,
                                   FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
                                   NewsTitleLengthCheck, NewsContentLengthCheck,
-                                  CommentTitleLengthCheck, CommentLengthCheck)
-
+                                  CommentLengthCheck)
+from config.settings import (PWD_MATCH_MSG, REQUIRED_FIELD_MSG)
 
 class VerifyEmailForm(FlaskForm):
     """
     Used on user_admin-page to verify email.
+    All fields are required and validated.
     Placeholder may be overwritten in html by current_user's email.
-    Validates email by checking if it's:
-    - empty -> use current user's email
-    - valid -> regex check
-    - length -> min max
-    
+
     Fields:
-    - email
+    - email [EmailField] [Required]
+    - form_type [HiddenField]
     """
     #  Placeholder is overwritten in html by current_user's data
     #  If field is empty, current user's email is used.
@@ -32,7 +30,7 @@ class VerifyEmailForm(FlaskForm):
             VerifyEmailCheck(),
         ]
     )
-    form_type = HiddenField(default="verify")
+    form_type = HiddenField(default="verify_form")
     submit = SubmitField(label="Verify")
 
 
@@ -44,12 +42,13 @@ class AuthenticationForm(FlaskForm):
      may be overwritten in html by current_user's data.
     
     Fields:
-    - email
-    - username
-    - password
-    - confirm_password
-    - fast_name
-    - fast_code
+    - email [EmailField] [Optional]
+    - username [StringField] [Optional]
+    - password [PasswordField] [Optional]
+    - confirm_password [PasswordField] [Optional]
+    - fast_name [StringField] [Optional]
+    - fast_code [PasswordField] [Optional]
+    - form_type [HiddenField]
     """
     #  Username, email and fast name placeholders
     # are overwritten in html by current_user's data
@@ -77,7 +76,7 @@ class AuthenticationForm(FlaskForm):
         validators=[
             PasswordCheck(admin=True),
             PasswordLengthCheck(admin=True),
-            EqualTo(fieldname="confirm_password", message="Passwords must match"),
+            EqualTo(fieldname="confirm_password", message=PWD_MATCH_MSG),
         ]
     )
     confirm_password = PasswordField(
@@ -86,7 +85,7 @@ class AuthenticationForm(FlaskForm):
         validators=[
             PasswordCheck(admin=True),
             PasswordLengthCheck(admin=True),
-            EqualTo(fieldname="password", message="Passwords must match"),
+            EqualTo(fieldname="password", message=PWD_MATCH_MSG),
         ]
     )
     fast_name = StringField(
@@ -105,7 +104,7 @@ class AuthenticationForm(FlaskForm):
             FastCodeLengthCheck(admin=True),
         ]
     )
-    form_type = HiddenField(default="authentication")
+    form_type = HiddenField(default="authentication_form")
     submit = SubmitField(label="Update")
 
 
@@ -114,14 +113,15 @@ class NewsForm(FlaskForm):
     Used on news_admin-page to add news.
     
     Fields:
-    - title
-    - content
+    - title [TextAreaField] [Required]
+    - content [TextAreaField] [Required]
+    - form_type [HiddenField]
     """
     title = TextAreaField(
         label="Title",
         render_kw={"placeholder": "News title"},
         validators=[
-            DataRequired(message="Title is required"),
+            DataRequired(message=REQUIRED_FIELD_MSG),
             NewsTitleLengthCheck(),
             ForbiddenCheck(),
         ]
@@ -130,34 +130,33 @@ class NewsForm(FlaskForm):
         label="Content",
         render_kw={"placeholder": "Content"},
         validators=[
-            DataRequired(message="Content is required"),
+            DataRequired(message=REQUIRED_FIELD_MSG),
             NewsContentLengthCheck(),
             ForbiddenCheck(),
         ]
     )
-    form_type = HiddenField(default="news")
+    form_type = HiddenField(default="news_form")
     submit = SubmitField("Submit")
 
 
 class CommentForm(FlaskForm):
     """
     Used on comment_admin-page to add comment.
-    Validates email by checking if it's:
-    - length -> min max
-    - valid -> check words & characters
+    All fields are required and validated.
     
     Fields:
-    - content
+    - content [TextAreaField] [Required]
+    - form_type [HiddenField]
     """
     content = TextAreaField(
         label="Content",
         render_kw={"placeholder": "Content"},
         validators=[
-            DataRequired(message="Comment is required"),
+            DataRequired(message=REQUIRED_FIELD_MSG),
             CommentLengthCheck(),
             ForbiddenCheck(),
         ]
     )
-    form_type = HiddenField(default="comment")
+    form_type = HiddenField(default="comment_form")
     submit = SubmitField("Submit")
     

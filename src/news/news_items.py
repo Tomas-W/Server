@@ -1,15 +1,24 @@
-from datetime import datetime, timedelta
-import random
+from src.utils.misc_utils import random_dates
 
 
-def random_dates(count=20):
-    start_date = datetime.now() - timedelta(weeks=3)
-    end_date = datetime.now()
-    return sorted(datetime.fromtimestamp(random.randint(int(start_date.timestamp()), int(end_date.timestamp()))).strftime("%d %b %H:%M") for _ in range(count))
 
 
 
 def get_news_dict() -> dict:
+    """
+    Returns a dictionary of news items.
+    
+    - News
+        - header: str
+        - title: str
+        - code: int
+        - important: str
+        - grid_cols: list[str]
+        - grid_rows: list[str]
+        - info_cols: list[str]
+        - info_rows: list[str]
+        - author: str
+    """
     data = {
         1: {
             "header": "Retourname",
@@ -94,6 +103,8 @@ def get_news_dict() -> dict:
 
 
 def get_news_items() -> list[dict]:
+    """
+    Returns a list of news items.
+    """
     data = get_news_dict()
     return [data[key] for key in sorted(data.keys())]
-

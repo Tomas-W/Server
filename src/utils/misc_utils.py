@@ -1,6 +1,15 @@
 import os
+from datetime import datetime, timedelta
+import random
 from PIL import Image
 from rembg import remove
+
+
+def random_dates(count=20):
+    start_date = datetime.now() - timedelta(weeks=3)
+    end_date = datetime.now()
+    return sorted(datetime.fromtimestamp(random.randint(int(start_date.timestamp()), int(end_date.timestamp()))).strftime("%d %b %H:%M") for _ in range(count))
+
 
 
 def resize_image(input_path, output_path, size):

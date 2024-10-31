@@ -100,7 +100,7 @@
     color: var(--text-color-hover);
 }
 
-.fast_flash {
+.fast-flash {
     position: absolute;
     top: 45px;
     left: 0;
@@ -110,7 +110,7 @@
     z-index: 10;
 }
 
-.fast_flash p {
+.fast-flash p {
     color: var(--text-color);
 }
 

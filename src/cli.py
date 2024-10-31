@@ -4,11 +4,12 @@ from sqlalchemy import inspect
 
 from src.extensions import server_db_
 
-from src.models.auth_model.auth_mod import User, _init_user, delete_user_by_id
+from src.models.auth_model.auth_mod import User
 from src.models.bakery_mod import (BakeryItem, get_item_by_id, delete_item_by_id,
                                    _init_bakery, clear_bakery_db)
 from src.models.news_mod import (News, get_news_by_id, delete_news_by_id,
                                  _init_news, clear_news_db)
+from src.models.auth_model.auth_mod_utils import (delete_user_by_id, _init_user)
 
 from src.bakery.bakery_items import get_bakery_dict
 from src.news.news_items import get_news_dict
@@ -202,7 +203,7 @@ def _auth_cli(app_: Flask) -> None:
 
         Usage: flask auth info <id_> [--v]
         """
-        user: User | None = server_db_.session.get_or_none(User, id_)
+        user: User | None = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -232,7 +233,7 @@ def _auth_cli(app_: Flask) -> None:
 
         Usage: flask auth delete-user <user id> [--v] [--c]
         """
-        user: User | None = server_db_.session.get_or_none(User, id_)
+        user: User | None = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -257,7 +258,7 @@ def _auth_cli(app_: Flask) -> None:
 
         Usage: flask auth get-col-by-id <user id> <column name> [--v]
         """
-        user: User | None = server_db_.session.get_or_none(User, id_)
+        user: User | None = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return
@@ -295,7 +296,7 @@ def _auth_cli(app_: Flask) -> None:
             click.echo(f"Param new_val must be of type bool but got '{new_val}'.")
             return
 
-        user: User | None = server_db_.session.get_or_none(User, id_)
+        user: User | None = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return

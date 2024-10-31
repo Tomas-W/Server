@@ -1,15 +1,25 @@
 import os
-from itsdangerous import SignatureExpired, BadSignature
+
 from flask import url_for
-from flask_login import current_user
 from flask_mail import Message
+from itsdangerous import SignatureExpired, BadSignature
+from sqlalchemy import select, or_
+from sqlalchemy.exc import IntegrityError
 
 from src.extensions import server_db_, serializer_, mail_
-from src.models.auth_model.auth_mod import get_user_by_email, AuthenticationToken
+from src.models.auth_model.auth_mod import (User, AuthenticationToken,
+                                            AuthenticationToken)
 from src.models.mod_utils import commit_to_db
-
+from config.settings import PASSWORD_VERIFICATION, EMAIL_VERIFICATION
 
 def process_verification_token(email: str, token_type: str) -> None:
+    """
+    Generate a token, reset it in the database, and send an email with a 
+    verification link and instructions.
+    
+    :param email: Email address of the user.
+    :param token_type: Type of token to generate.
+    """
     token = generate_authentication_token(email, token_type)
     reset_authentication_token(email, token_type, token)
     send_authentication_email(email, token_type, token)
@@ -27,10 +37,11 @@ def reset_authentication_token(email: str, token_type: str, token: str) -> bool:
     If the token already exists, update it and return True.
     If the token does not exist, create a new one and return True.
     """
-    id_ = get_user_by_email(email).id
-    if not id_:
+    user = get_user_by_email(email)
+    if not user:
         return False
     
+    id_ = user.id
     existing_token = server_db_.session.query(AuthenticationToken).filter_by(
         user_id=id_).first()
     if existing_token:
@@ -43,11 +54,11 @@ def reset_authentication_token(email: str, token_type: str, token: str) -> bool:
 
 
 def send_authentication_email(email: str, token_type: str, token: str):
-    if token_type == "email_verification":
+    if token_type == EMAIL_VERIFICATION:
         url_ = "admin.verify_email"
         subject = "Email Verification"
         message = "Please verify your email by visiting: "
-    elif token_type == "password_verification":
+    elif token_type == PASSWORD_VERIFICATION:
         url_ = "auth.reset_password"
         subject = "Password Reset"
         message = "Please reset your password by visiting: "
@@ -69,11 +80,17 @@ def confirm_authentication_token(token: str, token_type: str, expiration: int = 
             salt=os.environ.get(f"{token_type.upper()}_SALT"),
             max_age=expiration
         )
+        
         if stored_token and stored_token.token == token:
             delete_authentication_token(token_type, token)
             return email
+        
+        elif get_user_by_email(email) is None:
+            return -1
+        
         else:
             return None
+        
     except (SignatureExpired, BadSignature):
         return None
     
@@ -84,3 +101,58 @@ def delete_authentication_token(token_type: str, token: str) -> None:
     server_db_.session.query(AuthenticationToken).filter_by(
         token_type=token_type, token=token).delete()
 
+
+def get_user_by_email(email: str) -> User | None:
+    return server_db_.session.execute(
+        select(User).filter_by(email=email)
+    ).scalar_one_or_none()
+
+
+def get_user_by_email_or_username(email_or_username: str) -> User | None:
+    return server_db_.session.execute(
+        select(User).filter(
+            or_(User.email == email_or_username, User.username == email_or_username)
+        )
+    ).scalar_one_or_none()
+
+
+def get_user_by_fast_name(fast_name: str) -> User | None:
+    return server_db_.session.execute(
+        select(User).filter_by(fast_name=fast_name)
+    ).scalar_one_or_none()
+
+
+@commit_to_db
+def delete_user_by_id(id_: int) -> None:
+    server_db_.session.delete(server_db_.session.get(User, id_))
+
+
+def get_new_user(email: str, username: str, password: str) -> User | None:
+    # noinspection PyArgumentList
+    try:
+        new_user = User(
+            email=email,
+            username=username,
+            password=password,
+        )
+        server_db_.session.add(new_user)
+        server_db_.session.commit()
+        return new_user
+    except IntegrityError:
+        return None
+
+
+def _init_user() -> User | None:
+    if not server_db_.session.query(User).count():
+        new_user = User(
+            email="100pythoncourse@gmail.com",
+            username="100python",
+            password="TomasTomas1!",
+            fast_name="tomas",
+            fast_code=("00000"),
+        )
+        server_db_.session.add(new_user)
+        server_db_.session.commit()
+        return repr(new_user)
+    
+    return None

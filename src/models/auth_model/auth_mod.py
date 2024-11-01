@@ -80,6 +80,7 @@ class User(server_db_.Model, UserMixin):
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     
     tokens: Mapped[List[AuthenticationToken]] = relationship("AuthenticationToken", back_populates="user", cascade="all, delete-orphan")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="author_user", cascade="all, delete-orphan")
     
     def __init__(self, email: str, username: str, password: str,
                  fast_name: Optional[str] = None, fast_code: Optional[str] = None):

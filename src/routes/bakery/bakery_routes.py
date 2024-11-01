@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template
 from flask_login import current_user
-from src.models.bakery_mod import get_program_items_dicts, get_item_by_id_dict
 
+from src.models.bakery_model.bakery_mod_utils import (
+    get_program_items_dicts, get_item_by_id_dict
+)
 
 bakery_bp = Blueprint("bakery", __name__)
 

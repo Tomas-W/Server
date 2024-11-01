@@ -1,15 +1,19 @@
-from argon2.exceptions import (VerifyMismatchError, VerificationError, InvalidHashError)
+from argon2.exceptions import (
+    VerifyMismatchError, VerificationError, InvalidHashError
+)
 from flask import url_for, redirect, session, flash
 from flask_login import login_user, current_user, logout_user
 from flask import Response
 from src.extensions import argon2_
-from src.auth.auth_forms import FastLoginForm, LoginForm
+from src.routes.auth.auth_forms import FastLoginForm, LoginForm
 from src.models.auth_model.auth_mod import User
-from src.models.auth_model.auth_mod_utils import (get_user_by_email_or_username,
-                                                    get_user_by_fast_name)
-from config.settings import (LOGIN_SUCCESS_MSG, CREDENTIALS_ERROR_MSG,
-                             VERIFICATION_ERROR_MSG, UNEXPECTED_ERROR_MSG,
-                             ALL_NEWS_REDIRECT)
+from src.models.auth_model.auth_mod_utils import (
+    get_user_by_email_or_username, get_user_by_fast_name
+)
+from config.settings import (
+    LOGIN_SUCCESS_MSG, CREDENTIALS_ERROR_MSG, VERIFICATION_ERROR_MSG,
+    UNEXPECTED_ERROR_MSG, ALL_NEWS_REDIRECT
+)
 
 
 def handle_user_login(user: User, remember: bool = False, fresh: bool = True,
@@ -41,8 +45,10 @@ def handle_user_logout() -> None:
 def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:
     """
     Verifies fast_login credentials and redirects.
-    Calls handle_user_login if successful.
-    Returns tuple of redirect and error message.
+    If login successfull, redirect to ALL_NEWS_REDIRECT and call handle_user_login.
+    Session is not fresh or permanent.
+    
+    If not, it returns tuple of None and error message.
     """
     user: User | None = get_user_by_fast_name(login_form.fast_name.data.lower())
 
@@ -62,10 +68,11 @@ def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:
 def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
     """
     Verifies login credentials and redirects.
+    If login successfull, redirect to ALL_NEWS_REDIRECT and call handle_user_login.
     Sets remember to True if remember-me is checked.
     Session is always fresh.
-    Calls handle_user_login if successful.
-    Returns tuple of redirect and error message.
+    
+    If not, it returns tuple of None and error message.
     """
     user: User | None = get_user_by_email_or_username(login_form.email_or_uname.data)
 

@@ -1,11 +1,8 @@
 from datetime import datetime
-from flask_login import current_user
-from sqlalchemy import select, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.extensions import server_db_
-
-from src.news.news_items import get_news_dict
 from config.settings import CET
 
 
@@ -179,62 +176,6 @@ class News(server_db_.Model):
                 f" author='{self.author}')"
                 )
 
-
-def get_all_news_dict() -> list[dict]:
-    result = server_db_.session.execute(
-        select(News)
-    ).scalars().all()
-    return [news.to_dict() for news in result]
-
-
-def get_all_unread_dict(user_id: int) -> list[dict]:
-    result = server_db_.session.execute(
-        select(News)
-    ).scalars().all()
-    return [news.to_dict() for news in result
-            if str(user_id) not in news.seen_by.split("|")]
-
-
-def get_news_by_id(id_: int):
-    result = server_db_.session.get(News, id_)
-    return result
-
-
-def get_news_dict_by_id(id_: int):
-    result = server_db_.session.get(News, id_)
-    return result.to_dict()
-
-
-def delete_news_by_id(id_: int) -> None:
-    server_db_.session.delete(server_db_.session.get(News, id_))
-    server_db_.session.commit()
-
-
-def clear_news_db() -> None:
-    server_db_.session.query(News).delete()
-    server_db_.session.commit()
-
-
-def _init_news() -> bool | None:
-    if not server_db_.session.query(News).count():
-        news_dict = get_news_dict()
-        for _, item_details in news_dict.items():
-            news_item = News(
-                header=item_details["header"],
-                title=item_details["title"],
-                code=item_details["code"],
-                important=item_details["important"],
-                grid_cols=item_details["grid_cols"],
-                grid_rows=item_details["grid_rows"],
-                info_cols=item_details["info_cols"],
-                info_rows=item_details["info_rows"],
-                author=item_details["author"],
-            )
-            server_db_.session.add(news_item)
-        server_db_.session.commit()
-        return True
-    
-    return None
     
 class Comment(server_db_.Model):
     """
@@ -255,7 +196,6 @@ class Comment(server_db_.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    author: Mapped[str] = mapped_column(String(25), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET)
     )
@@ -265,6 +205,9 @@ class Comment(server_db_.Model):
     
     news_id: Mapped[int] = mapped_column(ForeignKey("news.id", ondelete="CASCADE"), nullable=False)
     news: Mapped["News"] = relationship("News", back_populates="comments")
+    
+    author_id: Mapped[int] = mapped_column(ForeignKey("auth.id", ondelete="CASCADE"), nullable=False)
+    author_user: Mapped["User"] = relationship("User", back_populates="comments")
 
     def __repr__(self) -> str:
         return (f"Comment:"
@@ -285,7 +228,8 @@ class Comment(server_db_.Model):
         return {
             "id": self.id,
             "content": self.content,
-            "author": self.author,
+            "author_id": self.author_id,
+            "author_username": self.author_user.username,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
             "liked_by": [num for num in self._split(str(self.liked_by)) if num],
             "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
@@ -306,18 +250,3 @@ class Comment(server_db_.Model):
     
     def _remove_disliked_by(self, user_id: int) -> None:
         self.disliked_by = self.disliked_by.replace(f"{user_id}|", "")
-
-
-def get_comment_by_id(id_: int):
-    result = server_db_.session.get(Comment, id_)
-    return result
-
-
-def add_new_comment(news_id: int, content: str) -> None:
-    comment = Comment(
-        content=content,
-        author=current_user.username,
-        news_id=news_id
-    )
-    server_db_.session.add(comment)
-    server_db_.session.commit()

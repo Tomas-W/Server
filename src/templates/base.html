@@ -16,23 +16,23 @@
      -->
 
     <!-- Style sheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     {% if page == "all_news" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news_base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/all_news.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/all_news.css') }}">
     {% elif page == "news" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news_base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news/news.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news.css') }}">
     {% elif page == "programs" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/programs.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/programs.css') }}">
     {% elif page == "info" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bakery/info.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/info.css') }}">
     {% endif %}
     {% if page == "admin" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin/admin_base.css') }}">
     {% endif %}
 
     <title>

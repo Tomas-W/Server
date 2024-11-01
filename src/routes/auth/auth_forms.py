@@ -1,15 +1,19 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, SubmitField, EmailField, PasswordField, BooleanField,
-                     HiddenField)
+from wtforms import (
+    StringField, SubmitField, EmailField, PasswordField, BooleanField, HiddenField
+)
 from wtforms.validators import DataRequired, Email, EqualTo
 
-from src.utils.form_utils import (EmailTakenCheck, PasswordCheck, ForbiddenCheck,
-                                  UsernameTakenCheck, EmailLengthCheck,
-                                  UsernameLengthCheck, PasswordLengthCheck)
-from config.settings import (REQUIRED_FIELD_MSG, PWD_MATCH_MSG, INVALID_EMAIL_MSG,
-                             REGISTER_FORM_TYPE, LOGIN_FORM_TYPE, FAST_LOGIN_FORM_TYPE,
-                             REQUEST_RESET_FORM_TYPE, SET_PASSWORD_FORM_TYPE,
-                             RESET_PASSWORD_FORM_TYPE)
+from src.utils.form_utils import (
+    EmailTakenCheck, PasswordCheck, ForbiddenCheck, UsernameTakenCheck,
+    EmailLengthCheck, UsernameLengthCheck, PasswordLengthCheck
+)
+from config.settings import (
+    REQUIRED_FIELD_MSG, PWD_MATCH_MSG, INVALID_EMAIL_MSG,
+    REGISTER_FORM_TYPE, LOGIN_FORM_TYPE, FAST_LOGIN_FORM_TYPE,
+    REQUEST_RESET_FORM_TYPE, SET_PASSWORD_FORM_TYPE, RESET_PASSWORD_FORM_TYPE
+)
+
 
 class RegisterForm(FlaskForm):
     """

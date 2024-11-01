@@ -23,13 +23,13 @@ PASTRY_IMAGES_FOLDER = "images/bakery/pastry/"
 SWEETS_IMAGES_FOLDER = "images/bakery/sweets/"
 
 # Server
-LOGIN_VIEW = "auth.login"
 DATABASE_URI = f"sqlite:///{DB_PATH}"
 LIMITER_URI = "memory://"
 DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
 CET: pytz.timezone = pytz.timezone('CET')
 
 # Redirects
+HOME_PAGE_REDIRECT: str = "news.all_news"
 LOGIN_REDIRECT: str = "auth.login"
 SET_PASSWORD_REDIRECT: str = "auth.set_password"
 REQUEST_RESET_REDIRECT: str = "auth.request_reset"

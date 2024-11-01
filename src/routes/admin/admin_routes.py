@@ -1,16 +1,21 @@
-from flask import (render_template, Blueprint, url_for, redirect, request, flash,
-                   session)
+from flask import (
+    render_template, Blueprint, url_for, redirect, request, flash, session
+)
 from flask_login import login_required
 
 from src.models.auth_model.auth_mod_utils import get_user_by_email
-from src.models.auth_model.auth_mod_utils import (confirm_authentication_token,
-                                                  process_verification_token)
-from src.admin.admin_forms import (NewsForm, VerifyEmailForm, AuthenticationForm)
-from src.admin.admin_route_utils import (add_news_message)
-from config.settings import (EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG,
-                              VERIFICATION_SEND_MSG, AUTHENTICATION_LINK_ERROR_MSG,
-                              USER_ADMIN_REDIRECT, ALL_NEWS_REDIRECT,
-                              VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE)
+from src.models.auth_model.auth_mod_utils import (
+    confirm_authentication_token, process_verification_token, process_verification_token
+)
+from src.routes.admin.admin_forms import (
+    NewsForm, VerifyEmailForm, AuthenticationForm
+)
+from src.routes.admin.admin_route_utils import add_news_message
+from config.settings import (
+    EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
+    AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT, ALL_NEWS_REDIRECT,
+    VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE
+)
 
 admin_bp = Blueprint("admin", __name__)
 

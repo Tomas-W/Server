@@ -5,21 +5,19 @@ from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
 from src.extensions import server_db_
-
 from src.models.auth_model.auth_mod import User
 
-from config.settings import (banned_words_list, banned_characters_list,
-                             required_password_symbols, MIN_COMMENT_LENGTH,
-                             MAX_COMMENT_LENGTH)
-from config.settings import (MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH,
-                             MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
-                             MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH,
-                             MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
-                             FAST_CODE_LENGTH, MIN_NEWS_TITLE_LENGTH,
-                             MAX_NEWS_TITLE_LENGTH, MIN_NEWS_CONTENT_LENGTH,
-                             MAX_NEWS_CONTENT_LENGTH, MIN_COMMENT_TITLE_LENGTH,
-                             MAX_COMMENT_TITLE_LENGTH, MIN_COMMENT_LENGTH,
-                             MAX_COMMENT_LENGTH)
+from config.settings import (
+    banned_words_list, banned_characters_list, required_password_symbols,
+    MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH
+)
+from config.settings import (
+    MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
+    MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH, MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
+    FAST_CODE_LENGTH, MIN_NEWS_TITLE_LENGTH, MAX_NEWS_TITLE_LENGTH,
+    MIN_NEWS_CONTENT_LENGTH, MAX_NEWS_CONTENT_LENGTH, MIN_COMMENT_LENGTH,
+    MAX_COMMENT_LENGTH
+)
 
 
 class VerifyEmailCheck:

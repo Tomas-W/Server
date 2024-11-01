@@ -1,14 +1,18 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, session
+from flask import (
+    render_template, Blueprint, request, redirect, url_for, flash, session
+)
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
-from src.models.news_mod import (get_all_news_dict, get_all_unread_dict, get_news_by_id,
-                                 get_news_dict_by_id, get_comment_by_id, add_new_comment)
-
-
-from src.news.news_forms import CommentForm
-from src.news.news_route_utils import allow_only_styling, clean_news_session
-
+from src.models.news_model.news_mod_utils import (
+    get_all_news_dict, get_all_unread_dict,
+    get_news_by_id, get_news_dict_by_id,
+    get_comment_by_id, add_new_comment
+)
+from src.routes.news.news_forms import CommentForm
+from src.routes.news.news_route_utils import (
+    allow_only_styling, clean_news_session
+)
 
 news_bp = Blueprint("news", __name__)
 
@@ -16,7 +20,8 @@ news_bp = Blueprint("news", __name__)
 # noinspection PyArgumentList
 @news_bp.route("/news/all-news")
 @login_required
-def all_news():       
+def all_news():
+    """Serves all news items with pagination."""
     all_news_dict = get_all_news_dict()
     flash_type = "all_news"
 
@@ -31,6 +36,11 @@ def all_news():
 @news_bp.route("/news/id/<id_>", methods=["GET", "POST"])
 @login_required
 def news(id_: int):
+    """
+    Serves news item based on id.
+    
+    - CommentForm
+    """
     comment_form = CommentForm()
     
     news_dict = get_news_dict_by_id(id_)
@@ -42,7 +52,7 @@ def news(id_: int):
     if request.method == "POST":
         if comment_form.validate_on_submit():
             sanitized_comment = allow_only_styling(comment_form.content.data)
-            add_new_comment(id_, sanitized_comment)
+            add_new_comment(news_id=id_, user_id=current_user.id, content=sanitized_comment)
             clean_news_session()
             flash("Comment submitted successfully!", "success")
             session["post_comment"] = True
@@ -70,7 +80,7 @@ def news(id_: int):
         news_dict=news_dict,
         comment_form=comment_form,
         form_errors=form_errors,
-        user_id=str(current_user.id),
+        current_user_id=str(current_user.id),
         # news_id=news_id,
         post_comment=post_comment,
         comment_id=comment_id,

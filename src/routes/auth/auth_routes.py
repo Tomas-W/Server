@@ -2,8 +2,9 @@ from functools import wraps
 import os
 
 import requests
-from flask import (Blueprint, redirect, url_for, request, render_template, flash,
-                   session)
+from flask import (
+    Blueprint, redirect, url_for, request, render_template, flash, session
+)
 from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
 from pip._vendor import cachecontrol  # noqa
@@ -11,31 +12,41 @@ import google.auth.transport.requests  # noqa
 from sqlalchemy import select
 
 from src.extensions import server_db_, flow_
-from src.auth.auth_forms import (LoginForm, FastLoginForm, RegisterForm, RequestResetForm,
-                                 SetPasswordForm, ResetPasswordForm)
-from src.auth.auth_route_utils import (fast_login, normal_login, handle_user_login,
-                                       handle_user_logout)
-from src.models.auth_model.auth_mod import (User)
-from src.models.auth_model.auth_mod_utils import (process_verification_token,
-                                                  confirm_authentication_token,
-                                                  get_user_by_email,
-                                                  get_new_user)
-from src.models.state_mod import (save_oauth_state, get_and_delete_oauth_state)
-from config.settings import (PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT,
-                             FAST_LOGIN_FORM_TYPE, SET_PASSWORD_REDIRECT,
-                             REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
-                             USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG,
-                             SESSION_ERROR_MSG, AUTHENTICATION_LINK_ERROR_MSG,
-                             UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
-                             PASSWORD_RESET_SEND_MSG, CREATE_ACCOUNT_MSG,
-                             PASSWORD_UPDATE_MSG, RESET_PASSWORD_REDIRECT,
-                             REGISTER_FORM_TYPE, LOGIN_FORM_TYPE)
+from src.routes.auth.auth_forms import (
+    LoginForm, FastLoginForm, RegisterForm, RequestResetForm, SetPasswordForm,
+    ResetPasswordForm
+)
+from src.routes.auth.auth_route_utils import (
+    fast_login, normal_login, handle_user_login, handle_user_logout
+)
+from src.models.auth_model.auth_mod import User
+from src.models.auth_model.auth_mod_utils import (
+    process_verification_token, confirm_authentication_token, get_user_by_email,
+    get_new_user
+)
+from src.models.state_model.state_mod_utils import (
+    save_oauth_state, get_and_delete_oauth_state
+)
+from config.settings import (
+    PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT, FAST_LOGIN_FORM_TYPE,
+    SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
+    USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG, SESSION_ERROR_MSG,
+    AUTHENTICATION_LINK_ERROR_MSG, UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
+    PASSWORD_RESET_SEND_MSG, CREATE_ACCOUNT_MSG, PASSWORD_UPDATE_MSG,
+    RESET_PASSWORD_REDIRECT, HOME_PAGE_REDIRECT
+)
 
 
 auth_bp = Blueprint("auth", __name__)
 
 
 def handle_fast_login(view_func):
+    """
+    Wraps all interactive auth routes.
+    Checks if fast login form is submitted and handles it.
+    
+    -FastLoginForm
+    """
     @wraps(view_func)
     def wrapper(*args, **kwargs):
         if request.method == "POST":
@@ -64,7 +75,7 @@ def handle_fast_login(view_func):
 def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
-        return redirect(url_for(ALL_NEWS_REDIRECT))
+        return redirect(url_for(HOME_PAGE_REDIRECT))
     return redirect(url_for(LOGIN_REDIRECT))
 
 
@@ -84,6 +95,11 @@ def base():
 @auth_bp.route("/login", methods=["GET", "POST"])
 @handle_fast_login
 def login():
+    """
+    Serves login form and redirects to login page when not successful.
+    
+    - LoginForm
+    """
     login_form = LoginForm()
     fast_login_form = FastLoginForm()
     fast = session.pop("fast_login", False)
@@ -95,7 +111,6 @@ def login():
                 return response
             if message:
                 flash(message)
-                return redirect(url_for(LOGIN_REDIRECT))
 
         session["form_errors"] = login_form.errors
         flash("T0000STER")
@@ -123,6 +138,14 @@ def g_login():
 
 @auth_bp.route("/callback")
 def callback():
+    """
+    Serves callback for Google login.
+    If successful and user exists,
+     call handle_user_login and redirects to ALL_NEWS_REDIRECT.
+    If successful and user does not exist,
+     redirects to SET_PASSWORD_REDIRECT.
+    If not successful, redirects to LOGIN_REDIRECT and flashes error message.
+    """
     try:
         flow_.fetch_token(authorization_response=request.url)
     except Exception as e:
@@ -160,17 +183,25 @@ def callback():
 @auth_bp.route("/set_password", methods=["GET", "POST"])
 @handle_fast_login
 def set_password():
+    """
+    Serves set password form after Google login when User does not exist.
+    If no session email, redirect to REQUEST_RESET_REDIRECT.
+    Creates User, calls handle_user_login and redirects to ALL_NEWS_REDIRECT.
+    If unexpected error, redirect to LOGIN_REDIRECT.
+    
+    - SetPasswordForm
+    """
     set_password_form = SetPasswordForm()
     fast_login_form = FastLoginForm()
     fast = session.pop("fast_login", False)
 
     if request.method == "POST":
         if set_password_form.validate_on_submit():
-            email = session.get("email")
+            email = session.pop("email", None)
             if not email:
                 flash(SESSION_ERROR_MSG)
                 return redirect(url_for(REQUEST_RESET_REDIRECT))
-            session.pop("email")
+            
             user: User | None = get_new_user(
                 email=email,
                 username=email[:8],
@@ -181,7 +212,7 @@ def set_password():
                 return redirect(url_for(ALL_NEWS_REDIRECT))
             else:
                 flash(UNEXPECTED_ERROR_MSG)
-                return redirect(url_for(SET_PASSWORD_REDIRECT))
+                return redirect(url_for(LOGIN_REDIRECT))
 
         session["form_errors"] = set_password_form.errors
         flash("T0000STER")
@@ -295,7 +326,7 @@ def reset_password(token):
         flash(AUTHENTICATION_LINK_ERROR_MSG)
         return redirect(url_for(REQUEST_RESET_REDIRECT))
 
-    if email == -1:
+    if email == -1:  # Fix workaroud for email == -1
         flash(CREATE_ACCOUNT_MSG)
         session["fill_email"] = session.pop("email")
         return redirect(url_for(REGISTER_REDIRECT))

@@ -1,7 +1,8 @@
 from flask_login import current_user
+
 from src.extensions import server_db_
 from src.models.mod_utils import commit_to_db
-from src.models.news_mod import News
+from src.models.news_model.news_mod import News
 
 
 @commit_to_db

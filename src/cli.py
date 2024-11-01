@@ -3,19 +3,23 @@ from flask import Flask, current_app
 from sqlalchemy import inspect
 
 from src.extensions import server_db_
-
 from src.models.auth_model.auth_mod import User
-from src.models.bakery_mod import (BakeryItem, get_item_by_id, delete_item_by_id,
-                                   _init_bakery, clear_bakery_db)
-from src.models.news_mod import (News, get_news_by_id, delete_news_by_id,
-                                 _init_news, clear_news_db)
-from src.models.auth_model.auth_mod_utils import (delete_user_by_id, _init_user)
+from src.models.bakery_model.bakery_mod import BakeryItem
+from src.models.bakery_model.bakery_mod_utils import (
+    get_item_by_id, delete_item_by_id, _init_bakery, clear_bakery_db
+)
+from src.models.news_model.news_mod import News
+from src.models.news_model.news_mod_utils import (
+    get_news_by_id, delete_news_by_id, _init_news, clear_news_db
+)
+from src.models.auth_model.auth_mod_utils import delete_user_by_id, _init_user
 
-from src.bakery.bakery_items import get_bakery_dict
-from src.news.news_items import get_news_dict
+from src.routes.bakery.bakery_items import get_bakery_dict
+from src.routes.news.news_items import get_news_dict
 
-from config.settings import (MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
-                             FAST_CODE_LENGTH)
+from config.settings import (
+    MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH
+)
 
 
 def _auth_cli(app_: Flask) -> None:

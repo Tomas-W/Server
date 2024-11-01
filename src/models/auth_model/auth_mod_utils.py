@@ -7,18 +7,17 @@ from sqlalchemy import select, or_
 from sqlalchemy.exc import IntegrityError
 
 from src.extensions import server_db_, serializer_, mail_
-from src.models.auth_model.auth_mod import (User, AuthenticationToken,
-                                            AuthenticationToken)
+from src.models.auth_model.auth_mod import (
+    User, AuthenticationToken, AuthenticationToken
+)
 from src.models.mod_utils import commit_to_db
 from config.settings import PASSWORD_VERIFICATION, EMAIL_VERIFICATION
+
 
 def process_verification_token(email: str, token_type: str) -> None:
     """
     Generate a token, reset it in the database, and send an email with a 
     verification link and instructions.
-    
-    :param email: Email address of the user.
-    :param token_type: Type of token to generate.
     """
     token = generate_authentication_token(email, token_type)
     reset_authentication_token(email, token_type, token)
@@ -54,6 +53,12 @@ def reset_authentication_token(email: str, token_type: str, token: str) -> bool:
 
 
 def send_authentication_email(email: str, token_type: str, token: str):
+    """
+    Send an email with a authentication link and instructions.
+    Verifications:
+    - EMAIL_VERIFICATION [set email verified]
+    - PASSWORD_VERIFICATION [reset password]
+    """
     if token_type == EMAIL_VERIFICATION:
         url_ = "admin.verify_email"
         subject = "Email Verification"
@@ -72,6 +77,12 @@ def send_authentication_email(email: str, token_type: str, token: str):
 
 
 def confirm_authentication_token(token: str, token_type: str, expiration: int = 3600) -> str | None:
+    """
+    Confirm the specified authentication token.
+    Verifications:
+    - EMAIL_VERIFICATION [set email verified]
+    - PASSWORD_VERIFICATION [reset password]
+    """
     stored_token = server_db_.session.query(AuthenticationToken).filter_by(
         token=token).first()
     try:
@@ -143,6 +154,10 @@ def get_new_user(email: str, username: str, password: str) -> User | None:
 
 
 def _init_user() -> User | None:
+    """
+    Initializer function for cli.
+    No internal use.
+    """
     if not server_db_.session.query(User).count():
         new_user = User(
             email="100pythoncourse@gmail.com",

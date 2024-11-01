@@ -14,7 +14,7 @@ from src.models.mod_utils import load_user
 
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from config.settings import DATABASE_URI, LOGIN_VIEW, DB_FOLDER, CET
+from config.settings import DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER, CET
 
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
@@ -53,7 +53,7 @@ def _configure_extensions(app_: Flask) -> None:
     bootstrap_.init_app(app_)
     csrf_.init_app(app_)
     login_manager_.init_app(app_)
-    login_manager_.login_view = LOGIN_VIEW
+    login_manager_.login_view = LOGIN_REDIRECT
     migrater_.init_app(app_, server_db_)
     limiter_.init_app(app_)
     app_.config['SESSION_SQLALCHEMY'] = server_db_
@@ -61,10 +61,10 @@ def _configure_extensions(app_: Flask) -> None:
 
 
 def _configure_blueprints(app_: Flask) -> None:
-    from src.news.news_routes import news_bp
-    from src.auth.auth_routes import auth_bp
-    from src.admin.admin_routes import admin_bp
-    from src.bakery.bakery_routes import bakery_bp
+    from src.routes.news.news_routes import news_bp
+    from src.routes.auth.auth_routes import auth_bp
+    from src.routes.admin.admin_routes import admin_bp
+    from src.routes.bakery.bakery_routes import bakery_bp
     app_.register_blueprint(news_bp)
     app_.register_blueprint(auth_bp)
     app_.register_blueprint(admin_bp)

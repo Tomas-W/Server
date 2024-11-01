@@ -1,8 +1,9 @@
 import os.path
 
-from config.settings import (BREAD_IMAGES_FOLDER, SMALL_BREAD_IMAGES_FOLDER,
-                             STOKBROOD_IMAGES_FOLDER, SAVORY_IMAGES_FOLDER,
-                             PASTRY_IMAGES_FOLDER, SWEETS_IMAGES_FOLDER)
+from config.settings import (
+    BREAD_IMAGES_FOLDER, SMALL_BREAD_IMAGES_FOLDER, STOKBROOD_IMAGES_FOLDER,
+    SAVORY_IMAGES_FOLDER, PASTRY_IMAGES_FOLDER, SWEETS_IMAGES_FOLDER
+)
 
 
 def get_lp_bread_dict() -> dict:

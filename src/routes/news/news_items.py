@@ -1,9 +1,3 @@
-from src.utils.misc_utils import random_dates
-
-
-
-
-
 def get_news_dict() -> dict:
     """
     Returns a dictionary of news items.

@@ -13,12 +13,10 @@ Login
     <div class="auth-container">
         <div class="auth-content">
             <!-------- Flashed messages -------->
-            {% if not fast %}
-                    {% for message in get_flashed_messages() %}
-                    <div class="auth-flash">
-                        <p>{{ message }}</p>
-                    </div>
-                    {% endfor %}
+            {% if get_flashed_messages() %}
+            <div class="auth-flash">
+                <p>{{ get_flashed_messages()[0] }}</p>
+            </div>
             {% endif %}
 
             <!-------- Login form -------->

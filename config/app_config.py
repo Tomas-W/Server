@@ -1,7 +1,7 @@
 from datetime import timedelta
 import os
 
-from config.settings import DATABASE_URI, DEFAULT_LIMITS
+from config.settings import DATABASE_URI, DEFAULT_LIMITS, UPLOAD_FOLDER
 
 
 class BaseConfig(object):

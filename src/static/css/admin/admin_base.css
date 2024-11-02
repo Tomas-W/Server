@@ -1,3 +1,8 @@
+.tester {
+    display: flex;
+    gap: 10px;
+}
+
 .admin-wrapper {
     padding: 75px 12%;
 }
@@ -24,6 +29,7 @@
 
 .admin-flash p {
     margin: 0;
+    text-align: center;
     color: var(--text-color);
     font-size: var(--admin-flash-size);
 }
@@ -68,6 +74,44 @@
 .admin-input-field:hover {	
     color: var(--text-color-hover);
     border-bottom-color: var(--border-color-hover);
+}
+
+.selected-icon {
+    border: 2px solid var(--text-color);
+}
+
+.selected-icon:hover {
+    border-color: var(--border-color-hover);
+}
+
+.profile-picture-field {
+    padding: 26px 0 0 0;
+}
+
+.test-img {
+    padding: 5px;
+}
+
+.test-img:hover {
+    filter: brightness(2);
+}
+
+.profile-picture-text {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    color: var(--text-color);
+}
+
+.profile-picture-field {
+    height: 36px;
+    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.profile-picture-field:hover {
+    color: var(--text-color-hover);
+    border-bottom-color: var(--border-color-hover);
+    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .form-item {
@@ -135,6 +179,12 @@
     padding: 0 0 10px 0;
     font-size: var(--admin-header-size);
     color: var(--text-color);
+}
+
+.about-me-label {
+    position: absolute;
+    left: 0;
+    bottom: 195px;
 }
 
 .href-scroll {

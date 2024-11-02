@@ -3,7 +3,8 @@ import os
 
 import requests
 from flask import (
-    Blueprint, redirect, url_for, request, render_template, flash, session
+    Blueprint, redirect, url_for, request, render_template, flash, session,
+    get_flashed_messages
 )
 from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
@@ -117,7 +118,9 @@ def login():
         return redirect(url_for(LOGIN_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
-    
+    flash_messages = get_flashed_messages()
+    for message in flash_messages:
+        print(message)
     return render_template(
         "/auth/login.html",
         login_form=login_form,

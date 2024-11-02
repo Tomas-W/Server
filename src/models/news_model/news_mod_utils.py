@@ -71,13 +71,11 @@ def get_comment_by_id(id_: int):
     return result
 
 
-# @commit_to_db
-def add_new_comment(news_id: int, user_id: int, content: str) -> None:
+def add_new_comment(news_id: int, author_id: int, content: str) -> None:
     comment = Comment(
+        news_id=news_id,
+        author_id=author_id,
         content=content,
-        author_id=user_id,
-        news_id=news_id
     )
     server_db_.session.add(comment)
     server_db_.session.commit()
-    

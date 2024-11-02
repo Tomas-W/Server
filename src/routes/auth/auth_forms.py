@@ -5,7 +5,7 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email, EqualTo
 
 from src.utils.form_utils import (
-    EmailTakenCheck, PasswordCheck, ForbiddenCheck, UsernameTakenCheck,
+    EmailCheck, EmailTakenCheck, PasswordCheck, ForbiddenCheck, UsernameTakenCheck,
     EmailLengthCheck, UsernameLengthCheck, PasswordLengthCheck
 )
 from config.settings import (
@@ -17,22 +17,21 @@ from config.settings import (
 
 class RegisterForm(FlaskForm):
     """
-    Used on auth-page to register a new user.
+    Used on auth.register page to register a new user.
     All fields are required and validated.
     
     Fields:
-    - email [EmailField] [Required]
-    - username [StringField] [Required]
-    - password [PasswordField] [Required]
-    - confirm_password [PasswordField] [Required]
-    - form_type [HiddenField]
+    - EMAIL [EmailField] [Required]
+    - USERNAME [StringField] [Required]
+    - PASSWORD [PasswordField] [Required]
+    - CONFIRM_PASSWORD [PasswordField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     email = EmailField(
         label="Email",
         render_kw={"placeholder": "Email", "autofocus": True},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
-            Email(message=INVALID_EMAIL_MSG),
+            EmailCheck(),
             EmailTakenCheck(),
             EmailLengthCheck(),
             ForbiddenCheck(),
@@ -73,15 +72,14 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     """
-    Used on auth-page to login a user.
-    Remember me sets a cookie.
-    Sets session as fresh.
+    Used on auth.login page to login a user.
+    Remember me for cookies.
     
     Fields:
-    - email_or_uname [EmailField] [Required]
-    - password [PasswordField] [Required]
-    - remember [BooleanField] [Optional]
-    - form_type [HiddenField]
+    - EMAIL_OR_UNAME [EmailField] [Required]
+    - PASSWORD [PasswordField] [Required]
+    - REMEMBER [BooleanField] [Optional]
+    - FORM_TYPE [HiddenField]
     """
     email_or_uname = EmailField(
         label="Email or username",
@@ -104,13 +102,13 @@ class LoginForm(FlaskForm):
 
 class FastLoginForm(FlaskForm):
     """
-    Used on auth-page to login a user via fast name and fast code.
+    Used on all auth pages to login a user via fast name and fast code.
     All fields are required and validated.
     
     Fields:
-    - fast_name [StringField] [Required]
-    - fast_code [PasswordField] [Required]
-    - form_type [HiddenField]
+    - FAST_NAME [StringField] [Required]
+    - FAST_CODE [PasswordField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     fast_name = StringField(
         label="Name",
@@ -135,12 +133,12 @@ class FastLoginForm(FlaskForm):
 
 class RequestResetForm(FlaskForm):
     """
-    Used on auth-page to request a reset password email.
+    Used on auth.request-reset page to request a reset password email.
     All fields are required and validated.
     
     Fields:
-    - email [EmailField] [Required]
-    - form_type [HiddenField]
+    - EMAIL [EmailField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     email = EmailField(
         label="Email",
@@ -157,13 +155,13 @@ class RequestResetForm(FlaskForm):
 
 class SetPasswordForm(FlaskForm):
     """
-    Used on auth-page to set a new password.
+    Used on auth.set-password page to set a new password.
     All fields are required and validated.
     
     Fields:
-    - password [PasswordField] [Required]
-    - confirm_password [PasswordField] [Required]
-    - form_type [HiddenField]
+    - PASSWORD [PasswordField] [Required]
+    - CONFIRM_PASSWORD [PasswordField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     password = PasswordField(
         label="Password",
@@ -190,13 +188,13 @@ class SetPasswordForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     """
-    Used on auth-page to reset password.
+    Used on auth.reset-password page to reset password.
     All fields are required and validated.
     
     Fields:
-    - password [PasswordField] [Required]
-    - confirm_password [PasswordField] [Required]
-    - form_type [HiddenField]
+    - PASSWORD [PasswordField] [Required]
+    - CONFIRM_PASSWORD [PasswordField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     password = PasswordField(
         label="Password",

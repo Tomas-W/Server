@@ -1,26 +1,30 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField
+    SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
+    FileField
 )
-from wtforms.validators import DataRequired, EqualTo
+from wtforms.validators import EqualTo
 
 from src.utils.form_utils import (
     ForbiddenCheck, UsernameTakenCheck, PasswordCheck, EmailTakenCheck,
     UsernameLengthCheck, PasswordLengthCheck, EmailCheck, EmailLengthCheck,
     FastNameLengthCheck, FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
-    NewsTitleLengthCheck, NewsContentLengthCheck, CommentLengthCheck
+    NewsTitleLengthCheck, NewsContentLengthCheck, CommentLengthCheck, ImageUploadCheck,
+    DisplayNameTakenCheck,
 )
-from config.settings import PWD_MATCH_MSG, REQUIRED_FIELD_MSG
+from config.settings import (
+    PWD_MATCH_MSG, country_choices
+)
 
 class VerifyEmailForm(FlaskForm):
     """
-    Used on user_admin-page to verify email.
-    All fields are required and validated.
+    Used on admin.user_admin page to verify email.
     Placeholder may be overwritten in html by current_user's email.
-
+    If field is empty, current user's email is used.
+    
     Fields:
-    - email [EmailField] [Required]
-    - form_type [HiddenField]
+    - EMAIL [EmailField]
+    - FORM_TYPE [HiddenField]
     """
     #  Placeholder is overwritten in html by current_user's data
     #  If field is empty, current user's email is used.
@@ -37,38 +41,39 @@ class VerifyEmailForm(FlaskForm):
 
 class AuthenticationForm(FlaskForm):
     """
-    Used on user_admin-page to update user's data.
+    Used on admin.user_admin page to update user's auth data.
     Allows empty fields for individual updates.
     Username, email and fast name placeholders
      may be overwritten in html by current_user's data.
     
     Fields:
-    - email [EmailField] [Optional]
-    - username [StringField] [Optional]
-    - password [PasswordField] [Optional]
-    - confirm_password [PasswordField] [Optional]
-    - fast_name [StringField] [Optional]
-    - fast_code [PasswordField] [Optional]
-    - form_type [HiddenField]
+    - EMAIL [EmailField] [Optional]
+    - USERNAME [StringField] [Optional]
+    - PASSWORD [PasswordField] [Optional]
+    - CONFIRM_PASSWORD [PasswordField] [Optional]
+    - FAST_NAME [StringField] [Optional]
+    - FAST_CODE [PasswordField] [Optional]
+    - FORM_TYPE [HiddenField]
     """
     #  Username, email and fast name placeholders
-    # are overwritten in html by current_user's data
+    #  are overwritten in html by current_user's data
     email = EmailField(
         label="email",
         render_kw={"placeholder": "example@example.com"},
         validators=[
             EmailCheck(admin=True),
-            EmailTakenCheck(admin=True),
             EmailLengthCheck(admin=True),
+            EmailTakenCheck(),
+            ForbiddenCheck(),
         ]
     )
     username = StringField(
         label="username",
         render_kw={"placeholder": "username"},
         validators=[
-            ForbiddenCheck(),
-            UsernameTakenCheck(admin=True),
             UsernameLengthCheck(admin=True),
+            UsernameTakenCheck(),
+            ForbiddenCheck(),
         ]
     )
     password = PasswordField(
@@ -93,8 +98,8 @@ class AuthenticationForm(FlaskForm):
         label="fast name",
         render_kw={"placeholder": "fast name"},
         validators=[
-            ForbiddenCheck(),
             FastNameLengthCheck(admin=True),
+            ForbiddenCheck(),
         ]
     )
     fast_code = PasswordField(
@@ -109,20 +114,72 @@ class AuthenticationForm(FlaskForm):
     submit = SubmitField(label="Update")
 
 
-class NewsForm(FlaskForm):
+class ProfileForm(FlaskForm):
     """
-    Used on news_admin-page to add news.
+    Used on admin.user_admin page to update users' profile data.
+    Allows empty fields for individual updates.
+    Placeholder may be overwritten in html by current_user's data.
     
     Fields:
-    - title [TextAreaField] [Required]
-    - content [TextAreaField] [Required]
-    - form_type [HiddenField]
+    - DISPLAY_NAME [StringField] [Optional]
+    - COUNTRY [SelectField] [Optional]
+    - PROFILE_ICON [StringField] [Optional]
+    - PROFILE_PICTURE [FileField] [Optional]
+    - ABOUT_ME [TextAreaField] [Optional]
+    - FORM_TYPE [HiddenField]
+    """
+    display_name = StringField(
+        label="display name",
+        render_kw={"placeholder": "display name"},
+        validators=[
+            DisplayNameTakenCheck(),
+            UsernameLengthCheck(admin=True),
+            ForbiddenCheck(),
+        ]
+    )
+    country = SelectField(
+        label="country",
+        choices=country_choices,
+        render_kw={"style": "cursor: pointer;"},
+    )
+    profile_icon = StringField(
+        label="profile icon",
+        render_kw={"placeholder": "[ click to select ]"},
+    )
+    profile_picture = FileField(
+        label="profile picture",
+        render_kw={"style": "opacity: 0; cursor: pointer;"},
+        validators=[
+            ImageUploadCheck(),
+        ]
+    )
+    about_me = TextAreaField(
+        label="about me",
+        render_kw={
+            "placeholder": "about me",
+            "style": "resize: none; height: 200px; position: relative;"
+        },
+        validators=[
+            ForbiddenCheck(),
+        ]
+    )
+    form_type = HiddenField(default="profile_form")
+    submit = SubmitField(label="Update")
+
+
+class NewsForm(FlaskForm):
+    """
+    Used on admin.news.add-news page to add news.
+    
+    Fields:
+    - TITLE [TextAreaField] [Required]
+    - CONTENT [TextAreaField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     title = TextAreaField(
         label="Title",
         render_kw={"placeholder": "News title"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             NewsTitleLengthCheck(),
             ForbiddenCheck(),
         ]
@@ -131,7 +188,6 @@ class NewsForm(FlaskForm):
         label="Content",
         render_kw={"placeholder": "Content"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             NewsContentLengthCheck(),
             ForbiddenCheck(),
         ]
@@ -142,18 +198,17 @@ class NewsForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     """
-    Used on comment_admin-page to add comment.
+    Used on admin.news.news_id page to add comment.
     All fields are required and validated.
     
     Fields:
-    - content [TextAreaField] [Required]
-    - form_type [HiddenField]
+    - CONTENT [TextAreaField] [Required]
+    - FORM_TYPE [HiddenField]
     """
     content = TextAreaField(
         label="Content",
         render_kw={"placeholder": "Content"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             CommentLengthCheck(),
             ForbiddenCheck(),
         ]

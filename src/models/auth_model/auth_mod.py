@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from flask_login import UserMixin
-from sqlalchemy import Boolean, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Boolean, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.extensions import server_db_, argon2_
@@ -45,6 +45,12 @@ class User(server_db_.Model, UserMixin):
     - FAST_NAME (str): User's fast name [Unique] [Optional]
     - FAST_CODE (int): User's fast code [Optional]
     
+    - DISPLAY_NAME (str): User's display name [Unique] [Optional]
+    - COUNTRY (str): User's country [Optional]
+    - PROFILE_ICON (str): User's profile icon [Optional]
+    - PROFILE_PICTURE (str): User's profile picture [Optional]
+    - ABOUT_ME (str): User's about me [Optional]
+    
     - EMAIL_VERIFIED (bool): Indicates if the email is verified [False]
     - REMEMBER_ME (bool): Indicates 'remember me' setting [False]
     - LAST_SETTING_UPDATE (str): Name of last updated setting [Default]
@@ -64,7 +70,13 @@ class User(server_db_.Model, UserMixin):
     username: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     fast_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
-    fast_code: Mapped[Optional[str]] = mapped_column(String(5))
+    fast_code: Mapped[Optional[str]] = mapped_column(String(5))\
+    
+    display_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
+    country: Mapped[Optional[str]] = mapped_column(String(32))
+    profile_icon: Mapped[Optional[str]] = mapped_column(String(32))
+    profile_picture: Mapped[Optional[str]] = mapped_column(String(255))
+    about_me: Mapped[Optional[str]] = mapped_column(Text)
 
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -79,8 +91,16 @@ class User(server_db_.Model, UserMixin):
                                                  default=lambda: datetime.now(CET))
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     
-    tokens: Mapped[List[AuthenticationToken]] = relationship("AuthenticationToken", back_populates="user", cascade="all, delete-orphan")
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="author_user", cascade="all, delete-orphan")
+    tokens: Mapped[List[AuthenticationToken]] = relationship(
+        "AuthenticationToken",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    comments: Mapped[list["Comment"]] = relationship(  # type: ignore
+        "Comment",
+        back_populates="author_user",
+        cascade="all, delete-orphan"
+    )
     
     def __init__(self, email: str, username: str, password: str,
                  fast_name: Optional[str] = None, fast_code: Optional[str] = None):
@@ -95,6 +115,8 @@ class User(server_db_.Model, UserMixin):
         self.password = self._get_hash(password)
         self.fast_name = fast_name.lower() if fast_name else None
         self.fast_code = self._get_hash(fast_code) if fast_code else None
+        self.display_name = username
+        self.about_me = "Share something interesting about yourself..."
     
     @set_updated_at
     def set_email(self, email: str) -> None:
@@ -115,6 +137,26 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_fast_code(self, fast_code: str) -> None:
         self.fast_code = self._get_hash(fast_code)
+    
+    @set_updated_at
+    def set_display_name(self, display_name: str) -> None:
+        self.display_name = display_name
+    
+    @set_updated_at
+    def set_country(self, country: str) -> None:
+        self.country = country
+    
+    @set_updated_at
+    def set_profile_icon(self, profile_icon: str) -> None:
+        self.profile_icon = profile_icon
+    
+    @set_updated_at
+    def set_profile_picture(self, profile_picture: str) -> None:
+        self.profile_picture = profile_picture
+    
+    @set_updated_at
+    def set_about_me(self, about_me: str) -> None:
+        self.about_me = about_me
     
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:

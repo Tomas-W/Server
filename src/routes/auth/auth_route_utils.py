@@ -37,9 +37,8 @@ def handle_user_logout() -> None:
     """
     Logs out user and removes session data.
     """
-    current_user.set_remember_me(False)
     logout_user()
-    session.pop('remember', None)
+    session.clear()
 
 
 def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:

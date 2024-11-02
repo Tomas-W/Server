@@ -5,7 +5,7 @@ Sets general app settings as well as private variables,
     blueprints, databases.
 """
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_login import current_user
 
 from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
@@ -14,8 +14,9 @@ from src.models.mod_utils import load_user
 
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from config.settings import DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER, CET
-
+from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
+                             PROFILE_ICON_FOLDER, PROFILE_PICTURES_FOLDER
+)
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     _configure_paths()
@@ -38,6 +39,7 @@ def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     _configure_requests(app_)
     _configure_cli(app_)
     _configure_database(app_)
+    _configure_url_rules(app_)
 
     return app_
 
@@ -88,10 +90,22 @@ def _configure_database(app_: Flask) -> None:
         if not os.path.exists(DATABASE_URI):
 
             server_db_.create_all()
+    
+def _configure_url_rules(app_: Flask) -> None:
+    app_.add_url_rule("/uploads/<filename>",
+                      endpoint="profile_icon_folder",
+                      view_func=lambda filename: send_from_directory(
+                          PROFILE_ICON_FOLDER,
+                          filename))
+    app_.add_url_rule("/uploads/<filename>",
+                      endpoint="profile_picture_folder",
+                      view_func=lambda filename: send_from_directory(
+                          PROFILE_PICTURES_FOLDER,
+                          filename))
 
 
 def get_app(testing: bool = False) -> Flask:
     app_: Flask = Flask(__name__.split('.')[0], template_folder="templates", static_folder="static")
     app_ = _configure_server(app_, testing=testing)    
-    
+
     return app_

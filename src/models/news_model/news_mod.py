@@ -203,11 +203,25 @@ class Comment(server_db_.Model):
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
-    news_id: Mapped[int] = mapped_column(ForeignKey("news.id", ondelete="CASCADE"), nullable=False)
-    news: Mapped["News"] = relationship("News", back_populates="comments")
+    news_id: Mapped[int] = mapped_column(ForeignKey(
+        "news.id",
+        ondelete="CASCADE"),
+        nullable=False
+    )
+    news: Mapped["News"] = relationship(
+        "News",
+        back_populates="comments"
+    )
     
-    author_id: Mapped[int] = mapped_column(ForeignKey("auth.id", ondelete="CASCADE"), nullable=False)
-    author_user: Mapped["User"] = relationship("User", back_populates="comments")
+    author_id: Mapped[int] = mapped_column(ForeignKey(
+        "auth.id",
+        ondelete="CASCADE"),
+        nullable=False
+    )
+    author_user: Mapped["User"] = relationship(  # type: ignore
+        "User",
+        back_populates="comments"
+    )
 
     def __repr__(self) -> str:
         return (f"Comment:"

@@ -79,7 +79,7 @@
 
         </div>
 
-        <div class="comment-container" id="comment-container">
+        <div class="post-comment-container" id="post-comment-container">
             <form method="POST" novalidate action="{{ url_for('news.news', id_=news_dict.id) }}" class="comment-form" id="comment-form">
                 {{ comment_form.hidden_tag() }}
                 
@@ -107,8 +107,15 @@
                 
                     <div class="comment-item outline news-gap {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
                         <div class="comment-info">
-                            <p class="comment-author italic">{{ comment.author_username }}</p>
-                            <p class="comment-author italic">{{ comment.created_at }}</p>
+                            <div class="comment-header">
+                                <div class="comment-profile-icon-wrapper">
+                                    <img class="comment-profile-icon" src="{{ url_for('profile_icon_folder', filename=current_user.profile_icon) }}" alt="Icon">
+                                </div>
+                                <div>
+                                    <p class="comment-author italic">{{ comment.author_username }}</p>
+                                    <p class="comment-author italic">{{ comment.created_at }}</p>
+                                </div>
+                            </div>
                             <p class="comment-content">{{ comment.content|safe }}</p>
                         </div>
                         <div class="comment-actions">

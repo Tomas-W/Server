@@ -1,0 +1,42 @@
+.body {
+    min-height: 100vh;
+    font-family: "Montserrat", sans-serif;
+    background-color: var(--gray1);
+}
+
+.email-content {
+    padding: 100px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+    background-color: var(--gray2);
+}
+
+.email-header {
+    padding: 0 0 100px 0;
+    /* text-align: center; */
+    border-bottom: 1px solid var(--gray3);
+}
+
+.redirect-title {
+    font-size: 1.2rem;
+    /* font-weight: 600; */
+}
+
+.redirect-link {
+    text-decoration: underline;
+    text-decoration-color: var(--text-color);
+}
+
+.email-footer {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.notification-settings-link {
+    text-decoration: underline;
+    /* text-decoration-color: var(--text-color); */
+}

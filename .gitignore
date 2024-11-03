@@ -25,5 +25,8 @@ backups/
 # Ignore databases
 db/
 
+# Ignore uploaded files
+uploads/
+
 # Ignore playgrounds
 playground.py

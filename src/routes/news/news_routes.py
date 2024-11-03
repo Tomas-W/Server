@@ -41,6 +41,7 @@ def news(id_: int):
     
     - CommentForm
     """
+    id_ = int(id_)
     comment_form = CommentForm()
     
     news_dict = get_news_dict_by_id(id_)
@@ -61,7 +62,7 @@ def news(id_: int):
         
         session["form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for("news.news", id_=id_, _anchor="comment-container"))
+        return redirect(url_for("news.news", id_=id_, _anchor="post-comment-container"))
 
     form_data = session.pop("form_data", None)
     if form_data:

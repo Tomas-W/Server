@@ -1,8 +1,3 @@
-.tester {
-    display: flex;
-    gap: 10px;
-}
-
 .admin-wrapper {
     padding: 75px 12%;
 }
@@ -44,18 +39,18 @@
     font-size: 1.3rem;
 }
 
-/* .admin-input-field:not(:placeholder-shown) + .admin-form-label {
-    display: block;
-} */
+.form-item {
+    margin-bottom: 30px;
+}
 
-.admin-form-label {
-    /* display: none; */
-    position: absolute;
-    left: 0;
-    bottom: 29px;
-    color: var(--label-color);
-    font-size: var(--admin-form-error-size);
-    white-space: nowrap;
+.last-form-item {
+    margin-bottom: 0;
+}
+
+.input-error-container {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .admin-input-field {
@@ -76,58 +71,6 @@
     border-bottom-color: var(--border-color-hover);
 }
 
-.selected-icon {
-    border: 2px solid var(--text-color);
-}
-
-.selected-icon:hover {
-    border-color: var(--border-color-hover);
-}
-
-.profile-picture-field {
-    padding: 26px 0 0 0;
-}
-
-.test-img {
-    padding: 5px;
-}
-
-.test-img:hover {
-    filter: brightness(2);
-}
-
-.profile-picture-text {
-    position: absolute;
-    left: 0;
-    bottom: 5px;
-    color: var(--text-color);
-}
-
-.profile-picture-field {
-    height: 36px;
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-.profile-picture-field:hover {
-    color: var(--text-color-hover);
-    border-bottom-color: var(--border-color-hover);
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-.form-item {
-    margin-bottom: 30px;
-}
-
-.last-form-item {
-    margin-bottom: 0;
-}
-
-.input-error-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
 .admin-form-error {
     position: absolute;
     padding-right: 3px;
@@ -137,6 +80,27 @@
     font-size: var(--admin-form-error-size);
     white-space: nowrap;
     transform: translateY(-50%);
+}
+
+.admin-form-label {
+    /* display: none; */
+    position: absolute;
+    left: 0;
+    bottom: 29px;
+    color: var(--label-color);
+    font-size: var(--admin-form-error-size);
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.admin-devider {
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease-in-out;
+}
+
+.admin-devider:hover {
+    border-bottom-color: var(--border-color-hover);
 }
 
 .admin-btn {
@@ -155,22 +119,6 @@
     color: var(--white-100);
 }
 
-.admin-devider {
-    margin: 0;
-    border-bottom: 1px solid var(--border-color);
-    transition: border-color 0.3s ease-in-out;
-}
-
-.admin-devider:hover {
-    border-bottom-color: var(--border-color-hover);
-}
-
-.admin-form {
-    margin: 30px auto 0;
-    display: flex;
-    flex-direction: column;
-}
-
 .admin-forms-wrapper {
     padding: 0 50px;
 }
@@ -179,6 +127,68 @@
     padding: 0 0 10px 0;
     font-size: var(--admin-header-size);
     color: var(--text-color);
+}
+
+.admin-form {
+    margin: 30px auto 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-icon-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.profile-icon-img {
+    padding: 5px;
+}
+
+.profile-icon-img:hover {
+    filter: brightness(2);
+}
+
+.selected-profile-icon {
+    border: 2px solid var(--text-color);
+}
+
+.selected-profile-icon:hover {
+    border-color: var(--border-color-hover);
+}
+
+.profile-picture-text {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    color: var(--text-color);
+}
+
+.profile-picture-label {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    color: var(--label-color);
+}
+
+.profile-picture-field {
+    height: 36px;
+    padding: 26px 0 0 0;
+    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.profile-picture-field:hover {
+    color: var(--text-color-hover);
+    border-bottom-color: var(--border-color-hover);
+    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.profile-pic-div {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-pic-img {
+    max-height: 300px;
 }
 
 .about-me-label {
@@ -198,6 +208,9 @@
 
 
 @media (max-width: 474.98px) {
+    .admin-wrapper {
+        padding: 75px 9%;
+    }
     .verify-wrapper {
         padding: 0 0 100px 0;
     }
@@ -207,9 +220,24 @@
     .admin-forms-wrapper {
         padding: 0;
     }
+    .profile-icon-wrapper {
+        position: absolute;
+        flex-wrap: wrap;
+        top: 10px;
+        right: 0;
+    }
+    .profile-picture-field {
+        padding-top: 60px;
+    }
+    .profile-icon-label {
+        bottom: 53px;
+    }
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
+    .admin-wrapper {
+        padding: 75px 9%;
+    }
     .verify-wrapper {
         padding: 0 0 100px 0;
     }

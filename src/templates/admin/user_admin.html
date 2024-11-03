@@ -46,7 +46,7 @@
         <div class="admin-forms-wrapper {% if not current_user.email_verified %}blur{% endif %}">
             <div class="admin-forms-content">
 
-                <div class="authentication-wrapper href-scroll admin-gap">
+                <div id="authentication-wrapper" class="authentication-wrapper href-scroll admin-gap">
                     {% if flash_type == "authentication" %}
                         {% for message in get_flashed_messages() %}
                         <div class="admin-flash admin-flash-gap italic href-scroll" id="authentication-flash">
@@ -166,24 +166,25 @@
                             
                             <div class="form-item">
                                 <div class="input-error-container profile-picture-field">
-                                    <div class="admin-form-label">{{ profile_form.profile_icon.label }}</div>
-                                    <div class="tester">
-                                        <a href="{{ url_for('admin.profile_icon', filename='baguette1.png') }}" class="profile-icon-link"><img class="test-img {% if current_user.profile_icon == 'baguette1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='baguette1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread1.png') }}"><img class="test-img {% if current_user.profile_icon == 'bread1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread2.png') }}"><img class="test-img {% if current_user.profile_icon == 'bread2.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread2.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread3.png') }}"><img class="test-img {% if current_user.profile_icon == 'bread3.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread3.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='cookie1.png') }}"><img class="test-img {% if current_user.profile_icon == 'cookie1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='cookie1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='croissant1.png') }}"><img class="test-img {% if current_user.profile_icon == 'croissant1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='croissant1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='donut1.png') }}"><img class="test-img {% if current_user.profile_icon == 'donut1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='donut1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='pie1.png') }}"><img class="test-img {% if current_user.profile_icon == 'pie1.png' %}selected-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='pie1.png') }}"></a>
+                                    <div class="admin-form-label profile-icon-label">{{ profile_form.profile_icon.label }}</div>
+                                    <div class="profile-icon-wrapper">
+                                        <a href="{{ url_for('admin.profile_icon', filename='baguette1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'baguette1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='baguette1.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='bread1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread1.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='bread2.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread2.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread2.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='bread3.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread3.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread3.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='cookie1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'cookie1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='cookie1.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='croissant1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'croissant1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='croissant1.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='donut1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'donut1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='donut1.png') }}"></a>
+                                        <a href="{{ url_for('admin.profile_icon', filename='pie1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'pie1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='pie1.png') }}"></a>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-item">
                                 <div class="input-error-container profile-picture-field outline-bottom">
-                                    <label for="profile_picture" class="profile-picture-text">
-                                        <span id="file-name-placeholder">{{ current_user.profile_picture or "No file chosen" }}</span> [ click to change ]
+                                    {% set file_name = "[ select file ]" if not current_user.profile_picture else (current_user.profile_picture[:25] + ".." if current_user.profile_picture|length > 27 else current_user.profile_picture) %}
+                                    <label for="profile_picture" class="{% if file_name == '[ select file ]' %} profile-picture-label {% else %} profile-picture-text {% endif %}">
+                                        <span id="file-name-placeholder">{{ file_name }}</span>
                                     </label>
                                     {{ profile_form.profile_picture(class="admin-input-field", id="profile_picture") }}
                                     {% if profile_errors["profile_picture"] %}
@@ -195,8 +196,7 @@
 
                             {% if current_user.profile_picture %}
                                 <div class="profile-pic-div">
-                                    <img class="profile-pic-img" src="{{ url_for('profile_icon_folder', filename=current_user.profile_picture) }}" style="max-height: 300px;">
-                                    <img class="profile-pic-img" src="{{ url_for('profile_picture_folder', filename=current_user.profile_picture) }}" style="max-height: 300px;">
+                                    <img class="profile-pic-img" src="{{ url_for('profile_picture_folder', filename=current_user.profile_picture) }}">
                                 </div>
                             {% endif %}
                             

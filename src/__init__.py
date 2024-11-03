@@ -92,12 +92,12 @@ def _configure_database(app_: Flask) -> None:
             server_db_.create_all()
     
 def _configure_url_rules(app_: Flask) -> None:
-    app_.add_url_rule("/uploads/<filename>",
+    app_.add_url_rule("/uploads/profile_icons/<filename>",
                       endpoint="profile_icon_folder",
                       view_func=lambda filename: send_from_directory(
                           PROFILE_ICON_FOLDER,
                           filename))
-    app_.add_url_rule("/uploads/<filename>",
+    app_.add_url_rule("/uploads/profile_pictures/<filename>",
                       endpoint="profile_picture_folder",
                       view_func=lambda filename: send_from_directory(
                           PROFILE_PICTURES_FOLDER,

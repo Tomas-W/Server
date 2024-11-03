@@ -147,8 +147,8 @@
     text-align: right;
 }
 
-.comment-container {
-    padding: var(--news-padding);
+.post-comment-container {
+    padding: var(--post-comment-padding);
     scroll-margin-top: 300px;
 }
 
@@ -214,21 +214,30 @@
     transition: color 0.3s ease-in-out, border-bottom-color 0.3s ease-in-out;
 }
 
+.post-comment {
+    background-color: var(--bg-highlight);
+}
+
 .comments-container {
     padding: var(--comment-padding);
-    margin: var(--comment-padding);
 }
 
 .comment-item {
     padding: var(--comment-padding);
 }
 
-.post-comment {
-    background-color: var(--bg-highlight);
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-profile-icon {
+    padding: 4px 0 0 0;
 }
 
 .comment-author {
-    padding: 0 0 0 20px;
+    /* padding: 0 0 0 20px; */
     font-size: var(--news-author-size);
 }
 
@@ -312,7 +321,7 @@
     .news-info-container {
         padding: var(--news-padding-s);
     }
-    .comment-container {
+    .post-comment-container {
         padding: var(--news-padding-s);
     }
     .comments-container {
@@ -346,7 +355,7 @@
     .news-info-container {
         padding: var(--news-padding-s);
     }
-    .comment-container {
+    .post-comment-container {
         padding: var(--news-padding-s);
     }
     .comments-container {
@@ -364,9 +373,46 @@
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
+    .post-comment-container {
+        padding: var(--news-padding-s);
+    }
+    .comments-container {
+        /* padding: 10px 0 50px 0; */
+        padding-top: 0;
+        margin: 0;
+        border: none;
+    }
+    .comment-item {
+        padding: var(--comment-padding-s);
+        margin: 40px 0;
+        border: none;
+        border-top: 1px solid var(--gray3);
+        border-bottom: 1px solid var(--gray3);
+    }
+    .side-panel {
+        display: none;
+    }
+    .side-panel-link {
+        display: block;
+    }
+    .top-panel-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .top-panel-item:nth-child(1) a,
+    .top-panel-item:nth-child(2) a,
+    .top-panel-item:nth-child(3) a {
+        padding-top: 30px;
+    }
+    .top-panel-item:nth-last-child(1) a,
+    .top-panel-item:nth-last-child(2) a {
+        padding-bottom: 30px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
+    .comments-container {
+        margin: 0;
+    }
 }
 
 @media (min-width: 1200px) and (max-width: 1348.98px) {

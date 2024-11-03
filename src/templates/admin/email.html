@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+</head>
+
+<body style="min-height: 100vh; font-family: 'Montserrat', sans-serif; background-color: rgba(18, 18, 18, 1); margin: 0;">
+
+<div class="email-wrapper" style="margin: 0; padding: 75px 3%;">
+    <div class="email-content" style="padding: 100px 3%; text-align: center; color: rgba(160, 160, 160, 1); background-color: rgba(23, 23, 23, 1); margin: 0; outline: 1px solid rgba(42, 45, 47, 1);">
+
+        <div class="email-header" style="padding: 0 0 75px 0; border-bottom: 1px solid rgba(42, 45, 47, 1); margin: 0 auto; max-width: 70%;">
+            <h1 style="font-size: 8vw; padding-bottom: 20px; margin: 0;">{{ title }}</h1>
+            <p class="redirect-title" style="font-size: 1.2rem; margin: 0;">{{ redirect_title }}<a class="redirect-link" href="{{ redirect_url }}" style="color: inherit; text-decoration: underline; margin: 0;">click here.</a></p>
+        </div>
+
+        <div class="email-footer" style="padding: 75px 0; text-align: center; margin: 0 auto; border-bottom: 1px solid rgba(42, 45, 47, 1); max-width: 70%;">
+            <p style="margin: 0;">{{ notification_settings }}</p>
+            <p style="margin: 0;">
+                You can change your notification settings by clicking the link below.
+                <br>
+                <br>
+                <a class="notification-settings-link" href="{{ settings_url }}" style="color: inherit; text-decoration: underline; margin: 0;">Change notification settings.</a>
+            </p>
+        </div>
+
+        <div class="disclaimer" style="padding: 75px 0 0 0; margin: 0 auto; max-width: 70%;">
+            <p class="disclaimer-text automated-email" style="margin: 0;">This is an automated email. Please do not reply.</p>
+            <p class="disclaimer-text copyright" style="margin: 0;">All rights reserved &copy; 2024</p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

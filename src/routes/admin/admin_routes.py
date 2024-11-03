@@ -13,7 +13,9 @@ from src.routes.admin.admin_forms import (
     NewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm
 )
 from src.routes.admin.admin_route_utils import (
-    add_news_message, process_admin_form, process_profile_picture
+    add_news_message, process_admin_form, process_profile_picture,
+    send_news_notification_email, send_comment_notification_email,
+    send_bakery_notification_email
 )
 from config.settings import (
     EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
@@ -36,7 +38,7 @@ def user_admin():
     - ProfileForm
     - NotificationsForm
     - SettingsForm
-    """   
+    """
     verify_email_form: VerifyEmailForm = VerifyEmailForm()
     authentication_form: AuthenticationForm = AuthenticationForm()
     profile_form: ProfileForm = ProfileForm()
@@ -131,6 +133,24 @@ def profile_icon(filename):
     current_user.profile_icon = filename
     return redirect(url_for("admin.user_admin", _anchor="profile-wrapper"))
 
+
+@admin_bp.route("/admin/email")
+@login_required
+def email():
+    title = "We have news!"
+    redirect_title = "To read the latest news, "
+    notification_settings = "You receive these emails because you signed up for notifications."
+    send_news_notification_email(recipient_email="tomaswaverijn@hotmail.com")
+    send_comment_notification_email(recipient_email="tomaswaverijn@hotmail.com",
+                                   comment_id=1, news_id=2)
+    send_bakery_notification_email(recipient_email="tomaswaverijn@hotmail.com",
+                                   bakery_id=1, add_update="updated")
+    return render_template(
+        "admin/email.html",
+        title=title,
+        redirect_title=redirect_title,
+        notification_settings=notification_settings
+    )
 
 
 @admin_bp.route("/admin/add-news", methods=["GET", "POST"])

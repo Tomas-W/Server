@@ -18,6 +18,7 @@
     <!-- Style sheets -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms_style.css') }}">
     {% if page == "all_news" %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news_base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/all_news.css') }}">
@@ -30,6 +31,9 @@
     {% elif page == "info" %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/info.css') }}">
+    {% elif page == "search" %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/search.css') }}">
     {% endif %}
     {% if page == "admin" %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin/admin_base.css') }}">
@@ -54,11 +58,10 @@
             </a>
             
             <div class="navbar-links">
-                <a class="nav-link" href="{{ url_for('admin.user_admin') }}">Admin</a>
                 <a class="nav-link" href="{{ url_for('news.all_news') }}">News</a>
                 <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
-                <a class="nav-link" href="#">Games</a>
-                <a class="nav-link" href="#">Tools</a>
+                <a class="nav-link" href="{{ url_for('bakery.search') }}">Search</a>
+                <a class="nav-link" href="{{ url_for('admin.user_admin') }}">Admin</a>
             </div>
             
             <div class="logout">
@@ -80,11 +83,10 @@
                             </div>
                         </a>
                     </li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('admin.user_admin') }}">Admin</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('news.all_news') }}">News</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('bakery.programs') }}">Programs</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="#">Games</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="#">Tools</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('bakery.search') }}">Search</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('admin.user_admin') }}">Admin</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('auth.logout') }}">Logout</a></div></li>
                 </ul>
             </div>

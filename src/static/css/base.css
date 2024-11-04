@@ -216,12 +216,13 @@
 
 .side-panel {
     width: auto;
+    padding: 55px;
     border-right: 1px solid var(--gray3);
     background-color: var(--gray2);
 }
 
 .side-panel-list {
-    margin: 55px;
+    /* margin: 55px; */
     padding: 0;
     list-style: none;
 }
@@ -317,7 +318,9 @@
     font-weight: 600;
     text-decoration: none;
     color: var(--text-color);
-    white-space: nowrap;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
     transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
 }
 

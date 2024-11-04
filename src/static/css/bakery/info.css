@@ -1,16 +1,3 @@
-.top-info {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-}
-
-.bakery-image {
-    /* width: 100%; this is inline!*/
-    /* height: 100%; this is inline!*/
-    max-width: 700px;
-    padding: 0 50px 0 50px;
-}
-
 .main-info {
     padding: 75px 20px 35px 0;
     padding-top: 75px;
@@ -53,6 +40,30 @@
 .allergy-wrapper {
     text-align: right;
 }
+
+
+.side-panel-title {
+    padding: 0 0 25px 0;
+    font-size: var(--side-panel-title-size);
+    color: var(--text-color);
+}
+
+.side-panel-list {
+    margin: 55px 45px;
+}
+
+.side-panel-item {
+    font-size: var(--side-panel-size-s);
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+.top-panel-item {
+    font-size: var(--top-panel-size-s);
+}
+
+
 
 @media (max-width: 474.98px) {
     .top-info {
@@ -148,6 +159,12 @@
     }
     .item-label {
         padding-right: 0 0 0 60px;
+    }
+    .side-panel-list {
+        margin: 55px 35px;
+    }
+    .side-panel-item {
+        font-size: var(--side-panel-size-xs);
     }
 }
 

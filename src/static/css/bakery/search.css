@@ -1,0 +1,51 @@
+.search-content {
+    padding: 75px;
+}
+
+.search-header {
+    padding: 0 0 10px 0;
+    font-size: var(--admin-header-size);
+    color: var(--text-color);
+}
+
+.admin-form-label {
+    display: none;
+}
+
+.admin-input-field:not(:placeholder-shown) + .admin-form-label {
+    display: block;
+}
+
+.custom-checkbox-wrapper {
+    width: 100%;
+}
+
+.custom-checkbox-box {
+    margin-left: auto;
+}
+
+.lactose-label {
+    position: absolute;
+    top: 9px;
+    padding: 0;
+    font-size: calc(var(--admin-form-input-size) + 0.05rem);
+    color: var(--label-color-darker);
+}
+
+.vegan-label {
+    position: absolute;
+    top: 9px;
+    padding: 0;
+    font-size: calc(var(--admin-form-input-size) + 0.05rem);
+    color: var(--label-color-darker);
+}
+
+.nutri-label {
+    font-size: calc(var(--admin-form-input-size) + 0.05rem);
+    color: var(--label-color-darker);
+}
+
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+}

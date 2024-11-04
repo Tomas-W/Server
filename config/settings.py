@@ -67,8 +67,10 @@ VERIFICATION_ERROR_MSG: str = "Verification error"
 UNEXPECTED_ERROR_MSG: str = "Unexpected error"
 
 # Forms
-required_password_symbols: str = string.punctuation + string.digits
-country_choices: list[str] = [country.name for country in pycountry.countries]
+REQUIRED_SYMBOLS: str = string.punctuation + string.digits
+COUNTRY_CHOICES: list[str] = [country.name for country in pycountry.countries]
+NUTRI_CHOICES: list[tuple[str, str]] = [("", "Nutri score"), ("A", "A"), ("B", "B"), ("C", "C"), ("D", "D"), ("E", "E")]
+
 
 # Form types
 REGISTER_FORM_TYPE: str = "register_form"
@@ -81,8 +83,10 @@ RESET_PASSWORD_FORM_TYPE: str = "reset_password_form"
 VERIFY_FORM_TYPE: str = "verify_form"
 AUTHENTICATION_FORM_TYPE: str = "authentication_form"
 PROFILE_FORM_TYPE: str = "profile_form"
-NEWS_FORM_TYPE: str = "news_form"
+NOTIFICATION_SETTINGS_FORM_TYPE: str = "notification_settings_form"
 COMMENT_FORM_TYPE: str = "comment_form"
+
+BAKERY_SEARCH_FORM_TYPE: str = "bakery_search_form"
 
 # Form messages
 EMAIL_TAKEN_MSG: str = "Email taken"

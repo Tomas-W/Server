@@ -7,7 +7,7 @@ from wtforms.validators import ValidationError
 from src.models.auth_model.auth_mod import User
 
 from config.settings import (
-    banned_words_list, banned_characters_list, required_password_symbols,
+    banned_words_list, banned_characters_list, REQUIRED_SYMBOLS,
     MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH
 )
 from config.settings import (
@@ -139,7 +139,7 @@ class PasswordCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.symbols: list[str] = required_password_symbols
+        self.symbols: list[str] = REQUIRED_SYMBOLS
         self.special_char_message: str = SPECIAL_CHAR_MSG
         self.capital_letter_message: str = CAPITAL_LETTER_MSG
         self.lower_letter_message: str = LOWER_LETTER_MSG

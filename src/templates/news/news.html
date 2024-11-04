@@ -47,14 +47,14 @@
             <div class="like-dislike-container" id="like-dislike">
                 <div class="like-container">
                     {% if current_user_id in news_dict.liked_by %}
-                        <p>{{ news_dict.liked_by|length }}</p><a href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_col_xl.png') }}" alt="Like"></a>
+                        <p>{{ news_dict.liked_by|length }}</p><a class="disable-a" href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_col_xl.png') }}" alt="Like"></a>
                     {% else %}
                         <p>{{ news_dict.liked_by|length }}</p><a href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_xl.png') }}" alt="Like"></a>
                     {% endif %}
                 </div>
                 <div class="dislike-container">
                     {% if current_user_id in news_dict.disliked_by %}
-                        <a href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_col_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
+                        <a class="disable-a" href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_col_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
                     {% else %}
                         <a href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
                     {% endif %}
@@ -96,7 +96,7 @@
                 </div>
                 {{ comment_form.form_type }}
                 <div class="comment-devider news-gap"> 
-                    {{ comment_form.submit(class="btn comment-btn") }}
+                    {{ comment_form.submit(class="comment-btn") }}
                 </div>
             </form>
 
@@ -119,7 +119,7 @@
                             <p class="comment-content">{{ comment.content|safe }}</p>
                         </div>
                         <div class="comment-actions">
-                            <a href="{{ url_for('news.like_comment', id_=comment.id) }}">
+                            <a class="{% if current_user_id in comment.liked_by %}disable-a{% endif %}" href="{{ url_for('news.like_comment', id_=comment.id) }}">
                             <div class="comment-like {% if comment.id == comment_id and current_user_id in comment.liked_by %}like-dislike-comment{% endif %}">
                                 {% if current_user_id in comment.liked_by %}
                                     <img class="like-comment-icon" src="{{ url_for('static', filename='images/like_col_xs.png') }}" alt="Like">
@@ -130,7 +130,7 @@
                             </div>
                             </a>
 
-                            <a href="{{ url_for('news.dislike_comment', id_=comment.id) }}">
+                            <a class="{% if current_user_id in comment.disliked_by %}disable-a{% endif %}" href="{{ url_for('news.dislike_comment', id_=comment.id) }}">
                                 <div class="comment-dislike {% if comment.id == comment_id and current_user_id in comment.disliked_by %}like-dislike-comment{% endif %}">
                                     {% if current_user_id in comment.disliked_by %}
                                         <img class="dislike-comment-icon" src="{{ url_for('static', filename='images/dislike_col_xs.png') }}" alt="Dislike">

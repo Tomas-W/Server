@@ -129,6 +129,8 @@
     width: 100%;
     margin: 0 auto;
     padding: 35px 0;
+    border: none;
+    background-color: transparent;
     cursor: pointer;
     font-size: var(--btn-text-size);
     color: var(--button-color);

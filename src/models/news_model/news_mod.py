@@ -1,8 +1,11 @@
 from datetime import datetime
 from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional
 
 from src.extensions import server_db_
+from src.models.auth_model.auth_mod import User
+from src.models.email_model.email_mod_utils import add_email_to_db
 from config.settings import CET
 
 
@@ -213,10 +216,9 @@ class Comment(server_db_.Model):
         back_populates="comments"
     )
     
-    author_id: Mapped[int] = mapped_column(ForeignKey(
-        "auth.id",
-        ondelete="CASCADE"),
-        nullable=False
+    author_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
+        "auth.id", ondelete="SET NULL"),
+        nullable=True
     )
     author_user: Mapped["User"] = relationship(  # type: ignore
         "User",
@@ -253,7 +255,12 @@ class Comment(server_db_.Model):
         self._remove_disliked_by(user_id)
         if not str(user_id) in self.liked_by:
             self.liked_by += f"{user_id}|"
-    
+            user = User.query.get(user_id)
+            add_email_to_db(recipient_email=user.email,
+                            email_type="comment",
+                            news_id=self.news_id,
+                            comment_id=self.id)
+
     def set_disliked_by(self, user_id: int) -> None:
         self._remove_liked_by(user_id)
         if not str(user_id) in self.disliked_by:

@@ -9,15 +9,13 @@
     --arrow-down: "\2193";
 
     --container-padding: 7%;
-
-    --side-panel-size: 1.2rem;
-    ---top-panel-size: 1.1rem;
     
     --white-0: rgba(255, 255, 255, 0);
     --white-100: rgba(255, 255, 255, 1);
     --text-color: rgba(160, 160, 160, 1);
     --text-color-hover: rgba(200, 200, 200, 1);
     --label-color: rgba(120, 120, 120, 1);
+    --label-color-darker: rgba(120, 120, 120, 0.7);
     --button-color: rgba(200, 200, 200, 1);
     --btn-text-size: 1.25rem;
     --input-color: rgba(200, 200, 200, 1);
@@ -42,6 +40,19 @@
 
     --s-menu-color: rgba(30, 30, 30, 1);
     --s-menu-color-hover: rgba(35, 35, 35, 1);
+
+    --side-panel-size: 1.2rem;
+    --side-panel-size-s: 1.1rem;
+    --side-panel-size-xs: 1rem;
+    --side-panel-title-size: 1.5rem;
+    --side-panel-title-size-s: 1.3rem;
+    --top-panel-size: 1.1rem;
+    --top-panel-size-s: 1rem;
+    --top-panel-size-xs: 0.9rem;
+    --top-panel-title-size: 1.4rem;
+    --top-panel-title-size-s: 1.2rem;
+
+
 
     --admin-form-input-size: 1.1rem;
     --admin-form-input-size-s: 0.9rem;
@@ -91,6 +102,15 @@
 
 
 /********* General settings *********/
+.href-scroll {
+    scroll-margin-top: 100px;
+}
+
+.blur {
+    filter: blur(3px);
+    transition: filter 0.2s ease-in-out;
+}
+
 .italic {
     font-style: italic;
 }

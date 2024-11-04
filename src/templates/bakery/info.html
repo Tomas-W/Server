@@ -11,114 +11,27 @@ Info
 <section class="base-section">
     <div class="base-container">
         
-        {% include "bakery/side_panel.html" %}
+        <div class="side-panel">
+            <ul class="side-panel-list">
+                <p class="side-panel-title">Items</p>
+                {% for item in ids_and_names %}
+                    <li><p class="side-panel-item"><a href="{{ url_for('bakery.info', id_=item.id) }}">{{ item.name }}</a></p></li>
+                {% endfor %}
+            </ul>
+        </div>
+        
         <div class="base-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel">Programs</label>
+            <label class="side-panel-link" for="toggle-top-panel">Items</label>
 
-                {% include "bakery/top_panel.html" %}
-
-            
-            <div class="top-info">
-                <img class="bakery-image" 
-                     src="{{ url_for("static", filename=bakery_item_dict.image) }}" 
-                     alt="Bakery image"
-                     style="width: 100%; height: 100%;"> 
-
-                <div class="main-info">
-                    <div class="health-container">
-                        <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + "nutri_" + bakery_item_dict.nutri_score + ".png") }}" alt="Nutri image">
-                        <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + ("vegan.png" if bakery_item_dict.vegan else "not_vegan.png")) }}" alt="Vegan image">
-                        <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + ("lactose.png" if bakery_item_dict.lactose_free else "not_lactose.png")) }}" alt="Lactose image">
-                    </div>
-                    <div class="item-container">
-                        <p class="item-info">{{ bakery_item_dict.name }}</p>
-                        {% if bakery_item_dict.type %}
-                        <p class="item-info">{{ bakery_item_dict.type }}</p>
-                        {% endif %}
-                        <p class="item-info">{{ bakery_item_dict.nasa }}</p>
-                        <p class="item-info">€ {{ bakery_item_dict.price }}</p>
-                    </div>
+            <div class="top-panel">
+                <div class="top-panel-list">
+                    {% for item in ids_and_names %}
+                        <div class="top-panel-item"><a href="{{ url_for('bakery.info', id_=item.id) }}">{{ item.name }}</a></div>
+                    {% endfor %}
                 </div>
             </div>
-
-            <div class="bakery-devider"> 
-            </div>
-            
-            <div class="bottom-info">
-
-                {% if bakery_item_dict.package_type %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Package type: </p>
-                    <p class="item-info">{{ bakery_item_dict.package_type }}</p>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.per_package %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Quantity per package: </p>
-                    <p class="item-info">{{ bakery_item_dict.per_package }}</p>
-                </div>
-                {% endif %}
-                
-                {% if bakery_item_dict.make_halves %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Make halves: </p>
-                    <p class="item-info">{{ "Yes" if bakery_item_dict.make_halves else "No" }}</p>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.rack_type %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Baking surface: </p>
-                    <p class="item-info">{{ bakery_item_dict.rack_type }}</p>
-                </div>
-                {% endif %}
-                
-                {% if bakery_item_dict.per_rack %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Quantity per surface: </p>
-                    <p class="item-info">{{ bakery_item_dict.per_rack }}</p>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.defrost_time %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Defrost time: </p>
-                    <p class="item-info">{{ bakery_item_dict.defrost_time }}</p>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.cooldown_time %}
-                <div class="bottom-info-duo">
-                    <p class="item-label item-info">Cooldown time: </p>
-                    <p class="item-info">{{ bakery_item_dict.cooldown_time }}</p>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.contains %}
-                <div class="bottom-info-duo allgeries">
-                    <p class="item-label item-info">Contains: </p>
-                    <div class="allergy-wrapper">
-                        {% for item in bakery_item_dict.contains %}
-                        <p class="item-info">{{ item }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if bakery_item_dict.may_contain %}
-                <div class="bottom-info-duo allgeries">
-                    <p class="item-label item-info">May contain: </p>
-                    <div class="allergy-wrapper">
-                        {% for item in bakery_item_dict.may_contain %}
-                        <p class="item-info">{{ item }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-            </div>
+            {% include "bakery/item_info.html" %}
         </div>        
     </div>
 </section>

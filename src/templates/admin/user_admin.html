@@ -35,7 +35,7 @@
                     {{ verify_email_form.form_type }}
                     <!-------- Submit -------->
                     <div class="admin-devider"> 
-                        {{ verify_email_form.submit(class="btn admin-btn") }}
+                        {{ verify_email_form.submit(class="admin-btn") }}
                     </div>
                 </form>
             </div>
@@ -55,7 +55,7 @@
                         {% endfor %}
                     {% endif %} 
 
-                    <p class="admin-header" >Authentication</p>
+                    <p class="admin-form-header">Authentication</p>
                     <div class="admin-form-wrapper">
                         <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
                             {{ authentication_form.hidden_tag() }}
@@ -124,14 +124,14 @@
                             {{ authentication_form.form_type }}
                             <!-------- Submit -------->
                             <div class="admin-devider"> 
-                                {{ authentication_form.submit(class="btn admin-btn", disabled=not current_user.email_verified) }}
+                                {{ authentication_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
                             </div>
                         </form>
 
                     </div>
                 </div>
 
-                <div id="profile-wrapper" class="profile-wrapper href-scroll">
+                <div id="profile-wrapper" class="profile-wrapper admin-gap href-scroll">
                     {% if flash_type == "profile" %}
                         {% for message in get_flashed_messages() %}
                         <div class="admin-flash admin-flash-gap italic href-scroll">
@@ -139,8 +139,8 @@
                         </div>
                         {% endfor %}
                     {% endif %} 
-                    <p class="admin-header">Profile</p>
-                    <div class="admin-form-wrapper"></div>
+                    <p class="admin-form-header">Profile</p>
+                    <div class="admin-form-wrapper">
                         <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
                             {{ profile_form.hidden_tag() }}
                             <!-------- Email or username -------->
@@ -215,19 +215,75 @@
                             {{ profile_form.form_type }}
                             <!-------- Submit -------->
                             <div class="admin-devider"> 
-                                {{ profile_form.submit(class="btn admin-btn", disabled=not current_user.email_verified) }}
+                                {{ profile_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
                             </div>
                         </form>
 
                     </div>
                 </div>
 
-                <div class="notifications-wrapper">
-                    <p class="admin-header">Notifications</p>
+
+                <div id="notification-settings-wrapper" class="notification-settings-wrapper admin-gap href-scroll">
+                    {% if flash_type == "notification_settings" %}
+                        {% for message in get_flashed_messages() %}
+                        <div class="admin-flash admin-flash-gap italic href-scroll">
+                            <p>{{ message }}</p>
+                        </div>
+                        {% endfor %}
+                    {% endif %} 
+                    <p class="admin-form-header smaller-padding">Notification settings</p>
+                    <div class="">
+                        <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+                            {{ notification_settings_form.hidden_tag() }}
+                        
+                            <!-- News Notifications Field -->
+                            <div class="form-item notification-item-wrapper">
+                                <div class="notification-item-flex">
+                                    <label class="custom-checkbox-wrapper">
+                                        <span class="notification-label {% if current_user.news_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.news_notifications.label }} ]</span>
+                                        {{ notification_settings_form.news_notifications(class="custom-checkbox") }}
+                                        <span class="custom-checkbox-box"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        
+                            <!-- Comment Notifications Field -->
+                            <div class="form-item notification-item-wrapper">
+                                <div class="notification-item-flex">
+                                    <label class="custom-checkbox-wrapper">
+                                        <span class="notification-label {% if current_user.comment_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.comment_notifications.label }} ]</span>
+                                        {{ notification_settings_form.comment_notifications(class="custom-checkbox") }}
+                                        <span class="custom-checkbox-box"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        
+                            <!-- Bakery Notifications Field -->
+                            <div class="form-item notification-item-wrapper">
+                                <div class="notification-item-flex">
+                                    <label class="custom-checkbox-wrapper">
+                                        <span class="notification-label {% if current_user.bakery_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.bakery_notifications.label }} ]</span>
+                                        {{ notification_settings_form.bakery_notifications(class="custom-checkbox") }}
+                                        <span class="custom-checkbox-box"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        
+                            <!-- Submit Button -->
+                            <div class="admin-devider"> 
+                                {{ notification_settings_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+
+
                 </div>
 
                 <div class="settings-wrapper">
-                    <p class="admin-header">Settings</p>
+                    <p class="admin-form-header">Settings</p>
                 </div>
                 
             </div>

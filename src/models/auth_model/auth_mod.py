@@ -1,3 +1,5 @@
+import os
+import random
 from datetime import datetime
 from typing import Optional, List
 
@@ -8,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.extensions import server_db_, argon2_
 from src.models.mod_utils import set_updated_at
 
-from config.settings import CET
+from config.settings import CET, PROFILE_ICON_FOLDER
 
 
 class AuthenticationToken(server_db_.Model):
@@ -51,6 +53,10 @@ class User(server_db_.Model, UserMixin):
     - PROFILE_PICTURE (str): User's profile picture [Optional]
     - ABOUT_ME (str): User's about me [Optional]
     
+    - NEWS_NOTIFICATIONS (bool): User wants news notifications [False]
+    - COMMENT_NOTIFICATIONS (bool): User wants comment notifications [False]
+    - BAKERY_NOTIFICATIONS (bool): User wants bakery notifications [False]
+    
     - EMAIL_VERIFIED (bool): Indicates if the email is verified [False]
     - REMEMBER_ME (bool): Indicates 'remember me' setting [False]
     - LAST_SETTING_UPDATE (str): Name of last updated setting [Default]
@@ -77,6 +83,10 @@ class User(server_db_.Model, UserMixin):
     profile_icon: Mapped[Optional[str]] = mapped_column(String(32))
     profile_picture: Mapped[Optional[str]] = mapped_column(String(255))
     about_me: Mapped[Optional[str]] = mapped_column(Text)
+    
+    news_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
+    comment_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
+    bakery_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
 
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -98,12 +108,12 @@ class User(server_db_.Model, UserMixin):
     )
     comments: Mapped[list["Comment"]] = relationship(  # type: ignore
         "Comment",
-        back_populates="author_user",
-        cascade="all, delete-orphan"
+        back_populates="author_user"
     )
     
     def __init__(self, email: str, username: str, password: str,
-                 fast_name: Optional[str] = None, fast_code: Optional[str] = None):
+                 fast_name: Optional[str] = None, fast_code: Optional[str] = None,
+                 email_verified: bool = False):
         """
         Initialize a new User instance.
         Applies argon2 hashing to the password.
@@ -116,7 +126,9 @@ class User(server_db_.Model, UserMixin):
         self.fast_name = fast_name.lower() if fast_name else None
         self.fast_code = self._get_hash(fast_code) if fast_code else None
         self.display_name = username
+        self.profile_icon = random.choice([file for file in os.listdir(PROFILE_ICON_FOLDER)])
         self.about_me = "Share something interesting about yourself..."
+        self.email_verified = email_verified
     
     @set_updated_at
     def set_email(self, email: str) -> None:
@@ -157,6 +169,18 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_about_me(self, about_me: str) -> None:
         self.about_me = about_me
+    
+    @set_updated_at
+    def set_news_notifications(self, news_notifications: bool) -> None:
+        self.news_notifications = news_notifications
+    
+    @set_updated_at
+    def set_comment_notifications(self, comment_notifications: bool) -> None:
+        self.comment_notifications = comment_notifications
+    
+    @set_updated_at
+    def set_bakery_notifications(self, bakery_notifications: bool) -> None:
+        self.bakery_notifications = bakery_notifications
     
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
-    FileField
+    FileField, BooleanField
 )
 from wtforms.validators import EqualTo
 
@@ -13,7 +13,7 @@ from src.utils.form_utils import (
     DisplayNameTakenCheck,
 )
 from config.settings import (
-    PWD_MATCH_MSG, country_choices
+    PWD_MATCH_MSG, COUNTRY_CHOICES
 )
 
 class VerifyEmailForm(FlaskForm):
@@ -139,7 +139,7 @@ class ProfileForm(FlaskForm):
     )
     country = SelectField(
         label="country",
-        choices=country_choices,
+        choices=COUNTRY_CHOICES,
         render_kw={"style": "cursor: pointer;"},
     )
     profile_icon = StringField(
@@ -166,6 +166,16 @@ class ProfileForm(FlaskForm):
     form_type = HiddenField(default="profile_form")
     submit = SubmitField(label="Update")
 
+
+class NotificationSettingsForm(FlaskForm):
+    """
+    Used on admin.user_admin page to update user's notification settings.
+    """
+    news_notifications = BooleanField(label="news notifications")
+    comment_notifications = BooleanField(label="comment notifications")
+    bakery_notifications = BooleanField(label="bakery notifications")
+    form_type = HiddenField(default="notification_settings_form")
+    submit = SubmitField(label="Update")
 
 class NewsForm(FlaskForm):
     """

@@ -5,7 +5,6 @@ from flask_mail import Mail
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -20,7 +19,6 @@ from config.settings import CLIENTS_SECRETS_PATH, DEFAULT_LIMITS, LIMITER_URI
 server_db_: SQLAlchemy = SQLAlchemy()
 mail_: Mail = Mail()
 argon2_: PasswordHasher = PasswordHasher()
-bootstrap_: Bootstrap = Bootstrap()
 csrf_: CSRFProtect = CSRFProtect()
 login_manager_: LoginManager = LoginManager()
 migrater_: Migrate = Migrate()

@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, Integer, String, Float, DateTime
+from sqlalchemy import Boolean, Integer, String, Float, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql import select
 
 from src.extensions import server_db_
 from config.settings import CET
@@ -74,6 +75,8 @@ class BakeryItem(server_db_.Model):
     updated_at: Mapped[datetime] = mapped_column(DateTime,
                                                  default=lambda: datetime.now(CET),
                                                  onupdate=lambda: datetime.now(CET))
+    
+    search_field: Mapped[str] = mapped_column(Text, nullable=True)
 
     def __init__(self, name: str, category: str, program: int, nasa: int, price: float,
                  type: list[str], tags: list[str], package_type: Optional[str],
@@ -106,7 +109,25 @@ class BakeryItem(server_db_.Model):
         self.may_contain = self._join(may_contain)
         
         self.image = image
+    
+    def update_search_field(self):
+        """Update search_field with combined values for text searching."""
+        fields_to_search = [
+            self.name,
+            self.category,
+            self.type,
+            self.tags,
+            self.contains,
+        ]
+        self.search_field = self._join(fields_to_search)
 
+    @staticmethod
+    def search(query: str):
+        # Add wildcard characters to match any occurrence within `search_content`
+        search_term = f"%{query}%"
+        stmt = select(BakeryItem).filter(BakeryItem.search_field.like(search_term))
+        return server_db_.session.execute(stmt).scalars().all()
+    
     @staticmethod
     def _join(list_: list[str]) -> str:
         return "|".join(list_)
@@ -146,6 +167,17 @@ class BakeryItem(server_db_.Model):
             "may_contain": self._split(self.may_contain),
             
             "image": self.image,
+        }
+    
+    def to_search_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "category": self.category,
+            "type": self._split(self.type),
+            "tags": self._split(self.tags),
+            "contains": self._split(self.contains),
+            "may_contain": self._split(self.may_contain),
         }
     
     def __repr__(self) -> str:

@@ -165,6 +165,7 @@ def _init_user() -> User | None:
             password="TomasTomas1!",
             fast_name="tomas",
             fast_code=("00000"),
+            email_verified=True,
         )
         server_db_.session.add(new_user)
         server_db_.session.commit()

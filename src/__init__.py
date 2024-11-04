@@ -5,11 +5,13 @@ Sets general app settings as well as private variables,
     blueprints, databases.
 """
 import os
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 from flask_login import current_user
+import secrets
 
-from src.extensions import (server_db_, mail_, bootstrap_, csrf_,
-                            login_manager_, migrater_, limiter_, session_)
+from src.extensions import (server_db_, mail_, csrf_,
+                            login_manager_, migrater_, limiter_, session_
+)
 from src.models.mod_utils import load_user
 
 from src.cli import _auth_cli, _server_cli
@@ -17,6 +19,25 @@ from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
                              PROFILE_ICON_FOLDER, PROFILE_PICTURES_FOLDER
 )
+
+
+HEADERS = {
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-XSS-Protection": "1; mode=block",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": (
+        "default-src 'self'; "
+        "object-src 'none'; "
+        "script-src 'self' 'nonce-{request.csp_nonce}' cdn.jsdelivr.net kit.fontawesome.com; "
+        "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com ka-f.fontawesome.com; "
+        "font-src 'self' fonts.gstatic.com ka-f.fontawesome.com; "
+        "base-uri 'self'; "
+        "require-trusted-types-for 'script';"
+    ),
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+}
+
 
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     _configure_paths()
@@ -52,7 +73,6 @@ def _configure_paths() -> None:
 def _configure_extensions(app_: Flask) -> None:
     server_db_.init_app(app_)
     mail_.init_app(app_)
-    bootstrap_.init_app(app_)
     csrf_.init_app(app_)
     login_manager_.init_app(app_)
     login_manager_.login_view = LOGIN_REDIRECT
@@ -74,10 +94,25 @@ def _configure_blueprints(app_: Flask) -> None:
 
 
 def _configure_requests(app_: Flask) -> None:
-    @app_.before_request
-    def before_request():
+    def handle_user_activity():
         if current_user.is_authenticated:
             current_user.update_last_seen()
+    
+    def make_nonce():
+        if not getattr(request, 'csp_nonce', None):
+            request.csp_nonce = secrets.token_urlsafe(18)[:18]
+    
+    def add_security_headers(resp):
+        resp.headers.update(HEADERS)
+        csp_header = resp.headers.get('Content-Security-Policy')
+        if csp_header and 'nonce' not in csp_header:
+            resp.headers['Content-Security-Policy'] = \
+                csp_header.replace('script-src', f"script-src 'nonce-{request.csp_nonce}'")
+        return resp
+    
+    app_.before_request(handle_user_activity)
+    # app_.before_request(make_nonce)
+    # app_.after_request(add_security_headers)
 
 
 def _configure_cli(app_: Flask) -> None:
@@ -109,3 +144,5 @@ def get_app(testing: bool = False) -> Flask:
     app_ = _configure_server(app_, testing=testing)    
 
     return app_
+
+

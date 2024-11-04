@@ -1,9 +1,16 @@
 from typing import Optional
-from sqlalchemy import select
+from sqlalchemy import select, event
 
 from src.extensions import server_db_
 from src.models.bakery_model.bakery_mod import BakeryItem
 from src.routes.bakery.bakery_items import get_bakery_dict
+
+
+def get_items_by_column(column_name: str, value: str) -> list[BakeryItem]:
+    result = server_db_.session.execute(
+        select(BakeryItem).filter_by(**{column_name: value})
+    ).scalars().all()
+    return result
 
 
 def get_program_items_dicts(program: int) -> list[dict]:
@@ -11,6 +18,13 @@ def get_program_items_dicts(program: int) -> list[dict]:
         select(BakeryItem).filter_by(program=program)
     ).scalars().all()
     return [item.to_dict() for item in result]
+
+
+def get_program_ids_and_names(program: int) -> list[dict]:
+    items = server_db_.session.execute(
+        select(BakeryItem).filter_by(program=program)
+    ).scalars().all()
+    return [{"id": item.id, "name": item.name} for item in items]
 
 
 def get_item_by_id(id_: int) -> Optional[BakeryItem]:
@@ -31,9 +45,16 @@ def delete_item_by_id(id_: int) -> None:
     server_db_.session.delete(server_db_.session.get(BakeryItem, id_))
     server_db_.session.commit()
 
+
 def clear_bakery_db() -> None:
     server_db_.session.query(BakeryItem).delete()
     server_db_.session.commit()
+
+
+@event.listens_for(BakeryItem, 'before_insert')
+@event.listens_for(BakeryItem, 'before_update')
+def update_search_field(mapper, connection, target):
+    target.update_search_field()
 
 
 def _init_bakery() -> bool | None:

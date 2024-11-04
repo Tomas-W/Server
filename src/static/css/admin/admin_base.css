@@ -1,3 +1,7 @@
+.smaller-padding {
+    padding: 0 0 17px 0;
+}
+
 .admin-wrapper {
     padding: 75px 12%;
 }
@@ -37,102 +41,6 @@
 .verify-header {
     padding: 0 0 5px 0;
     font-size: 1.3rem;
-}
-
-.form-item {
-    margin-bottom: 30px;
-}
-
-.last-form-item {
-    margin-bottom: 0;
-}
-
-.input-error-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.admin-input-field {
-    width: 100%;
-    padding: 7px 0;
-    flex-grow: 1;
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    outline: none;
-    background-color: transparent;
-    font-size: var(--admin-form-input-size);
-    color: var(--text-color);
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-.admin-input-field:hover {	
-    color: var(--text-color-hover);
-    border-bottom-color: var(--border-color-hover);
-}
-
-.admin-form-error {
-    position: absolute;
-    padding-right: 3px;
-    right: 0;
-    top: 50%;
-    color: var(--text-color);
-    font-size: var(--admin-form-error-size);
-    white-space: nowrap;
-    transform: translateY(-50%);
-}
-
-.admin-form-label {
-    /* display: none; */
-    position: absolute;
-    left: 0;
-    bottom: 29px;
-    color: var(--label-color);
-    font-size: var(--admin-form-error-size);
-    font-style: italic;
-    white-space: nowrap;
-}
-
-.admin-devider {
-    margin: 0;
-    border-bottom: 1px solid var(--border-color);
-    transition: border-color 0.3s ease-in-out;
-}
-
-.admin-devider:hover {
-    border-bottom-color: var(--border-color-hover);
-}
-
-.admin-btn {
-    width: 100%;
-    margin: 0 auto;
-    padding: 35px 0;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: var(--btn-text-size);
-    color: var(--button-color);
-    transition: color 0.3s ease-in-out;
-}
-
-.admin-btn:hover {
-    color: var(--white-100);
-}
-
-.admin-forms-wrapper {
-    padding: 0 50px;
-}
-
-.admin-header {
-    padding: 0 0 10px 0;
-    font-size: var(--admin-header-size);
-    color: var(--text-color);
-}
-
-.admin-form {
-    margin: 30px auto 0;
-    display: flex;
-    flex-direction: column;
 }
 
 .profile-icon-wrapper {
@@ -197,6 +105,30 @@
     bottom: 195px;
 }
 
+/* .notification-item-wrapper {
+    
+    margin-bottom: 10px;
+}
+
+.notification-item-flex {
+    display: flex;
+    font-size: var(--admin-form-input-size);
+    color: var(--label-color);
+}
+
+.notification-label {
+    pointer-events: none;
+    display: inline-block;
+    min-width: 250px;
+    padding: 7px 0;
+    font-size: var(--admin-form-input-size);
+    color: var(--label-color);
+}
+
+.notification-label-checked {
+    color: var(--text-color);
+} */
+
 .href-scroll {
     scroll-margin-top: 100px;
 }
@@ -205,6 +137,8 @@
     filter: blur(3px);
     transition: filter 0.2s ease-in-out;
 }
+
+
 
 
 @media (max-width: 474.98px) {

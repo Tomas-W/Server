@@ -306,6 +306,9 @@
     margin-bottom: var(--news-gap);
 }
 
+.disable-a {
+    pointer-events: none;
+}
 
 @media (max-width: 474.98px) {
     .news-item-container {

@@ -62,7 +62,7 @@ def news(id_: int):
         
         session["comment_form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for("news.news", id_=id_, _anchor="post-comment-container"))
+        return redirect(url_for("news.news", id_=id_, _anchor="post-comment-wrapper"))
 
     form_data = session.pop("form_data", None)
     if form_data:
@@ -149,4 +149,16 @@ def unread():
         page=["all_news"],
         all_news_dict=all_news_dict,
     )
+
+
+@news_bp.route("/news/profile_icons/<filename>")
+@login_required
+def profile_icons(filename):
+    referrer = request.headers.get("Referer")
+    if referrer:
+        return redirect(referrer)
+    else:
+        return redirect(url_for("news.all_news"))  # Fallback if no referrer is available
+
+
 

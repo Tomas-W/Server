@@ -1,5 +1,16 @@
-.news-flash p {
+.news-flash {
+    margin-bottom: var(--news-gap)
+}
+
+.comment-flash {
+    padding-top: var(--news-gap);
+    scroll-margin-top: var(--scroll-margin-100);
+    font-style: italic;
+}
+
+.comment-flash p {
     margin: 0;
+    text-align: center;
     color: var(--text-color);
     font-size: var(--auth-flash-size);
 }

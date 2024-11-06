@@ -17,7 +17,7 @@ from src.models.mod_utils import load_user
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
-                             PROFILE_ICON_FOLDER, PROFILE_PICTURES_FOLDER,
+                             PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
                              BAKERY_HEALTH_IMAGES_FOLDER
 )
 
@@ -129,9 +129,9 @@ def _configure_database(app_: Flask) -> None:
     
 def _configure_url_rules(app_: Flask) -> None:
     app_.add_url_rule("/uploads/profile_icons/<filename>",
-                      endpoint="profile_icon_folder",
+                      endpoint="profile_icons_folder",
                       view_func=lambda filename: send_from_directory(
-                          PROFILE_ICON_FOLDER,
+                          PROFILE_ICONS_FOLDER,
                           filename))
     app_.add_url_rule("/uploads/profile_pictures/<filename>",
                       endpoint="profile_picture_folder",

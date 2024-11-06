@@ -87,7 +87,7 @@ def user_admin():
                 session["flash_type"] = "notification_settings"  # To indicate flash position
                 session["_anchor"] = "notification-settings-wrapper"
                 return redirect(url_for(USER_ADMIN_REDIRECT,
-                                        _anchor="notification-settings-wrapper"))
+                                        _anchor="notifications-wrapper"))
                 
     verify_email_errors = session.pop("verify_email_errors", None)
     authentication_errors = session.pop("authentication_errors", None)

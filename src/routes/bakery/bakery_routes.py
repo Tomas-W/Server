@@ -59,7 +59,13 @@ def search(id_: int | None = None):
     if request.method == "POST":
         if bakery_search_form.validate_on_submit():
             search_results = process_bakery_form(bakery_search_form)
-
+            # print("********************")
+            # print("********************")
+            # print("********************")
+            # print(search_results)
+            # print("********************")
+            # print("********************")
+            # print("********************")
             session["bakery_search_results"] = search_results
             return redirect(url_for("bakery.search"))
         
@@ -72,14 +78,14 @@ def search(id_: int | None = None):
     bakery_item_dict = None
     if id_:
         bakery_item_dict = get_item_by_id_dict(id_)
-    
+
     return render_template(
         "bakery/search.html",
         page=["search", "info", "programs"],
         bakery_search_form=bakery_search_form,
+        bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_search_errors=bakery_search_errors,
         
-        bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_item_dict=bakery_item_dict,
     )
 

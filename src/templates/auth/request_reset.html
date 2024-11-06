@@ -25,7 +25,7 @@ Request reset
             <form method="POST" action="" novalidate class="auth-form">
                 
                 <div class="form-item last-form-item">
-                    <div class="input-error-container">
+                    <div class="input-error-wrapper">
                         {{ request_reset_form.email(class="auth-input-field") }}
                         {% if form_errors["email"] %}
                             <div class="auth-form-error"><strong>{{ form_errors["email"][0] }}</strong></div>

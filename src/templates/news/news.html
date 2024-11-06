@@ -5,21 +5,24 @@
 {% endblock %}
 
 {% block news_content %}
-<div class="news-item-container">
+<div class="news-content">
     <div class="news-item">
 
-        <div class="news-header outline-bottom news-gap">
+        <!-- News header -->
+        <div class="news-header outline-bottom">
             <p class="news-code {{ news_dict.color }}">{{ news_dict.code }}</p>
             <p class="news-title outline-left">{{ news_dict.title }}</p>
         </div>
-        
-        <div class="news-important-container">
-        <p class="news-important news-gap">{{ news_dict.important }}</p>
 
-        {% if news_dict.grid_cols %}
-            <div class="news-table-container news-gap">
+        <!-- News important -->
+        <div class="news-important-wrapper">
+            <p class="news-important">{{ news_dict.important }}</p>
+
+            <!-- News table -->
+            {% if news_dict.grid_cols %}
+                <div class="news-table-wrapper">
                 {% for row in news_dict.grid_rows %}
-                    <div class="row-container outline-top outline-bottom">
+                    <div class="row-wrapper outline-top outline-bottom">
                         {% for item in row %}
                             <div class="row-item">{{ item }}</div>
                         {% endfor %}
@@ -29,31 +32,33 @@
         {% endif %}
         </div>
 
+        <!-- News topics -->
         {% if news_dict.info_rows %}
-            <div class="news-info-container news-gap">
+            <div class="news-info-wrapper">
                 {% for i in range(news_dict.info_rows|length) %}
                     <div class="info-title">
                         {{ news_dict.info_cols[i] }}
                     </div>
-                    <div class="info-content news-gap">
+                    <div class="info-content">
                         {{ news_dict.info_rows[i] }}
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
 
-        <div class="news-footer news-gap">
-            <div class="like-dislike-container" id="like-dislike">
+        <!-- News footer -->
+        <div class="news-footer">
+            <div class="like-dislike-wrapper" id="like-dislike">
                 
-                <div class="like-container">
-                    
+                <div class="like-wrapper">
                     {% if current_user.id|string in news_dict.liked_by %}
                         <p>{{ news_dict.liked_by|length }}</p><a class="disable-a" href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_col_xl.png') }}" alt="Like"></a>
                     {% else %}
                         <p>{{ news_dict.liked_by|length }}</p><a href="{{ url_for('news.like_news', id_=news_dict.id) }}"><img class="like-icon" src="{{ url_for('static', filename='images/like_xl.png') }}" alt="Like"></a>
                     {% endif %}
                 </div>
-                <div class="dislike-container">
+
+                <div class="dislike-wrapper">
                     {% if current_user.id|string in news_dict.disliked_by %}
                         <a class="disable-a" href="{{ url_for('news.dislike_news', id_=news_dict.id) }}"><img class="dislike-icon" src="{{ url_for('static', filename='images/dislike_col_xl.png') }}" alt="Dislike"></a><p>{{ news_dict.disliked_by|length }}</p>
                     {% else %}
@@ -62,17 +67,17 @@
                 </div>
             </div>
 
-            <div class="author-date-container">
+            <div class="author-date-wrapper">
                 <p class="author">{{ news_dict.author }}</p>
                 <p class="date">{{ news_dict.created_at }}</p>
             </div>
 
             <div class="icon-wrapper">
-                <div class="icon-container">
+                <div class="icon-wrapper">
                     <p class="view-count">{{ news_dict.seen_by|length }}</p>
                     <img class="view-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Comments">
                 </div>
-                <div class="icon-container">
+                <div class="icon-wrapper">
                     <p class="comment-count">{{ news_dict.comments|length }}</p>
                     <img class="comment-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
                 </div>
@@ -80,14 +85,12 @@
 
         </div>
 
-        <div class="post-comment-container" id="post-comment-container">
+        <div class="post-comment-wrapper" id="post-comment-wrapper">
+            <!-- Comment form -->
             <form method="POST" novalidate action="{{ url_for('news.news', id_=news_dict.id) }}" class="comment-form" id="comment-form">
-                {{ comment_form.hidden_tag() }}
-                
-                <div class="form-item">
-                    
+                <div class="form-item last-form-item">
                     {{ comment_form.content(class="comment-input-field") }}
-                    <div class="input-error-container">
+                    <div class="input-error-wrapper">
                         {% if comment_form_errors["content"] %}
                             <div class="form-error">
                                 <strong>{{ comment_form_errors["content"][0] }}</strong>
@@ -96,21 +99,22 @@
                     </div>
                 </div>
                 {{ comment_form.form_type }}
-                <div class="comment-devider news-gap"> 
+                {{ comment_form.hidden_tag() }}
+                <div class="comment-devider"> 
                     {{ comment_form.submit(class="comment-btn") }}
                 </div>
             </form>
 
         </div>  
-        
-            <div class="comments-container news-gap">
-                {% for comment in news_dict.comments %}
-                
-                    <div class="comment-item outline news-gap {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
+
+        <!-- Comments -->
+        <div class="comments-wrapper">
+            {% for comment in news_dict.comments %}
+                    <div class="comment-item outline {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
                         <div class="comment-info">
                             <div class="comment-header">
                                 <div class="comment-profile-icon-wrapper">
-                                    <img class="comment-profile-icon" src="{{ url_for('profile_icon_folder', filename=current_user.profile_icon) }}" alt="Icon">
+                                    <img class="comment-profile-icon" src="{{ url_for('profile_icons_folder', filename=current_user.profile_icon) }}" alt="Icon">
                                 </div>
                                 <div>
                                     <p class="comment-author italic">{{ comment.author_username }}</p>
@@ -146,9 +150,11 @@
                     </div>
 
                 {% endfor %}
+
+                <!-- Comment flash -->
                 {% if flash_type == "comment" %}
                     {% for message in get_flashed_messages() %}
-                        <div id="comment-flash" class="comment-flash news-gap">
+                        <div id="comment-flash" class="comment-flash">
                             <p>{{ message }}</p>    
                         </div>
                     {% endfor %}

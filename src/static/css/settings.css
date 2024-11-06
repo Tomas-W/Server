@@ -9,6 +9,7 @@
     --arrow-down: "\2193";
 
     --container-padding: 7%;
+    --scroll-margin-100: 100px;
     
     --white-0: rgba(255, 255, 255, 0);
     --white-100: rgba(255, 255, 255, 1);
@@ -73,6 +74,8 @@
     --news-important-padding: 0 75px;
     --news-gap: 40px;
     --post-comment-padding: 50px 50px 0 50px;
+    --comment-container-padding: 50px;
+    --comment-container-padding-s: 40px 0;
     --comment-padding: 50px;
     --comment-padding-s: 40px;
 

@@ -6,7 +6,7 @@ All news
 {% endblock %}
 
 {% block news_content %}
-<div class="news-items-container">
+<div class="all-news-content">
     {% if flash_type == "all_news" %}
         {% for message in get_flashed_messages() %}
             <div class="news-flash">
@@ -16,31 +16,30 @@ All news
     {% endif %}
 
     {% if not all_news_dict %}
-        <div class="no-news-container outline">
+        <div class="no-news-wrapper outline">
             <div class="no-news">
                 <p class="">No unread news messages.</p>
                 <p class="">You are up to date!</p>
             </div>
 
-            <div class="news-seperator news-gap"></div>
         </div>
     {% else %}
         {% for news in all_news_dict %}
-            <div class="news-item outline">
-                <div class="news-header-container">
+            <div class="news-item-wrapper outline">
+                <div class="news-header-wrapper">
                     <div class="news-header">
                         <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
                         <p class="news-title">{{ news.header }}</p>
                     </div>
                     
-                    <div class="read-more-container">
+                    <div class="read-more-wrapper">
                         <div class="news-info">
-                            <div class="icon-container">
+                            <div class="icon-wrapper">
                                 <span class="icon-count">{{ news.seen_by|length }}</span>
                                 <img class="news-icon views-icon" src="{{ url_for('static', filename='images/views.png') }}" alt="Views">
                             </div>
                             
-                            <div class="icon-container">
+                            <div class="icon-wrapper">
                                 <span class="icon-count">{{ news.comments|length }}</span>
                                 <img class="news-icon comments-icon" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comments">
                             </div>

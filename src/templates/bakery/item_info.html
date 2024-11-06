@@ -3,114 +3,116 @@
 {% set vegan_image = "vegan.png" if bakery_item_dict.vegan else "not_vegan.png" %}
 {% set lactose_image = "lactose.png" if bakery_item_dict.lactose_free else "not_lactose.png" %}
 
-<!-- Image -->
-<div class="top-info">
-    <img class="{% if "info" in page %}large-item-image{% else %}small-item-image{% endif %}" 
-         src="{{ url_for("static",
-         filename=bakery_item_dict.image) }}" 
-         alt="Bakery image"> 
+<div class="info-content">
+    <!-- Primary info -->
+    <div class="primary-info">
+        <img class="{% if "info" in page %}large-item-image{% else %}small-item-image{% endif %}" 
+            src="{{ url_for("static",
+            filename=bakery_item_dict.image) }}" 
+            alt="Bakery image"> 
 
-    <!-- Health info -->
-    <div class="main-info">
-        <div class="health-container">
-            <img class="health-info" src="{{ url_for("bakery_health_folder",
-                                     filename=nutri_image) }}"
-                                     alt="Nutri image">
-            <img class="health-info" src="{{ url_for("bakery_health_folder",
-                                     filename=vegan_image) }}"
-                                     alt="Vegan image">
-            <img class="health-info" src="{{ url_for("bakery_health_folder",
-                                     filename=lactose_image) }}"
-                                     alt="Lactose image">
-        </div>
+        <div class="main-info-wrapper">
+            <!-- Health info -->
+            <div class="health-wrapper">
+                <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                        filename=nutri_image) }}"
+                                        alt="Nutri image">
+                <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                        filename=vegan_image) }}"
+                                        alt="Vegan image">
+                <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                        filename=lactose_image) }}"
+                                        alt="Lactose image">
+            </div>
 
-        <!-- Primary info -->
-        <div class="item-container">
-            <p class="item-info">{{ bakery_item_dict.name }}</p>
-            {% if bakery_item_dict.type %}
-            <p class="item-info">{{ bakery_item_dict.type }}</p>
-            {% endif %}
-            <p class="item-info">{{ bakery_item_dict.nasa }}</p>
-            <p class="item-info">€ {{ bakery_item_dict.price }}</p>
-        </div>
-    </div>
-</div>
-
-<div class="bakery-devider"> 
-</div>
-
-<!-- Secondary info -->
-<div class="bottom-info">
-
-    {% if bakery_item_dict.package_type %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Package type: </p>
-        <p class="item-info">{{ bakery_item_dict.package_type }}</p>
-    </div>
-    {% endif %}
-
-    {% if bakery_item_dict.per_package %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Quantity per package: </p>
-        <p class="item-info">{{ bakery_item_dict.per_package }}</p>
-    </div>
-    {% endif %}
-    
-    {% if bakery_item_dict.make_halves %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Make halves: </p>
-        <p class="item-info">{{ "Yes" if bakery_item_dict.make_halves else "No" }}</p>
-    </div>
-    {% endif %}
-
-    {% if bakery_item_dict.rack_type %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Baking surface: </p>
-        <p class="item-info">{{ bakery_item_dict.rack_type }}</p>
-    </div>
-    {% endif %}
-    
-    {% if bakery_item_dict.per_rack %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Quantity per surface: </p>
-        <p class="item-info">{{ bakery_item_dict.per_rack }}</p>
-    </div>
-    {% endif %}
-
-    {% if bakery_item_dict.defrost_time %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Defrost time: </p>
-        <p class="item-info">{{ bakery_item_dict.defrost_time }}</p>
-    </div>
-    {% endif %}
-
-    {% if bakery_item_dict.cooldown_time %}
-    <div class="bottom-info-duo">
-        <p class="item-label item-info">Cooldown time: </p>
-        <p class="item-info">{{ bakery_item_dict.cooldown_time }}</p>
-    </div>
-    {% endif %}
-
-    {% if bakery_item_dict.contains %}
-    <div class="bottom-info-duo allgeries">
-        <p class="item-label item-info">Contains: </p>
-        <div class="allergy-wrapper">
-            {% for item in bakery_item_dict.contains %}
-            <p class="item-info">{{ item }}</p>
-            {% endfor %}
+            <!-- Primary content -->
+            <div class="primary-info-content">
+                <p class="item-info">{{ bakery_item_dict.name }}</p>
+                {% if bakery_item_dict.type %}
+                <p class="item-info">{{ bakery_item_dict.type }}</p>
+                {% endif %}
+                <p class="item-info">{{ bakery_item_dict.nasa }}</p>
+                <p class="item-info">€ {{ bakery_item_dict.price }}</p>
+            </div>
         </div>
     </div>
-    {% endif %}
 
-    {% if bakery_item_dict.may_contain %}
-    <div class="bottom-info-duo allgeries">
-        <p class="item-label item-info">May contain: </p>
-        <div class="allergy-wrapper">
-            {% for item in bakery_item_dict.may_contain %}
-            <p class="item-info">{{ item }}</p>
-            {% endfor %}
-        </div>
+    <div class="bakery-devider"> 
     </div>
-    {% endif %}
 
+    <!-- Secondary info -->
+    <div class="secondary-info">
+
+        {% if bakery_item_dict.package_type %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Package type: </p>
+            <p class="item-info">{{ bakery_item_dict.package_type }}</p>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.per_package %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Quantity per package: </p>
+            <p class="item-info">{{ bakery_item_dict.per_package }}</p>
+        </div>
+        {% endif %}
+        
+        {% if bakery_item_dict.make_halves %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Make halves: </p>
+            <p class="item-info">{{ "Yes" if bakery_item_dict.make_halves else "No" }}</p>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.rack_type %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Baking surface: </p>
+            <p class="item-info">{{ bakery_item_dict.rack_type }}</p>
+        </div>
+        {% endif %}
+        
+        {% if bakery_item_dict.per_rack %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Quantity per surface: </p>
+            <p class="item-info">{{ bakery_item_dict.per_rack }}</p>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.defrost_time %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Defrost time: </p>
+            <p class="item-info">{{ bakery_item_dict.defrost_time }}</p>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.cooldown_time %}
+        <div class="bottom-info-duo">
+            <p class="item-label item-info">Cooldown time: </p>
+            <p class="item-info">{{ bakery_item_dict.cooldown_time }}</p>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.contains %}
+        <div class="bottom-info-duo allgeries">
+            <p class="item-label item-info">Contains: </p>
+            <div class="allergy-wrapper">
+                {% for item in bakery_item_dict.contains %}
+                <p class="item-info">{{ item }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if bakery_item_dict.may_contain %}
+        <div class="bottom-info-duo allgeries">
+            <p class="item-label item-info">May contain: </p>
+            <div class="allergy-wrapper">
+                {% for item in bakery_item_dict.may_contain %}
+                <p class="item-info">{{ item }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
 </div>

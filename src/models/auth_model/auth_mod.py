@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.extensions import server_db_, argon2_
 from src.models.mod_utils import set_updated_at
 
-from config.settings import CET, PROFILE_ICON_FOLDER
+from config.settings import CET, PROFILE_ICONS_FOLDER
 
 
 class AuthenticationToken(server_db_.Model):
@@ -126,7 +126,7 @@ class User(server_db_.Model, UserMixin):
         self.fast_name = fast_name.lower() if fast_name else None
         self.fast_code = self._get_hash(fast_code) if fast_code else None
         self.display_name = username
-        self.profile_icon = random.choice([file for file in os.listdir(PROFILE_ICON_FOLDER)])
+        self.profile_icon = random.choice([file for file in os.listdir(PROFILE_ICONS_FOLDER)])
         self.about_me = "Share something interesting about yourself..."
         self.email_verified = email_verified
     

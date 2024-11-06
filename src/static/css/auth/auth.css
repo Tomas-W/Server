@@ -66,7 +66,7 @@
     margin-bottom: 30px;
 }
 
-.input-error-container {
+.input-error-wrapper {
     position: relative;
     display: flex;
     align-items: center;
@@ -205,7 +205,7 @@
         margin-left: auto;
         margin-right: auto;
     }
-    .input-error-container {
+    .input-error-wrapper {
         flex-direction: column;
         align-items: flex-start;
     }
@@ -227,7 +227,7 @@
         margin-left: auto;
         margin-right: auto;
     }
-    .input-error-container {
+    .input-error-wrapper {
         flex-direction: column;
         align-items: flex-start;
     }

@@ -23,7 +23,7 @@ Login
             <form method="POST" action="" novalidate class="auth-form">
                 
                 <div class="form-item">
-                    <div class="input-error-container">
+                    <div class="input-error-wrapper">
                         {{ login_form.email_or_uname(class="auth-input-field") }}
                         {% if login_form.errors["email_or_uname"] %}
                             <div class="auth-form-error"><strong>{{ login_form.errors["email_or_uname"][0] }}</strong></div>
@@ -33,7 +33,7 @@ Login
                 </div>
 
                 <div class="form-item">
-                    <div class="input-error-container">
+                    <div class="input-error-wrapper">
                         {{ login_form.password(class="auth-input-field") }}
                         {% if login_form.errors["password"] %}
                             <div class="auth-form-error"><strong>{{ login_form.errors["password"][0] }}</strong></div>

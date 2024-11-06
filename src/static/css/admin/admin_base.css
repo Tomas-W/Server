@@ -2,43 +2,12 @@
     padding: 0 0 17px 0;
 }
 
-/* .more-margin {
-    margin-bottom: 43px;
-}
-
-.more-top {
-    top: 48px;
-} */
-
-.admin-wrapper {
-    padding: 75px 12%;
-}
-
 .admin-content {
-    padding: 40px 0 0 0;
+    padding: 100px 15%;
 }
 
 .verify-wrapper {
-    padding: 0 50px;
-}
-
-.verify-gap {
-    padding-bottom: 100px;
-}
-
-.admin-gap {
-    padding: 0 0 60px 0;
-}
-
-.admin-flash-gap {
-    padding: 0 0 30px 0;
-}
-
-.admin-flash p {
-    margin: 0;
-    text-align: center;
-    color: var(--text-color);
-    font-size: var(--admin-flash-size);
+    padding: 0 50px 125px 50px;
 }
 
 .verify-content {
@@ -49,6 +18,27 @@
 .verify-header {
     padding: 0 0 5px 0;
     font-size: 1.3rem;
+}
+
+.authentication-wrapper,
+.profile-wrapper,
+.notifications-wrapper,
+.settings-wrapper {
+    padding: 0 0 100px 0;
+    scroll-margin-top: 100px;
+}
+
+.admin-flash {
+    padding: 0 0 30px 0;
+    scroll-margin-top: var(--scroll-margin-100);
+    font-style: italic;
+}
+
+.admin-flash p {
+    margin: 0;
+    text-align: center;
+    color: var(--text-color);
+    font-size: var(--admin-flash-size);
 }
 
 .profile-icon-wrapper {
@@ -101,8 +91,6 @@
 }
 
 .profile-picture-field {
-    /* height: 36px;
-    padding: 26px 0 0 0; */
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -127,19 +115,10 @@
     bottom: 195px;
 }
 
-.href-scroll {
-    scroll-margin-top: 100px;
-}
-
-.blur {
-    filter: blur(3px);
-    transition: filter 0.2s ease-in-out;
-}
-
 
 
 @media (max-width: 474.98px) {
-    .admin-wrapper {
+    .admin-content {
         padding: 75px 9%;
     }
     .verify-wrapper {
@@ -147,9 +126,6 @@
     }
     .admin-input-field {
         font-size: var(--admin-form-input-size-s);
-    }
-    .admin-forms-wrapper {
-        padding: 0;
     }
     .profile-icon-wrapper {
         position: absolute;
@@ -166,7 +142,7 @@
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
-    .admin-wrapper {
+    .admin-content {
         padding: 75px 9%;
     }
     .verify-wrapper {
@@ -175,29 +151,23 @@
     .admin-input-field {
         font-size: var(--admin-form-input-size-s);
     }
-    .admin-forms-wrapper {
-        padding: 0;
-    }
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
+    .admin-content {
+        padding: 100px 12%;
+    }
     .verify-wrapper {
         padding: 0 0 100px 0;
     }
     .admin-input-field {
         font-size: var(--admin-form-input-size-s);
     }
-    .admin-forms-wrapper {
-        padding: 0;
-    }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
     .verify-wrapper {
         padding: 0 0 100px 0;
-    }
-    .admin-forms-wrapper {
-        padding: 0;
     }
 }
 

@@ -1,11 +1,21 @@
-.main-info {
-    padding: 75px 20px 35px 0;
+.info-content {
+    padding: 25px;
 }
-.health-container {
+
+.primary-info {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 50px;
+}
+
+.health-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
+
 .health-info {
     padding-bottom: 15px;
 }
@@ -22,7 +32,7 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.bottom-info {
+.secondary-info {
     margin-bottom: 50px;
 }
 
@@ -41,7 +51,6 @@
     text-align: right;
 }
 
-
 .side-panel-title {
     padding: 0 0 25px 0;
     font-size: var(--side-panel-title-size);
@@ -59,22 +68,22 @@
 
 
 @media (max-width: 474.98px) {
-    .top-info {
+    .primary-info {
         display: block;
     }
-    .main-info {
-        padding: 0 40px 0 40px;
+    .main-info-wrapper {
+        padding: 0 40px;
         display: flex;
         justify-content: space-around;
     }
-    .health-container {
+    .health-wrapper {
         order: 2;
         justify-content: space-between;
         display: flex;
         flex-direction: column;
     }
     .item-info {
-        padding-right: 40px;
+        padding: 0 40px 0 0;
         font-size: calc(var(--bakery-item-info-size) * 0.9);
     }
     .bakery-devider {
@@ -93,15 +102,15 @@
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
-    .top-info {
+    .primary-info {
         display: block;
     }
-    .main-info {
-        padding: 0 60px 0 60px;
+    .main-info-wrapper {
+        padding: 0 60px;
         display: flex;
         justify-content: space-around;
     }
-    .health-container {
+    .health-wrapper {
         order: 2;
         justify-content: space-between;
         display: flex;
@@ -112,7 +121,7 @@
         font-size: calc(var(--bakery-item-info-size) * 0.9);
     }
     .bakery-devider {
-        margin: 40px 60px 40px 60px;
+        margin: 40px 60px;
     }
     .bottom-info-duo {
         padding: 0 20px 0 60px;
@@ -125,15 +134,15 @@
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-    .top-info {
+    .primary-info {
         display: block;
     }
-    .main-info {
+    .main-info-wrapper {
         padding: 0 60px 0 60px;
         display: flex;
         justify-content: space-between;
     }
-    .health-container {
+    .health-wrapper {
         display: flex;
         flex-direction: column;
         order: 2;
@@ -153,9 +162,6 @@
     .item-label {
         padding-right: 0 0 0 60px;
     }
-    .side-panel-list {
-        /* margin: 55px 35px; */
-    }
     .side-panel-item {
         font-size: var(--side-panel-size-xs);
     }
@@ -171,8 +177,7 @@
     }
     .allergy-wrapper {
         order: 2;
-}
-
+    }
 }
 
 @media (min-width: 1200px) and (max-width: 1348.98px) {

@@ -1,9 +1,3 @@
-.top-info {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-}
-
 .bakery-header {
     padding: 0 0 10px 0;
     font-size: var(--admin-header-size);
@@ -61,7 +55,6 @@
     height: 100%;
     max-width: 700px;
     max-height: 700px;
-    padding: 0 75px;
 }
 
 
@@ -69,31 +62,19 @@
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
-    .large-item-image {
-        padding: 0 20px;
-    }
+
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
-    .large-item-image {
-        padding: 0 50px;
-    }
-    
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-    .large-item-image {
-        padding: 0 50px;
-    }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
-    .large-item-image {
-        padding: 0 50px;
-    }
 }
 
 @media (min-width: 1200px) {

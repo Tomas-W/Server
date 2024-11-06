@@ -16,7 +16,7 @@ IMAGES_FOLDER = os.path.join(SRC_FOLDER, "static", "images")
 
 UPLOAD_FOLDER = os.path.join(SRC_FOLDER, "uploads")
 PROFILE_PICTURES_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_pictures")
-PROFILE_ICON_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_icons")
+PROFILE_ICONS_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_icons")
 
 BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
 BAKERY_HEALTH_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "health")

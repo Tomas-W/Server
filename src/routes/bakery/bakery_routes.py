@@ -22,8 +22,7 @@ bakery_bp = Blueprint("bakery", __name__)
 def programs():
     return render_template(
         "bakery/programs.html",
-        page="programs",
-        username=current_user.username,
+        page=["programs"],
     )
 
 @bakery_bp.route("/bakery/program/<program>")
@@ -33,8 +32,7 @@ def program(program: int):
 
     return render_template(
         "bakery/programs.html",
-        page="programs",
-        username=current_user.username,
+        page=["programs"],
         bakery_items_dicts=bakery_items_dicts,
     )
 
@@ -43,13 +41,10 @@ def program(program: int):
 def info(id_: int):
     bakery_item_dict = get_item_by_id_dict(id_)
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])
-    for item in ids_and_names:
-        print(item["id"])
 
     return render_template(
         "bakery/info.html",
-        page="info",
-        username=current_user.username,
+        page=["info"],
         bakery_item_dict=bakery_item_dict,
         ids_and_names=ids_and_names,
     )
@@ -72,18 +67,18 @@ def search(id_: int | None = None):
         
         
     bakery_search_errors = session.pop("bakery_search_errors", None)
-    
     bakery_search_results_dicts = session.pop("bakery_search_results", [])
     
     bakery_item_dict = None
     if id_:
         bakery_item_dict = get_item_by_id_dict(id_)
-
+    
     return render_template(
         "bakery/search.html",
-        page="search",
+        page=["search", "info", "programs"],
         bakery_search_form=bakery_search_form,
         bakery_search_errors=bakery_search_errors,
+        
         bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_item_dict=bakery_item_dict,
     )
@@ -96,8 +91,17 @@ def zoeken(search_term: str):
     
     return render_template(
         "bakery/programs.html",
-        page="programs",
-        username=current_user.username,
+        page=["programs"],
         bakery_items_dicts=bakery_items_dicts,
     )
+
+@bakery_bp.route("/bakery/health/<filename>")
+@login_required
+def bakery_health(filename):
+    current_user.profile_icon = filename
+    referrer = request.headers.get("Referer")
+    if referrer:
+        return redirect(referrer)
+    else:
+        return redirect(url_for("news.all_news"))  # Fallback if no referrer is available
 

@@ -119,15 +119,14 @@ def login():
 
     form_errors = session.pop("form_errors", None)
     flash_messages = get_flashed_messages()
-    for message in flash_messages:
-        print(message)
+    
     return render_template(
         "/auth/login.html",
+        page=["login"],
         login_form=login_form,
         fast_login_form=fast_login_form,
-        page="login",
-        fast=fast,
         form_errors=form_errors,
+        fast=fast,
     )
 
 
@@ -225,11 +224,11 @@ def set_password():
 
     return render_template(
         "/auth/set_password.html",
+        page=["set_password"],
         set_password_form=set_password_form,
         fast_login_form=fast_login_form,
-        page="set_password",
-        fast=fast,
         form_errors=form_errors,
+        fast=fast,
     )
 
 
@@ -270,11 +269,11 @@ def register():
 
     return render_template(
         "/auth/register.html",
+        page=["register"],
         register_form=register_form,
         fast_login_form=fast_login_form,
-        page="register",
-        fast=fast,
         form_errors=form_errors,
+        fast=fast,
     )
 
 
@@ -305,11 +304,11 @@ def request_reset():
 
     return render_template(
         "/auth/request_reset.html",
+        page=["request_reset"],
         request_reset_form=request_reset_form,
         fast_login_form=fast_login_form,
-        page="request_reset",
-        fast=fast,
         form_errors=form_errors,
+        fast=fast,
     )
 
 
@@ -356,11 +355,11 @@ def reset_password(token):
 
     return render_template(
         "auth/reset_password.html",
+        page=["reset_password"],
         reset_password_form=reset_password_form,
         fast_login_form=fast_login_form,
-        page="reset_password",
-        fast=fast,
         form_errors=form_errors,
+        fast=fast,
     )
     
     

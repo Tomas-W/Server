@@ -8,10 +8,10 @@ Login
 {% endblock %}
 
 {% block auth_content %}
-
 <section class="auth-section">
     <div class="auth-container">
         <div class="auth-content">
+
             <!-------- Flashed messages -------->
             {% if get_flashed_messages() %}
             <div class="auth-flash">
@@ -21,8 +21,7 @@ Login
 
             <!-------- Login form -------->
             <form method="POST" action="" novalidate class="auth-form">
-                {{ login_form.hidden_tag() }}
-                <!-------- Email or username -------->
+                
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ login_form.email_or_uname(class="auth-input-field") }}
@@ -32,7 +31,7 @@ Login
                         <div class="auth-form-label">{{ login_form.email_or_uname.label }}</div>
                     </div>
                 </div>
-                <!-------- Password -------->   
+
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ login_form.password(class="auth-input-field") }}
@@ -42,14 +41,14 @@ Login
                         <div class="auth-form-label">{{ login_form.password.label }}</div>
                     </div>
                 </div>
-                <!-------- Remember me and submit -------->
+
                 <div class="form-item last-form-item remember-devider">
                     {{ login_form.remember(class="remember-me") }}
                     {{ login_form.remember.label(class="remember-me") }}
                 </div>
-                <!-------- Form type -------->
+
                 {{ login_form.form_type }}
-                <!-------- Submit -------->
+                {{ login_form.hidden_tag() }}
                 <div class="auth-devider"> 
                     {{ login_form.submit(class="auth-btn") }}
                 </div>
@@ -57,10 +56,11 @@ Login
 
             <!-------- Auth options -------->
             <div class="auth-options-container">
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.register') }}">Register a new account</a></p></div>
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.request_reset') }}">Reset your password</a></p></div>
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.g_login') }}">Login with Google</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.register") }}">Register a new account</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.request_reset") }}">Reset your password</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
             </div>
+
         </div>
     </div>
 </section>

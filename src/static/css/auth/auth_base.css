@@ -89,6 +89,7 @@
     outline: none;
     box-sizing: content-box;
     background-color: transparent;
+    font-size: var(--auth-form-size);
     color: var(--text-color);
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }

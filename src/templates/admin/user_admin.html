@@ -1,11 +1,35 @@
 {% extends "admin/admin_base.html" %}
 
+<!--  Variables  -->
+ {% set email_verified = current_user.email_verified %}
+ {% set email = current_user.email %}
+ {% set username = current_user.username %}
+ {% set fast_name = current_user.fast_name %}
+ {% set display_name = current_user.display_name %}
+ {% set country = current_user.country %}
+ {% set profile_icon = current_user.profile_icon %}
+ {% set profile_picture = current_user.profile_picture %}
+ {% set about_me = current_user.about_me %}
+
+{% set username_ph = " [ " ~ username ~ " ]" %}
+{% set email_ph = " [ " ~ email ~ " ]" %}
+{% set fast_name_ph = " [ " ~ fast_name ~ " ]" if fast_name else "" %}
+{% set display_name_ph = " [ " ~ display_name ~ " ]" if display_name else "" %}
+{% set country_ph = " [ " ~ country ~ " ]" if country else "" %}
+{% set about_me_ph = " [ " ~ about_me ~ " ]" if about_me else "" %}
+
+ {% set file_name = "[ Select file ]" if not profile_picture else (profile_picture[:25] + ".." if profile_picture|length > 27 else profile_picture) %}
+
+
+
 {% block admin_content %}
 <div class="admin-wrapper">
     <div class="admin-content">
 
-        {% if not current_user.email_verified %}
+        <!-- Display verification message if email is not verified -->
+        {% if not email_verified %}
         <div class="verify-wrapper verify-gap">
+            <!-- Verification flash messages -->
             {% if flash_type == "verify" %}
                 {% for message in get_flashed_messages() %}
                 <div class="admin-flash admin-flash-gap italic">
@@ -18,35 +42,34 @@
                 <p class="verify-info">If you used an invalid email address, you can change it here.</p>
             </div>
 
+            <!-- Verify email form -->
             <div class="verify-form-wrapper">
                 <form method="POST" action="" novalidate class="verify-form">
-                    {{ verify_email_form.hidden_tag() }}
-                    <!-------- Email or username -------->
+
                     <div class="form-item last-form-item">
                         <div class="input-error-container">
-                            {{ verify_email_form.email(class="admin-input-field", placeholder=current_user.email) }}
-                            {% if verify_errors["email"] %}
-                                <div class="admin-form-error"><strong>{{ verify_errors["email"][0] }}</strong></div>
+                            {{ verify_email_form.email(class="admin-input-field", placeholder=email) }}
+                            {% if verify_email_errors["email"] %}
+                                <div class="admin-form-error"><strong>{{ verify_email_errors["email"][0] }}</strong></div>
                             {% endif %}
                             <div class="admin-form-label">{{ verify_email_form.email.label }}</div>
                         </div>
                     </div>
-                    <!-------- Form type -------->
                     {{ verify_email_form.form_type }}
-                    <!-------- Submit -------->
+                    {{ verify_email_form.hidden_tag() }}
                     <div class="admin-devider"> 
                         {{ verify_email_form.submit(class="admin-btn") }}
                     </div>
                 </form>
             </div>
-
         </div>
         {% endif %}
 
-        <div class="admin-forms-wrapper {% if not current_user.email_verified %}blur{% endif %}">
+        <!-- Blurr content if email is not verified -->
+        <div class="admin-forms-wrapper {% if not email_verified %}blur{% endif %}">
             <div class="admin-forms-content">
-
                 <div id="authentication-wrapper" class="authentication-wrapper href-scroll admin-gap">
+                    <!-- Authentication flash messages -->
                     {% if flash_type == "authentication" %}
                         {% for message in get_flashed_messages() %}
                         <div class="admin-flash admin-flash-gap italic href-scroll" id="authentication-flash">
@@ -55,14 +78,14 @@
                         {% endfor %}
                     {% endif %} 
 
+                    <!-- Authentication form -->
                     <p class="admin-form-header">Authentication</p>
                     <div class="admin-form-wrapper">
                         <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
-                            {{ authentication_form.hidden_tag() }}
-                            <!-------- Email or username -------->
+
                             <div class="form-item">
                                 <div class="input-error-container">
-                                    {{ authentication_form.username(class="admin-input-field", placeholder=" [ " ~ current_user.username ~ " ]") }}
+                                    {{ authentication_form.username(class="admin-input-field", placeholder=username_ph) }}
                                     {% if authentication_errors["username"] %}
                                         <div class="admin-form-error"><strong>{{ authentication_errors["username"][0] }}</strong></div>
                                     {% endif %}
@@ -72,14 +95,14 @@
 
                             <div class="form-item">
                                 <div class="input-error-container">
-                                    {{ authentication_form.email(class="admin-input-field", placeholder=" [ " ~ current_user.email ~ " ]") }}
+                                    {{ authentication_form.email(class="admin-input-field", placeholder=email_ph) }}
                                     {% if authentication_errors["email"] %}
                                         <div class="admin-form-error"><strong>{{ authentication_errors["email"][0] }}</strong></div>
                                     {% endif %}
                                     <div class="admin-form-label">{{ authentication_form.email.label }}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="form-item">
                                 <div class="input-error-container">
                                     {{ authentication_form.password(class="admin-input-field") }}
@@ -102,7 +125,7 @@
 
                             <div class="form-item">
                                 <div class="input-error-container">
-                                    {{ authentication_form.fast_name(class="admin-input-field", placeholder=" [ " ~ current_user.fast_name ~ " ]" if current_user.fast_name else "") }}
+                                    {{ authentication_form.fast_name(class="admin-input-field", placeholder=fast_name_ph) }}
                                     {% if authentication_errors["fast_name"] %}
                                         <div class="admin-form-error"><strong>{{ authentication_errors["fast_name"][0] }}</strong></div>
                                         {% endif %}
@@ -119,18 +142,16 @@
                                     <div class="admin-form-label">{{ authentication_form.fast_code.label }}</div>
                                 </div>
                             </div>
-
-                            <!-------- Form type -------->
                             {{ authentication_form.form_type }}
-                            <!-------- Submit -------->
+                            {{ authentication_form.hidden_tag() }}
                             <div class="admin-devider"> 
-                                {{ authentication_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
+                                {{ authentication_form.submit(class="admin-btn", disabled=not email_verified) }}
                             </div>
                         </form>
-
                     </div>
                 </div>
 
+                <!-- Profile flash messages -->
                 <div id="profile-wrapper" class="profile-wrapper admin-gap href-scroll">
                     {% if flash_type == "profile" %}
                         {% for message in get_flashed_messages() %}
@@ -139,14 +160,15 @@
                         </div>
                         {% endfor %}
                     {% endif %} 
+
+                    <!-- Profile form -->
                     <p class="admin-form-header">Profile</p>
                     <div class="admin-form-wrapper">
                         <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
-                            {{ profile_form.hidden_tag() }}
-                            <!-------- Email or username -------->
+                            
                             <div class="form-item">
                                 <div class="input-error-container">
-                                    {{ profile_form.display_name(class="admin-input-field", placeholder=" [ " ~ current_user.display_name ~ " ]") }}
+                                    {{ profile_form.display_name(class="admin-input-field", placeholder=display_name_ph) }}
                                     {% if profile_errors["display_name"] %}
                                         <div class="admin-form-error"><strong>{{ profile_errors["display_name"][0] }}</strong></div>
                                     {% endif %}
@@ -154,36 +176,61 @@
                                 </div>
                             </div>
 
-                            <div class="form-item">
+                            <div class="form-item" style="margin-bottom: 43px;">
                                 <div class="input-error-container">
-                                    {{ profile_form.country(class="admin-input-field", placeholder=" [ " ~ current_user.country ~ " ]") }}
+                                    {{ profile_form.country(class="admin-input-field", placeholder=country_ph) }}
                                     {% if profile_errors["country"] %}
                                         <div class="admin-form-error"><strong>{{ profile_errors["country"][0] }}</strong></div>
                                     {% endif %}
-                                    <div class="admin-form-label">{{ profile_form.country.label }}</div>
+                                    <div class="admin-form-label more-top">{{ profile_form.country.label }}</div>
                                 </div>
                             </div>
                             
+                            <!-- Profile icons -->
                             <div class="form-item">
-                                <div class="input-error-container profile-picture-field">
+                                <div class="input-error-container profile-icon-field outline-bottom">
                                     <div class="admin-form-label profile-icon-label">{{ profile_form.profile_icon.label }}</div>
                                     <div class="profile-icon-wrapper">
-                                        <a href="{{ url_for('admin.profile_icon', filename='baguette1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'baguette1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='baguette1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread2.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread2.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread2.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='bread3.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'bread3.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='bread3.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='cookie1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'cookie1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='cookie1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='croissant1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'croissant1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='croissant1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='donut1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'donut1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='donut1.png') }}"></a>
-                                        <a href="{{ url_for('admin.profile_icon', filename='pie1.png') }}"><img class="profile-icon-img {% if current_user.profile_icon == 'pie1.png' %}selected-profile-icon{% endif %}" src="{{ url_for('profile_icon_folder', filename='pie1.png') }}"></a>
+
+                                        <a href="{{ url_for("admin.profile_icon", filename="baguette1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "baguette1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="baguette1.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="bread1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "bread1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="bread1.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="bread2.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "bread2.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="bread2.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="bread3.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "bread3.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="bread3.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="cookie1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "cookie1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="cookie1.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="croissant1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "croissant1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="croissant1.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="donut1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "donut1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="donut1.png") }}">
+                                        </a>
+                                        <a href="{{ url_for("admin.profile_icon", filename="pie1.png") }}">
+                                            <img class="profile-icon-img {% if profile_icon == "pie1.png" %}selected-profile-icon{% endif %}"
+                                                 src="{{ url_for("profile_icon_folder", filename="pie1.png") }}">
+                                        </a>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-item">
                                 <div class="input-error-container profile-picture-field outline-bottom">
-                                    {% set file_name = "[ select file ]" if not current_user.profile_picture else (current_user.profile_picture[:25] + ".." if current_user.profile_picture|length > 27 else current_user.profile_picture) %}
-                                    <label for="profile_picture" class="{% if file_name == '[ select file ]' %} profile-picture-label {% else %} profile-picture-text {% endif %}">
+                                    <label for="profile_picture" class="{% if file_name == '[ Select file ]' %} profile-picture-label {% else %} profile-picture-text {% endif %}">
                                         <span id="file-name-placeholder">{{ file_name }}</span>
                                     </label>
                                     {{ profile_form.profile_picture(class="admin-input-field", id="profile_picture") }}
@@ -194,36 +241,32 @@
                                 </div>
                             </div>
 
-                            {% if current_user.profile_picture %}
+                            {% if profile_picture %}
                                 <div class="profile-pic-div">
-                                    <img class="profile-pic-img" src="{{ url_for('profile_picture_folder', filename=current_user.profile_picture) }}">
+                                    <img class="profile-pic-img" src="{{ url_for("profile_picture_folder", filename=profile_picture) }}">
                                 </div>
                             {% endif %}
                             
-
                             <div class="form-item last-form-item">
                                 <div class="input-error-container">
-                                    {{ profile_form.about_me(class="admin-input-field", placeholder=" [ " ~ current_user.about_me ~ " ] ") }}
+                                    {{ profile_form.about_me(class="admin-input-field", placeholder=about_me_ph) }}
                                     {% if profile_errors["about_me"] %}
                                         <div class="admin-form-error"><strong>{{ profile_errors["about_me"][0] }}</strong></div>
                                         {% endif %}
                                     <div class="admin-form-label about-me-label">{{ profile_form.about_me.label }}</div>
                                 </div>
                             </div>
-
-                            <!-------- Form type -------->
                             {{ profile_form.form_type }}
-                            <!-------- Submit -------->
+                            {{ profile_form.hidden_tag() }}
                             <div class="admin-devider"> 
-                                {{ profile_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
+                                {{ profile_form.submit(class="admin-btn", disabled=not email_verified) }}
                             </div>
                         </form>
-
                     </div>
                 </div>
 
-
-                <div id="notification-settings-wrapper" class="notification-settings-wrapper admin-gap href-scroll">
+                <!-- Notifications flash messages -->
+                <div id="notifications-wrapper" class="notification-settings-wrapper admin-gap href-scroll">
                     {% if flash_type == "notification_settings" %}
                         {% for message in get_flashed_messages() %}
                         <div class="admin-flash admin-flash-gap italic href-scroll">
@@ -231,65 +274,75 @@
                         </div>
                         {% endfor %}
                     {% endif %} 
+
+                    <!-- Notifications form -->
                     <p class="admin-form-header smaller-padding">Notification settings</p>
-                    <div class="">
+                    <div class="admin-form-wrapper">
+
                         <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
-                            {{ notification_settings_form.hidden_tag() }}
-                        
-                            <!-- News Notifications Field -->
+                            
                             <div class="form-item notification-item-wrapper">
                                 <div class="notification-item-flex">
                                     <label class="custom-checkbox-wrapper">
-                                        <span class="notification-label {% if current_user.news_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.news_notifications.label }} ]</span>
                                         {{ notification_settings_form.news_notifications(class="custom-checkbox") }}
                                         <span class="custom-checkbox-box"></span>
+                                        <span class="notification-label {% if news_notifications %}notification-label-checked{% endif %}">
+                                            [ {{ notification_settings_form.news_notifications.label }} ]
+                                        </span>
                                     </label>
                                 </div>
                             </div>
-                        
-                            <!-- Comment Notifications Field -->
+                            
                             <div class="form-item notification-item-wrapper">
                                 <div class="notification-item-flex">
                                     <label class="custom-checkbox-wrapper">
-                                        <span class="notification-label {% if current_user.comment_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.comment_notifications.label }} ]</span>
                                         {{ notification_settings_form.comment_notifications(class="custom-checkbox") }}
                                         <span class="custom-checkbox-box"></span>
+                                        <span class="notification-label {% if comment_notifications %}notification-label-checked{% endif %}">
+                                            [ {{ notification_settings_form.comment_notifications.label }} ]
+                                        </span>
                                     </label>
                                 </div>
                             </div>
-                        
-                            <!-- Bakery Notifications Field -->
-                            <div class="form-item notification-item-wrapper">
+                    
+                            <div class="form-item last-form-item notification-item-wrapper">
                                 <div class="notification-item-flex">
                                     <label class="custom-checkbox-wrapper">
-                                        <span class="notification-label {% if current_user.bakery_notifications %}notification-label-checked{% endif %}">[ {{ notification_settings_form.bakery_notifications.label }} ]</span>
                                         {{ notification_settings_form.bakery_notifications(class="custom-checkbox") }}
                                         <span class="custom-checkbox-box"></span>
+                                        <span class="notification-label {% if bakery_notifications %}notification-label-checked{% endif %}">
+                                            [ {{ notification_settings_form.bakery_notifications.label }} ]
+                                        </span>
                                     </label>
                                 </div>
                             </div>
-                        
-                            <!-- Submit Button -->
+                    
+                            {{ notification_settings_form.form_type }}
+                            {{ notification_settings_form.hidden_tag() }}
                             <div class="admin-devider"> 
-                                {{ notification_settings_form.submit(class="admin-btn", disabled=not current_user.email_verified) }}
+                                {{ notification_settings_form.submit(class="admin-btn", disabled=not email_verified) }}
                             </div>
                         </form>
 
-
+                        
                     </div>
                 </div>
 
+                <!-- Settings flash messages -->
+                <div id="settings-wrapper" class="settings-wrapper">
+                    {% if flash_type == "settings" %}
+                        {% for message in get_flashed_messages() %}
+                        <div class="admin-flash admin-flash-gap italic href-scroll">
+                            <p>{{ message }}</p>
+                        </div>
+                        {% endfor %}
+                    {% endif %} 
 
-                </div>
-
-                <div class="settings-wrapper">
+                    <!-- Settings form -->
                     <p class="admin-form-header">Settings</p>
                 </div>
-                
             </div>
         </div>
-        
-
     </div>
 </div>
 
@@ -302,11 +355,9 @@
             if (profilePictureInput.files.length > 0) {
                 fileNamePlaceholder.textContent = profilePictureInput.files[0].name;
             } else {
-                fileNamePlaceholder.textContent = "No file chosen";
+                fileNamePlaceholder.textContent = "Choose file";
             }
         });
     });
 </script>
-
-
 {% endblock %}

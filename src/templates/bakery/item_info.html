@@ -1,15 +1,30 @@
+<!-- Variables -->
+{% set nutri_image = "nutri_" + bakery_item_dict.nutri_score + ".png" %}
+{% set vegan_image = "vegan.png" if bakery_item_dict.vegan else "not_vegan.png" %}
+{% set lactose_image = "lactose.png" if bakery_item_dict.lactose_free else "not_lactose.png" %}
 
+<!-- Image -->
 <div class="top-info">
-    <img class="{% if page == "info" %}large-item-image{% else %}small-item-image{% endif %}" 
-         src="{{ url_for("static", filename=bakery_item_dict.image) }}" 
+    <img class="{% if "info" in page %}large-item-image{% else %}small-item-image{% endif %}" 
+         src="{{ url_for("static",
+         filename=bakery_item_dict.image) }}" 
          alt="Bakery image"> 
 
+    <!-- Health info -->
     <div class="main-info">
         <div class="health-container">
-            <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + "nutri_" + bakery_item_dict.nutri_score + ".png") }}" alt="Nutri image">
-            <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + ("vegan.png" if bakery_item_dict.vegan else "not_vegan.png")) }}" alt="Vegan image">
-            <img class="health-info" src="{{ url_for("static", filename="images/bakery/health/" + ("lactose.png" if bakery_item_dict.lactose_free else "not_lactose.png")) }}" alt="Lactose image">
+            <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                     filename=nutri_image) }}"
+                                     alt="Nutri image">
+            <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                     filename=vegan_image) }}"
+                                     alt="Vegan image">
+            <img class="health-info" src="{{ url_for("bakery_health_folder",
+                                     filename=lactose_image) }}"
+                                     alt="Lactose image">
         </div>
+
+        <!-- Primary info -->
         <div class="item-container">
             <p class="item-info">{{ bakery_item_dict.name }}</p>
             {% if bakery_item_dict.type %}
@@ -24,6 +39,7 @@
 <div class="bakery-devider"> 
 </div>
 
+<!-- Secondary info -->
 <div class="bottom-info">
 
     {% if bakery_item_dict.package_type %}

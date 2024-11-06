@@ -8,10 +8,10 @@ Register
 {% endblock %}
 
 {% block auth_content %}
-
 <section class="auth-section">
     <div class="auth-container">
         <div class="auth-content">
+
             <!-------- Flashed messages -------->
             {% if not fast %}
                     {% for message in get_flashed_messages() %}
@@ -21,10 +21,9 @@ Register
                     {% endfor %}
             {% endif %}
 
-            <!-------- Login form -------->
+            <!-------- Register form -------->
             <form method="POST" action="" novalidate class="auth-form">
-                {{ register_form.hidden_tag() }}
-                <!-------- Email -------->
+                
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.email(class="auth-input-field") }}
@@ -34,7 +33,7 @@ Register
                         <div class="auth-form-label">{{ register_form.email.label }}</div>
                     </div>
                 </div>
-                <!-------- Username -------->   
+
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.username(class="auth-input-field") }}
@@ -44,7 +43,7 @@ Register
                         <div class="auth-form-label">{{ register_form.username.label }}</div>
                     </div>
                 </div>
-                <!-------- Password -------->   
+
                 <div class="form-item">
                     <div class="input-error-container">
                         {{ register_form.password(class="auth-input-field") }}
@@ -54,20 +53,19 @@ Register
                         <div class="auth-form-label">{{ register_form.password.label }}</div>
                     </div>
                 </div>
-                <!-------- Confirm password -------->   
+
                 <div class="form-item last-form-item">
                     <div class="input-error-container">
                         {{ register_form.confirm_password(class="auth-input-field") }}
-                        
                         {% if form_errors["confirm_password"] %}
                             <div class="auth-form-error"><strong>{{ form_errors["confirm_password"][0] }}</strong></div>
                         {% endif %}
                         <div class="auth-form-label">{{ register_form.confirm_password.label }}</div>
                     </div>
                 </div>
-                <!-------- Form type -------->
+
                 {{ register_form.form_type }}
-                <!-------- Submit -------->
+                {{ register_form.hidden_tag() }}
                 <div class="auth-devider"> 
                     {{ register_form.submit(class="auth-btn") }}
                 </div>
@@ -75,9 +73,10 @@ Register
 
             <!-------- Auth options -------->
             <div class="auth-options-container">
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.login') }}">Back to login</a></p></div>
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.g_login') }}">Login with Google</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.login") }}">Back to login</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
             </div>
+
         </div>
     </div>
 </section>

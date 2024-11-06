@@ -17,7 +17,8 @@ from src.models.mod_utils import load_user
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
-                             PROFILE_ICON_FOLDER, PROFILE_PICTURES_FOLDER
+                             PROFILE_ICON_FOLDER, PROFILE_PICTURES_FOLDER,
+                             BAKERY_HEALTH_IMAGES_FOLDER
 )
 
 
@@ -137,10 +138,19 @@ def _configure_url_rules(app_: Flask) -> None:
                       view_func=lambda filename: send_from_directory(
                           PROFILE_PICTURES_FOLDER,
                           filename))
+    app_.add_url_rule("/static/images/bakery/health/<path:filename>",
+                      endpoint="bakery_health_folder",
+                      view_func=lambda filename: send_from_directory(
+                          BAKERY_HEALTH_IMAGES_FOLDER,
+                          filename))
 
 
 def get_app(testing: bool = False) -> Flask:
-    app_: Flask = Flask(__name__.split('.')[0], template_folder="templates", static_folder="static")
+    app_: Flask = Flask(
+        import_name=__name__.split('.')[0],
+        template_folder="templates",
+        static_folder="static"
+    )
     app_ = _configure_server(app_, testing=testing)    
 
     return app_

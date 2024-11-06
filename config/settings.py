@@ -13,10 +13,13 @@ DB_FOLDER: os.path = os.path.join(SERVER_FOLDER, "db")
 DB_PATH: os.path = os.path.join(SERVER_FOLDER, "db", "server.db")
 CLIENTS_SECRETS_PATH = os.path.join(CONFIG_FOLDER, "client_secret.json")
 IMAGES_FOLDER = os.path.join(SRC_FOLDER, "static", "images")
-BAKERY_IMAGES_FOLDER = os.path.join("IMAGES_FOLDER", "bakery")
+
 UPLOAD_FOLDER = os.path.join(SRC_FOLDER, "uploads")
 PROFILE_PICTURES_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_pictures")
 PROFILE_ICON_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_icons")
+
+BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
+BAKERY_HEALTH_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "health")
 
 # Bakery paths [relative]
 BREAD_IMAGES_FOLDER = "images/bakery/bread/"

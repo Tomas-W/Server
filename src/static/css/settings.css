@@ -52,17 +52,17 @@
     --top-panel-title-size: 1.4rem;
     --top-panel-title-size-s: 1.2rem;
 
-
+    --auth-btn-text-size: 3.25rem;
+    --auth-form-size: 1rem;
+    --auth-flash-size: 1.1rem;
+    --auth-form-error-size: 0.9rem;
+    --auth-form-error-color: var(--label-color-darker);
 
     --admin-form-input-size: 1.1rem;
     --admin-form-input-size-s: 0.9rem;
     --admin-header-size: 1.3rem;
     --admin-form-error-size: 0.9rem;
     --admin-flash-size: 1.3rem;
-
-    --auth-btn-text-size: 3.25rem;
-    --auth-flash-size: 1.1rem;
-    --auth-form-error-size: 0.9rem;
 
     --news-title-size: 1.2rem;
     --news-info-size: 1.1rem;
@@ -102,6 +102,12 @@
 
 
 /********* General settings *********/
+.break-words {
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
 .href-scroll {
     scroll-margin-top: 100px;
 }

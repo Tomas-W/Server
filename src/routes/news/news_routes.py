@@ -27,7 +27,7 @@ def all_news():
 
     return render_template(
         "news/all_news.html",
-        page="all_news",
+        page=["all_news"],
         all_news_dict=all_news_dict,
         flash_type=flash_type,
     )
@@ -48,7 +48,7 @@ def news(id_: int):
     news_item = get_news_by_id(id_)
     news_item.set_seen_by(current_user.id)
     
-    form_errors = session.pop("form_errors", None)
+    comment_form_errors = session.pop("comment_form_errors", None)
 
     if request.method == "POST":
         if comment_form.validate_on_submit():
@@ -60,7 +60,7 @@ def news(id_: int):
             session["flash_type"] = "comment"
             return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
         
-        session["form_errors"] = comment_form.errors
+        session["comment_form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
         return redirect(url_for("news.news", id_=id_, _anchor="post-comment-container"))
 
@@ -68,21 +68,19 @@ def news(id_: int):
     if form_data:
         comment_form.process(MultiDict(form_data))
 
-    if form_errors is not None:
+    if comment_form_errors is not None:
         comment_form.process(MultiDict(form_data))
     
-    # news_id = session.pop("news_id", None)
     post_comment = session.pop("post_comment", None)  # for comment bg hghlight
     comment_id = session.pop("comment_id", None)      # for like/dislike bg hghlight
     flash_type = session.pop("flash_type", None)      # for flash messages location
     return render_template(
         "news/news.html",
-        page="news",
-        news_dict=news_dict,
+        page=["news"],
         comment_form=comment_form,
-        form_errors=form_errors,
-        current_user_id=str(current_user.id),
-        # news_id=news_id,
+        comment_form_errors=comment_form_errors,
+        news_dict=news_dict,
+        
         post_comment=post_comment,
         comment_id=comment_id,
         flash_type=flash_type,
@@ -95,7 +93,11 @@ def like_news(id_: int):
     news_item = get_news_by_id(id_)
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
-    return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
+    return redirect(url_for(
+        "news.news",
+        id_=id_,
+        _anchor="like-dislike"
+    ))
 
 
 @news_bp.route("/news/dislike-news/<id_>")
@@ -104,7 +106,11 @@ def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
-    return redirect(url_for("news.news", id_=id_, _anchor="like-dislike"))
+    return redirect(url_for(
+        "news.news",
+        id_=id_,
+        _anchor="like-dislike"
+    ))
 
 
 @news_bp.route("/news/like-comment/<id_>")
@@ -113,7 +119,11 @@ def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
-    return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
+    return redirect(url_for(
+        "news.news",
+        id_=comment_item.news_id,
+        _anchor=f"comment-{id_}"
+    ))
 
 
 @news_bp.route("/news/dislike-comment/<id_>")
@@ -122,7 +132,11 @@ def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)
-    return redirect(url_for("news.news", id_=comment_item.news_id, _anchor=f"comment-{id_}"))
+    return redirect(url_for(
+        "news.news",
+        id_=comment_item.news_id,
+        _anchor=f"comment-{id_}"
+    ))
 
 
 @news_bp.route("/news/unread")
@@ -132,7 +146,7 @@ def unread():
     
     return render_template(
         "news/all_news.html",
-        page="all_news",
+        page=["all_news"],
         all_news_dict=all_news_dict,
     )
 

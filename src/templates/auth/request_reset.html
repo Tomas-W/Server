@@ -8,10 +8,10 @@ Request reset
 {% endblock %}
 
 {% block auth_content %}
-
 <section class="auth-section">
     <div class="auth-container">
         <div class="auth-content">
+
             <!-------- Flashed messages -------->
             {% if not fast %}
                 {% for message in get_flashed_messages() %}
@@ -21,10 +21,9 @@ Request reset
                 {% endfor %}
             {% endif %}
 
-            <!-------- Login form -------->
+            <!-------- Request reset form -------->
             <form method="POST" action="" novalidate class="auth-form">
-                {{ request_reset_form.hidden_tag() }}
-                <!-------- Email or username -------->
+                
                 <div class="form-item last-form-item">
                     <div class="input-error-container">
                         {{ request_reset_form.email(class="auth-input-field") }}
@@ -34,9 +33,9 @@ Request reset
                         <div class="auth-form-label">{{ request_reset_form.email.label }}</div>
                     </div>
                 </div>
-                <!-------- Form type -------->
+
                 {{ request_reset_form.form_type }}
-                <!-------- Submit -------->
+                {{ request_reset_form.hidden_tag() }}
                 <div class="auth-devider"> 
                     {{ request_reset_form.submit(class="auth-btn") }}
                 </div>
@@ -44,9 +43,10 @@ Request reset
 
             <!-------- Auth options -------->
             <div class="auth-options-container">
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.login') }}">Back to login</a></p></div>
-                <div><p class="auth-options-content"><a href="{{ url_for('auth.g_login') }}">Login with Google</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.login") }}">Back to login</a></p></div>
+                <div><p class="auth-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
             </div>
+
         </div>
     </div>
 </section>

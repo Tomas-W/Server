@@ -55,7 +55,7 @@ def user_admin():
                 return redirect(url_for(USER_ADMIN_REDIRECT,
                                         _anchor="admin-content"))
             
-            session["verify_errors"] = verify_email_form.errors
+            session["verify_email_errors"] = verify_email_form.errors
             
         elif form_type == AUTHENTICATION_FORM_TYPE:
             if authentication_form.validate_on_submit():
@@ -89,20 +89,22 @@ def user_admin():
                 return redirect(url_for(USER_ADMIN_REDIRECT,
                                         _anchor="notification-settings-wrapper"))
                 
-    verify_errors = session.pop("verify_errors", None)
+    verify_email_errors = session.pop("verify_email_errors", None)
     authentication_errors = session.pop("authentication_errors", None)
     profile_errors = session.pop("profile_errors", None)
-    flash_type = session.pop("flash_type", None)
+    
     profile_form.country.data = current_user.country
     notification_settings_form.news_notifications.data = current_user.news_notifications
     notification_settings_form.comment_notifications.data = current_user.comment_notifications
     notification_settings_form.bakery_notifications.data = current_user.bakery_notifications
     
+    flash_type = session.pop("flash_type", None)
+    
     return render_template(
         "admin/user_admin.html",
-        page="admin",
+        page=["admin"],
         verify_email_form=verify_email_form,
-        verify_errors=verify_errors,
+        verify_email_errors=verify_email_errors,
         
         authentication_form=authentication_form,
         authentication_errors=authentication_errors,
@@ -133,19 +135,23 @@ def verify_email(token):
             return redirect(url_for(USER_ADMIN_REDIRECT))
     
     session["flash_type"] = "verify"
-    messages = get_flashed_messages()
-    for message in messages:
-        print(message)
     
     flash(AUTHENTICATION_LINK_ERROR_MSG)
-    return redirect(url_for(USER_ADMIN_REDIRECT, tester=request.url))
+    return redirect(url_for(
+        USER_ADMIN_REDIRECT,
+        tester=request.url
+    ))
 
 
 @admin_bp.route("/admin/profile-icon/<filename>")
 @login_required
 def profile_icon(filename):
     current_user.profile_icon = filename
-    return redirect(url_for("admin.user_admin", _anchor="profile-wrapper"))
+    
+    return redirect(url_for(
+        "admin.user_admin",
+        _anchor="profile-wrapper"
+    ))
 
 
 @admin_bp.route("/admin/email")
@@ -185,7 +191,7 @@ def add_news():
     
     return render_template(
         "admin/add_news.html",
-        page="add_news",
+        page=["add_news"],
         news_form=news_form,
         news_errors=news_errors,
     )

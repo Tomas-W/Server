@@ -16,27 +16,31 @@
      -->
 
     <!-- Style sheets -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms_style.css') }}">
-    {% if page == "all_news" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news_base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/all_news.css') }}">
-    {% elif page == "news" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news_base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/news/news.css') }}">
-    {% elif page == "programs" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/programs.css') }}">
-    {% elif page == "info" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/info.css') }}">
-    {% elif page == "search" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/bakery_base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bakery/search.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/settings.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/forms_style.css") }}">
+    {% if "all_news" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news_base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/all_news.css") }}">
     {% endif %}
-    {% if page == "admin" %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin/admin_base.css') }}">
+    {% if "news" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news_base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news.css") }}">
+    {% endif %}
+    {% if "programs" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/programs.css") }}">
+    {% endif %}
+    {% if "info" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/info.css") }}">
+    {% endif %}
+    {% if "search" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/search.css") }}">
+    {% endif %}
+    {% if "admin" in page %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/admin/admin_base.css") }}">
     {% endif %}
 
     <title>
@@ -79,7 +83,7 @@
                     <li>
                         <a class="navbar-s-link" href="{{ url_for('bakery.programs') }}">
                             <div class="image-container">
-                                <img class="s-profile-image profile-image" src="{{ url_for('static', filename='images/user22.png') }}" alt="Profile">
+                                <img class="s-profile-image profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
                             </div>
                         </a>
                     </li>

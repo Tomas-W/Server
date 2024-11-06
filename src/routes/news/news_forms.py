@@ -20,7 +20,6 @@ class CommentForm(FlaskForm):
         render_kw={"placeholder": "Enter your comment here",
                    "autofocus": False},
         validators=[
-            DataRequired(REQUIRED_FIELD_MSG),
             CommentLengthCheck(),
             ForbiddenCheck(),            
         ]

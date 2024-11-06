@@ -18,8 +18,7 @@
 {% set country_ph = " [ " ~ country ~ " ]" if country else "" %}
 {% set about_me_ph = " [ " ~ about_me ~ " ]" if about_me else "" %}
 
- {% set file_name = "[ Select file ]" if not profile_picture else (profile_picture[:25] + ".." if profile_picture|length > 27 else profile_picture) %}
-
+{% set file_name = "[ Select file ]" if not profile_picture else (profile_picture[:25] + ".." if profile_picture|length > 27 else profile_picture) %}
 
 
 {% block admin_content %}
@@ -29,12 +28,10 @@
     {% if not email_verified %}
     <div class="verify-wrapper">
         <!-- Verification flash messages -->
-        {% if flash_type == "verify" %}
-            {% for message in get_flashed_messages() %}
+        {% if flash_type == "verify" and get_flashed_messages() %}
             <div class="admin-flash">
-                <p>{{ message }}</p>
+                <p>{{ get_flashed_messages()[0] }}</p>
             </div>
-            {% endfor %}
         {% endif %} 
         <div class="verify-content">
             <p class="verify-header">Verify your email before access</p>
@@ -70,12 +67,10 @@
 
             <div id="authentication-wrapper" class="authentication-wrapper">
                 <!-- Authentication flash messages -->
-                {% if flash_type == "authentication" %}
-                    {% for message in get_flashed_messages() %}
+                {% if flash_type == "authentication" and get_flashed_messages() %}
                     <div class="admin-flash" id="authentication-flash">
-                        <p>{{ message }}</p>
+                        <p>{{ get_flashed_messages()[0] }}</p>
                     </div>
-                    {% endfor %}
                 {% endif %} 
 
                 <!-- Authentication form -->
@@ -153,17 +148,15 @@
 
             <!-- Profile flash messages -->
             <div id="profile-wrapper" class="profile-wrapper">
-                {% if flash_type == "profile" %}
-                    {% for message in get_flashed_messages() %}
+                {% if flash_type == "profile" and get_flashed_messages() %}
                     <div class="admin-flash">
-                        <p>{{ message }}</p>
+                        <p>{{ get_flashed_messages()[0] }}</p>
                     </div>
-                    {% endfor %}
                 {% endif %} 
 
                 <!-- Profile form -->
-                <p class="admin-form-header">Profile</p>
                 <div class="admin-form-wrapper">
+                    <p class="admin-form-header">Profile</p>
                     <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
                         
                         <div class="form-item">
@@ -267,18 +260,15 @@
 
             <!-- Notifications flash messages -->
             <div id="notifications-wrapper" class="notifications-wrapper">
-                {% if flash_type == "notification_settings" %}
-                    {% for message in get_flashed_messages() %}
+                {% if flash_type == "notifications" and get_flashed_messages() %}
                     <div class="admin-flash">
-                        <p>{{ message }}</p>
+                        <p>{{ get_flashed_messages()[0] }}</p>
                     </div>
-                    {% endfor %}
                 {% endif %} 
 
                 <!-- Notifications form -->
                 <div class="admin-form-wrapper">
                     <p class="admin-form-header smaller-padding">Notification settings</p>
-
                     <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
                         
                         <div class="form-item notification-item-wrapper">
@@ -330,12 +320,10 @@
 
             <!-- Settings flash messages -->
             <div id="settings-wrapper" class="settings-wrapper">
-                {% if flash_type == "settings" %}
-                    {% for message in get_flashed_messages() %}
+                {% if flash_type == "settings" and get_flashed_messages() %}
                     <div class="admin-flash">
-                        <p>{{ message }}</p>
+                        <p>{{ get_flashed_messages()[0] }}</p>
                     </div>
-                    {% endfor %}
                 {% endif %} 
 
                 <!-- Settings form -->

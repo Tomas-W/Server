@@ -8,7 +8,6 @@
     --arrow-up: "\2191";
     --arrow-down: "\2193";
 
-    --container-padding: 7%;
     --scroll-margin-100: 100px;
     
     --white-0: rgba(255, 255, 255, 0);
@@ -22,6 +21,7 @@
     --input-color: rgba(200, 200, 200, 1);
     --input-color-hover: rgba(220, 220, 220, 1);
 
+    --gray: var(--text-color); /* #a0a0a0 */
     --red: rgba(138, 0, 0, 1); /* #8a0000 */
     --orange: rgba(191, 83, 0, 1); /* #bf5300 */
     --blue: rgba(0, 0, 178, 1); /* #0000b2 */
@@ -34,7 +34,9 @@
     --bg-highlight: rgba(255, 255, 255, 0.03);
     --bg-highlight-hover: rgba(255, 255, 255, 0.05);
     
-    --navbar-padding: 15px 55px 15px 55px;
+    --navbar-padding: 7%;
+    --navbar-wrapper-padding: calc(2 * var(--navbar-padding));
+    --navbar-padding-inside: 15px 55px 15px 55px;
     --nav-brand-size: 1.8rem;
     --nav-link-size: 1.2rem;
     --footer-link-size: 0.8rem;
@@ -53,6 +55,8 @@
     --top-panel-title-size: 1.4rem;
     --top-panel-title-size-s: 1.2rem;
 
+    --fast-form-size: 1.05rem;
+
     --auth-btn-text-size: 3.25rem;
     --auth-form-size: 1rem;
     --auth-flash-size: 1.1rem;
@@ -61,6 +65,7 @@
 
     --admin-form-input-size: 1.1rem;
     --admin-form-input-size-s: 0.9rem;
+    --admin-notification-label-size-s: 1rem;
     --admin-header-size: 1.3rem;
     --admin-form-error-size: 0.9rem;
     --admin-flash-size: 1.3rem;
@@ -68,14 +73,19 @@
     --news-title-size: 1.2rem;
     --news-info-size: 1.1rem;
     --news-author-size: 0.9rem;
-    --news-container-padding: 75px 12%;
+    --news-table-size: 1rem;
+    --news-wrapper-padding: 75px 12%;
     --news-padding: 0 60px;
     --news-padding-s: 0 30px;
-    --news-important-padding: 0 75px;
+    --all-news-important-padding: 6px 100px 40px 75px;
+    --all-news-important-padding-s: 6px 15px 40px 15px;
+    --news-important-padding: 50px 90px;
+    --news-important-padding-s: 30px 60px;
+    --news-important-padding-xs: 30px 30px;
     --news-gap: 40px;
     --post-comment-padding: 50px 50px 0 50px;
-    --comment-container-padding: 50px;
-    --comment-container-padding-s: 40px 0;
+    --comment-wrapper-padding: 50px;
+    --comment-wrapper-padding-s: 40px 0;
     --comment-padding: 50px;
     --comment-padding-s: 40px;
 

@@ -56,7 +56,7 @@
 
 <section class="navbar-section">
     <nav class="navbar">
-        <div class="navbar-container">
+        <div class="navbar-wrapper">
             <a class="profile nav-link" href="{{ url_for('news.all_news') }}">
                 <img class="profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
             </a>
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <div class="navbar-s-container">
+        <div class="navbar-s-wrapper">
 
             <input type="checkbox" id="toggle-navbar-s" style="display: none;">
             <label class="navbar-s-link navbar-s-menu" for="toggle-navbar-s">Menu</label>
@@ -82,7 +82,7 @@
                 <ul class="navbar-s-links">
                     <li>
                         <a class="navbar-s-link" href="{{ url_for('bakery.programs') }}">
-                            <div class="image-container">
+                            <div class="image-wrapper">
                                 <img class="s-profile-image profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
                             </div>
                         </a>
@@ -107,7 +107,7 @@
 
 <section class="footer-section">
 
-    <div class="footer-section-container">
+    <div class="footer-section-wrapper">
 
         <p class="footer-title">Special thanks to:</p>
         <ul class="footer-list">

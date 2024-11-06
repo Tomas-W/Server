@@ -104,7 +104,7 @@ def zoeken(search_term: str):
 @bakery_bp.route("/bakery/health/<filename>")
 @login_required
 def bakery_health(filename):
-    current_user.profile_icon = filename
+    # current_user.profile_icon = filename
     referrer = request.headers.get("Referer")
     if referrer:
         return redirect(referrer)

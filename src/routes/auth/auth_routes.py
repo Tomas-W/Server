@@ -64,7 +64,7 @@ def handle_fast_login(view_func):
                         return redirect(url_for(f"auth.{view_func.__name__}"))
                 
                 session["form_errors"] = fast_login_form.errors
-                flash("TESTER")
+                flash("Fast login failed.")
                 return redirect(url_for(f"auth.{view_func.__name__}"))
 
         return view_func(*args, **kwargs)
@@ -114,7 +114,7 @@ def login():
                 flash(message)
 
         session["form_errors"] = login_form.errors
-        flash("T0000STER")
+        flash(f"Remember me: {login_form.remember.data}")
         return redirect(url_for(LOGIN_REDIRECT))
 
     form_errors = session.pop("form_errors", None)

@@ -144,7 +144,8 @@ class ProfileForm(FlaskForm):
     )
     profile_icon = StringField(
         label="profile icon",
-        render_kw={"placeholder": "[ click to select ]"},
+        render_kw={"placeholder": "[ click to select ]",
+                   "disabled": True},
     )
     profile_picture = FileField(
         label="profile picture",

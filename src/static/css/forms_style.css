@@ -123,8 +123,8 @@
 
 .custom-checkbox-box {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     margin: 0 15px 0 0;
     border: 2px solid var(--border-color);
     vertical-align: middle;
@@ -164,13 +164,12 @@
 .notification-item-flex:hover {
     border-bottom-color: var(--border-color-hover);
     color: var(--text-color);
+    cursor: pointer;
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .notification-label {
-    /* pointer-events: none; */
     display: inline-block;
-    min-width: 250px;
     padding: 7px 0;
     font-size: var(--admin-form-input-size);
     color: var(--label-color);

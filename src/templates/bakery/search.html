@@ -97,7 +97,7 @@ Search
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
             <label class="side-panel-link" for="toggle-top-panel">Selection</label>
 
-
+            <!-- Top panel -->
             <div class="top-panel">
                 <div class="bakery-form-wrapper">
                     <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
@@ -183,8 +183,9 @@ Search
                 {% include "bakery/item_info.html" %}
             {% else %}
 
-            <!-- All search results -->
+            <!-- Content -->
             <div class="programs-content">
+                <!-- All clickable search results -->
                 <div class="image-grid">
                     {% for item in bakery_search_results_dicts %}
                         <div class="grid-item">

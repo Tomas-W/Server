@@ -116,7 +116,6 @@
 }
 
 
-
 @media (max-width: 474.98px) {
     .admin-content {
         padding: 75px 9%;
@@ -128,16 +127,17 @@
         font-size: var(--admin-form-input-size-s);
     }
     .profile-icon-wrapper {
-        position: absolute;
         flex-wrap: wrap;
         top: 10px;
         right: 0;
     }
     .profile-picture-field {
-        padding-top: 60px;
     }
     .profile-icon-label {
-        bottom: 53px;
+        padding-bottom: 47px;
+    }
+    .notification-label {
+        font-size: var(--admin-notification-label-size-s);
     }
 }
 

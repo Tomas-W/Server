@@ -9,19 +9,21 @@ Login
 
 {% block auth_content %}
 <section class="auth-section">
-    <div class="auth-container">
+    <div class="auth-wrapper">
         <div class="auth-content">
 
-            <!-------- Flashed messages -------->
-            {% if get_flashed_messages() %}
-            <div class="auth-flash">
-                <p>{{ get_flashed_messages()[0] }}</p>
-            </div>
+            <!-- Flashed messages -->
+            {% if not fast %}
+                {% if get_flashed_messages() %}
+                    <div class="auth-flash">
+                        <p>{{ get_flashed_messages()[0] }}</p>
+                    </div>
+                {% endif %}
             {% endif %}
 
-            <!-------- Login form -------->
+            <!-- Login form -->
             <form method="POST" action="" novalidate class="auth-form">
-                
+
                 <div class="form-item">
                     <div class="input-error-wrapper">
                         {{ login_form.email_or_uname(class="auth-input-field") }}
@@ -43,8 +45,15 @@ Login
                 </div>
 
                 <div class="form-item last-form-item remember-devider">
-                    {{ login_form.remember(class="remember-me") }}
-                    {{ login_form.remember.label(class="remember-me") }}
+                    <div class="notification-item-flex">
+                        <label class="custom-checkbox-wrapper">
+                            {{ login_form.remember(class="custom-checkbox") }}
+                            <span class="custom-checkbox-box"></span>
+                            <span class="notification-label">
+                                {{ login_form.remember.label }}
+                            </span>
+                        </label>
+                    </div>
                 </div>
 
                 {{ login_form.form_type }}
@@ -54,8 +63,8 @@ Login
                 </div>
             </form>
 
-            <!-------- Auth options -------->
-            <div class="auth-options-container">
+            <!-- Auth options -->
+            <div class="auth-options-wrapper">
                 <div><p class="auth-options-content"><a href="{{ url_for("auth.register") }}">Register a new account</a></p></div>
                 <div><p class="auth-options-content"><a href="{{ url_for("auth.request_reset") }}">Reset your password</a></p></div>
                 <div><p class="auth-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>

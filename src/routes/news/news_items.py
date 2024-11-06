@@ -16,11 +16,11 @@ def get_news_dict() -> dict:
     data = {
         1: {
             "header": "Retourname",
-            "title": "Retourname Streeckgenoten Grillworst naturel",
+            "title": "Retourname Streeck genoten Grillworst naturel",
             "code": 999,
             "important": "Je moet onderstaand artikel onmiddellijk uit de verkoop nemen. Zorg dat de winkelvoorraad op 0 (nul) staat. De allergenen declaratie klopt niet.",
-            "grid_cols": ["Nasa", "Artikelomschrijving", "Verpakking/inhoud"],
-            "grid_rows": ["687307", "Streeckgenoten Grillworst naturel", "Ca 120 gram"],
+            "grid_cols": ["Nasa", "Artikel omschrijving", "Verpakking/ inhoud"],
+            "grid_rows": ["687307", "Streeck genoten Grillworst naturel", "Ca 120 gram"],
             "info_cols": ["Rode zakken", "Kassablokkade", "Winkelvoorraad op 0", "Retoursturen", "Mogelijk nog geleverd", "Klantenretouren", "Boetes NVWA (NL) / FABB (BE)", "Callcenter"],
             "info_rows": ["Je haalt het artikel ongeacht de code uit het schap en de koelcel. Je verpakt het in de rode code 999-plastic zakken die je eerst in standaard 23 cm CBL-fust plaatst",
                           "De kassa blokkeert bij het scannen van bovengenoemd artikel. In de instructie Een code 999 artikel bij de kassa verwerken lees je hoe je de kassa kunt deblokkeren.",
@@ -37,7 +37,7 @@ def get_news_dict() -> dict:
             "title": "Retourname 3 varianten filet americain",
             "code": 999,
             "important": "Je moet onderstaande artikelen onmiddellijk uit de verkoop nemen. Zorg dat de winkelvoorraad op 0 (nul) staat. Er is gevaar voor de volksgezondheid.",
-            "grid_cols": ["Nasa", "Artikelomschrijving", "Verpakking/inhoud"],
+            "grid_cols": ["Nasa", "Artikel omschrijving", "Verpakking/ inhoud"],
             "grid_rows": ["83461", "Filet americain naturel", "150 gram",
                           "83469", "Filet americain mager", "150 gram",
                           "772036", "Filet americain peper", "150 gram"],

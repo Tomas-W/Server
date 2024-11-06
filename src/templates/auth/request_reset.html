@@ -9,19 +9,19 @@ Request reset
 
 {% block auth_content %}
 <section class="auth-section">
-    <div class="auth-container">
+    <div class="auth-wrapper">
         <div class="auth-content">
 
-            <!-------- Flashed messages -------->
+            <!-- Flashed messages -->
             {% if not fast %}
-                {% for message in get_flashed_messages() %}
-                <div class="auth-flash">
-                    <p>{{ message }}</p>
-                </div>
-                {% endfor %}
+                {% if get_flashed_messages() %}
+                    <div class="auth-flash">
+                        <p>{{ get_flashed_messages()[0] }}</p>
+                    </div>
+                {% endif %}
             {% endif %}
 
-            <!-------- Request reset form -------->
+            <!-- Request reset form -->
             <form method="POST" action="" novalidate class="auth-form">
                 
                 <div class="form-item last-form-item">
@@ -41,8 +41,8 @@ Request reset
                 </div>
             </form>
 
-            <!-------- Auth options -------->
-            <div class="auth-options-container">
+            <!-- Auth options -->
+            <div class="auth-options-wrapper">
                 <div><p class="auth-options-content"><a href="{{ url_for("auth.login") }}">Back to login</a></p></div>
                 <div><p class="auth-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
             </div>

@@ -84,7 +84,7 @@ def user_admin():
             if notification_settings_form.validate_on_submit():
                 process_admin_form(notification_settings_form)
                 flash("Updated notification settings")
-                session["flash_type"] = "notification_settings"  # To indicate flash position
+                session["flash_type"] = "notifications"  # To indicate flash position
                 session["_anchor"] = "notification-settings-wrapper"
                 return redirect(url_for(USER_ADMIN_REDIRECT,
                                         _anchor="notifications-wrapper"))
@@ -97,7 +97,7 @@ def user_admin():
     notification_settings_form.news_notifications.data = current_user.news_notifications
     notification_settings_form.comment_notifications.data = current_user.comment_notifications
     notification_settings_form.bakery_notifications.data = current_user.bakery_notifications
-    
+
     flash_type = session.pop("flash_type", None)
     
     return render_template(
@@ -146,8 +146,13 @@ def verify_email(token):
 @admin_bp.route("/admin/profile-icon/<filename>")
 @login_required
 def profile_icon(filename):
+    """
+    Updates or loads profile icon.
+    """
     current_user.profile_icon = filename
-    
+    session["flash_type"] = "profile"
+    flash("Updated profile icon")
+        
     return redirect(url_for(
         "admin.user_admin",
         _anchor="profile-wrapper"

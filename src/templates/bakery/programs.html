@@ -27,6 +27,7 @@ Programs
             </ul>
         </div>
         
+        <!-- Content -->
         <div class="main-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
             <label class="side-panel-link" for="toggle-top-panel">Programs</label>
@@ -47,10 +48,11 @@ Programs
                 </div>
             </div>
             
-        
-        <div class="programs-content">
-            <div class="image-grid">
-                {% for item in bakery_items_dicts %}
+            <!-- Programs grid -->
+            <div class="programs-content">
+                <div class="image-grid">
+                    <!-- Clickable items -->
+                    {% for item in bakery_items_dicts %}
                     <div class="grid-item">
                         <a href="{{ url_for("bakery.info", id_=item.id) }}">
                             <p class="item-name">{{ item.name }}</p>
@@ -59,9 +61,9 @@ Programs
                                  alt="Bakery image">
                         </a>
                     </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
         
     </div>
 </section>

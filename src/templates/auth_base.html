@@ -22,49 +22,38 @@
 </head>
 <body>
     <!-- ********** Fast Login ********** -->
-    <section class="fast-login-section">
-        <div class="fast-login-wrapper">
-            <div class="fast-login-container">
-                <div class="fast-login-content">
-                    <form method="POST" action="" novalidate class="fast-login-form">
-                        {{ fast_login_form.hidden_tag() }}
-                        <div class="fast-login-form-row">
-                            <div class="form-group">
-                                {{ fast_login_form.fast_name(class="fast-underline-input") }}
-                            </div>
-                            <div class="form-group">
-                                {{ fast_login_form.fast_code(class="fast-underline-input") }}
-                            </div>
-                        </div>
-                        <div class="fast-side-panel">
-                            {{ fast_login_form.login_type }}
-                            {{ fast_login_form.submit(class="fast-login-btn") }}
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-                {% if fast %}
-                {% for message in get_flashed_messages() %}
-                <div class="fast-flash">
-                        <p>{{ message }}</p>
+<section class="fast-section">
+        <div class="fast-wrapper">
+            <div class="fast-content">
+
+                <!-- Fast Login Form -->
+                <form method="POST" action="" novalidate class="fast-form">
+                    <div class="fast-input-wrapper">
+                            {{ fast_login_form.fast_name(class="fast-underline-input") }}
+                            {{ fast_login_form.fast_code(class="fast-underline-input") }}
                     </div>
-                {% endfor %}
-                {% endif %}
+
+                    <div class="fast-button-wrapper">
+                        {{ fast_login_form.login_type }}
+                        {{ fast_login_form.hidden_tag() }}
+                        {{ fast_login_form.submit(class="fast-login-btn") }}
+                    </div>
+                </form>
+
+                <div class="fast-flash-wrapper">
+                    {% if fast and get_flashed_messages() %}
+                    <div class="fast-flash">
+                            <p>{{ get_flashed_messages()[0] }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
-    </section>
+</section>
 
 {% block auth_content %}
 {% endblock %}
-
-<!-- Bootstrap scripts -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
 
 </body>
 </html>

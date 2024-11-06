@@ -9,19 +9,21 @@ Reset
 
 {% block auth_content %}
 <section class="auth-section">
-    <div class="auth-container">
+    <div class="auth-wrapper">
         <div class="auth-content">
-            <!-------- Flashed messages -------->
+
+            <!-- Flashed messages -->
             {% if not fast %}
-                {% for message in get_flashed_messages() %}
-                <div class="auth-flash">
-                    <p>{{ message }}</p>
-                </div>
-                {% endfor %}
+                {% if get_flashed_messages() %}
+                    <div class="auth-flash">
+                        <p>{{ get_flashed_messages()[0] }}</p>
+                    </div>
+                {% endif %}
             {% endif %}
             
             <!-- Password reset form -->
             <form method="POST" action="" novalidate class="auth-form">
+
                 <div class="form-item">
                     <div class="input-error-wrapper">
                         {{ reset_form.password(class="auth-input-field") }}
@@ -49,8 +51,8 @@ Reset
                 </div>
             </form>
 
-            <!-------- Auth options -------->
-            <div class="auth-options-container">
+            <!-- Auth options -->
+            <div class="auth-options-wrapper">
                 <div><p class="auth-options-content">Reset your password</p></div>
                 <div><p class="auth-options-content">Register a new account</p></div>
                 <div><p class="auth-options-content">Login via Google</p></div>

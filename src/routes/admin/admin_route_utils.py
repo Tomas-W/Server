@@ -31,19 +31,17 @@ def process_admin_form(form: FlaskForm):
     skip_fields = ["form_type", "submit", "csrf_token"]
     
     for field in form:
-        if field.name in skip_fields or field.data == "":
+        if not field.data or field.name in skip_fields or field.data == "":
             continue
         
         method_name = f"set_{field.name}"
         if hasattr(current_user, method_name):
             method = getattr(current_user, method_name)
             
-            # Boolean fields return None if unchecked
             if isinstance(field.data, bool) or field.type == "BooleanField":
                 new_value = field.data if field.data is not None else False
             else:
                 new_value = field.data
-            
             user_entry = getattr(current_user, field.name, None)
             if user_entry != new_value:
                 method(new_value)

@@ -1,3 +1,6 @@
+.auth-section {
+    min-height: 100vh;
+}
 .fast-section {
     padding-top: 20px;
     position: relative;

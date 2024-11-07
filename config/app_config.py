@@ -7,7 +7,7 @@ from config.settings import DATABASE_URI, DEFAULT_LIMITS, UPLOAD_FOLDER
 class BaseConfig(object):
     CONFIG_NAME = "base"
     SECRET_KEY = os.environ.get("FLASK_KEY")
-
+    
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
     DEFAULT_LIMITS = DEFAULT_LIMITS
 

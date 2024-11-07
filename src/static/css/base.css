@@ -195,6 +195,7 @@
 
 .main-section {
     height: 100%;
+    min-height: 100vh;
     padding: 50px var(--navbar-padding);
     background-color: var(--gray1);
 }
@@ -445,27 +446,6 @@
     font-size: var(--footer-link-size);
 }
 
-/* #toggle-top-panel:checked ~ .base-content,
-#toggle-top-panel:checked ~ .admin-content {
-    filter: blur(3px);
-    transition: filter 0.2s ease-in-out;
-}
-
-#toggle-top-panel:not(:checked) ~ .base-content {
-    filter: blur(0);
-    transition: filter 0.2s ease-in-out;
-}
-
-#toggle-top-panel:checked ~ .top-info {
-    filter: blur(3px);
-    transition: filter 0.2s ease-in-out;
-}
-
-#toggle-top-panel:not(:checked) ~ .top-info {
-    filter: blur(0);
-    transition: filter 0.2s ease-in-out;
-} */
-
 #toggle-top-panel:checked:not(:checked) ~ .bottom-info,
 #toggle-top-panel:checked:not(:checked) ~ .programs-content,
 #toggle-top-panel:checked:not(:checked) ~ .admin-content,
@@ -482,9 +462,3 @@
     filter: blur(3px);
     transition: filter 0.2s ease-in-out;
 }
-
-/* #toggle-top-panel:not(:checked) ~ .bottom-info {
-    filter: blur(0);
-    transition: filter 0.2s ease-in-out;
-}
- */

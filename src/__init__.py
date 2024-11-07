@@ -8,7 +8,8 @@ import os
 from flask import Flask, send_from_directory, request
 from flask_login import current_user
 import secrets
-
+from flask_assets import Environment
+from flask_assets import Bundle
 from src.extensions import (server_db_, mail_, csrf_,
                             login_manager_, migrater_, limiter_, session_
 )
@@ -16,6 +17,7 @@ from src.models.mod_utils import load_user
 
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
+from src.extensions_utils import css_bundle
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
                              PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
                              BAKERY_HEALTH_IMAGES_FOLDER
@@ -43,7 +45,6 @@ HEADERS = {
 def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     _configure_paths()
     environment = os.environ.get("FLASK_ENV", "debug").lower()
-
     if testing:
         config_obj = TestConfig()
     elif environment == "debug":
@@ -81,7 +82,11 @@ def _configure_extensions(app_: Flask) -> None:
     limiter_.init_app(app_)
     app_.config['SESSION_SQLALCHEMY'] = server_db_
     session_.init_app(app_)
-
+    assets_ = Environment(app_)
+    _configure_css(assets_)
+    app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
+    app_.config['ASSETS_DEBUG'] = True
+    app_.context_processor(lambda: dict(assets=assets_))
 
 def _configure_blueprints(app_: Flask) -> None:
     from src.routes.news.news_routes import news_bp
@@ -145,13 +150,24 @@ def _configure_url_rules(app_: Flask) -> None:
                           filename))
 
 
+def _configure_css(assets_: Environment) -> None:
+    for bundle in css_bundle:
+        assets_.register(
+            bundle["name"],
+            Bundle(*bundle["files"],
+                   filters=bundle["filters"],
+                   output=bundle["output"])
+        )
+
+
 def get_app(testing: bool = False) -> Flask:
     app_: Flask = Flask(
         import_name=__name__.split('.')[0],
         template_folder="templates",
         static_folder="static"
     )
-    app_ = _configure_server(app_, testing=testing)    
+    app_ = _configure_server(app_, testing=testing)
+    print(os.environ.get("FLASK_DEBUG_PIN"))
 
     return app_
 

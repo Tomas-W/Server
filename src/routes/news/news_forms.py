@@ -17,8 +17,7 @@ class CommentForm(FlaskForm):
     """
     content = TextAreaField(
         label="Comment",
-        render_kw={"placeholder": "Enter your comment here",
-                   "autofocus": False},
+        render_kw={"placeholder": "Enter your comment here"},
         validators=[
             CommentLengthCheck(),
             ForbiddenCheck(),            

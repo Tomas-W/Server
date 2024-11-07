@@ -1,0 +1,155 @@
+.info-content {
+    padding: 25px;
+}
+
+.primary-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.health-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.health-info {
+    padding-bottom: 15px;
+}
+
+.item-info {
+    padding: 0 20px 15px 0;  /* because linked*/
+    font-weight: 600;
+    font-size: var(--bakery-item-info-size);
+    color: var(--text-color);
+}
+
+.bakery-devider {
+    margin: 0 60px 60px 75px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.secondary-info {
+    margin-bottom: 50px;
+}
+
+.item-label {
+    color: var(--label-color);
+}
+
+.bottom-info-duo {
+    padding: 0 20% 0 20%;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.allergy-wrapper {
+    text-align: right;
+}
+
+
+@media (max-width: 474.98px) {
+    .primary-info {
+        display: block;
+    }
+    .main-info-wrapper {
+        padding: 0 40px;
+        display: flex;
+        justify-content: space-around;
+    }
+    .health-wrapper {
+        order: 2;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+    }
+    .item-info {
+        padding: 0 40px 0 0;
+        font-size: calc(var(--bakery-item-info-size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 40px 40px 40px;
+    }
+    .bottom-info-duo {
+        padding: 0 0 0 45px;
+        display: block;
+    }
+    .item-label {
+        padding: 0;
+    }
+    .allergy-wrapper {
+        text-align: left;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .primary-info {
+        display: block;
+    }
+    .main-info-wrapper {
+        padding: 0 60px;
+        display: flex;
+        justify-content: space-around;
+    }
+    .health-wrapper {
+        order: 2;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+    }
+    .item-info {
+        padding-right: 50px;
+        font-size: calc(var(--bakery-item-info-size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 60px;
+    }
+    .bottom-info-duo {
+        padding: 0 20px 0 60px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .item-label {
+        padding-right: 0 0 0 60px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .primary-info {
+        display: block;
+    }
+    .main-info-wrapper {
+        padding: 0 60px 0 60px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .health-wrapper {
+        display: flex;
+        flex-direction: column;
+        order: 2;
+        justify-content: space-between;
+    }
+    .item-info {
+        padding-right: 50px;
+        font-size: calc(var(--bakery-item-info-size) * 0.9);
+    }
+    .bakery-devider {
+        margin: 40px 60px 40px 60px;
+    }
+
+    .bottom-info-duo {
+        padding: 0 10px 20px 60px;
+    }
+    .item-label {
+        padding-right: 0 0 0 60px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
+
+@media (min-width: 1200px) and (max-width: 1348.98px) {
+}

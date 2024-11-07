@@ -267,6 +267,8 @@ class ForbiddenCheck:
         self.char_message: str = FORBIDDEN_CHAR_MSG
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
+        if field.data is None:
+            return
         if self._contains_banned_word(field.data):
             raise ValidationError(self.word_message)
         if self._contains_banned_char(field.data):

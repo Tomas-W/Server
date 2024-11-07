@@ -76,7 +76,7 @@ class User(server_db_.Model, UserMixin):
     username: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     fast_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
-    fast_code: Mapped[Optional[str]] = mapped_column(String(5))\
+    fast_code: Mapped[Optional[str]] = mapped_column(String(5))
     
     display_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
     country: Mapped[Optional[str]] = mapped_column(String(32))
@@ -88,6 +88,7 @@ class User(server_db_.Model, UserMixin):
     comment_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
     bakery_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    new_email: Mapped[Optional[str]] = mapped_column(String(75))
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
     last_setting_update: Mapped[Optional[str]] = mapped_column(String(32))
@@ -181,6 +182,13 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_bakery_notifications(self, bakery_notifications: bool) -> None:
         self.bakery_notifications = bakery_notifications
+    
+    @set_updated_at
+    def set_new_email(self, new_email: str) -> None:
+        self.new_email = new_email
+    
+    def reset_new_email(self) -> None:
+        self.new_email = None
     
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:

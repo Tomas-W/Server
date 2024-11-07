@@ -1,10 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}
-Search
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for("static", filename="dist/search_css.min.css") }}">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const checkboxes = document.querySelectorAll(".custom-checkbox");
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener("change", function() {
+            const label = checkbox.closest(".custom-checkbox-wrapper").querySelector(".notification-label");
+            if (checkbox.checked) {
+                label.style.color = "var(--text-color)";
+            } else {
+                label.style.color = "";
+            }
+        });
+        });
+    });
+</script>
+
 {% endblock %}
 
-{% block scripts %}
+{% block title %}
+Search
 {% endblock %}
 
 {% block content %}
@@ -59,7 +78,7 @@ Search
 
                         <div class="form-item border-bottom">
                             <div class="flex-space-between">
-                                {{ bakery_search_form.nutri_score(class="admin-input-field nutri-label") }}
+                                {{ bakery_search_form.nutri_score(class="admin-input-field nutri-label nutri-select-field") }}
                             </div>
                         </div>
 
@@ -95,7 +114,7 @@ Search
 
         <div class="main-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel">Selection</label>
+            <label class="side-panel-link" for="toggle-top-panel">Search</label>
 
             <!-- Top panel -->
             <div class="top-panel">
@@ -191,7 +210,7 @@ Search
                         <div class="grid-item">
                         <a href="{{ url_for("bakery.search", id_=item.id) }}">
                             <p class="item-name">{{ item.name }}</p>
-                            <img class="{% if "search" in page %}small-item-image{% else %}large-item-image{% endif %}" 
+                            <img class="grid-item-image" 
                                  src="{{ url_for("static", filename=item.image) }}" 
                                  alt="Bakery image">
                         </a>

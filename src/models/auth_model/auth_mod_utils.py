@@ -1,6 +1,7 @@
 import os
 
 from flask import url_for
+from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
 from sqlalchemy import select, or_
@@ -20,7 +21,7 @@ def process_verification_token(email: str, token_type: str) -> None:
     verification link and instructions.
     """
     token = generate_authentication_token(email, token_type)
-    reset_authentication_token(email, token_type, token)
+    reset_authentication_token(token_type, token)
     send_authentication_email(email, token_type, token)
 
 
@@ -29,20 +30,20 @@ def generate_authentication_token(email: str, token_type: str) -> str:
     return token
 
 
-def reset_authentication_token(email: str, token_type: str, token: str) -> bool:
+def reset_authentication_token(token_type: str, token: str) -> bool:
     """
     Reset the specified authentication token.
     If no User with the given email exists, return False.
     If the token already exists, update it and return True.
     If the token does not exist, create a new one and return True.
     """
-    user = get_user_by_email(email)
+    user = get_user_by_email(current_user.email)
     if not user:
         return False
     
     id_ = user.id
     existing_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_).first()
+        user_id=id_, token_type=token_type).first()
     if existing_token:
         existing_token.token = token
     else:
@@ -80,11 +81,11 @@ def confirm_authentication_token(token: str, token_type: str, expiration: int = 
     """
     Confirm the specified authentication token.
     Verifications:
-    - EMAIL_VERIFICATION [set email verified]
+    - EMAIL_VERIFICATION [set email verified | set new email]
     - PASSWORD_VERIFICATION [reset password]
     """
     stored_token = server_db_.session.query(AuthenticationToken).filter_by(
-        token=token).first()
+        user_id=current_user.id, token_type=token_type).first()
     try:
         email = serializer_.loads(
             token,

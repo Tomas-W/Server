@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}
-Info
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for("static", filename="dist/info_css.min.css") }}">
 {% endblock %}
 
-{% block scripts %}
+{% block title %}
+Info
 {% endblock %}
 
 {% block content %}

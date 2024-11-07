@@ -59,13 +59,7 @@ def search(id_: int | None = None):
     if request.method == "POST":
         if bakery_search_form.validate_on_submit():
             search_results = process_bakery_form(bakery_search_form)
-            # print("********************")
-            # print("********************")
-            # print("********************")
-            # print(search_results)
-            # print("********************")
-            # print("********************")
-            # print("********************")
+
             session["bakery_search_results"] = search_results
             return redirect(url_for("bakery.search"))
         
@@ -81,7 +75,7 @@ def search(id_: int | None = None):
 
     return render_template(
         "bakery/search.html",
-        page=["search", "info", "programs"],
+        page=["search", "programs"],
         bakery_search_form=bakery_search_form,
         bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_search_errors=bakery_search_errors,
@@ -104,7 +98,6 @@ def zoeken(search_term: str):
 @bakery_bp.route("/bakery/health/<filename>")
 @login_required
 def bakery_health(filename):
-    # current_user.profile_icon = filename
     referrer = request.headers.get("Referer")
     if referrer:
         return redirect(referrer)

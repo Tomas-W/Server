@@ -16,32 +16,7 @@
      -->
 
     <!-- Style sheets -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/settings.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/forms_style.css") }}">
-    {% if "all_news" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news_base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/all_news.css") }}">
-    {% endif %}
-    {% if "news" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news_base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/news/news.css") }}">
-    {% endif %}
-    {% if "programs" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/programs.css") }}">
-    {% endif %}
-    {% if "info" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/info.css") }}">
-    {% endif %}
-    {% if "search" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/bakery_base.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bakery/search.css") }}">
-    {% endif %}
-    {% if "admin" in page %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/admin/admin_base.css") }}">
-    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="dist/base_css.min.css") }}">
 
     <title>
         {% block title %}

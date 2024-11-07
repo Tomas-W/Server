@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}
-Programs
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for("static", filename="dist/programs_css.min.css") }}">
 {% endblock %}
 
-{% block scripts %}
+{% block title %}
+Programs
 {% endblock %}
 
 {% block content %}
@@ -56,7 +57,7 @@ Programs
                     <div class="grid-item">
                         <a href="{{ url_for("bakery.info", id_=item.id) }}">
                             <p class="item-name">{{ item.name }}</p>
-                            <img class="{% if "programs" in page %}small-item-image{% else %}large-item-image{% endif %}" 
+                            <img class="grid-item-image" 
                                  src="{{ url_for("static", filename=item.image) }}" 
                                  alt="Bakery image">
                         </a>

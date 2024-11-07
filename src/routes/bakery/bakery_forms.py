@@ -30,6 +30,7 @@ class BakerySearchForm(FlaskForm):
     nutri_score = SelectField(
         label="Nutri score",
         choices=NUTRI_CHOICES,
+        render_kw={},
     )
     min_price = StringField(
         label="Min price",

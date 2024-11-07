@@ -52,8 +52,8 @@ def handle_fast_login(view_func):
     def wrapper(*args, **kwargs):
         if request.method == "POST":
             form_type = request.form.get("form_type")
-            session["fast_login"] = True
             if form_type == FAST_LOGIN_FORM_TYPE:
+                session["fast_login"] = True
                 fast_login_form = FastLoginForm()
                 if fast_login_form.validate_on_submit():
                     response, message = fast_login(fast_login_form)
@@ -115,10 +115,9 @@ def login():
 
         session["form_errors"] = login_form.errors
         flash(f"Remember me: {login_form.remember.data}")
-        return redirect(url_for(LOGIN_REDIRECT))
+        # return redirect(url_for(LOGIN_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
-    flash_messages = get_flashed_messages()
     
     return render_template(
         "/auth/login.html",
@@ -217,8 +216,6 @@ def set_password():
                 return redirect(url_for(LOGIN_REDIRECT))
 
         session["form_errors"] = set_password_form.errors
-        flash("T0000STER")
-        return redirect(url_for(SET_PASSWORD_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
 
@@ -259,10 +256,8 @@ def register():
 
         session["form_errors"] = register_form.errors
         flash("T0000STER")
-        return redirect(url_for(REGISTER_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
-    
     fill_email = session.pop("fill_email", None)
     if fill_email:
         register_form.email.data = fill_email
@@ -298,7 +293,6 @@ def request_reset():
         
         session["form_errors"] = request_reset_form.errors
         flash("T0000STER")
-        return redirect(url_for(REQUEST_RESET_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
 
@@ -348,8 +342,6 @@ def reset_password(token):
 
         session["form_errors"] = reset_password_form.errors
         session["last_form_type"] = "password"
-        return redirect(url_for(RESET_PASSWORD_REDIRECT, token=token))
-
 
     form_errors = session.pop("form_errors", None)
 

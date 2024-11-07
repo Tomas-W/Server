@@ -10,9 +10,10 @@
     <script src="https://kit.fontawesome.com/0a8b309a8e.js" crossorigin="anonymous"></script>
     <!-- Bootstrap -->
     <!-- Style sheets -->
-    <link rel="stylesheet" href="../static/css/settings.css">
-    <link rel="stylesheet" href="../static/css/auth/auth_base.css">
-    <link rel="stylesheet" href="../static/css/auth/auth.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="dist/auth_css.min.css") }}">
+    <!-- <link rel="stylesheet" href="{{ url_for("static", filename="css/settings.css") }}">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/auth/auth.css") }}">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/auth/auth_base.css") }}"> -->
 
     <title>
         {% block auth_title %}

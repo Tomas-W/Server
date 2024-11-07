@@ -136,8 +136,9 @@
 }
 
 .custom-checkbox:checked + .custom-checkbox-box {
-    border-color: var(--border-color);
-    border-width: 6px;
+    border-width: 5px;
+    border-color: var(--label-color);
+    border-radius: 50%;
 }
 
 .custom-checkbox:checked + .custom-checkbox-box + .notification-label {
@@ -147,12 +148,12 @@
 .custom-checkbox-box {
     width: 18px;
     height: 18px;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--gray4);
     margin-right: 10px;
     position: relative;
     transition: border-radius 0.3s ease-in-out,
                 border-width 0.3s ease-in-out;
-    border-radius: 5%;
+    border-radius: 3px;
 }
 
 .notification-label {

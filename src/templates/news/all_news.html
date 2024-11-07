@@ -1,5 +1,8 @@
 {% extends "news/news_base.html" %}
 
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for("static", filename="dist/all_news_css.min.css") }}">
+{% endblock %}
 
 {% block title %}
 All news

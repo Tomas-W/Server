@@ -26,7 +26,7 @@ Register
                 
                 <div class="form-item">
                     <div class="input-error-wrapper">
-                        {{ register_form.email(class="auth-input-field") }}
+                        {{ register_form.email(class="auth-input-field" + (" ph_red_color" if form_errors["email"] else "")) }}
                         {% if form_errors["email"] %}
                             <div class="auth-form-error"><strong>{{ form_errors["email"][0] }}</strong></div>
                         {% endif %}
@@ -36,7 +36,7 @@ Register
 
                 <div class="form-item">
                     <div class="input-error-wrapper">
-                        {{ register_form.username(class="auth-input-field") }}
+                        {{ register_form.username(class="auth-input-field" + (" ph_red_color" if form_errors["username"] else "")) }}
                         {% if form_errors["username"] %}
                             <div class="auth-form-error"><strong>{{ form_errors["username"][0] }}</strong></div>
                         {% endif %}

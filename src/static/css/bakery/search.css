@@ -1,3 +1,6 @@
+.top-panel {
+    padding: 20px 8% 0 8%;
+}
 
 .side-panel {
     padding: 55px 20px;
@@ -18,10 +21,6 @@
 
 .admin-input-field:not(:placeholder-shown) + .admin-form-label {
     display: block;
-}
-
-.custom-checkbox-wrapper {
-    width: 100%;
 }
 
 .custom-checkbox-box {
@@ -48,4 +47,48 @@
 .flex-space-between {
     display: flex;
     justify-content: space-between;
+}
+
+.nutri-select-field:focus {
+    background-color: var(--gray2);
+    /* border: 2px solid blue; */
+}
+
+
+@media (max-width: 474.98px) {
+    .form-item {
+        margin-bottom: 18px;
+    }
+    .admin-input-field,
+    .notification-label {
+        font-size: 0.95rem;
+    }
+    .lactose-label,
+    .vegan-label {
+        z-index: -1;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .form-item {
+        margin-bottom: 18px;
+    }
+    .admin-input-field,
+    .notification-label {
+        font-size: 0.95rem;
+    }
+    .lactose-label,
+    .vegan-label {
+        z-index: -1;
+    }
+
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
+
+@media (min-width: 1200px) {
 }

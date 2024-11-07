@@ -29,7 +29,7 @@ class RegisterForm(FlaskForm):
     """
     email = EmailField(
         label="Email",
-        render_kw={"placeholder": "Email", "autofocus": True},
+        render_kw={"placeholder": "Email"},
         validators=[
             EmailCheck(),
             EmailTakenCheck(),
@@ -41,7 +41,6 @@ class RegisterForm(FlaskForm):
         label="Username",
         render_kw={"placeholder": "Username"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             UsernameTakenCheck(),
             UsernameLengthCheck(),
             ForbiddenCheck(),
@@ -51,7 +50,6 @@ class RegisterForm(FlaskForm):
         label="Password",
         render_kw={"placeholder": "Password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
@@ -60,7 +58,6 @@ class RegisterForm(FlaskForm):
         label="Confirm password",
         render_kw={"placeholder": "Confirm password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
             EqualTo(fieldname="password", message=PWD_MATCH_MSG),
             PasswordCheck(),
             PasswordLengthCheck(),
@@ -83,7 +80,7 @@ class LoginForm(FlaskForm):
     """
     email_or_uname = EmailField(
         label="Email or username",
-        render_kw={"placeholder": "Email or username", "autofocus": True},
+        render_kw={"placeholder": "Email or username"},
         validators=[
             DataRequired(message=REQUIRED_FIELD_MSG),
         ]

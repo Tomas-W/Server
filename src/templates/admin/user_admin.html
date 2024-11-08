@@ -53,7 +53,7 @@ User Admin
 
                 <div class="form-item last-form-item">
                     <div class="input-error-wrapper">
-                        {{ verify_email_form.email(class="admin-input-field", placeholder=email) }}
+                        {{ verify_email_form.email(class="main-input-field", placeholder=email) }}
                         {% if verify_email_errors["email"] %}
                             <div class="admin-form-error"><strong>{{ verify_email_errors["email"][0] }}</strong></div>
                         {% endif %}
@@ -90,7 +90,7 @@ User Admin
                         <div class="form-item">
                             <div class="input-error-wrapper">
                                 {{ authentication_form.username(
-                                    class="admin-input-field" + (" ph_red_color" if authentication_errors["username"] else ""), 
+                                    class="main-input-field" + (" ph_red_color" if authentication_errors["username"] else ""), 
                                     placeholder=username_ph) }}
                                 {% if authentication_errors["username"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["username"][0] }}</strong></div>
@@ -102,7 +102,7 @@ User Admin
                         <div class="form-item">
                             <div class="input-error-wrapper">
                                 {{ authentication_form.email(
-                                    class="admin-input-field" + (" ph_red_color" if authentication_errors["email"] else ""),
+                                    class="main-input-field" + (" ph_red_color" if authentication_errors["email"] else ""),
                                     placeholder=email_ph) }}
                                 {% if authentication_errors["email"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["email"][0] }}</strong></div>
@@ -113,7 +113,7 @@ User Admin
 
                         <div class="form-item">
                             <div class="input-error-wrapper">
-                                {{ authentication_form.password(class="admin-input-field") }}
+                                {{ authentication_form.password(class="main-input-field") }}
                                 {% if authentication_errors["password"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["password"][0] }}</strong></div>
                                 {% endif %}
@@ -123,7 +123,7 @@ User Admin
 
                         <div class="form-item">
                             <div class="input-error-wrapper">
-                                {{ authentication_form.confirm_password(class="admin-input-field") }}
+                                {{ authentication_form.confirm_password(class="main-input-field") }}
                                 {% if authentication_errors["confirm_password"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["confirm_password"][0] }}</strong></div>
                                 {% endif %}
@@ -134,7 +134,7 @@ User Admin
                         <div class="form-item">
                             <div class="input-error-wrapper">
                                 {{ authentication_form.fast_name(
-                                    class="admin-input-field" + (" ph_red_color" if authentication_errors["fast_name"] else ""),
+                                    class="main-input-field" + (" ph_red_color" if authentication_errors["fast_name"] else ""),
                                     placeholder=fast_name_ph) }}
                                 {% if authentication_errors["fast_name"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["fast_name"][0] }}</strong></div>
@@ -145,7 +145,7 @@ User Admin
 
                         <div class="form-item last-form-item">
                             <div class="input-error-wrapper">
-                                {{ authentication_form.fast_code(class="admin-input-field") }}
+                                {{ authentication_form.fast_code(class="main-input-field") }}
                                 {% if authentication_errors["fast_code"] %}
                                     <div class="admin-form-error"><strong>{{ authentication_errors["fast_code"][0] }}</strong></div>
                                 {% endif %}
@@ -177,7 +177,7 @@ User Admin
                         <div class="form-item">
                             <div class="input-error-wrapper">
                                 {{ profile_form.display_name(
-                                    class="admin-input-field" + (" ph_red_color" if profile_errors["display_name"] else ""),
+                                    class="main-input-field" + (" ph_red_color" if profile_errors["display_name"] else ""),
                                     placeholder=display_name_ph) }}
                                 {% if profile_errors["display_name"] %}
                                     <div class="admin-form-error"><strong>{{ profile_errors["display_name"][0] }}</strong></div>
@@ -189,7 +189,7 @@ User Admin
                         <div class="form-item" style="margin-bottom: 43px;">
                             <div class="input-error-wrapper">
                                 {{ profile_form.country(
-                                    class="admin-input-field country-select-field" + (" ph_red_color" if profile_errors["country"] else ""),
+                                    class="main-input-field country-select-field" + (" ph_red_color" if profile_errors["country"] else ""),
                                     placeholder=country_ph) }}
                                 {% if profile_errors["country"] %}
                                     <div class="admin-form-error"><strong>{{ profile_errors["country"][0] }}</strong></div>
@@ -245,7 +245,7 @@ User Admin
                                 <label for="profile_picture" class="{% if file_name == '[ Select file ]' %} profile-picture-label {% else %} profile-picture-text {% endif %}">
                                     <span id="file-name-placeholder">{{ file_name }}</span>
                                 </label>
-                                {{ profile_form.profile_picture(class="admin-input-field", id="profile_picture") }}
+                                {{ profile_form.profile_picture(class="main-input-field", id="profile_picture") }}
                                 {% if profile_errors["profile_picture"] %}
                                     <div class="admin-form-error"><strong>{{ profile_errors["profile_picture"][0] }}</strong></div>
                                 {% endif %}
@@ -261,7 +261,7 @@ User Admin
                         
                         <div class="form-item last-form-item">
                             <div class="input-error-wrapper">
-                                {{ profile_form.about_me(class="admin-input-field", placeholder=about_me_ph) }}
+                                {{ profile_form.about_me(class="main-input-field", placeholder=about_me_ph) }}
                                 {% if profile_errors["about_me"] %}
                                     <div class="admin-form-error"><strong>{{ profile_errors["about_me"][0] }}</strong></div>
                                     {% endif %}
@@ -363,6 +363,18 @@ User Admin
             } else {
                 fileNamePlaceholder.textContent = "Choose file";
             }
+        });
+
+        // Remove the hash from the URL if present
+        if (window.location.hash) {
+            history.replaceState(null, "", window.location.href.split("#")[0]);
+        }
+
+        document.querySelectorAll(".side-panel-item").forEach(item => {
+            item.addEventListener("click", function() {
+                const targetElement = document.getElementById(item.dataset.target);
+                targetElement?.scrollIntoView({ behavior: "smooth" });
+            });
         });
     });
 </script>

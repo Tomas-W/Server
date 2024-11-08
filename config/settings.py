@@ -86,7 +86,7 @@ RESET_PASSWORD_FORM_TYPE: str = "reset_password_form"
 VERIFY_FORM_TYPE: str = "verify_form"
 AUTHENTICATION_FORM_TYPE: str = "authentication_form"
 PROFILE_FORM_TYPE: str = "profile_form"
-NOTIFICATION_SETTINGS_FORM_TYPE: str = "notification_settings_form"
+NOTIFICATIONS_FORM_TYPE: str = "notifications_form"
 COMMENT_FORM_TYPE: str = "comment_form"
 
 BAKERY_SEARCH_FORM_TYPE: str = "bakery_search_form"

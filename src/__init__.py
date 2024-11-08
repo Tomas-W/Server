@@ -17,6 +17,7 @@ from src.models.mod_utils import load_user
 
 from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
+from src.utils.misc_utils import clear_webassets_cache
 from src.extensions_utils import css_bundle
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
                              PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
@@ -167,8 +168,7 @@ def get_app(testing: bool = False) -> Flask:
         static_folder="static"
     )
     app_ = _configure_server(app_, testing=testing)
-    print(os.environ.get("FLASK_DEBUG_PIN"))
-
+    clear_webassets_cache()
     return app_
 
 

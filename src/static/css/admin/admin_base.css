@@ -119,11 +119,11 @@
     bottom: 195px;
 }
 
-.admin-input-field:not(:placeholder-shown) {
+.main-input-field:not(:placeholder-shown) {
     font-size: 1.2rem;
 }
 
-.admin-input-field.ph_red_color {
+.main-input-field.ph_red_color {
     color: var(--red);
     animation: revertColor 2s forwards;
 }
@@ -136,7 +136,7 @@
     .verify-wrapper {
         padding: 0 0 100px 0;
     }
-    .admin-input-field {
+    .main-input-field {
         font-size: var(--admin-form-input-size-s);
     }
     .profile-icon-wrapper {
@@ -159,7 +159,7 @@
     .verify-wrapper {
         padding: 0 0 100px 0;
     }
-    .admin-input-field {
+    .main-input-field {
         font-size: var(--admin-form-input-size-s);
     }
 }
@@ -171,7 +171,7 @@
     .verify-wrapper {
         padding: 0 0 100px 0;
     }
-    .admin-input-field {
+    .main-input-field {
         font-size: var(--admin-form-input-size-s);
     }
 }

@@ -23,8 +23,8 @@
     display: flex;
     align-items: center;
 }
-
-.admin-input-field {
+d
+.main-input-field {
     width: 100%;
     padding: 7px 0;
     flex-grow: 1;
@@ -37,7 +37,7 @@
     transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.admin-input-field:hover {	
+.main-input-field:hover {	
     color: var(--text-color-hover);
     border-bottom-color: var(--border-color-hover);
 }

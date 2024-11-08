@@ -19,7 +19,7 @@
     display: none;
 }
 
-.admin-input-field:not(:placeholder-shown) + .admin-form-label {
+.main-input-field:not(:placeholder-shown) + .admin-form-label {
     display: block;
 }
 
@@ -67,7 +67,7 @@
     .form-item {
         margin-bottom: 18px;
     }
-    .admin-input-field,
+    .main-input-field,
     .notification-label {
         font-size: 0.95rem;
     }
@@ -81,7 +81,7 @@
     .form-item {
         margin-bottom: 18px;
     }
-    .admin-input-field,
+    .main-input-field,
     .notification-label {
         font-size: 0.95rem;
     }

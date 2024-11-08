@@ -168,14 +168,14 @@ class ProfileForm(FlaskForm):
     submit = SubmitField(label="Update")
 
 
-class NotificationSettingsForm(FlaskForm):
+class NotificationsForm(FlaskForm):
     """
     Used on admin.user_admin page to update user's notification settings.
     """
     news_notifications = BooleanField(label="news notifications")
     comment_notifications = BooleanField(label="comment notifications")
     bakery_notifications = BooleanField(label="bakery notifications")
-    form_type = HiddenField(default="notification_settings_form")
+    form_type = HiddenField(default="notifications_form")
     submit = SubmitField(label="Update")
 
 class NewsForm(FlaskForm):

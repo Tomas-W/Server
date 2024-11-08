@@ -15,13 +15,13 @@ from src.routes.admin.admin_route_utils import (
     process_new_email_address
 )
 from src.routes.admin.admin_forms import (
-    NewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationSettingsForm
+    NewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
 )
 from config.settings import (
     EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
     AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT, ALL_NEWS_REDIRECT,
     VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE, PROFILE_FORM_TYPE,
-    NOTIFICATION_SETTINGS_FORM_TYPE
+    NOTIFICATIONS_FORM_TYPE
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -40,12 +40,12 @@ def user_admin():
     - NotificationsForm
     - SettingsForm
     """
+    form_type = request.form.get("form_type")
     verify_email_form: VerifyEmailForm = VerifyEmailForm()
     authentication_form: AuthenticationForm = AuthenticationForm()
     profile_form: ProfileForm = ProfileForm()
-    notification_settings_form: NotificationSettingsForm = NotificationSettingsForm()
-    form_type = request.form.get("form_type")
-    
+    notifications_form: NotificationsForm = NotificationsForm()
+       
     if request.method == "POST":
         if form_type == VERIFY_FORM_TYPE:
             if verify_email_form.validate_on_submit():
@@ -76,40 +76,57 @@ def user_admin():
                                         _anchor="authentication-wrapper"))
 
             session["authentication_errors"] = authentication_form.errors
+            
         
         elif form_type == PROFILE_FORM_TYPE:
             if profile_form.validate_on_submit():
-                clean_up_form_fields(profile_form)
-                process_profile_picture(profile_form)
-                process_admin_form(profile_form)
-                flash("Updated profile data")
+                if clean_up_form_fields(profile_form):
+                    flash("No changes made")
+
+                if process_profile_picture(profile_form):
+                    flash("Updated profile picture")
+                    
+                if process_admin_form(profile_form):
+                    flash("Updated profile data")
+                    
                 session["flash_type"] = "profile"  # To indicate flash position
                 session["_anchor"] = "profile-wrapper"
                 return redirect(url_for(USER_ADMIN_REDIRECT,
                                         _anchor="profile-wrapper"))
-
+            
             session["profile_errors"] = profile_form.errors
+            session["_anchor"] = "profile-wrapper"
         
-        elif form_type == NOTIFICATION_SETTINGS_FORM_TYPE:
-            if notification_settings_form.validate_on_submit():
-                clean_up_form_fields(notification_settings_form)
-                process_admin_form(notification_settings_form)
-                flash("Updated notification settings")
+        elif form_type == NOTIFICATIONS_FORM_TYPE:
+            if notifications_form.validate_on_submit():
+                if clean_up_form_fields(notifications_form):
+                    flash("No changes made")
+                    
+                if process_admin_form(notifications_form):
+                    flash("Updated notification settings")
+                else:
+                    flash("No changes made")
+                    
                 session["flash_type"] = "notifications"  # To indicate flash position
                 session["_anchor"] = "notification-settings-wrapper"
                 return redirect(url_for(USER_ADMIN_REDIRECT,
                                         _anchor="notifications-wrapper"))
-                
+            
+            session["_anchor"] = "notifications-wrapper"
+    
     verify_email_errors = session.pop("verify_email_errors", None)
     authentication_errors = session.pop("authentication_errors", None)
     profile_errors = session.pop("profile_errors", None)
     
     profile_form.country.data = current_user.country
-    notification_settings_form.news_notifications.data = current_user.news_notifications
-    notification_settings_form.comment_notifications.data = current_user.comment_notifications
-    notification_settings_form.bakery_notifications.data = current_user.bakery_notifications
+    profile_form.profile_picture.data = current_user.profile_picture
+    notifications_form.news_notifications.data = current_user.news_notifications
+    notifications_form.comment_notifications.data = current_user.comment_notifications
+    notifications_form.bakery_notifications.data = current_user.bakery_notifications
 
     flash_type = session.pop("flash_type", None)
+    _anchor = session.pop("_anchor", None)
+    print(f"*****ANCHOR: {_anchor}*******")
 
     return render_template(
         "admin/user_admin.html",
@@ -123,9 +140,10 @@ def user_admin():
         profile_form=profile_form,
         profile_errors=profile_errors,
         
-        notification_settings_form=notification_settings_form,
+        notification_settings_form=notifications_form,
         
         flash_type=flash_type,
+        _anchor=_anchor,
     )
 
 

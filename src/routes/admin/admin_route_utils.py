@@ -25,25 +25,19 @@ def add_news_message(title, content) -> None:
 def clean_up_form_fields(form: FlaskForm) -> bool:
     """
     Deletes fields that are empty, None, or in delete_fields from the form.
-    Skips fields that are in skip_fields.
     
     Returns True if no fields are left in the form, False otherwise.
     """
     delete_fields = {"form_type", "submit", "csrf_token"}
-    skip_fields = {"profile_picture"}
     empty_fields_to_delete = []
 
-    # Identify empty fields to delete
-    for field in form:
-        if field.name in skip_fields:
-            continue
-        
-        if field.data is None or field.data == "":  # Check for empty or None
+    for field in form:   
+        if field.data is None or field.data == "":
+            print("************")
+            print(f"deleting {field.name=}")
             empty_fields_to_delete.append(field.name)
 
-    # Combine fields to delete
     all_fields_to_delete = delete_fields.union(empty_fields_to_delete)
-    # Delete specified fields
     for field_name in all_fields_to_delete:
         if field_name in form._fields:
             del form._fields[field_name]
@@ -59,6 +53,13 @@ def process_admin_form(form: FlaskForm) -> bool:
       
     Returns True if any fields were updated, False otherwise.
     """
+    set_value_fields = ["country", "news_notifications", "comment_notifications",
+                        "bakery_notifications"]
+    for field_name in set_value_fields:
+        if field_name in form and getattr(current_user, field_name, None) == form[field_name].data:
+            print(f"*****NOT UPDATING {field_name}*******")
+            del form._fields[field_name]
+
     has_updated = False
     for field in form:
         method_name = f"set_{field.name}"
@@ -67,6 +68,8 @@ def process_admin_form(form: FlaskForm) -> bool:
 
             user_data = getattr(current_user, field.name, None)
             if user_data != field.data:
+                print("************")
+                print(f"SETTING {field.name=} to {field.data}")
                 method(field.data)
                 has_updated = True
     return has_updated
@@ -96,14 +99,17 @@ def process_profile_picture(form: FlaskForm) -> None:
       saves its path to the database, stores the file in the UPLOAD_FOLDER
       and removes the profile picture from the form to be processed further.
     """
-    if not form.profile_picture or not form.profile_picture.data:
-        return
+    if form.profile_picture.data:
+        current_user.set_profile_picture(form.profile_picture.data.filename)
+        profile_picture_data = form.profile_picture.data
+        if profile_picture_data:
+            profile_picture_data.save(os.path.join(
+                PROFILE_PICTURES_FOLDER,
+                profile_picture_data.filename)
+            )
+        del form["profile_picture"]
+        return True
     
-    profile_picture_data = form.profile_picture.data
-    if profile_picture_data:
-        current_user.profile_picture = profile_picture_data.filename
-        profile_picture_data.save(os.path.join(
-            PROFILE_PICTURES_FOLDER,
-            profile_picture_data.filename)
-        )
     del form["profile_picture"]
+    return False
+

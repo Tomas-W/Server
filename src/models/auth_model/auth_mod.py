@@ -6,7 +6,6 @@ from typing import Optional, List
 from flask_login import UserMixin
 from sqlalchemy import Boolean, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from src.extensions import server_db_, argon2_
 from src.models.mod_utils import set_updated_at
 

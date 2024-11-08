@@ -10,8 +10,7 @@
         {% include "admin/side_panel.html" %}
         
         <div class="main-content">
-            <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel">Admin</label>
+            <button id="toggle-top-panel-btn" class="side-panel-link">Admin</button>
 
             {% include "admin/top_panel.html" %}
             
@@ -23,9 +22,20 @@
 </section>
 
 <script>
+    const toggleButton = document.getElementById("toggle-top-panel-btn");
+    const topPanel = document.querySelector(".top-panel");
+
+    toggleButton.addEventListener("click", () => {
+        if (topPanel.style.display === "block") {
+            topPanel.style.display = "none";
+        } else {
+            topPanel.style.display = "block";
+        }
+    });
+
     document.querySelectorAll(".top-panel a").forEach(link => {
         link.addEventListener("click", () => {
-            document.getElementById("toggle-top-panel").checked = false;
+            topPanel.style.display = "none";
         });
     });
 </script>

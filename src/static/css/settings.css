@@ -112,10 +112,20 @@
 @media (min-width: 1200px) {
 }
 
+@keyframes revertColor {
+    0%, 35% {
+        color: var(--red);
+    }
+    100% {
+        color: var(--text-color);
+    }
+}
+
+
 
 /********* General settings *********/
 .ph_red_color {
-    color: var(--red)!important;
+    color: var(--red);
 }
 
 .break-words {

@@ -3,8 +3,9 @@ css_bundle = [
             "name": "auth_css",
             "files": [
                 "css/settings.css",
+                "css/forms_style.css",
                 "css/auth/auth_base.css",
-                "css/auth/auth.css"
+                "css/auth/auth.css",
             ],
             "filters": "rcssmin",
             "output": "dist/auth_css.min.css"
@@ -12,9 +13,9 @@ css_bundle = [
         {
             "name": "base_css",
             "files": [
-                "css/base.css",
                 "css/settings.css",
-                "css/forms_style.css"
+                "css/forms_style.css",
+                "css/base.css",
             ],
             "filters": "rcssmin",
             "output": "dist/base_css.min.css"
@@ -69,8 +70,8 @@ css_bundle = [
             "files": [
                 "css/bakery/bakery_base.css",
                 "css/bakery/search.css",
+                "css/bakery/programs.css",
                 "css/bakery/item_info.css",
-                "css/bakery/programs.css"
             ],
             "filters": "rcssmin",
             "output": "dist/search_css.min.css"

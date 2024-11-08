@@ -54,7 +54,6 @@
 }
 
 .admin-form-label {
-    /* display: none; */
     position: absolute;
     left: 0;
     bottom: 29px;
@@ -112,30 +111,9 @@
     display: inline-flex;
     align-items: center;
     position: relative;
-    padding: 5px 0;
     gap: 8px;
     border-bottom: 1px solid var(--border-color);
     transition: border-color 0.3s ease-in-out;
-}
-.custom-checkbox {
-    display: none;
-}
-
-.custom-checkbox-box {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin: 0 15px 0 0;
-    border: 2px solid var(--gray4);
-    vertical-align: middle;
-    transition: background-color 0.3s ease, border-color 0.3s ease, border-width 0.3s ease, border-radius 0.3s ease;
-    border-radius: 3px;
-}
-
-.custom-checkbox:checked + .custom-checkbox-box {
-    border-width: 5px;
-    border-color: var(--text-color);
-    border-radius: 50%;
 }
 
 .custom-checkbox-wrapper:hover {
@@ -148,20 +126,67 @@
     transition: color 0.3s ease-in-out;
 }
 
+.custom-checkbox {
+    display: none;
+}
 
+.medium-checkbox-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 15px 0 0;
+    border: 2px solid var(--gray4);
+    vertical-align: middle;
+    transition: border-color 0.3s ease,
+                border-width 0.3s ease,
+                border-radius 0.3s ease;
+    border-radius: 3px;
+}
+
+.small-checkbox-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--gray4);
+    margin-right: 10px;
+    position: relative;
+    transition: border-radius 0.3s ease-in-out,
+                border-width 0.3s ease-in-out;
+    border-radius: 3px;
+}
+
+.custom-checkbox:checked + .small-checkbox-box {
+    border-width: 4px;
+    border-color: var(--text-color);
+    border-radius: 50%;
+}
+
+.custom-checkbox:checked + .medium-checkbox-box {
+    border-width: 5px;
+    border-color: var(--text-color);
+    border-radius: 50%;
+}
+
+.custom-checkbox:checked + .small-checkbox-box + .notification-label {
+    color: var(--text-color);
+}
+
+.custom-checkbox:checked + .medium-checkbox-box + .notification-label {
+    color: var(--text-color);
+}
 
 .notification-item-flex {
     display: flex;
+    align-items: center;
     font-size: var(--admin-form-input-size);
     color: var(--label-color);
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: border-color 0.3s ease-in-out,
+                color 0.3s ease-in-out;
 }
 
 .notification-item-flex:hover {
-    border-bottom-color: var(--border-color-hover);
     color: var(--text-color);
     cursor: pointer;
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out;
 }
 
 .notification-label {
@@ -169,13 +194,10 @@
     padding: 7px 0;
     font-size: var(--admin-form-input-size);
     color: var(--label-color);
+    cursor: pointer;
     transition: color 0.3s ease-in-out;
 }
 
 .notification-label label {
     cursor: pointer;
-}
-
-.input-box-label-checked {
-    color: var(--text-color);
 }

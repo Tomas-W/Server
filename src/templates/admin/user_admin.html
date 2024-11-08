@@ -294,8 +294,10 @@ User Admin
                             <div class="notification-item-flex">
                                 <label class="custom-checkbox-wrapper">
                                     {{ notification_settings_form.news_notifications(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
-                                    
+                                    <span class="medium-checkbox-box"></span>
+                                    <span class="notification-label">
+                                        [ {{ notification_settings_form.news_notifications.label }} ]
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -304,8 +306,8 @@ User Admin
                             <div class="notification-item-flex">
                                 <label class="custom-checkbox-wrapper">
                                     {{ notification_settings_form.comment_notifications(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
-                                    <span class="notification-label {% if comment_notifications %}notification-label-checked{% endif %}">
+                                    <span class="medium-checkbox-box"></span>
+                                    <span class="notification-label">
                                         [ {{ notification_settings_form.comment_notifications.label }} ]
                                     </span>
                                 </label>
@@ -316,22 +318,20 @@ User Admin
                             <div class="notification-item-flex">
                                 <label class="custom-checkbox-wrapper">
                                     {{ notification_settings_form.bakery_notifications(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
-                                    <span class="notification-label {% if bakery_notifications %}notification-label-checked{% endif %}">
+                                    <span class="medium-checkbox-box"></span>
+                                    <span class="notification-label">
                                         [ {{ notification_settings_form.bakery_notifications.label }} ]
                                     </span>
                                 </label>
                             </div>
                         </div>
-                
+
                         {{ notification_settings_form.form_type }}
                         {{ notification_settings_form.hidden_tag() }}
                         <div class="admin-devider"> 
                             {{ notification_settings_form.submit(class="admin-btn", disabled=not email_verified) }}
                         </div>
                     </form>
-
-                    
                 </div>
             </div>
 

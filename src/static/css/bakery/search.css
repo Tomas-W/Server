@@ -23,8 +23,15 @@
     display: block;
 }
 
-.custom-checkbox-box {
-    margin: 0 0 0 auto;
+.custom-checkbox-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    padding: 7px 0;
+}
+
+.medium-checkbox-box {
+    margin: 0;
 }
 
 .lactose-label {
@@ -53,6 +60,7 @@
     background-color: var(--gray2);
     /* border: 2px solid blue; */
 }
+
 
 
 @media (max-width: 474.98px) {

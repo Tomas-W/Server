@@ -38,7 +38,7 @@ def clean_up_form_fields(form: FlaskForm) -> bool:
         if field.name in skip_fields:
             continue
         
-        if not field.data:  # Check for empty or None
+        if field.data is None or field.data == "":  # Check for empty or None
             empty_fields_to_delete.append(field.name)
 
     # Combine fields to delete
@@ -67,7 +67,6 @@ def process_admin_form(form: FlaskForm) -> bool:
 
             user_data = getattr(current_user, field.name, None)
             if user_data != field.data:
-                print(f"UPDATING {field.name=} {field.data=}")
                 method(field.data)
                 has_updated = True
     return has_updated

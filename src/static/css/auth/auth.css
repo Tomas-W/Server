@@ -65,7 +65,8 @@
     background-color: transparent;
     font-size: var(--auth-form-size);
     color: var(--text-color);
-    transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: border-color 0.3s ease-in-out,
+                color 0.3s ease-in-out;
 }
 
 .auth-input-field:hover {
@@ -79,6 +80,11 @@
 
 .auth-input-field:not(:placeholder-shown) {
     font-size: 1.2rem;
+}
+
+.auth-input-field.ph_red_color {
+    color: var(--red);
+    animation: revertColor 2s forwards;
 }
 
 .auth-form-error {
@@ -111,55 +117,16 @@
 .remember-devider {
     padding: 0 0 7px 0;
     margin-top: 10px;
-    border-bottom: 1px solid var(--border-color);
     transition: border-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .remember-devider:hover {
-    border-bottom-color: var(--border-color-hover);
     cursor: pointer;
-}
-
-.notification-item-flex {
-    display: flex;
-    align-items: center;
-}
-
-.custom-checkbox-wrapper {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.custom-checkbox {
-    display: none;
-}
-
-.custom-checkbox:checked + .custom-checkbox-box {
-    border-width: 5px;
-    border-color: var(--label-color);
-    border-radius: 50%;
-}
-
-.custom-checkbox:checked + .custom-checkbox-box + .notification-label {
-    color: var(--text-color);
-}
-
-.custom-checkbox-box {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--gray4);
-    margin-right: 10px;
-    position: relative;
-    transition: border-radius 0.3s ease-in-out,
-                border-width 0.3s ease-in-out;
-    border-radius: 3px;
 }
 
 .notification-label {
     color: var(--label-color-darker);
     font-size: var(--auth-form-size);
-    transition: color 0.3s ease-in-out;
 }
 
 .auth-devider {
@@ -228,7 +195,6 @@
     right: auto;
     background-color: var(--text-color-hover);
 }
-
 
 @media (max-width: 474.98px) {
     .auth-section {

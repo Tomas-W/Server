@@ -2,24 +2,6 @@
 
 {% block scripts %}
 <link rel="stylesheet" href="{{ url_for("static", filename="dist/search_css.min.css") }}">
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const checkboxes = document.querySelectorAll(".custom-checkbox");
-
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener("change", function() {
-            const label = checkbox.closest(".custom-checkbox-wrapper").querySelector(".notification-label");
-            if (checkbox.checked) {
-                label.style.color = "var(--text-color)";
-            } else {
-                label.style.color = "";
-            }
-        });
-        });
-    });
-</script>
-
 {% endblock %}
 
 {% block title %}
@@ -59,9 +41,9 @@ Search
                         <div class="form-item">
                             <div class="flex-space-between">
                                 <label class="custom-checkbox-wrapper">
-                                    <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
                                     {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
+                                    <span class="medium-checkbox-box"></span>
+                                    <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
                                 </label>
                             </div>
                         </div>
@@ -69,9 +51,9 @@ Search
                         <div class="form-item">
                             <div class="flex-space-between">
                                 <label class="custom-checkbox-wrapper">
-                                    <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
                                     {{ bakery_search_form.vegan(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
+                                    <span class="medium-checkbox-box"></span>
+                                    <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
                                 </label>
                             </div>
                         </div>
@@ -146,7 +128,7 @@ Search
                                 <label class="custom-checkbox-wrapper">
                                     <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
                                     {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
+                                    <span class="medium-checkbox-box"></span>
                                 </label>
                             </div>
                         </div>
@@ -156,7 +138,7 @@ Search
                                 <label class="custom-checkbox-wrapper">
                                     <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
                                     {{ bakery_search_form.vegan(class="custom-checkbox") }}
-                                    <span class="custom-checkbox-box"></span>
+                                    <span class="medium-checkbox-box"></span>
                                 </label>
                             </div>
                         </div>

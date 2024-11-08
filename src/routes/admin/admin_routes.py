@@ -110,10 +110,7 @@ def user_admin():
     notification_settings_form.bakery_notifications.data = current_user.bakery_notifications
 
     flash_type = session.pop("flash_type", None)
-    print("************")
-    print("************")
-    for form in authentication_form:
-        print(form.name, form.data)
+
     return render_template(
         "admin/user_admin.html",
         page=["admin"],

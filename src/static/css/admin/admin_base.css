@@ -119,6 +119,15 @@
     bottom: 195px;
 }
 
+.admin-input-field:not(:placeholder-shown) {
+    font-size: 1.2rem;
+}
+
+.admin-input-field.ph_red_color {
+    color: var(--red);
+    animation: revertColor 2s forwards;
+}
+
 
 @media (max-width: 474.98px) {
     .admin-content {
@@ -134,8 +143,6 @@
         flex-wrap: wrap;
         top: 10px;
         right: 0;
-    }
-    .profile-picture-field {
     }
     .profile-icon-label {
         padding-bottom: 47px;

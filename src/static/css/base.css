@@ -265,9 +265,11 @@
 .side-panel-link {
     display: none;
     padding: 15px 0;
+    width: 100%;
     background-color: var(--s-menu-color);
     text-align: center;
     text-decoration: none;
+    border: none;
     cursor: pointer;
     font-weight: 600;
     font-size: var(--side-panel-size);
@@ -360,9 +362,6 @@
 }
 
 @media (max-width: 474.98px) {
-    /* .base-link {
-        display: inline-block;
-    } */
     .side-panel {
         display: none;
     }

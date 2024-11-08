@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
+{% set BAKERY_REFINE_SEARCH_FORM_TYPE = "bakery_refine_search_form" %}
+
 {% block scripts %}
-<link rel="stylesheet" href="{{ url_for("static", filename="dist/search_css.min.css") }}">
+<link rel="preload" href="{{ url_for("static", filename="dist/search_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
+
 {% endblock %}
 
 {% block title %}
@@ -11,9 +14,13 @@ Search
 {% block content %}
 <section class="main-section">
     <div class="main-wrapper">
-
         <!-- Side panel -->
         <div class="side-panel">
+            {% if bakery_search_results_dicts %}
+                <div class="reset-search-wrapper reset-search-side">
+                    <a href="{{ url_for("bakery.search", reset=True) }}" class="reset-search-btn">Reset</a>
+                </div>
+            {% endif %}
             <p class="search-header">Search</p>
                 <div class="bakery-form-wrapper">
                     <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
@@ -85,7 +92,11 @@ Search
                             </div>
                         </div>
 
-                        {{ bakery_search_form.form_type }}
+                        {% if bakery_search_results_dicts %}
+                            {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
+                        {% else %}
+                            {{ bakery_search_form.form_type }}
+                        {% endif %}
                         {{ bakery_search_form.hidden_tag() }}
                         <div class="admin-devider"> 
                             {{ bakery_search_form.submit(class="admin-btn")}}
@@ -95,11 +106,18 @@ Search
         </div>
 
         <div class="main-content">
-            <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel">Search</label>
 
+            <div class="search-reset-wrapper">
+                <input type="checkbox" id="toggle-top-panel" style="display: none;">
+                <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">Search</label>
+                {% if bakery_search_results_dicts %}
+                    <div class="reset-search-wrapper reset-search-top">
+                        <a href="{{ url_for("bakery.search", reset=True) }}" class="reset-search-btn">Reset</a>
+                    </div>
+                {% endif %}
+            </div>
             <!-- Top panel -->
-            <div class="top-panel">
+            <div class="top-panel" id="top-panel" style="display: none;">
                 <div class="bakery-form-wrapper">
                     <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
                         <div class="form-item">
@@ -170,7 +188,11 @@ Search
                             </div>
                         </div>
 
-                        {{ bakery_search_form.form_type }}
+                        {% if bakery_search_results_dicts %}
+                            {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
+                        {% else %}
+                            {{ bakery_search_form.form_type }}
+                        {% endif %}
                         {{ bakery_search_form.hidden_tag() }}
                         <div class="admin-devider"> 
                             {{ bakery_search_form.submit(class="admin-btn")}}
@@ -185,20 +207,21 @@ Search
             {% else %}
 
             <!-- Content -->
-            <div class="programs-content">
+            <div class="programs-content blur-target">
                 <!-- All clickable search results -->
                 <div class="image-grid">
-                    {% for item in bakery_search_results_dicts %}
-                        <div class="grid-item">
-                        <a href="{{ url_for("bakery.search", id_=item.id) }}">
-                            <p class="item-name">{{ item.name }}</p>
-                            <img class="grid-item-image" 
-                                 src="{{ url_for("static", filename=item.image) }}" 
-                                 alt="Bakery image">
-                        </a>
-                        </div>
-                    {% endfor %}
-
+                    {% if bakery_search_results_dicts %}
+                        {% for item in bakery_search_results_dicts %}
+                            <div class="grid-item">
+                            <a href="{{ url_for("bakery.search", id_=item.id) }}">
+                                <p class="item-name">{{ item.name }}</p>
+                                <img class="grid-item-image" 
+                                    src="{{ url_for("static", filename=item.image) }}" 
+                                    alt="Bakery image">
+                            </a>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             {% endif %}

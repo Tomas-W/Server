@@ -111,13 +111,12 @@ class BakeryItem(server_db_.Model):
         self.image = image
     
     def update_search_field(self):
-        """Update search_field with combined values for text searching."""
         fields_to_search = [
-            self.name,
-            self.category,
-            self.type,
-            self.tags,
-            self.contains,
+            self.name.lower(),
+            self.category.lower(),
+            self.type.lower(),
+            self.tags.lower(),
+            self.contains.lower(),
         ]
         self.search_field = self._join(fields_to_search)
 
@@ -165,6 +164,7 @@ class BakeryItem(server_db_.Model):
             
             "contains": self._split(self.contains),
             "may_contain": self._split(self.may_contain),
+            "search_field": self._split(self.search_field),
             
             "image": self.image,
         }

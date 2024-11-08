@@ -1,13 +1,16 @@
 from datetime import timedelta
 import os
 
-from config.settings import DATABASE_URI, DEFAULT_LIMITS, UPLOAD_FOLDER
+from config.settings import DATABASE_URI, DEFAULT_LIMITS
 
 
 class BaseConfig(object):
     CONFIG_NAME = "base"
     SECRET_KEY = os.environ.get("FLASK_KEY")
     
+    COMPRESS_ALGORITHM = "gzip"
+    COMPRESS_LEVEL = 6
+    COMPRESS_MIN_SIZE = 500
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
     DEFAULT_LIMITS = DEFAULT_LIMITS
 

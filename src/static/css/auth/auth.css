@@ -78,10 +78,6 @@
     display: block;
 }
 
-.auth-input-field:not(:placeholder-shown) {
-    font-size: 1.2rem;
-}
-
 .auth-input-field.ph_red_color {
     color: var(--red);
     animation: revertColor 2s forwards;
@@ -103,8 +99,9 @@
     position: absolute;
     padding-right: 3px;
     left: 0;
-    top: -10px;
+    top: -5px;
     color: var(--auth-form-error-color);
+    font-style: italic;
     font-size: var(--auth-form-error-size);
     white-space: nowrap;
     transform: translateY(-50%);

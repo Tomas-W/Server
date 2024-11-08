@@ -57,12 +57,12 @@
     --fast-form-size: 1.05rem;
 
     --auth-btn-text-size: 3.25rem;
-    --auth-form-size: 1rem;
+    --auth-form-size: 1.1rem;
     --auth-flash-size: 1.1rem;
     --auth-form-error-size: 0.9rem;
     --auth-form-error-color: var(--label-color-darker);
 
-    --admin-form-input-size: 1.1rem;
+    --admin-form-input-size: 1.2rem;
     --admin-form-input-size-s: 0.9rem;
     --admin-notification-label-size-s: 1rem;
     --admin-header-size: 1.3rem;
@@ -139,9 +139,15 @@
 }
 
 .blur {
-    filter: blur(3px);
+    filter: blur(2px);
     transition: filter 0.2s ease-in-out;
 }
+
+.no-blur {
+    filter: blur(0px);
+    transition: filter 0.2s ease-in-out;
+}
+
 
 .italic {
     font-style: italic;
@@ -193,7 +199,7 @@
 
 
 * {
-    font-family: 'Montserrat';
+    font-family: "Host Grotesk", sans-serif;
     box-sizing: border-box;
     padding: 0;
     margin: 0;

@@ -10,7 +10,10 @@ from src.routes.bakery.bakery_forms import (
     BakerySearchForm
 )
 from src.routes.bakery.bakery_route_utils import (
-    process_bakery_form
+    process_bakery_form, refine_bakery_search
+)
+from config.settings import (
+    BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE
 )
 
 
@@ -53,29 +56,51 @@ def info(id_: int):
 @bakery_bp.route("/bakery/search", defaults={"id_": None}, methods=["GET", "POST"])
 @bakery_bp.route("/bakery/search/<id_>", methods=["GET", "POST"])
 @login_required
-def search(id_: int | None = None):
+def search(id_: int | None = None, reset: bool = False):
     bakery_search_form = BakerySearchForm()
+    form_type = request.form.get("form_type")
+    print("************")
+    print(f"form_type: {form_type}")
+    
+    reset = request.args.get("reset")
+    if reset:
+        session.pop("bakery_search_results")
+        print("************")
+        print("BEEN RESET")
+        return redirect(url_for("bakery.search"))
     
     if request.method == "POST":
-        if bakery_search_form.validate_on_submit():
-            search_results = process_bakery_form(bakery_search_form)
+        print("HERE")
+        if form_type == BAKERY_SEARCH_FORM_TYPE:
+            print("NO HERE")
+            if bakery_search_form.validate_on_submit():
+                search_results = process_bakery_form(bakery_search_form)
+                print("************")
+                print(f"search_results: {search_results}")
 
-            session["bakery_search_results"] = search_results
-            return redirect(url_for("bakery.search"))
+                session["bakery_search_results"] = search_results
+                return redirect(url_for("bakery.search"))
         
-        session["bakery_search_errors"] = bakery_search_form.errors
-        
-        
+        elif form_type == BAKERY_REFINE_SEARCH_FORM_TYPE:
+            if bakery_search_form.validate_on_submit():
+                search_results = session.pop("bakery_search_results", [])
+                search_results = refine_bakery_search(search_results, bakery_search_form)
+                session["bakery_search_results"] = search_results
+                return redirect(url_for("bakery.search"))
+            
+            session["bakery_search_errors"] = bakery_search_form.errors
+                    
     bakery_search_errors = session.pop("bakery_search_errors", None)
-    bakery_search_results_dicts = session.pop("bakery_search_results", [])
-    
+    bakery_search_results_dicts = session.get("bakery_search_results", None)
+    if bakery_search_results_dicts:
+        bakery_search_form.submit.label.text = "Refine"
     bakery_item_dict = None
     if id_:
         bakery_item_dict = get_item_by_id_dict(id_)
 
     return render_template(
         "bakery/search.html",
-        page=["search", "programs"],
+        page=["search"],
         bakery_search_form=bakery_search_form,
         bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_search_errors=bakery_search_errors,

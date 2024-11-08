@@ -22,7 +22,7 @@
 {% set file_name = "[ Select file ]" if not profile_picture else (profile_picture[:25] + ".." if profile_picture|length > 27 else profile_picture) %}
 
 {% block scripts %}
-<link rel="stylesheet" href="{{ url_for("static", filename="dist/admin_css.min.css") }}">
+<link rel="preload" href="{{ url_for("static", filename="dist/admin_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
 {% endblock %}
 
 
@@ -31,7 +31,7 @@ User Admin
 {% endblock %}
 
 {% block admin_content %}
-<div class="admin-content">
+<div class="admin-content blur-target">
 
     <!-- Display verification message if email is not verified -->
     {% if not email_verified %}

@@ -139,7 +139,7 @@ class RequestResetForm(FlaskForm):
     """
     email = EmailField(
         label="Email",
-        render_kw={"placeholder": "Example@example.com", "autofocus": True},
+        render_kw={"placeholder": "Example@example.com"},
         validators=[
             DataRequired(message=REQUIRED_FIELD_MSG),
             Email(message=INVALID_EMAIL_MSG),
@@ -162,7 +162,7 @@ class SetPasswordForm(FlaskForm):
     """
     password = PasswordField(
         label="Password",
-        render_kw={"placeholder": "Password", "autofocus": True},
+        render_kw={"placeholder": "Password"},
         validators=[
             DataRequired(message=REQUIRED_FIELD_MSG),
             PasswordCheck(),
@@ -195,7 +195,7 @@ class ResetPasswordForm(FlaskForm):
     """
     password = PasswordField(
         label="Password",
-        render_kw={"placeholder": "Password", "autofocus": True},
+        render_kw={"placeholder": "Password"},
         validators=[
             DataRequired(message=REQUIRED_FIELD_MSG),
             PasswordCheck(),

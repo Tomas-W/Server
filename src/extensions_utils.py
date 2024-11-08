@@ -75,5 +75,5 @@ css_bundle = [
             ],
             "filters": "rcssmin",
             "output": "dist/search_css.min.css"
-        }
+        },
     ]

@@ -1,7 +1,7 @@
 {% extends "news/news_base.html" %}
 
 {% block scripts %}
-<link rel="stylesheet" href="{{ url_for("static", filename="dist/all_news_css.min.css") }}">
+<link rel="preload" href="{{ url_for("static", filename="dist/all_news_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
 {% endblock %}
 
 {% block title %}
@@ -9,7 +9,7 @@ All news
 {% endblock %}
 
 {% block news_content %}
-<div class="all-news-content">
+<div class="all-news-content blur-target">
 
     <!-- Flashed messages -->
     {% if flash_type == "all_news" and get_flashed_messages() %}

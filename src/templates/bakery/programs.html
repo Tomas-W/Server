@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block scripts %}
-<link rel="stylesheet" href="{{ url_for("static", filename="dist/programs_css.min.css") }}">
+<link rel="preload" href="{{ url_for("static", filename="dist/programs_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
 {% endblock %}
 
 {% block title %}
@@ -30,9 +30,9 @@ Programs
         
         <!-- Content -->
         <div class="main-content">
-            <button id="toggle-top-panel-btn" class="side-panel-link">Programs</button>
-
-            <div class="top-panel">
+            <input type="checkbox" id="toggle-top-panel" style="display: none;">
+            <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">Programs</label>
+            <div class="top-panel" id="top-panel" style="display: none;">
                 <div class="top-panel-list">
                     <div class="top-panel-item"><a href="{{ url_for("bakery.program", program=1) }}">Program 1</a></div>
                     <div class="top-panel-item"><a href="{{ url_for("bakery.program", program=2) }}">Program 2</a></div>
@@ -49,7 +49,7 @@ Programs
             </div>
             
             <!-- Programs grid -->
-            <div class="programs-content">
+            <div class="programs-content blur-target">
                 <div class="image-grid">
                     <!-- Clickable items -->
                     {% for item in bakery_items_dicts %}

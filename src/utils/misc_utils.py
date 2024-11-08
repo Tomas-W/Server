@@ -7,22 +7,17 @@ import glob
 
 
 def clear_webassets_cache(cache_dir="C:/Coding/Projects/Server/src/static/.webassets-cache", max_files=10):
-    # Get a list of all files in the cache directory
     files = glob.glob(os.path.join(cache_dir, "*"))
     
-    # Check if the number of files exceeds the maximum allowed
     if len(files) > max_files:
-        # Sort files by modification time, oldest first
         files.sort(key=os.path.getmtime)
         
-        # Calculate how many files need to be removed
         files_to_remove = len(files) - max_files
-        print(f"*****FILES TO REMOVE: {files_to_remove}*******")
+        print(f"*********** TOTAL FILES: {len(files)} *****************")
+        print("*********************************************")
         
-        # Remove the oldest files
         for file in files[:files_to_remove]:
             os.remove(file)
-            print(f"Deleted: {file}")
 
 
 # def random_dates(count=20):

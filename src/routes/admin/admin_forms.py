@@ -30,7 +30,7 @@ class VerifyEmailForm(FlaskForm):
     #  If field is empty, current user's email is used.
     email = EmailField(
         label="Email",
-        render_kw={"placeholder": "Example@example.com", "autofocus": True},
+        render_kw={"placeholder": "Example@example.com"},
         validators=[
             VerifyEmailCheck(),
         ]

@@ -3,16 +3,22 @@
 }
 
 .side-panel {
-    padding: 55px 20px;
+    padding: 0;;
 }
+
 .search-content {
     padding: 75px;
 }
 
 .search-header {
-    padding: 0 0 10px 0;
+    padding: 0 0 10px 20px;
+    margin: 35px 0 0 0;
     font-size: var(--admin-header-size);
     color: var(--text-color);
+}
+
+.form-item {
+    padding: 0 20px;
 }
 
 .admin-form-label {
@@ -58,12 +64,52 @@
 
 .nutri-select-field:focus {
     background-color: var(--gray2);
-    /* border: 2px solid blue; */
 }
 
+.reset-search-wrapper {
+    width: 100%;
+    background-color: var(--s-menu-color);
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--side-panel-size);
+    color: var(--text-color);
+    user-select: none;
+    transition: color 0.3s ease-in-out;
+}
 
+.reset-search-wrapper:hover {
+    background-color: var(--s-menu-color-hover);
+    color: var(--white-100);
+    transition: color 0.3s ease-in-out;
+}
+
+.search-reset-wrapper {
+    display: flex;
+}
+
+.reset-search-top {
+    display: none;
+}
+
+.reset-search-btn {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 15px 0;
+}
 
 @media (max-width: 474.98px) {
+    .reset-search-side {
+        display: none;
+    }
+    .reset-search-top {
+        display: block;
+        margin: 0;
+        border-left: 1px solid var(--gray3);
+    }
     .form-item {
         margin-bottom: 18px;
     }
@@ -78,6 +124,15 @@
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
+    .reset-search-side {
+        display: none;
+    }
+    .reset-search-top {
+        display: block;
+        margin: 0;
+        border-left: 1px solid var(--gray3);
+    }
+    
     .form-item {
         margin-bottom: 18px;
     }

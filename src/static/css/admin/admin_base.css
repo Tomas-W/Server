@@ -119,10 +119,6 @@
     bottom: 195px;
 }
 
-.main-input-field:not(:placeholder-shown) {
-    font-size: 1.2rem;
-}
-
 .main-input-field.ph_red_color {
     color: var(--red);
     animation: revertColor 2s forwards;
@@ -183,13 +179,4 @@
 }
 
 @media (min-width: 1200px) {
-}
-
-/* Add this CSS to control the visibility of the top panel */
-#toggle-top-panel:checked ~ .main-content .top-panel {
-    display: none;
-}
-
-#toggle-top-panel:not(:checked) ~ .main-content .top-panel {
-    display: block;
 }

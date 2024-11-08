@@ -1,6 +1,7 @@
 import os
 
 from flask import current_app
+from flask_compress import Compress
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -36,3 +37,4 @@ flow_ = Flow.from_client_secrets_file(
         redirect_uri="http://localhost:5000/callback"
     )
 serializer_ = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))
+compress_ = Compress()

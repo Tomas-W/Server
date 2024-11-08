@@ -11,7 +11,7 @@ import secrets
 from flask_assets import Environment
 from flask_assets import Bundle
 from src.extensions import (server_db_, mail_, csrf_,
-                            login_manager_, migrater_, limiter_, session_
+                            login_manager_, migrater_, limiter_, session_, compress_
 )
 from src.models.mod_utils import load_user
 
@@ -98,6 +98,7 @@ def _configure_blueprints(app_: Flask) -> None:
     app_.register_blueprint(auth_bp)
     app_.register_blueprint(admin_bp)
     app_.register_blueprint(bakery_bp)
+    compress_.init_app(app_)
 
 
 def _configure_requests(app_: Flask) -> None:
@@ -106,20 +107,27 @@ def _configure_requests(app_: Flask) -> None:
             current_user.update_last_seen()
     
     def make_nonce():
-        if not getattr(request, 'csp_nonce', None):
+        if not getattr(request, "csp_nonce", None):
             request.csp_nonce = secrets.token_urlsafe(18)[:18]
     
     def add_security_headers(resp):
         resp.headers.update(HEADERS)
-        csp_header = resp.headers.get('Content-Security-Policy')
-        if csp_header and 'nonce' not in csp_header:
-            resp.headers['Content-Security-Policy'] = \
-                csp_header.replace('script-src', f"script-src 'nonce-{request.csp_nonce}'")
+        csp_header = resp.headers.get("Content-Security-Policy")
+        if csp_header and "nonce" not in csp_header:
+            resp.headers["Content-Security-Policy"] = \
+                csp_header.replace("script-src", f"script-src 'nonce-{request.csp_nonce}'")
         return resp
+
+    def add_cache_control_headers(response):
+        content_type = response.headers.get("Content-Type", "")
+        if "text/css" in content_type or "application/javascript" in content_type:
+            response.cache_control.max_age = 3600 * 24 * 7
+        return response
     
     app_.before_request(handle_user_activity)
-    # app_.before_request(make_nonce)
+    app_.before_request(make_nonce)
     # app_.after_request(add_security_headers)
+    app_.after_request(add_cache_control_headers)
 
 
 def _configure_cli(app_: Flask) -> None:

@@ -4,84 +4,74 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet">
-    <!-- Fav Icon -->
-    <!-- Flat Icon -->
-    <!-- Font awesome -->
-    <!-- jQuery scripts -->
-    <!-- Attribute 
-     flaticon
-     icons8
-     -->
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <!-- flaticon -->
+    <!-- icons8 -->
     <!-- Style sheets -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="dist/base_css.min.css") }}">
+    <link rel="preload" href="{{ url_for("static", filename="dist/base_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
 
     <title>
         {% block title %}
         {% endblock %}
     </title>
 
-    {% block scripts %}
-    {% endblock %}
-
+    <link rel="icon" href="{{ url_for("static", filename="images/favicon.png") }}" type="image/png">
+    
 </head>
 <body>
 
 <section class="navbar-section">
     <nav class="navbar">
         <div class="navbar-wrapper">
-            <a class="profile nav-link" href="{{ url_for('news.all_news') }}">
-                <img class="profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
+            <a class="profile nav-link" href="{{ url_for("news.all_news") }}">
+                <img class="profile-image" src="{{ url_for("static",
+                                           filename="images/user.png") }}" 
+                                           alt="Profile">
             </a>
             
             <div class="navbar-links">
-                <a class="nav-link" href="{{ url_for('news.all_news') }}">News</a>
-                <a class="nav-link" href="{{ url_for('bakery.programs') }}">Programs</a>
-                <a class="nav-link" href="{{ url_for('bakery.search') }}">Search</a>
-                <a class="nav-link" href="{{ url_for('admin.user_admin') }}">Admin</a>
+                <a class="nav-link" href="{{ url_for("news.all_news") }}">News</a>
+                <a class="nav-link" href="{{ url_for("bakery.programs") }}">Programs</a>
+                <a class="nav-link" href="{{ url_for("bakery.search") }}">Search</a>
+                <a class="nav-link" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
             <div class="logout">
-                <a class="logout-link nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                <a class="logout-link nav-link" href="{{ url_for("auth.logout") }}">Logout</a>
             </div>
         </div>
 
         <div class="navbar-s-wrapper">
-
-            <input type="checkbox" id="toggle-navbar-s" style="display: none;">
-            <label class="navbar-s-link navbar-s-menu" for="toggle-navbar-s">Menu</label>
-
-            <div class="navbar-s-content">
+            <button class="navbar-s-link navbar-s-menu" onclick="toggleNavbarS()">Menu</button>
+            <div class="navbar-s-content" id="navbar-s-content">
                 <ul class="navbar-s-links">
                     <li>
-                        <a class="navbar-s-link" href="{{ url_for('bakery.programs') }}">
+                        <a class="navbar-s-link" href="{{ url_for("bakery.programs") }}">
                             <div class="image-wrapper">
-                                <img class="s-profile-image profile-image" src="{{ url_for('static', filename='images/user.png') }}" alt="Profile">
+                                <img class="s-profile-image profile-image" src="{{ url_for("static",
+                                                                           filename="images/user.png") }}" 
+                                                                           alt="Profile">
                             </div>
                         </a>
                     </li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('news.all_news') }}">News</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('bakery.programs') }}">Programs</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('bakery.search') }}">Search</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('admin.user_admin') }}">Admin</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for('auth.logout') }}">Logout</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("news.all_news") }}">News</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.programs") }}">Programs</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.search") }}">Search</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("admin.user_admin") }}">Admin</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("auth.logout") }}">Logout</a></div></li>
                 </ul>
             </div>
         </div>
 
     </nav>
-
 </section>
 
 {% block content %}
-
 {% endblock %}
 
-
 <section class="footer-section">
-
     <div class="footer-section-wrapper">
 
         <p class="footer-title">Special thanks to:</p>
@@ -93,9 +83,64 @@
         </ul>
 
     </div>
-
-
 </section>
 
+<script>
+    function toggleTopPanel() {
+        var topPanel = document.getElementById("top-panel");
+        var sidePanelLink = document.querySelector(".side-panel-link");
+            // Toggle visibility
+        if (topPanel.style.display === "none") {
+            topPanel.style.display = "block";
+            // Change background
+            sidePanelLink.style.backgroundColor = "var(--s-menu-color-hover)";
+            // Change arrow direction
+            sidePanelLink.classList.add("active");
+        } else {
+            topPanel.style.display = "none";
+            sidePanelLink.style.backgroundColor = "";
+            sidePanelLink.classList.remove("active");
+        }
+        toggleBlur();
+    }
+
+    function toggleNavbarS() {
+        var navbarSContent = document.getElementById("navbar-s-content");
+        var navbarSLink = document.querySelector(".navbar-s-link");
+            // Toggle visibility
+        if (navbarSContent.style.display === "none" || navbarSContent.style.display === "") {
+            navbarSContent.style.display = "block";
+            // Change background
+            navbarSLink.style.backgroundColor = "var(--s-menu-color-hover)";
+            // Change arrow direction
+            navbarSLink.classList.add("active");
+        } else {
+            navbarSContent.style.display = "none";
+            navbarSLink.style.backgroundColor = "";
+            navbarSLink.classList.remove("active");
+        }
+    }
+
+    function toggleBlur() {
+        var topPanel = document.getElementById("top-panel");
+        var elements = document.querySelectorAll(".blur-target");
+            // Toggle blur
+        if (topPanel.style.display === "block") {
+            elements.forEach(function(element) {
+                element.classList.add("blur");
+                element.classList.remove("no-blur");
+            });
+        } else {
+            elements.forEach(function(element) {
+                element.classList.add("no-blur");
+                element.classList.remove("blur");
+            });
+        }
+    }
+</script>
+
+{% block scripts %}
+{% endblock %}
+<!-- <style>html{visibility: visible;opacity:1;}</style> -->
 </body>
 </html>

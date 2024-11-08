@@ -90,6 +90,7 @@ NOTIFICATIONS_FORM_TYPE: str = "notifications_form"
 COMMENT_FORM_TYPE: str = "comment_form"
 
 BAKERY_SEARCH_FORM_TYPE: str = "bakery_search_form"
+BAKERY_REFINE_SEARCH_FORM_TYPE: str = "bakery_refine_search_form"
 
 # Form messages
 EMAIL_TAKEN_MSG: str = "Email taken"

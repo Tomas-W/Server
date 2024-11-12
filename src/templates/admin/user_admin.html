@@ -206,35 +206,57 @@ User Admin
 
                                     <a href="{{ url_for("admin.profile_icon", filename="baguette1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "baguette1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="baguette1.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="baguette1.png") }}"
+                                                alt="baguette1"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="bread1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "bread1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="bread1.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="bread1.png") }}"
+                                                alt="bread1"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="bread2.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "bread2.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="bread2.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="bread2.png") }}"
+                                                alt="bread2"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="bread3.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "bread3.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="bread3.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="bread3.png") }}"
+                                                alt="bread3"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="cookie1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "cookie1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="cookie1.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="cookie1.png") }}"
+                                                alt="cookie1"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="croissant1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "croissant1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="croissant1.png") }}">
+                                                src="{{ url_for("profile_icons_folder",
+                                                filename="croissant1.png") }}"
+                                                alt="croissant1"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="donut1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "donut1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="donut1.png") }}">
+                                                src="{{ url_for("profile_icons_folder", filename="donut1.png") }}"
+                                                alt="donut1"
+                                                type="image/png">
                                     </a>
                                     <a href="{{ url_for("admin.profile_icon", filename="pie1.png") }}">
                                         <img class="profile-icon-img {% if profile_icon == "pie1.png" %}selected-profile-icon{% endif %}"
-                                                src="{{ url_for("profile_icons_folder", filename="pie1.png") }}">
+                                                src="{{ url_for("profile_icons_folder", filename="pie1.png") }}"
+                                                alt="pie1"
+                                                type="image/png">
                                     </a>
                                 </div>
                             </div>
@@ -255,7 +277,10 @@ User Admin
 
                         {% if profile_picture %}
                             <div class="profile-pic-div">
-                                <img class="profile-pic-img" src="{{ url_for("profile_picture_folder", filename=profile_picture) }}">
+                                <img class="profile-pic-img" src="{{ url_for("profile_picture_folder",
+                                                                   filename=profile_picture) }}"
+                                                                   alt="profile_picture"
+                                                                   type="image/png">
                             </div>
                         {% endif %}
                         

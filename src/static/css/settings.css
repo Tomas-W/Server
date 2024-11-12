@@ -140,12 +140,12 @@
 
 .blur {
     filter: blur(2px);
-    transition: filter 0.2s ease-in-out;
+    /* transition: filter 0.2s ease-in-out; */
 }
 
 .no-blur {
     filter: blur(0px);
-    transition: filter 0.2s ease-in-out;
+    /* transition: filter 0.2s ease-in-out; */
 }
 
 

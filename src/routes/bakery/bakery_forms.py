@@ -43,7 +43,9 @@ class BakerySearchForm(FlaskForm):
     )
     nasa = StringField(
         label="Nasa",
-        render_kw={"placeholder": "Nasa"},
+        render_kw={"placeholder": "Nasa",
+                   "inputmode": "numeric",
+                   "pattern": "[0-9]*"},
     )
     form_type = HiddenField(default=BAKERY_SEARCH_FORM_TYPE)
     submit = SubmitField("Search")

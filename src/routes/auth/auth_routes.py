@@ -51,11 +51,12 @@ def handle_fast_login(view_func):
     @wraps(view_func)
     def wrapper(*args, **kwargs):
         if request.method == "POST":
-            form_type = request.form.get("form_type")
-            if form_type == FAST_LOGIN_FORM_TYPE:
+            fast_login_form = FastLoginForm()
+            
+            if fast_login_form.fast_name.data is not None and fast_login_form.fast_code.data is not None:
                 session["fast_login"] = True
-                fast_login_form = FastLoginForm()
                 if fast_login_form.validate_on_submit():
+                    
                     response, message = fast_login(fast_login_form)
                     if response:
                         return response
@@ -115,7 +116,6 @@ def login():
 
         session["form_errors"] = login_form.errors
         flash(f"Remember me: {login_form.remember.data}")
-        # return redirect(url_for(LOGIN_REDIRECT))
 
     form_errors = session.pop("form_errors", None)
     

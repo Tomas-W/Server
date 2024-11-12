@@ -9,20 +9,24 @@
         <img class="item-info-image" 
             src="{{ url_for("static",
             filename=bakery_item_dict.image) }}" 
-            alt="Bakery image"> 
+            alt="Bakery image"
+            type="image/png"> 
 
         <div class="main-info-wrapper">
             <!-- Health info -->
             <div class="health-wrapper">
                 <img class="health-info" src="{{ url_for("bakery_health_folder",
                                         filename=nutri_image) }}"
-                                        alt="Nutri image">
+                                        alt="Nutri"
+                                        type="image/png">
                 <img class="health-info" src="{{ url_for("bakery_health_folder",
                                         filename=vegan_image) }}"
-                                        alt="Vegan image">
+                                        alt="Vegan"
+                                        type="image/png">
                 <img class="health-info" src="{{ url_for("bakery_health_folder",
                                         filename=lactose_image) }}"
-                                        alt="Lactose image">
+                                        alt="Lactose"
+                                        type="image/png">
             </div>
 
             <!-- Item info -->

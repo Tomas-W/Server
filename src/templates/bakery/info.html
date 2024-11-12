@@ -41,23 +41,6 @@ Info
         </div>        
     </div>
 </section>
-<script>
-    const toggleButton = document.getElementById("toggle-top-panel-btn");
-    const topPanel = document.querySelector(".top-panel");
 
-    toggleButton.addEventListener("click", () => {
-        if (topPanel.style.display === "block") {
-            topPanel.style.display = "none";
-        } else {
-            topPanel.style.display = "block";
-        }
-    });
-
-    document.querySelectorAll(".top-panel a").forEach(link => {
-        link.addEventListener("click", () => {
-            topPanel.style.display = "none";
-        });
-    });
-</script>
 {% endblock %}
 

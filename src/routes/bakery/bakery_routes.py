@@ -2,7 +2,6 @@ from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 from flask import request, redirect, url_for, session
 
-from src.models.bakery_model.bakery_mod import BakeryItem
 from src.models.bakery_model.bakery_mod_utils import (
     get_program_items_dicts, get_item_by_id_dict, get_program_ids_and_names
 )
@@ -10,7 +9,7 @@ from src.routes.bakery.bakery_forms import (
     BakerySearchForm
 )
 from src.routes.bakery.bakery_route_utils import (
-    process_bakery_form, refine_bakery_search
+    process_bakery_form
 )
 from config.settings import (
     BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE
@@ -59,18 +58,14 @@ def info(id_: int):
 def search(id_: int | None = None, reset: bool = False):
     bakery_search_form = BakerySearchForm()
     form_type = request.form.get("form_type")
-    print("************")
-    print(f"form_type: {form_type}")
-    
+
     reset = request.args.get("reset")
     if reset:
-        session.pop("bakery_search_results")
-        print("************")
-        print("BEEN RESET")
+        session.pop("bakery_search_results", None)
+        session.pop("bakery_search_input", None)
         return redirect(url_for("bakery.search"))
     
     if request.method == "POST":
-        print("HERE")
         if form_type == BAKERY_SEARCH_FORM_TYPE:
             print("NO HERE")
             if bakery_search_form.validate_on_submit():
@@ -79,21 +74,30 @@ def search(id_: int | None = None, reset: bool = False):
                 print(f"search_results: {search_results}")
 
                 session["bakery_search_results"] = search_results
+                session["bakery_search_input"] = bakery_search_form.data
                 return redirect(url_for("bakery.search"))
         
         elif form_type == BAKERY_REFINE_SEARCH_FORM_TYPE:
             if bakery_search_form.validate_on_submit():
                 search_results = session.pop("bakery_search_results", [])
-                search_results = refine_bakery_search(search_results, bakery_search_form)
+                search_results = process_bakery_form(bakery_search_form)
                 session["bakery_search_results"] = search_results
+                session["bakery_search_input"] = bakery_search_form.data
                 return redirect(url_for("bakery.search"))
             
             session["bakery_search_errors"] = bakery_search_form.errors
-                    
+    
+    bakery_search_input = session.get("bakery_search_input", None)
+    if bakery_search_input:
+        bakery_search_form.process(data=bakery_search_input)
+        bakery_search_form.min_price.data = f"{float(bakery_search_form.min_price.data):.2f}"
+        bakery_search_form.max_price.data = f"{float(bakery_search_form.max_price.data):.2f}"
+    
     bakery_search_errors = session.pop("bakery_search_errors", None)
     bakery_search_results_dicts = session.get("bakery_search_results", None)
     if bakery_search_results_dicts:
         bakery_search_form.submit.label.text = "Refine"
+        
     bakery_item_dict = None
     if id_:
         bakery_item_dict = get_item_by_id_dict(id_)
@@ -108,17 +112,6 @@ def search(id_: int | None = None, reset: bool = False):
         bakery_item_dict=bakery_item_dict,
     )
 
-@bakery_bp.route("/bakery/zoeken/<search_term>")
-@login_required
-def zoeken(search_term: str):
-    results = BakeryItem.search(search_term)
-    bakery_items_dicts = [item.to_dict() for item in results]
-    
-    return render_template(
-        "bakery/programs.html",
-        page=["programs"],
-        bakery_items_dicts=bakery_items_dicts,
-    )
 
 @bakery_bp.route("/bakery/health/<filename>")
 @login_required

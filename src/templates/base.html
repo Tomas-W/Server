@@ -28,18 +28,19 @@
             <a class="profile nav-link" href="{{ url_for("news.all_news") }}">
                 <img class="profile-image" src="{{ url_for("static",
                                            filename="images/user.png") }}" 
-                                           alt="Profile">
+                                           alt="Profile"
+                                           type="image/png">
             </a>
             
             <div class="navbar-links">
-                <a class="nav-link" href="{{ url_for("news.all_news") }}">News</a>
-                <a class="nav-link" href="{{ url_for("bakery.programs") }}">Programs</a>
-                <a class="nav-link" href="{{ url_for("bakery.search") }}">Search</a>
-                <a class="nav-link" href="{{ url_for("admin.user_admin") }}">Admin</a>
+                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("news.all_news") }}">News</a>
+                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("bakery.programs") }}">Programs</a>
+                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("bakery.search") }}">Search</a>
+                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
             <div class="logout">
-                <a class="logout-link nav-link" href="{{ url_for("auth.logout") }}">Logout</a>
+                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("auth.logout") }}">Logout</a>
             </div>
         </div>
 
@@ -52,7 +53,8 @@
                             <div class="image-wrapper">
                                 <img class="s-profile-image profile-image" src="{{ url_for("static",
                                                                            filename="images/user.png") }}" 
-                                                                           alt="Profile">
+                                                                           alt="Profile"
+                                                                           type="image/png">
                             </div>
                         </a>
                     </li>
@@ -137,10 +139,18 @@
             });
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var topPanelLinks = document.querySelectorAll("#top-panel a");
+        topPanelLinks.forEach(function(link) {
+            link.addEventListener("click", function() {
+                toggleTopPanel();
+            });
+        });
+    });
 </script>
 
 {% block scripts %}
 {% endblock %}
-<!-- <style>html{visibility: visible;opacity:1;}</style> -->
 </body>
 </html>

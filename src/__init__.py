@@ -120,8 +120,10 @@ def _configure_requests(app_: Flask) -> None:
 
     def add_cache_control_headers(response):
         content_type = response.headers.get("Content-Type", "")
-        if "text/css" in content_type or "application/javascript" in content_type:
-            response.cache_control.max_age = 3600 * 24 * 7
+        if "text/css" in content_type or "application/javascript" in content_type or "image/" in content_type:
+            response.cache_control.public = True
+            response.cache_control.max_age = 3600 * 24 * 7  # 7 days
+            response.expires = 3600 * 24 * 7
         return response
     
     app_.before_request(handle_user_activity)

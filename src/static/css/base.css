@@ -36,19 +36,39 @@
 }
 
 .nav-link {
-    color: var(--text-color);
+    position: relative;
     font-size: var(--nav-link-size);
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 5px;
-    text-decoration-color: var(--white-0);
-    transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--text-color);
+    white-space: nowrap;
 }
 
-.nav-link:hover {
-    text-decoration-color: var(--white-100);
-    color: var(--white-100);
-    transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -3px;
+    right: 0;
+    background-color: var(--text-color);
+}
+
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:focus-within {
+    color: var(--white-100)!important;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover::after,
+.nav-link:focus::after,
+.nav-link:focus-within::after {
+    width: 100%;
+    left: 0;
+    right: auto;
+    background-color: var(--text-color-hover);
+    transition: width 0.3s ease-in-out,
+                background-color 0.3s ease-in-out;
 }
 
 .logout {
@@ -83,7 +103,6 @@
     font-size: var(--side-panel-size);
     color: var(--text-color);
     user-select: none;
-    transition: color 0.3s ease-in-out;
 }
 
 .navbar-s-link:hover {
@@ -235,7 +254,6 @@
     text-decoration: none;
     color: var(--text-color);
     white-space: nowrap;
-    transition: color 0.3s ease-in-out;
 }
 
 .side-panel-item::after {

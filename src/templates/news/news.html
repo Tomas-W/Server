@@ -68,13 +68,15 @@ News
                         <a class="disable-a" href="{{ url_for("news.like_news", id_=news_dict.id) }}">
                             <img class="like-icon" src="{{ url_for("static",
                                                    filename="images/like_col_xl.png") }}" 
-                                                   alt="Like"></a>
+                                                   alt="Like"
+                                                   type="image/png"></a>
                     {% else %}
                         <p>{{ news_dict.liked_by|length }}</p>
                         <a href="{{ url_for("news.like_news", id_=news_dict.id) }}">
                             <img class="like-icon" src="{{ url_for("static",
                                                    filename="images/like_xl.png") }}" 
-                                                   alt="Like"></a>
+                                                   alt="Like"
+                                                   type="image/png"></a>
                     {% endif %}
                 </div>
 
@@ -84,13 +86,15 @@ News
                         <a class="disable-a" href="{{ url_for("news.dislike_news", id_=news_dict.id) }}">
                             <img class="dislike-icon" src="{{ url_for("static",
                                                       filename="images/dislike_col_xl.png") }}" 
-                                                      alt="Dislike"></a>
+                                                      alt="Dislike"
+                                                      type="image/png"></a>
                         <p>{{ news_dict.disliked_by|length }}</p>
                     {% else %}
                         <a href="{{ url_for("news.dislike_news", id_=news_dict.id) }}">
                             <img class="dislike-icon" src="{{ url_for("static",
                                                       filename="images/dislike_xl.png") }}" 
-                                                      alt="Dislike"></a>
+                                                      alt="Dislike"
+                                                      type="image/png"></a>
                         <p>{{ news_dict.disliked_by|length }}</p>
                     {% endif %}
                 </div>
@@ -108,13 +112,15 @@ News
                     <p class="view-count">{{ news_dict.seen_by|length }}</p>
                     <img class="view-icon" src="{{ url_for("static",
                                            filename="images/views.png") }}" 
-                                           alt="Comments">
+                                           alt="Comments"
+                                           type="image/png">
                 </div>
                 <div class="icon-content">
                     <p class="comment-count">{{ news_dict.comments|length }}</p>
                     <img class="comment-icon" src="{{ url_for("static",
                                                filename="images/comments.png") }}" 
-                                               alt="Comments">
+                                               alt="Comments"
+                                               type="image/png">
                 </div>
             </div>
 
@@ -154,7 +160,10 @@ News
                             <div class="comment-header">
                                 <div class="comment-profile-icon-wrapper">
                                     {% if current_user.profile_icon %}
-                                        <img class="comment-profile-icon" src="{{ url_for("profile_icons_folder", filename=current_user.profile_icon) }}" alt="">
+                                        <img class="comment-profile-icon" src="{{ url_for("profile_icons_folder",
+                                                                          filename=current_user.profile_icon) }}"
+                                                                          alt="profile icon"
+                                                                          type="image/png">
                                     {% endif %}
                                 </div>
                                 <div>
@@ -174,11 +183,13 @@ News
                                     {% if current_user.id|string in comment.liked_by %}
                                         <img class="like-comment-icon" src="{{ url_for("static",
                                                                        filename="images/like_col_xs.png") }}" 
-                                                                       alt="Like">
+                                                                       alt="Like"
+                                                                       type="image/png">
                                     {% else %}
                                         <img class="like-comment-icon" src="{{ url_for("static",
                                                                        filename="images/like_xs.png") }}" 
-                                                                       alt="Like">
+                                                                       alt="Like"
+                                                                       type="image/png">
                                     {% endif %}
                                     <p class="comment-like-count">{{ comment.liked_by|length }}</p>
                                 </div>
@@ -190,11 +201,13 @@ News
                                     {% if current_user.id|string in comment.disliked_by %}
                                         <img class="dislike-comment-icon" src="{{ url_for("static",
                                                                           filename="images/dislike_col_xs.png") }}" 
-                                                                          alt="Dislike">
+                                                                          alt="Dislike"
+                                                                          type="image/png">
                                     {% else %}
                                         <img class="dislike-comment-icon" src="{{ url_for("static",
                                                                           filename="images/dislike_xs.png") }}" 
-                                                                          alt="Dislike">
+                                                                          alt="Dislike"
+                                                                          type="image/png">
                                     {% endif %}
                                     <p class="comment-dislike-count">{{ comment.disliked_by|length }}</p>
                                 </div>
@@ -216,7 +229,8 @@ News
     <a href="#like-dislike" class="scroll-to-top">
         <img src="{{ url_for("static",
              filename="images/scroll_up.png") }}" 
-             alt="Go up">
+             alt="Go up"
+             type="image/png">
     </a>
 </div>
 {% endblock %}

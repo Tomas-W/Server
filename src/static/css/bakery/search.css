@@ -12,7 +12,7 @@
 
 .search-header {
     padding: 0 0 10px 20px;
-    margin: 35px 0 0 0;
+    margin: 35px 0 15px 0;
     font-size: var(--admin-header-size);
     color: var(--text-color);
 }

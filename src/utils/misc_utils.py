@@ -2,7 +2,7 @@ import os
 import glob
 # from datetime import datetime, timedelta
 # import random
-# from PIL import Image
+from PIL import Image
 # from rembg import remove
 
 
@@ -26,11 +26,21 @@ def clear_webassets_cache(cache_dir="C:/Coding/Projects/Server/src/static/.webas
 #     return sorted(datetime.fromtimestamp(random.randint(int(start_date.timestamp()), int(end_date.timestamp()))).strftime("%d %b %H:%M") for _ in range(count))
 
 
-# def resize_image(input_path, output_path, size):
-#     with Image.open(input_path) as img:
-#         img = img.convert("RGB")
-#         img = img.resize(size, Image.LANCZOS)
-#         img.save(output_path)
+def resize_image(input_path, output_path, size):
+    with Image.open(input_path) as img:
+        img = img.convert("RGBA")
+        img = img.resize(size, Image.LANCZOS)
+        img.save(output_path)
+        
+# if __name__ == "__main__":
+#     for root, dirs, files in os.walk("C:/Coding/Projects/Server/backups/images/bakery smaller/New folder"):
+#         for image in files:
+#             input_path = os.path.join(root, image)
+#             relative_path = os.path.relpath(root, "C:/Coding/Projects/Server/backups/images/bakery smaller/New folder")
+#             output_dir = os.path.join("C:/Coding/Projects/Server/backups/images/bakery smaller/New folder/new", relative_path)
+#             os.makedirs(output_dir, exist_ok=True)
+#             output_path = os.path.join(output_dir, image)
+#             resize_image(input_path, output_path, (200, 200))
 
 # def process_images(root_folder):
 #     sizes = [(400, 400), (300, 300), (200, 200), (100, 100), (50, 50)]
@@ -61,7 +71,6 @@ def clear_webassets_cache(cache_dir="C:/Coding/Projects/Server/src/static/.webas
 #             output_file_path = os.path.join(folder_path, file.split(".")[0] + "0.png")
 #             with open(output_file_path, "wb") as output_file:
 #                 output_file.write(output_image)
-
 
 # def remove_background_by_file(input_image_path):
 #     with open(input_image_path, "rb") as input_file:

@@ -72,15 +72,15 @@ Search
                         </div>
 
                         <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.min_price(class="main-input-field") }}
+                            <div class="input-error-wrapper outline-bottom">
+                                <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
                                 <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
                             </div>
                         </div>
 
                         <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.max_price(class="main-input-field") }}
+                            <div class="input-error-wrapper outline-bottom">
+                                <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
                                 <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
                             </div>
                         </div>
@@ -168,15 +168,15 @@ Search
                         </div>
 
                         <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.min_price(class="main-input-field") }}
+                            <div class="input-error-wrapper outline-bottom">
+                                <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
                                 <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
                             </div>
                         </div>
 
                         <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.max_price(class="main-input-field") }}
+                            <div class="input-error-wrapper outline-bottom">
+                                <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
                                 <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
                             </div>
                         </div>
@@ -217,7 +217,8 @@ Search
                                 <p class="item-name">{{ item.name }}</p>
                                 <img class="grid-item-image" 
                                     src="{{ url_for("static", filename=item.image) }}" 
-                                    alt="Bakery image">
+                                    alt="{{ item.name }}"
+                                    type="image/png">
                             </a>
                             </div>
                         {% endfor %}

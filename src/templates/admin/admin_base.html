@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
+Admin
 {% endblock %}
 
 {% block content %}
@@ -11,7 +12,9 @@
         
         <div class="main-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">Admin</label>
+            <label class="side-panel-link"
+                   for="toggle-top-panel"
+                   onclick="toggleTopPanel()">Admin</label>
             {% include "admin/top_panel.html" %}
             
             {% block admin_content %}

@@ -10,14 +10,21 @@
     <!-- flaticon -->
     <!-- icons8 -->
     <!-- Style sheets -->
-    <link rel="preload" href="{{ url_for("static", filename="dist/base_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload"
+          href="{{ url_for("static", 
+          filename="dist/base_css.min.css") }}" 
+          as="style" 
+          onload="this.rel='stylesheet'">
 
     <title>
         {% block title %}
         {% endblock %}
     </title>
 
-    <link rel="icon" href="{{ url_for("static", filename="images/favicon.png") }}" type="image/png">
+    <link rel="icon"
+          href="{{ url_for("static", 
+          filename="images/favicon.png") }}" 
+          type="image/png">
     
 </head>
 <body>
@@ -33,14 +40,14 @@
             </a>
             
             <div class="navbar-links">
-                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("news.all_news") }}">News</a>
-                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("bakery.programs") }}">Programs</a>
-                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("bakery.search") }}">Search</a>
-                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("admin.user_admin") }}">Admin</a>
+                <a class="nav-link" href="{{ url_for("news.all_news") }}">News</a>
+                <a class="nav-link" href="{{ url_for("bakery.programs") }}">Programs</a>
+                <a class="nav-link" href="{{ url_for("bakery.search") }}">Search</a>
+                <a class="nav-link" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
             <div class="logout">
-                <a class="nav-link" style="color: var(--text-color);" href="{{ url_for("auth.logout") }}">Logout</a>
+                <a class="nav-link" href="{{ url_for("auth.logout") }}">Logout</a>
             </div>
         </div>
 

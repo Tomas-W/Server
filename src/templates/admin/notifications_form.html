@@ -1,0 +1,57 @@
+<!-- Notifications flash messages -->
+<div id="notifications-wrapper" class="notifications-wrapper">
+    {% if flash_type == "notifications" and get_flashed_messages() %}
+        <div class="admin-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+        </div>
+    {% endif %} 
+
+    <!-- Notifications form -->
+    <div class="admin-form-wrapper">
+        <p class="admin-form-header smaller-padding">Notification settings</p>
+        <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+            
+            <div class="form-item notification-item-wrapper">
+                <div class="notification-item-flex">
+                    <label class="custom-checkbox-wrapper">
+                        {{ notification_settings_form.news_notifications(class="custom-checkbox") }}
+                        <span class="medium-checkbox-box"></span>
+                        <span class="notification-label">
+                            [ {{ notification_settings_form.news_notifications.label }} ]
+                        </span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-item notification-item-wrapper">
+                <div class="notification-item-flex">
+                    <label class="custom-checkbox-wrapper">
+                        {{ notification_settings_form.comment_notifications(class="custom-checkbox") }}
+                        <span class="medium-checkbox-box"></span>
+                        <span class="notification-label">
+                            [ {{ notification_settings_form.comment_notifications.label }} ]
+                        </span>
+                    </label>
+                </div>
+            </div>
+    
+            <div class="form-item last-form-item notification-item-wrapper">
+                <div class="notification-item-flex">
+                    <label class="custom-checkbox-wrapper">
+                        {{ notification_settings_form.bakery_notifications(class="custom-checkbox") }}
+                        <span class="medium-checkbox-box"></span>
+                        <span class="notification-label">
+                            [ {{ notification_settings_form.bakery_notifications.label }} ]
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            {{ notification_settings_form.form_type }}
+            {{ notification_settings_form.hidden_tag() }}
+            <div class="admin-devider"> 
+                {{ notification_settings_form.submit(class="admin-btn", disabled=not email_verified) }}
+            </div>
+        </form>
+    </div>
+</div>

@@ -18,7 +18,9 @@ Search
         <div class="side-panel">
             {% if bakery_search_results_dicts %}
                 <div class="reset-search-wrapper reset-search-side">
-                    <a href="{{ url_for("bakery.search", reset=True) }}" class="reset-search-btn">Reset</a>
+                    <a href="{{ url_for("bakery.search",
+                       reset=True) }}" 
+                       class="reset-search-btn">Reset</a>
                 </div>
             {% endif %}
             <p class="search-header">Search</p>
@@ -108,11 +110,17 @@ Search
         <div class="main-content">
 
             <div class="search-reset-wrapper">
-                <input type="checkbox" id="toggle-top-panel" style="display: none;">
-                <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">Search</label>
+                <input type="checkbox"
+                       id="toggle-top-panel" 
+                       style="display: none;">
+                <label class="side-panel-link" 
+                       for="toggle-top-panel" 
+                       onclick="toggleTopPanel()">Search</label>
                 {% if bakery_search_results_dicts %}
                     <div class="reset-search-wrapper reset-search-top">
-                        <a href="{{ url_for("bakery.search", reset=True) }}" class="reset-search-btn">Reset</a>
+                        <a href="{{ url_for("bakery.search",
+                           reset=True) }}" 
+                           class="reset-search-btn">Reset</a>
                     </div>
                 {% endif %}
             </div>
@@ -213,12 +221,14 @@ Search
                     {% if bakery_search_results_dicts %}
                         {% for item in bakery_search_results_dicts %}
                             <div class="grid-item">
-                            <a href="{{ url_for("bakery.search", id_=item.id) }}">
-                                <p class="item-name">{{ item.name }}</p>
-                                <img class="grid-item-image" 
-                                    src="{{ url_for("static", filename=item.image) }}" 
-                                    alt="{{ item.name }}"
-                                    type="image/png">
+                                <a href="{{ url_for("bakery.search",
+                                   id_=item.id) }}">
+                                    <p class="item-name">{{ item.name }}</p>
+                                    <img class="grid-item-image" 
+                                         src="{{ url_for("static", 
+                                         filename=item.image) }}" 
+                                         alt="{{ item.name }}"
+                                         type="image/png">
                             </a>
                             </div>
                         {% endfor %}

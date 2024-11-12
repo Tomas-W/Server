@@ -1,0 +1,140 @@
+<!-- Profile flash messages -->
+<div id="profile-wrapper" class="profile-wrapper">
+    {% if flash_type == "profile" and get_flashed_messages() %}
+        <div class="admin-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+        </div>
+    {% endif %} 
+
+    <!-- Profile form -->
+    <div class="admin-form-wrapper">
+        <p class="admin-form-header">Profile</p>
+        <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+            
+            <div class="form-item">
+                <div class="input-error-wrapper">
+                    {{ profile_form.display_name(
+                        class="main-input-field" + (" ph_red_color" if profile_errors["display_name"] else ""),
+                        placeholder=display_name_ph) }}
+                    {% if profile_errors["display_name"] %}
+                        <div class="admin-form-error"><strong>{{ profile_errors["display_name"][0] }}</strong></div>
+                    {% endif %}
+                    <div class="admin-form-label">{{ profile_form.display_name.label }}</div>
+                </div>
+            </div>
+
+            <div class="form-item" style="margin-bottom: 43px;">
+                <div class="input-error-wrapper">
+                    {{ profile_form.country(
+                        class="main-input-field country-select-field" + (" ph_red_color" if profile_errors["country"] else ""),
+                        placeholder=country_ph) }}
+                    {% if profile_errors["country"] %}
+                        <div class="admin-form-error"><strong>{{ profile_errors["country"][0] }}</strong></div>
+                    {% endif %}
+                    <div class="admin-form-label more-top">{{ profile_form.country.label }}</div>
+                </div>
+            </div>
+            
+            <!-- Profile icons -->
+            <div class="form-item">
+                <div class="input-error-wrapper profile-icon-field outline-bottom">
+                    <div class="admin-form-label profile-icon-label">{{ profile_form.profile_icon.label }}</div>
+                    <div class="profile-icon-wrapper">
+
+                        <a href="{{ url_for("admin.profile_icon", filename="baguette1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "baguette1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="baguette1.png") }}"
+                                    alt="baguette1"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="bread1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "bread1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="bread1.png") }}"
+                                    alt="bread1"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="bread2.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "bread2.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="bread2.png") }}"
+                                    alt="bread2"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="bread3.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "bread3.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="bread3.png") }}"
+                                    alt="bread3"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="cookie1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "cookie1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="cookie1.png") }}"
+                                    alt="cookie1"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="croissant1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "croissant1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder",
+                                    filename="croissant1.png") }}"
+                                    alt="croissant1"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="donut1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "donut1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder", filename="donut1.png") }}"
+                                    alt="donut1"
+                                    type="image/png">
+                        </a>
+                        <a href="{{ url_for("admin.profile_icon", filename="pie1.png") }}">
+                            <img class="profile-icon-img {% if profile_icon == "pie1.png" %}selected-profile-icon{% endif %}"
+                                    src="{{ url_for("profile_icons_folder", filename="pie1.png") }}"
+                                    alt="pie1"
+                                    type="image/png">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-item">
+                <div class="input-error-wrapper profile-picture-field outline-bottom">
+                    <label for="profile_picture" class="{% if file_name == '[ Select file ]' %} profile-picture-label {% else %} profile-picture-text {% endif %}">
+                        <span id="file-name-placeholder">{{ file_name }}</span>
+                    </label>
+                    {{ profile_form.profile_picture(class="main-input-field", id="profile_picture") }}
+                    {% if profile_errors["profile_picture"] %}
+                        <div class="admin-form-error"><strong>{{ profile_errors["profile_picture"][0] }}</strong></div>
+                    {% endif %}
+                    <div class="admin-form-label">{{ profile_form.profile_picture.label }}</div>
+                </div>
+            </div>
+
+            {% if profile_picture %}
+                <div class="profile-pic-div">
+                    <img class="profile-pic-img" src="{{ url_for("profile_picture_folder",
+                                                       filename=profile_picture) }}"
+                                                       alt="profile_picture"
+                                                       type="image/png">
+                </div>
+            {% endif %}
+            
+            <div class="form-item last-form-item">
+                <div class="input-error-wrapper">
+                    {{ profile_form.about_me(class="main-input-field", placeholder=about_me_ph) }}
+                    {% if profile_errors["about_me"] %}
+                        <div class="admin-form-error"><strong>{{ profile_errors["about_me"][0] }}</strong></div>
+                        {% endif %}
+                    <div class="admin-form-label about-me-label">{{ profile_form.about_me.label }}</div>
+                </div>
+            </div>
+            {{ profile_form.form_type }}
+            {{ profile_form.hidden_tag() }}
+            <div class="admin-devider"> 
+                {{ profile_form.submit(class="admin-btn", disabled=not email_verified) }}
+            </div>
+        </form>
+    </div>
+</div>

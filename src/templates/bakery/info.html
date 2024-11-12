@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block scripts %}
-<link rel="preload" href="{{ url_for("static", filename="dist/info_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
+<link rel="preload" 
+      href="{{ url_for("static", 
+      filename="dist/info_css.min.css") }}" 
+      as="style" 
+      onload="this.rel='stylesheet'">
 {% endblock %}
 
 {% block title %}
@@ -17,7 +21,8 @@ Info
             <ul class="side-panel-list">
                 <p class="side-panel-title">Items</p>
                 {% for item in ids_and_names %}
-                    <li><p class="side-panel-item"><a class="break-words" href="{{ url_for("bakery.info", id_=item.id) }}">{{ item.name }}</a></p></li>
+                    <li><p class="side-panel-item"><a class="break-words" href="{{ url_for("bakery.info", 
+                                                                          id_=item.id) }}">{{ item.name }}</a></p></li>
                 {% endfor %}
             </ul>
         </div>
@@ -25,12 +30,15 @@ Info
         <!-------- Content -------->
         <div class="main-content">
             <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">Items</label>
+            <label class="side-panel-link" 
+                   for="toggle-top-panel" 
+                   onclick="toggleTopPanel()">Items</label>
             <!-------- Top panel -------->
             <div class="top-panel" id="top-panel" style="display: none;">
                 <div class="top-panel-list">
                     {% for item in ids_and_names %}
-                        <div class="top-panel-item"><a href="{{ url_for("bakery.info", id_=item.id) }}">{{ item.name }}</a></div>
+                        <div class="top-panel-item"><a href="{{ url_for("bakery.info",
+                                                       id_=item.id) }}">{{ item.name }}</a></div>
                     {% endfor %}
                 </div>
             </div>

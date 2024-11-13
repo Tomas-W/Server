@@ -33,8 +33,6 @@ def clean_up_form_fields(form: FlaskForm) -> bool:
 
     for field in form:   
         if field.data is None or field.data == "":
-            print("************")
-            print(f"deleting {field.name=}")
             empty_fields_to_delete.append(field.name)
 
     all_fields_to_delete = delete_fields.union(empty_fields_to_delete)
@@ -68,8 +66,6 @@ def process_admin_form(form: FlaskForm) -> bool:
 
             user_data = getattr(current_user, field.name, None)
             if user_data != field.data:
-                print("************")
-                print(f"SETTING {field.name=} to {field.data}")
                 method(field.data)
                 has_updated = True
     return has_updated
@@ -105,8 +101,8 @@ def process_profile_picture(form: FlaskForm) -> None:
         if profile_picture_data:
             profile_picture_data.save(os.path.join(
                 PROFILE_PICTURES_FOLDER,
-                profile_picture_data.filename)
-            )
+                f"{current_user.id}_{profile_picture_data.filename}",
+            ))
         del form["profile_picture"]
         return True
     

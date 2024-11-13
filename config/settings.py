@@ -39,7 +39,7 @@ MAX_IMAGE_FILE_SIZE: int = 2 * 1024 * 1024
 ALLOWED_FILE_EXTENSIONS: list[str] = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp"]
 
 banned_words_list: list[str] = ["forbidden"]
-banned_characters_list: list[str] = ["^"]
+banned_characters_list: list[str] = ["|", "_"]
 
 # Redirects
 HOME_PAGE_REDIRECT: str = "news.all_news"
@@ -105,8 +105,8 @@ DISPLAY_NAME_TAKEN_MSG: str = "Display name taken"
 SPECIAL_CHAR_MSG: str = "Special character required"
 CAPITAL_LETTER_MSG: str = "Capital letter required"
 LOWER_LETTER_MSG: str = "Lower case letter required"
-FORBIDDEN_WORD_MSG: str = "Contains banned word"
-FORBIDDEN_CHAR_MSG: str = "Contains banned character"
+FORBIDDEN_WORD_MSG: str = "Banned word: "
+FORBIDDEN_CHAR_MSG: str = "Banned character: "
 REQUIRED_FIELD_MSG: str = "Field is required"
 FILE_EXTENSION_ERROR_MSG: str = "Invalid file extension"
 FILE_SIZE_ERROR_MSG: str = f"Max. file size: {MAX_IMAGE_FILE_SIZE // (1024)} kb"

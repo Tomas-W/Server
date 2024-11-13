@@ -5,6 +5,22 @@
 {% block scripts %}
 <link rel="preload" href="{{ url_for("static", filename="dist/search_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const devider = document.querySelector('.top-panel-admin-devider');
+    const topPanel = document.getElementById('top-panel');
+
+    if (devider && topPanel) {
+        devider.addEventListener('mouseenter', function () {
+            topPanel.style.borderBottomColor = 'var(--white-100)';
+        });
+
+        devider.addEventListener('mouseleave', function () {
+            topPanel.style.borderBottomColor = ''; // Reset to original color or remove style
+        });
+    }
+});
+</script>
 {% endblock %}
 
 {% block title %}
@@ -202,7 +218,7 @@ Search
                             {{ bakery_search_form.form_type }}
                         {% endif %}
                         {{ bakery_search_form.hidden_tag() }}
-                        <div class="admin-devider"> 
+                        <div class="admin-devider top-panel-admin-devider"> 
                             {{ bakery_search_form.submit(class="admin-btn")}}
                         </div>
                 </form>
@@ -240,3 +256,4 @@ Search
     </div>
 </section>
 {% endblock %}
+

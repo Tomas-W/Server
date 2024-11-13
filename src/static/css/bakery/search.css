@@ -1,9 +1,14 @@
 .top-panel {
     padding: 20px 8% 0 8%;
+    transition: border-bottom-color 0.3s ease-in-out;
 }
 
 .side-panel {
     padding: 0;;
+}
+
+.top-panel-admin-devider {
+    border: none;
 }
 
 .search-content {
@@ -23,6 +28,10 @@
 
 .admin-form-label {
     display: none;
+}
+
+.input-error-wrapper:hover {
+    border-bottom-color: var(--border-color-hover);
 }
 
 .main-input-field:not(:placeholder-shown) + .admin-form-label {

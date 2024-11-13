@@ -18,6 +18,9 @@ __pycache__/
 # Ignore Flask-Assets cache
 .webassets-cache/
 
+# Ignore compiled assets
+dist/
+
 # Ignore secret files
 client_secret.json
 .flaskenv

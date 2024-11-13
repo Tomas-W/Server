@@ -115,7 +115,7 @@
             {% if profile_picture %}
                 <div class="profile-pic-div">
                     <img class="profile-pic-img" src="{{ url_for("profile_picture_folder",
-                                                       filename=profile_picture) }}"
+                                                       filename=current_user.id|string + "_" + profile_picture) }}"
                                                        alt="profile_picture"
                                                        type="image/png">
                 </div>

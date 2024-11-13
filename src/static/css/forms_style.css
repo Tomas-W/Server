@@ -22,6 +22,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    transition: border-color 0.3s ease-in-out;
 }
 
 .main-input-field {

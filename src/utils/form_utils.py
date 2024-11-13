@@ -265,20 +265,31 @@ class ForbiddenCheck:
         self.banned_chars: list[str] = banned_characters_list
         self.word_message: str = FORBIDDEN_WORD_MSG
         self.char_message: str = FORBIDDEN_CHAR_MSG
+        
+        self.word = ""
+        self.char = ""
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if field.data is None:
             return
         if self._contains_banned_word(field.data):
-            raise ValidationError(self.word_message)
+            raise ValidationError(self.word_message + self.word)
         if self._contains_banned_char(field.data):
-            raise ValidationError(self.char_message)
+            raise ValidationError(self.char_message + self.char)
 
     def _contains_banned_word(self, text: str) -> bool:
-        return any(word in text.lower() for word in self.banned_words)
+        for word in self.banned_words:
+            if word in text.lower():
+                self.word = word
+                return True
+        return False
 
     def _contains_banned_char(self, text: str) -> bool:
-        return any(char in text for char in self.banned_chars)
+        for char in self.banned_chars:
+            if char in text:
+                self.char = char
+                return True
+        return False
 
 
 class NewsTitleLengthCheck:

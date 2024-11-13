@@ -4,12 +4,16 @@ from datetime import datetime
 from typing import Optional, List
 
 from flask_login import UserMixin
-from sqlalchemy import Boolean, Integer, String, DateTime, ForeignKey, Text
+from sqlalchemy import (
+    Boolean, Integer, String, DateTime, ForeignKey, Text
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.extensions import server_db_, argon2_
 from src.models.mod_utils import set_updated_at
 
-from config.settings import CET, PROFILE_ICONS_FOLDER
+from config.settings import (
+    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER
+)
 
 
 class AuthenticationToken(server_db_.Model):
@@ -164,6 +168,14 @@ class User(server_db_.Model, UserMixin):
     
     @set_updated_at
     def set_profile_picture(self, profile_picture: str) -> None:
+        try:
+            for file in os.listdir(PROFILE_PICTURES_FOLDER):
+                if file.startswith(f"{self.id}_"):
+                    print(f"Deleting {file}")
+                    os.remove(os.path.join(PROFILE_PICTURES_FOLDER, file))
+        except FileNotFoundError:
+            print("File not found")
+            pass
         self.profile_picture = profile_picture
     
     @set_updated_at

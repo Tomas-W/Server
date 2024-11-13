@@ -1,6 +1,6 @@
 import os
 
-from flask import url_for
+from flask import url_for, render_template
 from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
@@ -63,17 +63,32 @@ def send_authentication_email(email: str, token_type: str, token: str):
     if token_type == EMAIL_VERIFICATION:
         url_ = "admin.verify_email"
         subject = "Email Verification"
-        message = "Please verify your email by visiting: "
+        redirect_title = "To verify your email, "
     elif token_type == PASSWORD_VERIFICATION:
         url_ = "auth.reset_password"
         subject = "Password Reset"
-        message = "Please reset your password by visiting: "
+        redirect_title = "To reset your password, "
 
     verification_url = url_for(url_, token=token, _external=True)
-    message = Message(subject=subject,
-                      sender=os.environ.get("GMAIL_EMAIL"),
-                      recipients=[email],
-                      body=f"{message} {verification_url}")
+    settings_url = url_for("admin.user_admin",
+                           _anchor="notifications-wrapper",
+                           _external=True)
+
+    html_body = render_template(
+        "admin/email.html",
+        title=subject,
+        redirect_title=redirect_title,
+        redirect_url=verification_url,
+        notification_settings="You can change your notification settings below.",
+        settings_url=settings_url
+    )
+
+    message = Message(
+        subject=subject,
+        sender=os.environ.get("GMAIL_EMAIL"),
+        recipients=[email],
+        html=html_body
+    )
     mail_.send(message)
 
 

@@ -67,11 +67,8 @@ def search(id_: int | None = None, reset: bool = False):
     
     if request.method == "POST":
         if form_type == BAKERY_SEARCH_FORM_TYPE:
-            print("NO HERE")
             if bakery_search_form.validate_on_submit():
                 search_results = process_bakery_form(bakery_search_form)
-                print("************")
-                print(f"search_results: {search_results}")
 
                 session["bakery_search_results"] = search_results
                 session["bakery_search_input"] = bakery_search_form.data

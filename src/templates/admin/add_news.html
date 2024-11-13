@@ -1,27 +1,248 @@
-{% extends "base.html" %}
-
-<!--  Variables  -->
-{% set title = news_form.title %}
-{% set content = news_form.content %}
+{% extends "admin/admin_base.html" %}
 
 {% block title %}
-Add news
+Master Admin
 {% endblock %}
 
 {% block scripts %}
+<link rel="preload"
+      href="{{ url_for("static",
+      filename="dist/admin_css.min.css") }}" 
+      as="style" 
+      onload="this.rel='stylesheet'">
 {% endblock %}
 
-{% block content %}
-<form method="POST" action="" novalidate>
+{% block admin_content %}
+<div class="admin-content blur-target">
 
-    <p>{{ title.label }}</p>
-    {{ title() }}
+    <form method="POST" action="" novalidate class="admin-form">
 
-    <p>{{ content.label }}</p>
-    {{ content() }}
+        <div class="form-item">
+            <div class="input-error-wrapper">
+                {{ add_news_form.header(class="main-input-field") }}
+                {% if add_news_form.header.errors %}
+                    <div class="admin-form-error"><strong>{{ add_news_form.header.errors[0] }}</strong></div>
+                {% endif %}
+                <div class="admin-form-label text-area-label">{{ add_news_form.header.label }}</div>
+            </div>
+        </div>
 
-    {{ news_form.form_type }}
-    {{ news_form.hidden_tag() }}
-    {{ news_form.submit() }}
-</form>
+        <div class="form-item">
+            <div class="input-error-wrapper">
+                {{ add_news_form.title(class="main-input-field") }}
+                {% if add_news_form.title.errors %}
+                    <div class="admin-form-error"><strong>{{ add_news_form.title.errors[0] }}</strong></div>
+                {% endif %}
+                <div class="admin-form-label text-area-label">{{ add_news_form.title.label }}</div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <div class="input-error-wrapper">
+                {{ add_news_form.code(class="main-input-field") }}
+                {% if add_news_form.code.errors %}
+                    <div class="admin-form-error"><strong>{{ add_news_form.code.errors[0] }}</strong></div>
+                {% endif %}
+                <div class="admin-form-label text-area-label">{{ add_news_form.code.label }}</div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <div class="input-error-wrapper">
+                {{ add_news_form.important(class="main-input-field") }}
+                {% if add_news_form.important.errors %}
+                    <div class="admin-form-error"><strong>{{ add_news_form.important.errors[0] }}</strong></div>
+                {% endif %}
+                <div class="admin-form-label text-area-label">{{ add_news_form.important.label }}</div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <div class="input-error-wrapper">
+                {{ add_news_form.author(class="main-input-field") }}
+                {% if add_news_form.author.errors %}
+                    <div class="admin-form-error"><strong>{{ add_news_form.author.errors[0] }}</strong></div>
+                {% endif %}
+                <div class="admin-form-label text-area-label">{{ add_news_form.author.label }}</div>
+            </div>
+        </div>
+
+        <div id="grid-fields" class="form-item">
+            <div class="input-error-wrapper form-gap">
+                <label class="admin-form-label text-area-label">Table Column 1</label>
+                <textarea name="table_cols[]" class="main-input-field"></textarea>
+            </div>
+            <button type="button" class="top-panel-item master-admin-button" onclick="addColumn()">Add Column</button>
+            <button type="button" class="top-panel-item master-admin-button" onclick="deleteColumn()">Delete Column</button>
+            <div class="input-error-wrapper form-gap" style="margin-top: 30px;">
+                <label class="admin-form-label text-area-label">Table Row 1</label>
+                <textarea name="table_rows[]" class="main-input-field"></textarea>
+            </div>
+            <button type="button" class="top-panel-item master-admin-button" onclick="addRow()">Add Row</button>
+            <button type="button" class="top-panel-item master-admin-button" onclick="deleteRow()">Delete Row</button>
+        </div>
+
+        <div id="info-fields" class="form-item">
+            <div class="input-error-wrapper form-gap">
+                <label class="admin-form-label text-area-label">Alinea Header 1</label>
+                <textarea name="alinea_headers[]" class="main-input-field"></textarea>
+            </div>
+            <div class="input-error-wrapper form-gap">
+                <label class="admin-form-label text-area-label">Alinea Content 1</label>
+                <textarea name="alinea_contents[]" class="main-input-field"></textarea>
+            </div>
+            <button type="button" class="top-panel-item master-admin-button" onclick="addAlinea()">Add Alinea</button>
+            <button type="button" class="top-panel-item master-admin-button" onclick="deleteAlinea()">Delete Alinea</button>
+        </div>
+
+        {{ add_news_form.form_type }}
+        {{ add_news_form.hidden_tag() }}
+        <div class="admin-devider"> 
+            {{ add_news_form.submit(class="admin-btn") }}
+        </div>
+    </form>
+
+</div>
+
+<script>
+function addColumn() {
+    var container = document.getElementById("grid-fields");
+    var existingCols = container.querySelectorAll("textarea[name='table_cols[]']").length;
+
+    var colWrapperDiv = document.createElement("div");
+    colWrapperDiv.className = "input-error-wrapper form-gap";
+    var colLabel = document.createElement("label");
+    colLabel.className = "admin-form-label text-area-label";
+    colLabel.textContent = "Table Column " + (existingCols + 1);
+    var colTextarea = document.createElement("textarea");
+    colTextarea.name = "table_cols[]";
+    colTextarea.className = "main-input-field";
+    colWrapperDiv.appendChild(colLabel);
+    colWrapperDiv.appendChild(colTextarea);
+
+    var addButton = container.querySelector("button[onclick='addColumn()']");
+    container.insertBefore(colWrapperDiv, addButton);
+    updateColumnLabels();
+}
+
+function deleteColumn() {
+    var container = document.getElementById("grid-fields");
+    var colWrappers = container.querySelectorAll("textarea[name='table_cols[]']");
+    if (colWrappers.length > 1) {
+        container.removeChild(colWrappers[colWrappers.length - 1].parentElement);
+        updateColumnLabels();
+    }
+}
+
+function updateColumnLabels() {
+    var container = document.getElementById("grid-fields");
+    var colLabels = container.querySelectorAll("label.admin-form-label");
+    var colIndex = 1;
+    colLabels.forEach((label) => {
+        if (label.textContent.startsWith("Table Column")) {
+            label.textContent = "Table Column " + colIndex;
+            colIndex++;
+        }
+    });
+}
+
+function addRow() {
+    var container = document.getElementById("grid-fields");
+    var existingRows = container.querySelectorAll("textarea[name='table_rows[]']").length;
+
+    var rowWrapperDiv = document.createElement("div");
+    rowWrapperDiv.className = "input-error-wrapper form-gap";
+    var rowLabel = document.createElement("label");
+    rowLabel.className = "admin-form-label text-area-label";
+    rowLabel.textContent = "Table Row " + (existingRows + 1);
+    var rowTextarea = document.createElement("textarea");
+    rowTextarea.name = "table_rows[]";
+    rowTextarea.className = "main-input-field";
+    rowWrapperDiv.appendChild(rowLabel);
+    rowWrapperDiv.appendChild(rowTextarea);
+
+    container.insertBefore(rowWrapperDiv, container.lastElementChild.previousElementSibling);
+    updateRowLabels();
+}
+
+function deleteRow() {
+    var container = document.getElementById("grid-fields");
+    var wrappers = container.getElementsByClassName("input-error-wrapper");
+    if (wrappers.length > 2) {
+        container.removeChild(wrappers[wrappers.length - 1]);
+        updateRowLabels();
+    }
+}
+
+function updateRowLabels() {
+    var container = document.getElementById("grid-fields");
+    var labels = container.querySelectorAll("label.admin-form-label");
+    var rowIndex = 1;
+    labels.forEach((label) => {
+        if (label.textContent.startsWith("Table Row")) {
+            label.textContent = "Table Row " + rowIndex;
+            rowIndex++;
+        }
+    });
+}
+
+function addAlinea() {
+    var container = document.getElementById("info-fields");
+    var existingRows = container.querySelectorAll("textarea[name='alinea_contents[]']").length;
+    var existingCols = container.querySelectorAll("textarea[name='alinea_headers[]']").length;
+
+    var colWrapperDiv = document.createElement("div");
+    colWrapperDiv.className = "input-error-wrapper form-gap";
+    var colLabel = document.createElement("label");
+    colLabel.className = "admin-form-label text-area-label";
+    colLabel.textContent = "Alinea Header " + (existingCols + 1);
+    var colTextarea = document.createElement("textarea");
+    colTextarea.name = "alinea_headers[]";
+    colTextarea.className = "main-input-field";
+    colWrapperDiv.appendChild(colLabel);
+    colWrapperDiv.appendChild(colTextarea);
+
+    var rowWrapperDiv = document.createElement("div");
+    rowWrapperDiv.className = "input-error-wrapper form-gap";
+    var rowLabel = document.createElement("label");
+    rowLabel.className = "admin-form-label text-area-label";
+    rowLabel.textContent = "Alinea Content " + (existingRows + 1);
+    var rowTextarea = document.createElement("textarea");
+    rowTextarea.name = "alinea_contents[]";
+    rowTextarea.className = "main-input-field";
+    rowWrapperDiv.appendChild(rowLabel);
+    rowWrapperDiv.appendChild(rowTextarea);
+
+    container.insertBefore(colWrapperDiv, container.lastElementChild.previousElementSibling);
+    container.insertBefore(rowWrapperDiv, container.lastElementChild.previousElementSibling);
+    updateAlineaLabels();
+}
+
+function deleteAlinea() {
+    var container = document.getElementById("info-fields");
+    var colWrappers = container.querySelectorAll("textarea[name='alinea_headers[]']");
+    var rowWrappers = container.querySelectorAll("textarea[name='alinea_contents[]']");
+    if (colWrappers.length > 0 && rowWrappers.length > 0) {
+        container.removeChild(colWrappers[colWrappers.length - 1].parentElement);
+        container.removeChild(rowWrappers[rowWrappers.length - 1].parentElement);
+        updateAlineaLabels();
+    }
+}
+
+function updateAlineaLabels() {
+    var container = document.getElementById("info-fields");
+    var rowLabels = container.querySelectorAll("label.admin-form-label");
+    var rowIndex = 1;
+    var colIndex = 1;
+    rowLabels.forEach((label) => {
+        if (label.textContent.startsWith("Alinea Header")) {
+            label.textContent = "Alinea Header " + colIndex;
+            colIndex++;
+        } else if (label.textContent.startsWith("Alinea Content")) {
+            label.textContent = "Alinea Content " + rowIndex;
+            rowIndex++;
+        }
+    });
+}
+</script>
 {% endblock %}

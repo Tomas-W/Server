@@ -33,8 +33,7 @@ from config.settings import (
     SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
     USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG, SESSION_ERROR_MSG,
     AUTHENTICATION_LINK_ERROR_MSG, UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
-    PASSWORD_RESET_SEND_MSG, CREATE_ACCOUNT_MSG, PASSWORD_UPDATE_MSG,
-    RESET_PASSWORD_REDIRECT, HOME_PAGE_REDIRECT
+    PASSWORD_RESET_SEND_MSG, CREATE_ACCOUNT_MSG, PASSWORD_UPDATE_MSG, HOME_PAGE_REDIRECT
 )
 
 
@@ -121,7 +120,6 @@ def login():
     
     return render_template(
         "/auth/login.html",
-        page=["login"],
         login_form=login_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -221,7 +219,6 @@ def set_password():
 
     return render_template(
         "/auth/set_password.html",
-        page=["set_password"],
         set_password_form=set_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -264,7 +261,6 @@ def register():
 
     return render_template(
         "/auth/register.html",
-        page=["register"],
         register_form=register_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -298,7 +294,6 @@ def request_reset():
 
     return render_template(
         "/auth/request_reset.html",
-        page=["request_reset"],
         request_reset_form=request_reset_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -347,7 +342,6 @@ def reset_password(token):
 
     return render_template(
         "auth/reset_password.html",
-        page=["reset_password"],
         reset_password_form=reset_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,

@@ -14,12 +14,15 @@ from config.settings import (
     MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
     MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH, MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
     FAST_CODE_LENGTH, MIN_NEWS_TITLE_LENGTH, MAX_NEWS_TITLE_LENGTH,
-    MIN_NEWS_CONTENT_LENGTH, MAX_NEWS_CONTENT_LENGTH, MIN_COMMENT_LENGTH,
+    MIN_COMMENT_LENGTH,
     MAX_COMMENT_LENGTH, MAX_IMAGE_FILE_SIZE, ALLOWED_FILE_EXTENSIONS,
     EMAIL_TAKEN_MSG, USERNAME_TAKEN_MSG, INVALID_EMAIL_MSG, SPECIAL_CHAR_MSG,
     CAPITAL_LETTER_MSG, LOWER_LETTER_MSG, FAST_CODE_ERROR_MSG, FORBIDDEN_WORD_MSG,
     FORBIDDEN_CHAR_MSG, FILE_SIZE_ERROR_MSG, MIN_ABOUT_ME_LENGTH, MAX_ABOUT_ME_LENGTH,
-    DISPLAY_NAME_TAKEN_MSG
+    DISPLAY_NAME_TAKEN_MSG, MIN_NEWS_HEADER_LENGTH, MAX_NEWS_HEADER_LENGTH,
+    NEWS_CODE_LENGTH, NEWS_CODE_LENGTH_ERROR_MSG, NEWS_CODE_NUMERIC_ERROR_MSG,
+    MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
+    MAX_NEWS_LENGTH
 )
 
 
@@ -260,7 +263,8 @@ class ForbiddenCheck:
     """
     Validates text by checking forbidden words and characters.
     """
-    def __init__(self) -> None:
+    def __init__(self, admin: bool = False) -> None:
+        self.admin: bool = admin
         self.banned_words: list[str] = banned_words_list
         self.banned_chars: list[str] = banned_characters_list
         self.word_message: str = FORBIDDEN_WORD_MSG
@@ -274,8 +278,9 @@ class ForbiddenCheck:
             return
         if self._contains_banned_word(field.data):
             raise ValidationError(self.word_message + self.word)
-        if self._contains_banned_char(field.data):
-            raise ValidationError(self.char_message + self.char)
+        if not self.admin:
+            if self._contains_banned_char(field.data):
+                raise ValidationError(self.char_message + self.char)
 
     def _contains_banned_word(self, text: str) -> bool:
         for word in self.banned_words:
@@ -290,6 +295,21 @@ class ForbiddenCheck:
                 self.char = char
                 return True
         return False
+
+
+class NewsHeaderLengthCheck:
+    """
+    Validates news header by checking length.
+    """
+    def __init__(self) -> None:
+        self.min_length_message: str = f"Min. {MIN_NEWS_HEADER_LENGTH} characters"
+        self.max_length_message: str = f"Max. {MAX_NEWS_HEADER_LENGTH} characters"
+
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if len(field.data) < MIN_NEWS_HEADER_LENGTH:
+            raise ValidationError(self.min_length_message)
+        if len(field.data) > MAX_NEWS_HEADER_LENGTH:
+            raise ValidationError(self.max_length_message)
 
 
 class NewsTitleLengthCheck:
@@ -307,17 +327,45 @@ class NewsTitleLengthCheck:
             raise ValidationError(self.max_length_message)
 
 
-class NewsContentLengthCheck:
-    """Validates news content by checking length."""
+class NewsCodeCheck:
+    """
+    Validates news code by checking length and if it's numeric.
+    """
+    def __init__(self) -> None:
+        self.length_message: str = NEWS_CODE_LENGTH_ERROR_MSG
+        self.numeric_message: str = NEWS_CODE_NUMERIC_ERROR_MSG
+    
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if not field.data.isdigit():
+            raise ValidationError(self.numeric_message)
+        if len(field.data) != NEWS_CODE_LENGTH:
+            raise ValidationError(self.length_message)
+
+
+class NewsImportantLengthCheck:
+    """Validates news important by checking length."""
 
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_NEWS_CONTENT_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_NEWS_CONTENT_LENGTH} characters"
+        self.min_length_message: str = f"Min. {MIN_NEWS_IMPORTANT_LENGTH} characters"
+        self.max_length_message: str = f"Max. {MAX_NEWS_IMPORTANT_LENGTH} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_NEWS_CONTENT_LENGTH:
+        if len(field.data) < MIN_NEWS_IMPORTANT_LENGTH:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_NEWS_CONTENT_LENGTH:
+        if len(field.data) > MAX_NEWS_IMPORTANT_LENGTH:
+            raise ValidationError(self.max_length_message)
+
+
+class NewsLengthCheck:
+    """Validates news grid columns by checking length."""
+    def __init__(self) -> None:
+        self.min_length_message: str = f"Min. {MIN_NEWS_LENGTH} characters"
+        self.max_length_message: str = f"Max. {MAX_NEWS_LENGTH} characters"
+
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if len(field.data) < MIN_NEWS_LENGTH:
+            raise ValidationError(self.min_length_message)
+        if len(field.data) > MAX_NEWS_LENGTH:
             raise ValidationError(self.max_length_message)
 
 

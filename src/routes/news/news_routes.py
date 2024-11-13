@@ -27,7 +27,6 @@ def all_news():
 
     return render_template(
         "news/all_news.html",
-        page=["all_news"],
         all_news_dict=all_news_dict,
         flash_type=flash_type,
     )
@@ -74,9 +73,9 @@ def news(id_: int):
     post_comment = session.pop("post_comment", None)  # for comment bg hghlight
     comment_id = session.pop("comment_id", None)      # for like/dislike bg hghlight
     flash_type = session.pop("flash_type", None)      # for flash messages location
+    print(f"news_item.grid_cols: {news_item.grid_cols}")
     return render_template(
         "news/news.html",
-        page=["news"],
         comment_form=comment_form,
         comment_form_errors=comment_form_errors,
         news_dict=news_dict,
@@ -146,7 +145,6 @@ def unread():
     
     return render_template(
         "news/all_news.html",
-        page=["all_news"],
         all_news_dict=all_news_dict,
     )
 

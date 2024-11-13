@@ -1,16 +1,17 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
-    FileField, BooleanField
+    FileField, BooleanField, IntegerField
 )
-from wtforms.validators import EqualTo
+from wtforms.validators import EqualTo, DataRequired
 
 from src.utils.form_utils import (
     ForbiddenCheck, UsernameTakenCheck, PasswordCheck, EmailTakenCheck,
     UsernameLengthCheck, PasswordLengthCheck, EmailCheck, EmailLengthCheck,
     FastNameLengthCheck, FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
-    NewsTitleLengthCheck, NewsContentLengthCheck, CommentLengthCheck, ImageUploadCheck,
-    DisplayNameTakenCheck,
+    NewsTitleLengthCheck, CommentLengthCheck, ImageUploadCheck,
+    DisplayNameTakenCheck, NewsHeaderLengthCheck, NewsCodeCheck,
+    NewsImportantLengthCheck
 )
 from config.settings import (
     PWD_MATCH_MSG, COUNTRY_CHOICES
@@ -178,7 +179,7 @@ class NotificationsForm(FlaskForm):
     form_type = HiddenField(default="notifications_form")
     submit = SubmitField(label="Update")
 
-class NewsForm(FlaskForm):
+class AddNewsForm(FlaskForm):
     """
     Used on admin.news.add-news page to add news.
     
@@ -187,20 +188,44 @@ class NewsForm(FlaskForm):
     - CONTENT [TextAreaField] [Required]
     - FORM_TYPE [HiddenField]
     """
-    title = TextAreaField(
-        label="Title",
-        render_kw={"placeholder": "News title"},
+    header = TextAreaField(
+        label="Header",
+        render_kw={},
         validators=[
-            NewsTitleLengthCheck(),
-            ForbiddenCheck(),
+            NewsHeaderLengthCheck(),
+            ForbiddenCheck(admin=True),
         ]
     )
-    content = TextAreaField(
-        label="Content",
-        render_kw={"placeholder": "Content"},
+    title = TextAreaField(
+        label="Title",
+        render_kw={},
         validators=[
-            NewsContentLengthCheck(),
-            ForbiddenCheck(),
+            NewsTitleLengthCheck(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+    code = TextAreaField(
+        label="Code",
+        render_kw={},
+        validators=[
+            NewsCodeCheck(),
+        ]
+    )
+    important = TextAreaField(
+        label="Important",
+        render_kw={},
+        validators=[
+            NewsImportantLengthCheck(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+
+    author = TextAreaField(
+        label="Author",
+        render_kw={},
+        validators=[
+            DataRequired(),
+            ForbiddenCheck(admin=True),
         ]
     )
     form_type = HiddenField(default="news_form")

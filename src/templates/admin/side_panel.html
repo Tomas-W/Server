@@ -4,5 +4,10 @@
         <li><p class="side-panel-item" data-target="profile-wrapper">Profile</p></li>
         <li><p class="side-panel-item" data-target="notifications-wrapper">Notifications</p></li>
         <li><p class="side-panel-item" data-target="settings-wrapper">Settings</p></li>
+        {% set roles = current_user.roles.split("|") %}
+        {% if 'admin' in roles %}
+            <p class="admin-panel-label">Admin Panel</p>
+            <li><p class="side-panel-item admin-panel-item" data-target="add-news-wrapper">Add News</p></li>
+        {% endif %}
     </ul>
 </div>

@@ -12,7 +12,7 @@ from src.extensions import server_db_, argon2_
 from src.models.mod_utils import set_updated_at
 
 from config.settings import (
-    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER
+    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES
 )
 
 
@@ -90,6 +90,8 @@ class User(server_db_.Model, UserMixin):
     news_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
     comment_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
     bakery_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    roles: Mapped[list[str]] = mapped_column(String(255), default="")
 
     new_email: Mapped[Optional[str]] = mapped_column(String(75))
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -195,6 +197,24 @@ class User(server_db_.Model, UserMixin):
         self.bakery_notifications = bakery_notifications
     
     @set_updated_at
+    def add_role(self, role: str) -> None:
+        if role not in USER_ROLES:
+            raise ValueError(f"Invalid role: {role}")
+        if role in self.roles.split("|"):
+            return
+        self.roles += f"|{role}"
+    
+    @set_updated_at
+    def remove_role(self, role: str) -> None:
+        if role not in USER_ROLES:
+            raise ValueError(f"Invalid role: {role}")
+        if role not in self.roles.split("|"):
+            raise ValueError(f"User does not have role: {role}")
+        roles = self.roles.split("|")
+        roles.remove(role)
+        self.roles = "|".join(roles)
+        
+    @set_updated_at
     def set_new_email(self, new_email: str) -> None:
         self.new_email = new_email
     
@@ -203,6 +223,10 @@ class User(server_db_.Model, UserMixin):
     
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:
+        if verified:
+            self.roles.append("verified")
+        else:
+            self.roles.remove("verified")
         self.email_verified = verified
     
     @set_updated_at

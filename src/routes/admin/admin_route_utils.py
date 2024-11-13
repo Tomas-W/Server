@@ -6,17 +6,25 @@ from flask_wtf import FlaskForm
 from src.extensions import server_db_
 from src.models.auth_model.auth_mod_utils import process_verification_token
 from src.models.mod_utils import commit_to_db
+from src.routes.admin.admin_forms import AddNewsForm
 from config.settings import PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION
 
 
 @commit_to_db
-def add_news_message(title, content) -> None:
+def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[str],
+                     info_cols: list[str], info_rows: list[str]) -> None:
     from src.models.news_model.news_mod import News
     # noinspection PyArgumentList
     new_news = News(
-        title=title,
-        content=content,
-        author=current_user.username
+        title=form.title.data,
+        header=form.header.data,
+        code=form.code.data,
+        important=form.important.data,
+        grid_cols=grid_cols,
+        grid_rows=grid_rows,
+        info_cols=info_cols,
+        info_rows=info_rows,
+        author=form.author.data
     )
     server_db_.session.add(new_news)
 

@@ -15,16 +15,16 @@
           filename="dist/base_css.min.css") }}" 
           as="style" 
           onload="this.rel='stylesheet'">
-
-    <title>
-        {% block title %}
-        {% endblock %}
-    </title>
-
+    
     <link rel="icon"
           href="{{ url_for("static", 
           filename="images/favicon.png") }}" 
           type="image/png">
+          
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
     
 </head>
 <body>

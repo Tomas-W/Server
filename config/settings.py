@@ -39,7 +39,9 @@ MAX_IMAGE_FILE_SIZE: int = 2 * 1024 * 1024
 ALLOWED_FILE_EXTENSIONS: list[str] = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp"]
 
 banned_words_list: list[str] = ["forbidden"]
-banned_characters_list: list[str] = ["|", "_"]
+banned_characters_list: list[str] = ["|"]
+
+USER_ROLES: list[str] = ["verified", "admin", "news"]
 
 # Redirects
 HOME_PAGE_REDIRECT: str = "news.all_news"
@@ -111,6 +113,9 @@ REQUIRED_FIELD_MSG: str = "Field is required"
 FILE_EXTENSION_ERROR_MSG: str = "Invalid file extension"
 FILE_SIZE_ERROR_MSG: str = f"Max. file size: {MAX_IMAGE_FILE_SIZE // (1024)} kb"
 
+NEWS_CODE_LENGTH_ERROR_MSG: str = "Must be 3 digits"
+NEWS_CODE_NUMERIC_ERROR_MSG: str = "Must be numeric"
+
 MIN_EMAIL_LENGTH: int = 10
 MAX_EMAIL_LENGTH: int = 50
 MIN_USERNAME_LENGTH: int = 4
@@ -124,10 +129,16 @@ FAST_CODE_LENGTH: int = 5
 MIN_ABOUT_ME_LENGTH: int = 10
 MAX_ABOUT_ME_LENGTH: int = 1_000
 
-MIN_NEWS_TITLE_LENGTH: int = 4
-MAX_NEWS_TITLE_LENGTH: int = 80
-MIN_NEWS_CONTENT_LENGTH: int = 10
-MAX_NEWS_CONTENT_LENGTH: int = 10_000
+MIN_NEWS_HEADER_LENGTH: int = 3
+MAX_NEWS_HEADER_LENGTH: int = 24
+MIN_NEWS_TITLE_LENGTH: int = 3
+MAX_NEWS_TITLE_LENGTH: int = 55
+NEWS_CODE_LENGTH: int = 3
+MIN_NEWS_IMPORTANT_LENGTH: int = 10
+MAX_NEWS_IMPORTANT_LENGTH: int = 400
+MIN_NEWS_LENGTH: int = 4
+MAX_NEWS_LENGTH: int = 10_000
+
 MIN_COMMENT_LENGTH: int = 10
 MAX_COMMENT_LENGTH: int = 1_000
 

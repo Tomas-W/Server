@@ -24,7 +24,6 @@ bakery_bp = Blueprint("bakery", __name__)
 def programs():
     return render_template(
         "bakery/programs.html",
-        page=["programs"],
     )
 
 @bakery_bp.route("/bakery/program/<program>")
@@ -34,7 +33,6 @@ def program(program: int):
 
     return render_template(
         "bakery/programs.html",
-        page=["programs"],
         bakery_items_dicts=bakery_items_dicts,
     )
 
@@ -46,7 +44,6 @@ def info(id_: int):
 
     return render_template(
         "bakery/info.html",
-        page=["info"],
         bakery_item_dict=bakery_item_dict,
         ids_and_names=ids_and_names,
     )
@@ -101,7 +98,6 @@ def search(id_: int | None = None, reset: bool = False):
 
     return render_template(
         "bakery/search.html",
-        page=["search"],
         bakery_search_form=bakery_search_form,
         bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_search_errors=bakery_search_errors,

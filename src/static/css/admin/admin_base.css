@@ -2,6 +2,45 @@
     padding: 0 0 17px 0;
 }
 
+.form-gap {
+    margin-bottom: 30px;
+}
+
+.text-area-label {
+    bottom: 60px;
+}
+
+.master-admin-button {
+    width: 200px;
+    height: 50px;
+    margin: 0 0 60px 0;
+    border: 1px solid var(--gray3);
+    background-color: var(--gray2);
+    transition: color 0.3s ease-in-out,
+                border-color 0.3s ease-in-out;
+}
+
+.master-admin-button:hover {
+    color: var(--text-color-hover);
+    border-color: var(--border-color-hover);
+}
+
+.master-admin-button:last-child,
+.master-admin-button:nth-last-child(2) {
+    margin-bottom: 30px;
+}
+
+.admin-panel-label {
+    margin: 20px 0 5px 0;
+    font-style: italic;
+    color: var(--label-color);
+}
+
+.admin-panel-item {
+    padding-top: 0;
+    margin-bottom: 10px;
+}
+
 .admin-content {
     padding: 100px 15%;
 }

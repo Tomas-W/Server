@@ -1,6 +1,6 @@
 import os
-
-from flask import url_for, render_template
+from functools import wraps
+from flask import url_for, render_template, redirect
 from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
@@ -13,6 +13,15 @@ from src.models.auth_model.auth_mod import (
 )
 from src.models.mod_utils import commit_to_db
 from config.settings import PASSWORD_VERIFICATION, EMAIL_VERIFICATION
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or "admin" not in current_user.roles.split("|"):
+            return redirect(url_for("news.all_news"))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def process_verification_token(email: str, token_type: str) -> None:

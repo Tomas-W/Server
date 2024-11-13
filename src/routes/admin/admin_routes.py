@@ -1,6 +1,5 @@
 from flask import (
-    render_template, Blueprint, url_for, redirect, request, flash, session,
-    get_flashed_messages
+    render_template, Blueprint, url_for, redirect, request, flash, session
 )
 from flask_login import login_required, current_user
 
@@ -8,14 +7,14 @@ from src.models.auth_model.auth_mod import User
 
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token, process_verification_token,
-    process_verification_token
+    process_verification_token, admin_required
 )
 from src.routes.admin.admin_route_utils import (
     add_news_message, process_admin_form, process_profile_picture, clean_up_form_fields,
     process_new_email_address
 )
 from src.routes.admin.admin_forms import (
-    NewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
+    AddNewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
 )
 from config.settings import (
     EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
@@ -29,6 +28,7 @@ admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route("/admin/user-admin", methods=["GET", "POST"])
 @login_required
+@admin_required
 def user_admin():
     """
     Asks user to verify email before allowing them to update their data.
@@ -130,7 +130,6 @@ def user_admin():
 
     return render_template(
         "admin/user_admin.html",
-        page=["admin"],
         verify_email_form=verify_email_form,
         verify_email_errors=verify_email_errors,
         
@@ -145,6 +144,33 @@ def user_admin():
         flash_type=flash_type,
         _anchor=_anchor,
     )
+
+
+@admin_bp.route("/admin/add-news", methods=["GET", "POST"])
+@login_required
+def add_news():
+    add_news_form: AddNewsForm = AddNewsForm()
+    
+    if request.method == "POST":
+        if add_news_form.validate_on_submit():
+            grid_cols = request.form.getlist("table_cols[]")
+            grid_rows = [row.replace("\n", "|") for row in request.form.getlist("table_rows[]")]
+            info_cols = request.form.getlist("alinea_headers[]")
+            info_rows = request.form.getlist("alinea_contents[]")
+            add_news_message(add_news_form,
+                             grid_cols,
+                             grid_rows,
+                             info_cols,
+                             info_rows)
+            return redirect(url_for(ALL_NEWS_REDIRECT))
+        
+        session["news_errors"] = add_news_form.errors
+
+    add_news_errors = session.pop("add_news_errors", None)
+    
+    return render_template("admin/add_news.html",
+                           add_news_form=add_news_form,
+                           add_news_errors=add_news_errors)
 
 
 @admin_bp.route("/admin/verify-email/<token>", methods=["GET"])
@@ -206,30 +232,3 @@ def email():
     )
 
 
-@admin_bp.route("/admin/add-news", methods=["GET", "POST"])
-@login_required
-def add_news():
-    """
-    Adds a news message to the database.
-    
-    - NewsForm
-    """
-    news_form: NewsForm = NewsForm()
-    
-    if request.method == "POST":
-        if news_form.validate_on_submit():
-            add_news_message(news_form.title.data,
-                             news_form.content.data)
-            return redirect(url_for(ALL_NEWS_REDIRECT))
-        
-        session["news_errors"] = news_form.errors
-
-    news_errors = session.pop("news_errors", None)
-    
-    return render_template(
-        "admin/add_news.html",
-        page=["add_news"],
-        news_form=news_form,
-        news_errors=news_errors,
-    )
-    

@@ -14,16 +14,6 @@ def load_user(user_id):
     return server_db_.session.get(User, user_id)
 
 
-# def commit_to_db(func: Callable) -> Callable:
-#     """Decorator to commit the session after executing the wrapped function."""
-#     @wraps(func)
-#     def wrapper(self, *args, **kwargs):
-#         result = func(self, *args, **kwargs)
-#         server_db_.session.commit()
-#         return result
-#     return wrapper
-
-
 def set_updated_at(func: Callable) -> Callable:
     """
     Decorator to set the updated_setting_at and last_setting_update attributes

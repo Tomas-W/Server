@@ -95,6 +95,14 @@
 </section>
 
 <script>
+    window.onload = function() {
+      if (window.location.hash) {
+        var offset = 150;
+        var element = document.querySelector(window.location.hash);
+        window.scrollTo(0, element.offsetTop - offset);
+      }
+    };
+    
     function toggleTopPanel() {
         var topPanel = document.getElementById("top-panel");
         var sidePanelLink = document.querySelector(".side-panel-link");

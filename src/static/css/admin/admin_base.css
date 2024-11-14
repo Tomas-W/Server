@@ -76,12 +76,10 @@
 .notifications-wrapper,
 .settings-wrapper {
     padding: 0 0 100px 0;
-    scroll-margin-top: 100px;
 }
 
 .admin-flash {
     padding: 0 0 30px 0;
-    scroll-margin-top: var(--scroll-margin-100);
     font-style: italic;
 }
 

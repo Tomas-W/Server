@@ -73,6 +73,8 @@ CREDENTIALS_ERROR_MSG: str = "Incorrect credentials"
 VERIFICATION_ERROR_MSG: str = "Verification error"
 UNEXPECTED_ERROR_MSG: str = "Unexpected error"
 
+COMMENT_SUCCESS_MSG: str = "Comment submitted successfully!"
+
 # Forms
 REQUIRED_SYMBOLS: str = string.punctuation + string.digits
 COUNTRY_CHOICES: list[str] = [country.name for country in pycountry.countries]

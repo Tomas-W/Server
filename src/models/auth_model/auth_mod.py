@@ -176,10 +176,8 @@ class User(server_db_.Model, UserMixin):
         try:
             for file in os.listdir(PROFILE_PICTURES_FOLDER):
                 if file.startswith(f"{self.id}_"):
-                    print(f"Deleting {file}")
                     os.remove(os.path.join(PROFILE_PICTURES_FOLDER, file))
         except FileNotFoundError:
-            print("File not found")
             pass
         self.profile_picture = profile_picture
     

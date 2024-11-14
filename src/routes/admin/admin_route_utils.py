@@ -61,7 +61,6 @@ def process_admin_form(form: FlaskForm) -> bool:
                         "bakery_notifications"]
     for field_name in set_value_fields:
         if field_name in form and getattr(current_user, field_name, None) == form[field_name].data:
-            print(f"*****NOT UPDATING {field_name}*******")
             del form._fields[field_name]
 
     has_updated = False

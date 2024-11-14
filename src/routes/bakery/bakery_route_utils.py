@@ -68,31 +68,3 @@ def get_bakery_items_by_column(form: FlaskForm) -> list[BakeryItem] | None:
             ).scalars().all()
             bakery_items.extend(result)
     return bakery_items
-
-
-# def process_search_fields(form: FlaskForm):
-#     for field in form:
-#         if field.data and field.name == "all_columns":
-#             print(f"{field.name}: {field.data}")
-        
-#         if field.data and field.name == "contains":
-#             print(f"{field.name}: {field.data}")
-        
-#         if field.data and field.name == "may_contain":
-#             print(f"{field.name}: {field.data}")
-            
-#         if field.data and field.name == "lactose_free":
-#             print(f"{field.name}: {field.data}")
-            
-#         if field.data and field.name == "vegan":
-#             print(f"{field.name}: {field.data}")
-
-#         if field.data and field.name == "nutri_score":
-#             print(f"{field.name}: {field.data}")
-            
-#         if field.data and field.name == "price":
-#             print(f"{field.name}: {field.data}")
-            
-#         if field.data and field.name == "nasa":
-#             print(f"{field.name}: {field.data}")
-

@@ -8,7 +8,6 @@
     --arrow-up: "\2191";
     --arrow-down: "\2193";
 
-    --scroll-margin-100: 100px;
     --white-0: rgba(255, 255, 255, 0);
     --white-100: rgba(255, 255, 255, 1);
     --text-color: rgba(160, 160, 160, 1);
@@ -140,18 +139,12 @@
     overflow-wrap: break-word;
 }
 
-.href-scroll {
-    scroll-margin-top: 100px;
-}
-
 .blur {
     filter: blur(2px);
-    /* transition: filter 0.2s ease-in-out; */
 }
 
 .no-blur {
     filter: blur(0px);
-    /* transition: filter 0.2s ease-in-out; */
 }
 
 

@@ -4,7 +4,6 @@
 
 .comment-flash {
     padding-top: var(--news-gap);
-    scroll-margin-top: var(--scroll-margin-100);
     font-style: italic;
 }
 

@@ -13,6 +13,7 @@ from src.routes.news.news_forms import CommentForm
 from src.routes.news.news_route_utils import (
     allow_only_styling, clean_news_session
 )
+from config.settings import COMMENT_SUCCESS_MSG
 
 news_bp = Blueprint("news", __name__)
 
@@ -46,7 +47,7 @@ def news(id_: int):
 
     news_dict = get_news_dict_by_id(id_)
     comment_form = CommentForm()
-    comment_form_errors = session.pop("form_errors", None)
+    comment_form_errors = session.pop("comment_form_errors", None)
     form_data = session.pop("form_data", None)
     
     if request.method == "POST":
@@ -54,7 +55,7 @@ def news(id_: int):
             sanitized_comment = allow_only_styling(comment_form.content.data)
             add_new_comment(news_id=id_, author_id=current_user.id, content=sanitized_comment)
             clean_news_session()
-            flash("Comment submitted successfully!", "success")
+            flash(COMMENT_SUCCESS_MSG)
             session["post_comment"] = True
             session["flash_type"] = "comment"
             return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
@@ -72,7 +73,7 @@ def news(id_: int):
     post_comment = session.pop("post_comment", None)  # for comment bg hghlight
     comment_id = session.pop("comment_id", None)      # for like/dislike bg hghlight
     flash_type = session.pop("flash_type", None)      # for flash messages location
-    print(f"news_item.grid_cols: {news_item.grid_cols}")
+    
     return render_template(
         "news/news.html",
         comment_form=comment_form,

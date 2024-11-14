@@ -94,7 +94,6 @@
     justify-content: center;
     align-items: center;
     font-size: 1.8rem;
-    scroll-margin-top: 300px;
 }
 
 .like-wrapper,
@@ -150,7 +149,6 @@
 
 .post-comment-wrapper {
     padding: var(--post-comment-padding);
-    scroll-margin-top: 300px;
 }
 
 .form-item {
@@ -279,7 +277,6 @@
 
 .comment-flash {
     text-align: center;
-    scroll-margin-top: 300px;
 }
 
 .comment-flash p {

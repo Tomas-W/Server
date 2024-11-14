@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 
-from flask import url_for, render_template, redirect, flash
+from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
@@ -11,10 +11,11 @@ from sqlalchemy.exc import IntegrityError
 from config.settings import (
     PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG
 )
-from src.extensions import server_db_, serializer_, mail_
+from src.extensions import server_db_, serializer_, mail_, logger
 from src.models.auth_model.auth_mod import (
     User, AuthenticationToken
 )
+from src.utils.logger_config import get_logging_routes
 
 def admin_required(f):
     @wraps(f)
@@ -22,6 +23,7 @@ def admin_required(f):
         if not current_user.is_authenticated \
                 or "admin" not in current_user.roles.split("|"):
             flash(NOT_AUTHORIZED_MSG)
+            logger.warning(f"@admin_required {get_logging_routes()}")
             return redirect(url_for("news.all_news"))
         return f(*args, **kwargs)
     return decorated_function

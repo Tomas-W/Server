@@ -4,6 +4,7 @@ from flask import (
 from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
+from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token, process_verification_token,
@@ -59,6 +60,7 @@ def user_admin():
             
         elif form_type == AUTHENTICATION_FORM_TYPE:
             if authentication_form.validate_on_submit():
+                logger.info("Authentication form submitted")
 
                 if clean_up_form_fields(authentication_form):
                     flash("No changes made")

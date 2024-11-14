@@ -172,5 +172,5 @@ def get_app(testing: bool = False) -> Flask:
         static_folder="static"
     )
     app_ = _configure_server(app_, testing=testing)
-    clear_webassets_cache()
+    clear_webassets_cache()    
     return app_

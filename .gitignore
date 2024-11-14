@@ -39,3 +39,7 @@ profile_pictures/
 
 # Ignore playgrounds
 playground.py
+
+# Ignore logs
+logs/
+*.log

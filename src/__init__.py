@@ -1,28 +1,20 @@
-"""
-Initializes the FlaskApp.
-
-Sets general app settings as well as private variables,
-    blueprints, databases.
-"""
 import os
+import secrets
+
 from flask import Flask, send_from_directory, request
 from flask_login import current_user
-import secrets
-from flask_assets import Environment
-from flask_assets import Bundle
-from src.extensions import (server_db_, mail_, csrf_,
-                            login_manager_, migrater_, limiter_, session_, compress_
-)
-from src.models.mod_utils import load_user
+from flask_assets import Environment, Bundle
 
-from src.cli import _auth_cli, _server_cli
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from src.utils.misc_utils import clear_webassets_cache
-from src.extensions_utils import css_bundle
 from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
                              PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
-                             BAKERY_HEALTH_IMAGES_FOLDER
-)
+                             BAKERY_HEALTH_IMAGES_FOLDER)
+
+from src.extensions import (server_db_, mail_, csrf_,
+                            login_manager_, migrater_, limiter_, session_, compress_)
+from src.models.mod_utils import load_user
+from src.cli import _auth_cli, _server_cli
+from src.extensions_utils import clear_webassets_cache, css_bundle
 
 
 HEADERS = {
@@ -86,7 +78,7 @@ def _configure_extensions(app_: Flask) -> None:
     assets_ = Environment(app_)
     _configure_css(assets_)
     app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
-    app_.context_processor(lambda: dict(assets=assets_))
+    app_.context_processor(lambda: {"assets": assets_})
     compress_.init_app(app_)
 
 def _configure_blueprints(app_: Flask) -> None:
@@ -100,18 +92,17 @@ def _configure_blueprints(app_: Flask) -> None:
     app_.register_blueprint(admin_bp)
     app_.register_blueprint(bakery_bp)
     app_.register_blueprint(errors_bp)
-    
 
 
 def _configure_requests(app_: Flask) -> None:
     def handle_user_activity():
         if current_user.is_authenticated:
             current_user.update_last_seen()
-    
+
     def make_nonce():
         if not getattr(request, "csp_nonce", None):
             request.csp_nonce = secrets.token_urlsafe(18)[:18]
-    
+
     def add_security_headers(resp):
         resp.headers.update(HEADERS)
         csp_header = resp.headers.get("Content-Security-Policy")
@@ -127,11 +118,10 @@ def _configure_requests(app_: Flask) -> None:
             response.cache_control.max_age = 3600 * 24 * 7  # 7 days
             response.expires = 3600 * 24 * 7
         return response
-    
+
     app_.before_request(handle_user_activity)
     app_.before_request(make_nonce)
     # app_.after_request(add_security_headers)
-    # caching
     # app_.after_request(add_cache_control_headers)
 
 
@@ -145,7 +135,8 @@ def _configure_database(app_: Flask) -> None:
         if not os.path.exists(DATABASE_URI):
 
             server_db_.create_all()
-    
+
+
 def _configure_url_rules(app_: Flask) -> None:
     app_.add_url_rule("/uploads/profile_icons/<filename>",
                       endpoint="profile_icons_folder",
@@ -176,12 +167,10 @@ def _configure_css(assets_: Environment) -> None:
 
 def get_app(testing: bool = False) -> Flask:
     app_: Flask = Flask(
-        import_name=__name__.split('.')[0],
+        import_name=__name__.split('.', maxsplit=1)[0],
         template_folder="templates",
         static_folder="static"
     )
     app_ = _configure_server(app_, testing=testing)
     clear_webassets_cache()
     return app_
-
-

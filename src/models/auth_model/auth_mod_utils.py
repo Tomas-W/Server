@@ -1,5 +1,4 @@
 import os
-import time
 from functools import wraps
 
 from flask import url_for, render_template, redirect, flash
@@ -9,29 +8,31 @@ from itsdangerous import SignatureExpired, BadSignature
 from sqlalchemy import select, or_
 from sqlalchemy.exc import IntegrityError
 
-from src.extensions import server_db_, serializer_, mail_
-from src.models.auth_model.auth_mod import (
-    User, AuthenticationToken, AuthenticationToken
-)
 from config.settings import (
     PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG
 )
-
+from src.extensions import server_db_, serializer_, mail_
+from src.models.auth_model.auth_mod import (
+    User, AuthenticationToken
+)
 
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or "admin" not in current_user.roles.split("|"):
+        if not current_user.is_authenticated \
+                or "admin" not in current_user.roles.split("|"):
             flash(NOT_AUTHORIZED_MSG)
             return redirect(url_for("news.all_news"))
         return f(*args, **kwargs)
     return decorated_function
 
 
-def process_verification_token(email: str, token_type: str, allow_unknown: bool = False) -> None:
+def process_verification_token(email: str, token_type: str,
+                               allow_unknown: bool = False) -> bool:
     """
     Generate a token, reset it in the database, and send an email with a 
     verification link and instructions.
+    allow_unknown: if True, do not check if the user exists (for email verification)
     """
     if not allow_unknown:
         user = get_user_by_email(email)
@@ -41,6 +42,7 @@ def process_verification_token(email: str, token_type: str, allow_unknown: bool 
     token = generate_authentication_token(email, token_type)
     reset_authentication_token(token_type, token, email)
     send_authentication_email(email, token_type, token)
+    return True
 
 
 def generate_authentication_token(email: str, token_type: str) -> str:
@@ -48,16 +50,16 @@ def generate_authentication_token(email: str, token_type: str) -> str:
     return token
 
 
-def reset_authentication_token(token_type: str, token: str, email: str) -> bool:
+def reset_authentication_token(token_type: str, token: str, email: str) -> None:
     """
     Reset the specified authentication token.
     If no User with the given email exists, return False.
     If the token already exists, update it and return True.
     If the token does not exist, create a new one and return True.
-    """    
+    """
     id_ = get_user_by_email(email).id
     existing_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type=token_type).first()
+        user_id=id_, token_type=token_type).first_or_none()
     if existing_token:
         existing_token.token = token
     else:
@@ -65,10 +67,9 @@ def reset_authentication_token(token_type: str, token: str, email: str) -> bool:
                                         token_type=token_type, token=token)
         server_db_.session.add(new_token)
         server_db_.session.commit()
-    return True
 
 
-def send_authentication_email(email: str, token_type: str, token: str):
+def send_authentication_email(email: str, token_type: str, token: str) -> None:
     """
     Send an email with a authentication link and instructions.
     Verifications:
@@ -78,7 +79,7 @@ def send_authentication_email(email: str, token_type: str, token: str):
     user: User | None = get_user_by_email(email)
     if not user:
         return
-    
+
     if token_type == EMAIL_VERIFICATION:
         url_ = "admin.verify_email"
         subject = "Email Verification"
@@ -87,6 +88,8 @@ def send_authentication_email(email: str, token_type: str, token: str):
         url_ = "auth.reset_password"
         subject = "Password Reset"
         redirect_title = "To reset your password, "
+    else:
+        raise ValueError(f"Invalid token type: {token_type}")
 
     verification_url = url_for(url_, token=token, _external=True)
     settings_url = url_for("admin.user_admin",
@@ -111,7 +114,8 @@ def send_authentication_email(email: str, token_type: str, token: str):
     mail_.send(message)
 
 
-def confirm_authentication_token(token: str, token_type: str, expiration: int = 3600) -> str | None:
+def confirm_authentication_token(token: str, token_type: str,
+                                 expiration: int = 3600) -> str | None:
     """
     Confirm the specified authentication token.
     Verifications:
@@ -126,27 +130,30 @@ def confirm_authentication_token(token: str, token_type: str, expiration: int = 
         )
         stored_token = server_db_.session.query(AuthenticationToken).filter_by(
             user_email=email, token_type=token_type).first()
-        
+
         if stored_token and stored_token.token == token:
             # delete_authentication_token(token_type, token)
             return email
-        
+
         # elif get_user_by_email(email) is None:
         #     print("email not found")
         #     return -1
-        
+
         else:
             return None
-        
+
     except (SignatureExpired, BadSignature):
         return None
-    
-    
+
+
 def delete_authentication_token(token_type: str, token: str) -> None:
     """Delete the specified authentication token."""
-    server_db_.session.query(AuthenticationToken).filter_by(
-        token_type=token_type, token=token).delete()
-    server_db_.session.commit()
+    try:
+        server_db_.session.query(AuthenticationToken).filter_by(
+            token_type=token_type, token=token).delete()
+        server_db_.session.commit()
+    except Exception as e:
+        print(e)
 
 
 def get_user_by_email(email: str) -> User | None:
@@ -207,5 +214,5 @@ def _init_user() -> User | None:
         server_db_.session.add(new_user)
         server_db_.session.commit()
         return repr(new_user)
-    
+
     return None

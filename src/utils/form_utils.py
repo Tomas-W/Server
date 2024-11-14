@@ -4,13 +4,8 @@ from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
-from src.models.auth_model.auth_mod import User
-
 from config.settings import (
     banned_words_list, banned_characters_list, REQUIRED_SYMBOLS,
-    MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH
-)
-from config.settings import (
     MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
     MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH, MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
     FAST_CODE_LENGTH, MIN_NEWS_TITLE_LENGTH, MAX_NEWS_TITLE_LENGTH,
@@ -24,6 +19,7 @@ from config.settings import (
     MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
     MAX_NEWS_LENGTH
 )
+from src.models.auth_model.auth_mod import User
 
 
 class VerifyEmailCheck:
@@ -65,8 +61,8 @@ class EmailCheck:
             return
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', field.data):
             raise ValidationError(self.invalid_message)
-        
-        
+
+
 class EmailTakenCheck:
     """
     Validates email by checking if it's registered or not.
@@ -133,7 +129,7 @@ class UsernameLengthCheck:
             raise ValidationError(self.min_length_message)
         if len(field.data) > MAX_USERNAME_LENGTH:
             raise ValidationError(self.max_length_message)
-                
+
 
 class PasswordCheck:
     """
@@ -269,7 +265,7 @@ class ForbiddenCheck:
         self.banned_chars: list[str] = banned_characters_list
         self.word_message: str = FORBIDDEN_WORD_MSG
         self.char_message: str = FORBIDDEN_CHAR_MSG
-        
+
         self.word = ""
         self.char = ""
 
@@ -334,7 +330,7 @@ class NewsCodeCheck:
     def __init__(self) -> None:
         self.length_message: str = NEWS_CODE_LENGTH_ERROR_MSG
         self.numeric_message: str = NEWS_CODE_NUMERIC_ERROR_MSG
-    
+
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if not field.data.isdigit():
             raise ValidationError(self.numeric_message)
@@ -400,4 +396,3 @@ class ImageUploadCheck:
                 raise ValidationError(self.extension_message)
             if field.data.content_length > self.max_size:
                 raise ValidationError(self.size_message)
-

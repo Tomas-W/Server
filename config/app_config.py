@@ -8,7 +8,6 @@ class BaseConfig(object):
     CONFIG_NAME = "base"
     SECRET_KEY = os.environ.get("FLASK_KEY")
     
-    # caching
     # SEND_FILE_MAX_AGE_DEFAULT = timedelta(days=7)
     # ASSETS_DEBUG = True
     

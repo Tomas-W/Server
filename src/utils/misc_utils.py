@@ -1,23 +1,8 @@
-import os
-import glob
+
 # from datetime import datetime, timedelta
 # import random
 from PIL import Image
 # from rembg import remove
-
-
-def clear_webassets_cache(cache_dir="C:/Coding/Projects/Server/src/static/.webassets-cache", max_files=10):
-    files = glob.glob(os.path.join(cache_dir, "*"))
-    
-    if len(files) > max_files:
-        files.sort(key=os.path.getmtime)
-        
-        files_to_remove = len(files) - max_files
-        print(f"*********** TOTAL FILES: {len(files)} *****************")
-        print("*********************************************")
-        
-        for file in files[:files_to_remove]:
-            os.remove(file)
 
 
 # def random_dates(count=20):

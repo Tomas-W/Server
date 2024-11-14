@@ -37,8 +37,6 @@ User Admin
 {% block admin_content %}
 <div class="admin-content blur-target">
 
-    <!-- Display verification message if email is not verified -->
-    {% if not email_verified %}
     <div class="verify-wrapper">
         <!-- Verification flash messages -->
         {% if flash_type == "verify" and get_flashed_messages() %}
@@ -46,6 +44,9 @@ User Admin
                 <p>{{ get_flashed_messages()[0] }}</p>
             </div>
         {% endif %} 
+
+        <!-- Display verification message if email is not verified -->
+        {% if not email_verified %}
         <div class="verify-content">
             <p class="verify-header">Verify your email before access</p>
             <p class="verify-info">If you used an invalid email address, you can change it here.</p>

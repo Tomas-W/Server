@@ -28,7 +28,6 @@ admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route("/admin/user-admin", methods=["GET", "POST"])
 @login_required
-@admin_required
 def user_admin():
     """
     Asks user to verify email before allowing them to update their data.
@@ -147,6 +146,7 @@ def user_admin():
 
 @admin_bp.route("/admin/add-news", methods=["GET", "POST"])
 @login_required
+@admin_required
 def add_news():
     add_news_form: AddNewsForm = AddNewsForm()
     
@@ -189,14 +189,10 @@ def verify_email(token):
             flash(EMAIL_VERIFIED_MSG)
             return redirect(url_for(USER_ADMIN_REDIRECT))
     
-    user: User = get_user_by_email(email)
-    if not user.email_verified:
-        session["flash_type"] = "verify"
-        flash(AUTHENTICATION_LINK_ERROR_MSG)
-    else:
-        session["flash_type"] = "authentication"
-        flash(AUTHENTICATION_LINK_ERROR_MSG)
-    
+
+    session["flash_type"] = "verify"
+    flash(AUTHENTICATION_LINK_ERROR_MSG)
+
     return redirect(url_for(
         USER_ADMIN_REDIRECT,
     ))

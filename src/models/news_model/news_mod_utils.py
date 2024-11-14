@@ -3,7 +3,6 @@ from sqlalchemy import select
 from src.extensions import server_db_
 from src.models.news_model.news_mod import News, Comment
 from src.routes.news.news_items import get_news_dict
-from src.models.mod_utils import commit_to_db
 
 
 def get_all_news_dict() -> list[dict]:
@@ -31,14 +30,14 @@ def get_news_dict_by_id(id_: int):
     return result.to_dict()
 
 
-@commit_to_db
 def delete_news_by_id(id_: int) -> None:
     server_db_.session.delete(server_db_.session.get(News, id_))
+    server_db_.session.commit()
 
 
-@commit_to_db
 def clear_news_db() -> None:
     server_db_.session.query(News).delete()
+    server_db_.session.commit()
 
 
 def _init_news() -> bool | None:

@@ -7,7 +7,7 @@ from src.models.auth_model.auth_mod import User
 
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token, process_verification_token,
-    process_verification_token, admin_required
+    process_verification_token, admin_required, delete_authentication_token
 )
 from src.routes.admin.admin_route_utils import (
     add_news_message, process_admin_form, process_profile_picture, clean_up_form_fields,
@@ -126,7 +126,6 @@ def user_admin():
 
     flash_type = session.pop("flash_type", None)
     _anchor = session.pop("_anchor", None)
-    print(f"*****ANCHOR: {_anchor}*******")
 
     return render_template(
         "admin/user_admin.html",
@@ -180,16 +179,18 @@ def verify_email(token):
     """
     email = confirm_authentication_token(token, EMAIL_VERIFICATION)
     if email:
-        user: User = get_user_by_email(current_user.email)
+        user: User = get_user_by_email(email)
         if user:
             user.set_email(email)
             user.reset_new_email()
             user.set_email_verified(True)
+            delete_authentication_token(EMAIL_VERIFICATION, token)
             session["flash_type"] = "authentication"
             flash(EMAIL_VERIFIED_MSG)
             return redirect(url_for(USER_ADMIN_REDIRECT))
     
-    if not current_user.email_verified:
+    user: User = get_user_by_email(email)
+    if not user.email_verified:
         session["flash_type"] = "verify"
         flash(AUTHENTICATION_LINK_ERROR_MSG)
     else:

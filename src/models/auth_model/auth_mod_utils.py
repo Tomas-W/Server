@@ -1,6 +1,8 @@
 import os
+import time
 from functools import wraps
-from flask import url_for, render_template, redirect
+
+from flask import url_for, render_template, redirect, flash
 from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
@@ -11,26 +13,33 @@ from src.extensions import server_db_, serializer_, mail_
 from src.models.auth_model.auth_mod import (
     User, AuthenticationToken, AuthenticationToken
 )
-from src.models.mod_utils import commit_to_db
-from config.settings import PASSWORD_VERIFICATION, EMAIL_VERIFICATION
+from config.settings import (
+    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG
+)
 
 
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or "admin" not in current_user.roles.split("|"):
+            flash(NOT_AUTHORIZED_MSG)
             return redirect(url_for("news.all_news"))
         return f(*args, **kwargs)
     return decorated_function
 
 
-def process_verification_token(email: str, token_type: str) -> None:
+def process_verification_token(email: str, token_type: str, allow_unknown: bool = False) -> None:
     """
     Generate a token, reset it in the database, and send an email with a 
     verification link and instructions.
     """
+    if not allow_unknown:
+        user = get_user_by_email(email)
+        if not user:
+            # time.sleep(0.2)
+            return False
     token = generate_authentication_token(email, token_type)
-    reset_authentication_token(token_type, token)
+    reset_authentication_token(token_type, token, email)
     send_authentication_email(email, token_type, token)
 
 
@@ -39,24 +48,21 @@ def generate_authentication_token(email: str, token_type: str) -> str:
     return token
 
 
-def reset_authentication_token(token_type: str, token: str) -> bool:
+def reset_authentication_token(token_type: str, token: str, email: str) -> bool:
     """
     Reset the specified authentication token.
     If no User with the given email exists, return False.
     If the token already exists, update it and return True.
     If the token does not exist, create a new one and return True.
-    """
-    user = get_user_by_email(current_user.email)
-    if not user:
-        return False
-    
-    id_ = user.id
+    """    
+    id_ = get_user_by_email(email).id
     existing_token = server_db_.session.query(AuthenticationToken).filter_by(
         user_id=id_, token_type=token_type).first()
     if existing_token:
         existing_token.token = token
     else:
-        new_token = AuthenticationToken(user_id=id_, token_type=token_type, token=token)
+        new_token = AuthenticationToken(user_id=id_, user_email=email,
+                                        token_type=token_type, token=token)
         server_db_.session.add(new_token)
         server_db_.session.commit()
     return True
@@ -69,6 +75,10 @@ def send_authentication_email(email: str, token_type: str, token: str):
     - EMAIL_VERIFICATION [set email verified]
     - PASSWORD_VERIFICATION [reset password]
     """
+    user: User | None = get_user_by_email(email)
+    if not user:
+        return
+    
     if token_type == EMAIL_VERIFICATION:
         url_ = "admin.verify_email"
         subject = "Email Verification"
@@ -108,21 +118,22 @@ def confirm_authentication_token(token: str, token_type: str, expiration: int = 
     - EMAIL_VERIFICATION [set email verified | set new email]
     - PASSWORD_VERIFICATION [reset password]
     """
-    stored_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=current_user.id, token_type=token_type).first()
     try:
         email = serializer_.loads(
             token,
             salt=os.environ.get(f"{token_type.upper()}_SALT"),
             max_age=expiration
         )
+        stored_token = server_db_.session.query(AuthenticationToken).filter_by(
+            user_email=email, token_type=token_type).first()
         
         if stored_token and stored_token.token == token:
-            delete_authentication_token(token_type, token)
+            # delete_authentication_token(token_type, token)
             return email
         
-        elif get_user_by_email(email) is None:
-            return -1
+        # elif get_user_by_email(email) is None:
+        #     print("email not found")
+        #     return -1
         
         else:
             return None
@@ -131,11 +142,11 @@ def confirm_authentication_token(token: str, token_type: str, expiration: int = 
         return None
     
     
-@commit_to_db
 def delete_authentication_token(token_type: str, token: str) -> None:
     """Delete the specified authentication token."""
     server_db_.session.query(AuthenticationToken).filter_by(
         token_type=token_type, token=token).delete()
+    server_db_.session.commit()
 
 
 def get_user_by_email(email: str) -> User | None:
@@ -158,9 +169,9 @@ def get_user_by_fast_name(fast_name: str) -> User | None:
     ).scalar_one_or_none()
 
 
-@commit_to_db
 def delete_user_by_id(id_: int) -> None:
     server_db_.session.delete(server_db_.session.get(User, id_))
+    server_db_.session.commit()
 
 
 def get_new_user(email: str, username: str, password: str) -> User | None:
@@ -191,6 +202,7 @@ def _init_user() -> User | None:
             fast_name="tomas",
             fast_code=("00000"),
             email_verified=True,
+            roles="admin|"
         )
         server_db_.session.add(new_user)
         server_db_.session.commit()

@@ -22,6 +22,7 @@ class AuthenticationToken(server_db_.Model):
     
     - ID (int): Identifier [Primary Key]
     - USER_ID (int): User ID [Foreign Key]
+    - USER_EMAIL (str): User email [Optional]
     - TOKEN_TYPE (str): Type of token
     - TOKEN (str): Token
     - CREATED_AT (datetime): Timestamp of creation [Default]
@@ -32,6 +33,7 @@ class AuthenticationToken(server_db_.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("auth.id", ondelete="CASCADE"))
+    user_email: Mapped[str] = mapped_column(String(75), nullable=True)
     token_type: Mapped[str] = mapped_column(String(32))
     token: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
@@ -119,7 +121,7 @@ class User(server_db_.Model, UserMixin):
     
     def __init__(self, email: str, username: str, password: str,
                  fast_name: Optional[str] = None, fast_code: Optional[str] = None,
-                 email_verified: bool = False):
+                 email_verified: bool = False, roles: Optional[str] = None):
         """
         Initialize a new User instance.
         Applies argon2 hashing to the password.
@@ -135,6 +137,7 @@ class User(server_db_.Model, UserMixin):
         self.profile_icon = random.choice([file for file in os.listdir(PROFILE_ICONS_FOLDER)])
         self.about_me = "Share something interesting about yourself..."
         self.email_verified = email_verified
+        self.roles = roles
     
     @set_updated_at
     def set_email(self, email: str) -> None:
@@ -224,7 +227,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:
         if verified:
-            self.roles.append("verified")
+            self.roles += ("verified|")
         else:
             self.roles.remove("verified")
         self.email_verified = verified

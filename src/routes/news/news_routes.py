@@ -40,15 +40,15 @@ def news(id_: int):
     
     - CommentForm
     """
-    id_ = int(id_)
-    comment_form = CommentForm()
-    
-    news_dict = get_news_dict_by_id(id_)
     news_item = get_news_by_id(id_)
-    news_item.set_seen_by(current_user.id)
-    
-    comment_form_errors = session.pop("comment_form_errors", None)
+    if not news_item:
+        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
 
+    news_dict = get_news_dict_by_id(id_)
+    comment_form = CommentForm()
+    comment_form_errors = session.pop("form_errors", None)
+    form_data = session.pop("form_data", None)
+    
     if request.method == "POST":
         if comment_form.validate_on_submit():
             sanitized_comment = allow_only_styling(comment_form.content.data)
@@ -63,7 +63,6 @@ def news(id_: int):
         session["form_data"] = request.form.to_dict()
         return redirect(url_for("news.news", id_=id_, _anchor="post-comment-wrapper"))
 
-    form_data = session.pop("form_data", None)
     if form_data:
         comment_form.process(MultiDict(form_data))
 
@@ -90,6 +89,9 @@ def news(id_: int):
 @login_required
 def like_news(id_: int):
     news_item = get_news_by_id(id_)
+    if not news_item:
+        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
+        
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
@@ -103,6 +105,9 @@ def like_news(id_: int):
 @login_required
 def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
+    if not news_item:
+        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
+        
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
@@ -116,6 +121,9 @@ def dislike_news(id_: int):
 @login_required
 def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
+    if not comment_item:
+        return render_template("errors/404.html", info=f"Comment with ID {id_} not found"), 404
+        
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(
@@ -129,6 +137,9 @@ def like_comment(id_: int):
 @login_required
 def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
+    if not comment_item:
+        return render_template("errors/404.html", info=f"Comment with ID {id_} not found"), 404
+        
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(

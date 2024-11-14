@@ -1,0 +1,17 @@
+{% extends "errors/error_base.html" %}
+
+{% block error_content %}
+
+<div class="error-header">
+    <p class="error-title">404 Not Found</p>
+    <p class="error-sub-title">{{ info }}</p>
+    <p class="referrer">
+        <a href="javascript:history.back()"><span style="text-decoration: underline;">Go back</span> to the previous page</a>
+    </p>
+</div>
+
+{% if info %}
+<p class="error-info">{{ info }}</p>
+{% endif %}
+
+{% endblock %} 

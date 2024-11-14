@@ -86,19 +86,21 @@ def _configure_extensions(app_: Flask) -> None:
     assets_ = Environment(app_)
     _configure_css(assets_)
     app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
-    app_.config['ASSETS_DEBUG'] = True
     app_.context_processor(lambda: dict(assets=assets_))
+    compress_.init_app(app_)
 
 def _configure_blueprints(app_: Flask) -> None:
     from src.routes.news.news_routes import news_bp
     from src.routes.auth.auth_routes import auth_bp
     from src.routes.admin.admin_routes import admin_bp
     from src.routes.bakery.bakery_routes import bakery_bp
+    from src.routes.errors.error_routes import errors_bp
     app_.register_blueprint(news_bp)
     app_.register_blueprint(auth_bp)
     app_.register_blueprint(admin_bp)
     app_.register_blueprint(bakery_bp)
-    compress_.init_app(app_)
+    app_.register_blueprint(errors_bp)
+    
 
 
 def _configure_requests(app_: Flask) -> None:
@@ -129,7 +131,8 @@ def _configure_requests(app_: Flask) -> None:
     app_.before_request(handle_user_activity)
     app_.before_request(make_nonce)
     # app_.after_request(add_security_headers)
-    app_.after_request(add_cache_control_headers)
+    # caching
+    # app_.after_request(add_cache_control_headers)
 
 
 def _configure_cli(app_: Flask) -> None:

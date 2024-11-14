@@ -3,8 +3,7 @@ import os
 
 import requests
 from flask import (
-    Blueprint, redirect, url_for, request, render_template, flash, session,
-    get_flashed_messages
+    Blueprint, redirect, url_for, request, render_template, flash, session
 )
 from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
@@ -13,6 +12,7 @@ import google.auth.transport.requests  # noqa
 from sqlalchemy import select
 
 from src.extensions import server_db_, flow_
+from src.models.auth_model.auth_mod_utils import delete_authentication_token
 from src.routes.auth.auth_forms import (
     LoginForm, FastLoginForm, RegisterForm, RequestResetForm, SetPasswordForm,
     ResetPasswordForm
@@ -317,11 +317,11 @@ def reset_password(token):
         flash(AUTHENTICATION_LINK_ERROR_MSG)
         return redirect(url_for(REQUEST_RESET_REDIRECT))
 
-    if email == -1:  # Fix workaroud for email == -1
-        flash(CREATE_ACCOUNT_MSG)
-        session["fill_email"] = session.pop("email")
-        return redirect(url_for(REGISTER_REDIRECT))
-
+    # if email == -1:  # Fix workaroud for email == -1
+    #     flash(CREATE_ACCOUNT_MSG)
+    #     session["fill_email"] = session.pop("email")
+    #     return redirect(url_for(REGISTER_REDIRECT))
+    
     user: User | None = server_db_.session.execute(
         select(User).filter_by(email=email)).scalar_one_or_none()
 
@@ -329,6 +329,7 @@ def reset_password(token):
         if reset_password_form.validate_on_submit():
             user.set_password(reset_password_form.password.data)
             user.set_email_verified(True)
+            delete_authentication_token(PASSWORD_VERIFICATION, token)
             handle_user_login(user, remember=False, flash_=False)
             
             flash(PASSWORD_UPDATE_MSG)
@@ -337,7 +338,7 @@ def reset_password(token):
 
         session["form_errors"] = reset_password_form.errors
         session["last_form_type"] = "password"
-
+    
     form_errors = session.pop("form_errors", None)
 
     return render_template(

@@ -76,4 +76,12 @@ css_bundle = [
             "filters": "rcssmin",
             "output": "dist/search_css.min.css"
         },
+        {
+            "name": "errors_css",
+            "files": [
+                "css/errors/error_base.css",
+                ],
+            "filters": "rcssmin",
+            "output": "dist/errors_css.min.css"
+        }
     ]

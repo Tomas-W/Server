@@ -87,7 +87,7 @@ Master Admin
                 <label class="admin-form-label text-area-label">Alinea Header 1</label>
                 <textarea name="alinea_headers[]" class="main-input-field"></textarea>
             </div>
-            <div class="input-error-wrapper form-gap">
+            <div class="input-error-wrapper form-gap alinea-content-gap">
                 <label class="admin-form-label text-area-label">Alinea Content 1</label>
                 <textarea name="alinea_contents[]" class="main-input-field"></textarea>
             </div>
@@ -105,144 +105,72 @@ Master Admin
 </div>
 
 <script>
-function addColumn() {
-    var container = document.getElementById("grid-fields");
-    var existingCols = container.querySelectorAll("textarea[name='table_cols[]']").length;
+function addItem(containerId, type, nameAttr, labelPrefix) {
+    const container = document.getElementById(containerId);
+    const existingItems = container.querySelectorAll(`textarea[name='${nameAttr}']`).length;
 
-    var colWrapperDiv = document.createElement("div");
-    colWrapperDiv.className = "input-error-wrapper form-gap";
-    var colLabel = document.createElement("label");
-    colLabel.className = "admin-form-label text-area-label";
-    colLabel.textContent = "Table Column " + (existingCols + 1);
-    var colTextarea = document.createElement("textarea");
-    colTextarea.name = "table_cols[]";
-    colTextarea.className = "main-input-field";
-    colWrapperDiv.appendChild(colLabel);
-    colWrapperDiv.appendChild(colTextarea);
+    const wrapperDiv = document.createElement("div");
+    wrapperDiv.className = nameAttr.includes("alinea_contents") ? "input-error-wrapper form-gap alinea-content-gap" : "input-error-wrapper form-gap";
 
-    var addButton = container.querySelector("button[onclick='addColumn()']");
-    container.insertBefore(colWrapperDiv, addButton);
-    updateColumnLabels();
+    const label = document.createElement("label");
+    label.className = "admin-form-label text-area-label";
+    label.textContent = `${labelPrefix} ${existingItems + 1}`;
+
+    const textarea = document.createElement("textarea");
+    textarea.name = nameAttr;
+    textarea.className = "main-input-field";
+
+    wrapperDiv.appendChild(label);
+    wrapperDiv.appendChild(textarea);
+
+    const addButton = container.querySelector(`button[onclick^="add${type}"]`);
+    container.insertBefore(wrapperDiv, addButton);
+
+    updateLabels(containerId, labelPrefix);
 }
 
-function deleteColumn() {
-    var container = document.getElementById("grid-fields");
-    var colWrappers = container.querySelectorAll("textarea[name='table_cols[]']");
-    if (colWrappers.length > 1) {
-        container.removeChild(colWrappers[colWrappers.length - 1].parentElement);
-        updateColumnLabels();
+function deleteItem(containerId, nameAttr, labelPrefix) {
+    const container = document.getElementById(containerId);
+    const items = container.querySelectorAll(`textarea[name='${nameAttr}']`);
+    if (items.length > 1) {
+        container.removeChild(items[items.length - 1].parentElement);
+        updateLabels(containerId, labelPrefix);
     }
 }
 
-function updateColumnLabels() {
-    var container = document.getElementById("grid-fields");
-    var colLabels = container.querySelectorAll("label.admin-form-label");
-    var colIndex = 1;
-    colLabels.forEach((label) => {
-        if (label.textContent.startsWith("Table Column")) {
-            label.textContent = "Table Column " + colIndex;
-            colIndex++;
-        }
-    });
-}
+function updateLabels(containerId, labelPrefix) {
+    const container = document.getElementById(containerId);
+    const labels = container.querySelectorAll("label.admin-form-label");
+    let index = 1;
 
-function addRow() {
-    var container = document.getElementById("grid-fields");
-    var existingRows = container.querySelectorAll("textarea[name='table_rows[]']").length;
-
-    var rowWrapperDiv = document.createElement("div");
-    rowWrapperDiv.className = "input-error-wrapper form-gap";
-    var rowLabel = document.createElement("label");
-    rowLabel.className = "admin-form-label text-area-label";
-    rowLabel.textContent = "Table Row " + (existingRows + 1);
-    var rowTextarea = document.createElement("textarea");
-    rowTextarea.name = "table_rows[]";
-    rowTextarea.className = "main-input-field";
-    rowWrapperDiv.appendChild(rowLabel);
-    rowWrapperDiv.appendChild(rowTextarea);
-
-    container.insertBefore(rowWrapperDiv, container.lastElementChild.previousElementSibling);
-    updateRowLabels();
-}
-
-function deleteRow() {
-    var container = document.getElementById("grid-fields");
-    var wrappers = container.getElementsByClassName("input-error-wrapper");
-    if (wrappers.length > 2) {
-        container.removeChild(wrappers[wrappers.length - 1]);
-        updateRowLabels();
-    }
-}
-
-function updateRowLabels() {
-    var container = document.getElementById("grid-fields");
-    var labels = container.querySelectorAll("label.admin-form-label");
-    var rowIndex = 1;
     labels.forEach((label) => {
-        if (label.textContent.startsWith("Table Row")) {
-            label.textContent = "Table Row " + rowIndex;
-            rowIndex++;
+        if (label.textContent.startsWith(labelPrefix)) {
+            label.textContent = `${labelPrefix} ${index}`;
+            index++;
         }
     });
+}
+
+function addColumn() {
+    addItem("grid-fields", "Column", "table_cols[]", "Table Column");
+}
+function deleteColumn() {
+    deleteItem("grid-fields", "table_cols[]", "Table Column");
+}
+function addRow() {
+    addItem("grid-fields", "Row", "table_rows[]", "Table Row");
+}
+function deleteRow() {
+    deleteItem("grid-fields", "table_rows[]", "Table Row");
 }
 
 function addAlinea() {
-    var container = document.getElementById("info-fields");
-    var existingRows = container.querySelectorAll("textarea[name='alinea_contents[]']").length;
-    var existingCols = container.querySelectorAll("textarea[name='alinea_headers[]']").length;
-
-    var colWrapperDiv = document.createElement("div");
-    colWrapperDiv.className = "input-error-wrapper form-gap";
-    var colLabel = document.createElement("label");
-    colLabel.className = "admin-form-label text-area-label";
-    colLabel.textContent = "Alinea Header " + (existingCols + 1);
-    var colTextarea = document.createElement("textarea");
-    colTextarea.name = "alinea_headers[]";
-    colTextarea.className = "main-input-field";
-    colWrapperDiv.appendChild(colLabel);
-    colWrapperDiv.appendChild(colTextarea);
-
-    var rowWrapperDiv = document.createElement("div");
-    rowWrapperDiv.className = "input-error-wrapper form-gap";
-    var rowLabel = document.createElement("label");
-    rowLabel.className = "admin-form-label text-area-label";
-    rowLabel.textContent = "Alinea Content " + (existingRows + 1);
-    var rowTextarea = document.createElement("textarea");
-    rowTextarea.name = "alinea_contents[]";
-    rowTextarea.className = "main-input-field";
-    rowWrapperDiv.appendChild(rowLabel);
-    rowWrapperDiv.appendChild(rowTextarea);
-
-    container.insertBefore(colWrapperDiv, container.lastElementChild.previousElementSibling);
-    container.insertBefore(rowWrapperDiv, container.lastElementChild.previousElementSibling);
-    updateAlineaLabels();
+    addItem("info-fields", "Alinea", "alinea_headers[]", "Alinea Header");
+    addItem("info-fields", "Alinea", "alinea_contents[]", "Alinea Content");
 }
-
 function deleteAlinea() {
-    var container = document.getElementById("info-fields");
-    var colWrappers = container.querySelectorAll("textarea[name='alinea_headers[]']");
-    var rowWrappers = container.querySelectorAll("textarea[name='alinea_contents[]']");
-    if (colWrappers.length > 0 && rowWrappers.length > 0) {
-        container.removeChild(colWrappers[colWrappers.length - 1].parentElement);
-        container.removeChild(rowWrappers[rowWrappers.length - 1].parentElement);
-        updateAlineaLabels();
-    }
-}
-
-function updateAlineaLabels() {
-    var container = document.getElementById("info-fields");
-    var rowLabels = container.querySelectorAll("label.admin-form-label");
-    var rowIndex = 1;
-    var colIndex = 1;
-    rowLabels.forEach((label) => {
-        if (label.textContent.startsWith("Alinea Header")) {
-            label.textContent = "Alinea Header " + colIndex;
-            colIndex++;
-        } else if (label.textContent.startsWith("Alinea Content")) {
-            label.textContent = "Alinea Content " + rowIndex;
-            rowIndex++;
-        }
-    });
+    deleteItem("info-fields", "alinea_headers[]", "Alinea Header");
+    deleteItem("info-fields", "alinea_contents[]", "Alinea Content");
 }
 </script>
 {% endblock %}

@@ -55,6 +55,8 @@ ALL_NEWS_REDIRECT: str = "news.all_news"
 USER_ADMIN_REDIRECT: str = "admin.user_admin"
 
 # Flash messages
+NOT_AUTHORIZED_MSG: str = "You are not authorized to access this page."
+
 LOGIN_SUCCESS_MSG: str = "Logged in successfully"
 LOGOUT_SUCCESS_MSG: str = "Logged out successfully"
 CREATE_ACCOUNT_MSG: str = "Create an account first"

@@ -5,11 +5,9 @@ from flask_mail import Message
 from src.extensions import server_db_, mail_
 from src.models.email_model.email_mod import EmailStrorage
 from src.models.auth_model.auth_mod import User
-from src.models.mod_utils import commit_to_db
 
 
-@commit_to_db
-def add_email_to_db(email_type: str, recipient_email: str, news_id: int = None,
+def add_notification_email_to_db(email_type: str, recipient_email: str, news_id: int = None,
                     comment_id: int = None, bakery_id: int = None,
                     add_update: str = None) -> None:
     """

@@ -1,0 +1,47 @@
+{% if current_user.is_authenticated %}
+    {% extends "base.html" %}
+{% endif %}
+
+
+{% block scripts %}
+<link rel="preload"
+        href="{{ url_for("static",
+        filename="dist/base_css.min.css") }}" 
+        as="style" 
+        onload="this.rel='stylesheet'">
+    
+<link rel="preload"
+    href="{{ url_for("static",
+    filename="dist/errors_css.min.css") }}" 
+    as="style" 
+    onload="this.rel='stylesheet'">
+{% endblock %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<section class="main-section">
+    <div class="main-wrapper">
+
+        <div class="main-content">
+            
+            <div class="error-content">
+                {% block error_content %}
+                {% endblock %}
+            
+            {% if not current_user.is_authenticated %}
+                <!-- Auth options -->
+                <div class="error-options-wrapper">
+                    <div><p class="error-options-content"><a href="{{ url_for("auth.login") }}">Go to login page</a></p></div>
+                    <div><p class="error-options-content"><a href="{{ url_for("auth.register") }}">Register a new account</a></p></div>
+                    <div><p class="error-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
+                </div>
+            {% endif %}
+            </div>
+            
+        </div>
+
+    </div>
+</section>
+{% endblock %}

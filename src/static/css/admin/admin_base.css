@@ -25,8 +25,7 @@
     border-color: var(--border-color-hover);
 }
 
-.master-admin-button:last-child,
-.master-admin-button:nth-last-child(2) {
+.master-admin-button:last-of-type {
     margin-bottom: 30px;
 }
 
@@ -34,6 +33,19 @@
     margin: 20px 0 5px 0;
     font-style: italic;
     color: var(--label-color);
+}
+
+.alinea-content-gap {
+    margin: 0 0 100px 0;
+}
+
+#info-fields .input-error-wrapper:last-of-type {
+    margin-bottom: 30px;
+}
+
+#info-fields .master-admin-button:nth-last-child(2),
+#info-fields .master-admin-button:nth-last-child(1) {
+    margin: 0 0 30px 0;
 }
 
 .admin-panel-item {

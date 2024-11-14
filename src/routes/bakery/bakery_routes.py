@@ -27,9 +27,13 @@ def programs():
     )
 
 @bakery_bp.route("/bakery/program/<program>")
+@login_required
 def program(program: int):
-    
     bakery_items_dicts = get_program_items_dicts(program)
+    if not bakery_items_dicts:
+        return (render_template("errors/404.html",
+                                info=f"Program {program} not in database"),
+                404)
 
     return render_template(
         "bakery/programs.html",
@@ -40,6 +44,11 @@ def program(program: int):
 @login_required
 def info(id_: int):
     bakery_item_dict = get_item_by_id_dict(id_)
+    if not bakery_item_dict:
+        return (render_template("errors/404.html",
+                                info=f"Item with ID {id_} not in database"),
+                404)
+        
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])
 
     return render_template(

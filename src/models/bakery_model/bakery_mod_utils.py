@@ -38,7 +38,7 @@ def get_item_by_id_dict(id_: int) -> Optional[dict]:
     result = server_db_.session.execute(
             select(BakeryItem).filter_by(id=id_)
     ).scalar_one_or_none()
-    return result.to_dict()
+    return result.to_dict() if result else None
 
 
 def delete_item_by_id(id_: int) -> None:

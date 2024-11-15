@@ -1,21 +1,24 @@
 import os
 import secrets
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, render_template
 from flask_login import current_user
 from flask_assets import Environment, Bundle
-
+from sqlalchemy.exc import SQLAlchemyError
 from config.app_config import DebugConfig, DeployConfig, TestConfig
-from config.settings import (DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
-                             PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
-                             BAKERY_HEALTH_IMAGES_FOLDER)
+from config.settings import (
+    DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
+    PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
+    BAKERY_HEALTH_IMAGES_FOLDER, E_500_TEMPLATE
+)
 
-from src.extensions import (server_db_, mail_, csrf_,
-                            login_manager_, migrater_, limiter_, session_, compress_)
+from src.extensions import (
+    server_db_, mail_, csrf_, login_manager_, migrater_, limiter_, session_,
+    compress_
+)
 from src.models.mod_utils import load_user
 from src.cli import _auth_cli, _server_cli
 from src.extensions_utils import clear_webassets_cache, css_bundle
-
 
 HEADERS = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",

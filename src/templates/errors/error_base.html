@@ -27,6 +27,12 @@
         <div class="main-content">
             
             <div class="error-content">
+                <div class="error-message">
+                    {% for error in errors %}
+                        <p class="message">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                
                 {% block error_content %}
                 {% endblock %}
             

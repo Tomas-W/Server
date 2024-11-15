@@ -7,6 +7,7 @@ from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
 from sqlalchemy import select, or_, delete
+from smtplib import SMTPRecipientsRefused
 
 from config.settings import (
     PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG, ADMIN_ROLE,
@@ -58,8 +59,9 @@ def start_verification_process(email: str, token_type: str,
 def get_authentication_token(email: str, token_type: str) -> str:
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
-        logger.critical(f"Salt not found for: {token_type} {log_function()} {log_routes()}")
-        return url_for(E_500_REDIRECT)
+        errors = f"Salt not found for: {token_type}", log_function(), log_routes()
+        logger.critical(errors)
+        return url_for(E_500_REDIRECT, errors=errors)
     token = serializer_.dumps(email, salt=salt)
     return token
 
@@ -73,6 +75,7 @@ def reset_authentication_token(token_type: str, token: str, email: str) -> None:
         select(AuthenticationToken).filter_by(
             user_email=email,
             token_type=token_type)).scalar_one_or_none()
+
     if existing_token:
         existing_token.set_token(token)
     else:
@@ -98,8 +101,9 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         subject = "Password Reset"
         redirect_title = "To reset your password, "
     else:
-        logger.error(f"Wrong token_type: {token_type} {log_function()} {log_routes()}")
-        return redirect(url_for(E_500_REDIRECT))
+        errors = f"Wrong token_type: {token_type}", log_function(), log_routes()
+        logger.error(errors)
+        return redirect(url_for(E_500_REDIRECT, errors=errors))
 
     try:
         verification_url = url_for(url_,
@@ -109,8 +113,9 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
                                _anchor="notifications-wrapper",
                                _external=True)
     except Exception as e:
-        logger.error(f"Error generating url_for: {e} {log_function()} {log_routes()}")
-        return redirect(url_for(E_500_REDIRECT))
+        errors = f"Error generating url_for: {e}", log_function(), log_routes()
+        logger.error(errors)
+        return redirect(url_for(E_500_REDIRECT, errors=errors))
 
     try:
         html_body = render_template(
@@ -122,8 +127,9 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
             settings_url=settings_url
         )
     except Exception as e:
-        logger.error(f"Error rendering email template: {e} {log_function()} {log_routes()}")
-        return redirect(url_for(E_500_REDIRECT))
+        errors = f"Error rendering email template: {e}", log_function(), log_routes()
+        logger.error(errors)
+        return redirect(url_for(E_500_REDIRECT, errors=errors))
 
     message = Message(
         subject=subject,
@@ -134,11 +140,13 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
     try:
         mail_.send(message)
     except SMTPRecipientsRefused as e:
-        logger.error(f"Recipients refused: {e} {log_function()} {log_routes()}")
-        return redirect(url_for(E_500_REDIRECT))
+        errors = f"Recipients refused: {e}", log_function(), log_routes()
+        logger.error(errors)
+        return redirect(url_for(E_500_REDIRECT, errors=errors))
     except Exception as e:
-        logger.error(f"Error sending verification: {e} {log_function()} {log_routes()}")
-        return redirect(url_for(E_500_REDIRECT))
+        errors = f"Error sending verification: {e}", log_function(), log_routes()
+        logger.error(errors)
+        return redirect(url_for(E_500_REDIRECT, errors=errors))
 
 
 def confirm_authentication_token(token: str, token_type: str,
@@ -151,8 +159,9 @@ def confirm_authentication_token(token: str, token_type: str,
     """
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
-        logger.critical(f"Salt not found for: {token_type} {log_function()} {log_routes()}")
-        return url_for(E_500_REDIRECT)
+        errors = f"Salt not found for: {token_type}", log_function(), log_routes()
+        logger.critical(errors)
+        return url_for(E_500_REDIRECT, errors=errors)
 
     try:
         email = serializer_.loads(
@@ -169,11 +178,13 @@ def confirm_authentication_token(token: str, token_type: str,
             return email
 
         else:
-            logger.warning(f"Email token not confirmed {log_function()} {log_routes()}")
+            errors = f"Email token not confirmed", log_function(), log_routes()
+            logger.warning(errors)
             return None
 
     except (SignatureExpired, BadSignature) as e:
-        logger.warning(f"Email token expired: {e} {log_function()} {log_routes()}")
+        errors = f"Email token expired: {e}", log_function(), log_routes()
+        logger.warning(errors)
         return None
 
 

@@ -8,6 +8,10 @@
     color: var(--text-color);
 }
 
+.error-message {
+    font-size: var(--error-info-size);
+}
+
 .error-header {
     padding: 0 0 150px 0;
 }

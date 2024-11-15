@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from functools import wraps
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from src.extensions import logger, server_db_
 from src.utils.logger_config import log_function, log_routes
@@ -9,21 +9,16 @@ from config.settings import (
     E_500_TEMPLATE
 )
 
-
-
 errors_bp = Blueprint("errors", __name__)
 
 
-def handle_db_exceptions(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except SQLAlchemyError as e:
-            logger.error(f"Database error: {e} {log_function()} {log_routes()}")
-            server_db_.session.rollback()
-            return render_template(E_500_TEMPLATE), 500
-    return decorated_function
+@errors_bp.app_errorhandler(SQLAlchemyError)
+def handle_sqlalchemy_error(error):
+    error_msg = str(error).split("\n")[0]
+    errors = error_msg, log_function(), log_routes()
+    server_db_.session.rollback()
+    logger.critical(f"Database error: {errors}")
+    return render_template(E_500_TEMPLATE, errors=errors), 500
 
 
 @errors_bp.app_errorhandler(400)

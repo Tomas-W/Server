@@ -12,7 +12,9 @@ from src.routes.bakery.bakery_route_utils import (
     process_bakery_form
 )
 from config.settings import (
-    BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE
+    BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE,
+    PROGRAMS_TEMPLATE, INFO_TEMPLATE, SEARCH_TEMPLATE, SEARCH_REDIRECT,
+    E_404_TEMPLATE
 )
 
 
@@ -23,7 +25,7 @@ bakery_bp = Blueprint("bakery", __name__)
 @login_required
 def programs():
     return render_template(
-        "bakery/programs.html",
+        PROGRAMS_TEMPLATE,
     )
 
 @bakery_bp.route("/bakery/program/<program>")
@@ -31,12 +33,12 @@ def programs():
 def program(program: int):
     bakery_items_dicts = get_program_items_dicts(program)
     if not bakery_items_dicts:
-        return (render_template("errors/404.html",
+        return (render_template(E_404_TEMPLATE,
                                 info=f"Program {program} not in database"),
                 404)
 
     return render_template(
-        "bakery/programs.html",
+        PROGRAMS_TEMPLATE,
         bakery_items_dicts=bakery_items_dicts,
     )
 
@@ -45,14 +47,14 @@ def program(program: int):
 def info(id_: int):
     bakery_item_dict = get_item_by_id_dict(id_)
     if not bakery_item_dict:
-        return (render_template("errors/404.html",
+        return (render_template(E_404_TEMPLATE,
                                 info=f"Item with ID {id_} not in database"),
                 404)
         
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])
 
     return render_template(
-        "bakery/info.html",
+        INFO_TEMPLATE,
         bakery_item_dict=bakery_item_dict,
         ids_and_names=ids_and_names,
     )
@@ -69,7 +71,7 @@ def search(id_: int | None = None, reset: bool = False):
     if reset:
         session.pop("bakery_search_results", None)
         session.pop("bakery_search_input", None)
-        return redirect(url_for("bakery.search"))
+        return redirect(url_for(SEARCH_REDIRECT))
     
     if request.method == "POST":
         if form_type == BAKERY_SEARCH_FORM_TYPE:
@@ -78,7 +80,7 @@ def search(id_: int | None = None, reset: bool = False):
 
                 session["bakery_search_results"] = search_results
                 session["bakery_search_input"] = bakery_search_form.data
-                return redirect(url_for("bakery.search"))
+                return redirect(url_for(SEARCH_REDIRECT))
         
         elif form_type == BAKERY_REFINE_SEARCH_FORM_TYPE:
             if bakery_search_form.validate_on_submit():
@@ -86,7 +88,7 @@ def search(id_: int | None = None, reset: bool = False):
                 search_results = process_bakery_form(bakery_search_form)
                 session["bakery_search_results"] = search_results
                 session["bakery_search_input"] = bakery_search_form.data
-                return redirect(url_for("bakery.search"))
+                return redirect(url_for(SEARCH_REDIRECT))
             
             session["bakery_search_errors"] = bakery_search_form.errors
     
@@ -106,7 +108,7 @@ def search(id_: int | None = None, reset: bool = False):
         bakery_item_dict = get_item_by_id_dict(id_)
 
     return render_template(
-        "bakery/search.html",
+        SEARCH_TEMPLATE,
         bakery_search_form=bakery_search_form,
         bakery_search_results_dicts=bakery_search_results_dicts,
         bakery_search_errors=bakery_search_errors,
@@ -122,5 +124,5 @@ def bakery_health(filename):
     if referrer:
         return redirect(referrer)
     else:
-        return redirect(url_for("news.all_news"))  # Fallback if no referrer is available
+        return redirect(url_for(ALL_NEWS_REDIRECT))  # Fallback if no referrer is available
 

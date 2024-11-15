@@ -4,7 +4,7 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 
 from src.extensions import server_db_
-from src.models.auth_model.auth_mod_utils import process_verification_token
+from src.models.auth_model.auth_mod_utils import start_verification_process
 from src.routes.admin.admin_forms import AddNewsForm
 from config.settings import PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION
 
@@ -89,8 +89,9 @@ def process_new_email_address(form: FlaskForm) -> bool:
     if new_email_address != current_user.email:
         current_user.new_email = new_email_address
         del form._fields["email"]
-        process_verification_token(email=new_email_address,
-                                   token_type=EMAIL_VERIFICATION)
+        start_verification_process(email=new_email_address,
+                                   token_type=EMAIL_VERIFICATION,
+                                   allow_unknown=True)
         return True
     return False
 

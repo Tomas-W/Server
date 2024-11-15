@@ -34,14 +34,46 @@ DATABASE_URI = f"sqlite:///{DB_PATH}"
 LIMITER_URI = "memory://"
 DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
 CET: pytz.timezone = pytz.timezone('CET')
+GMAIL_EMAIL: str = os.environ.get("GMAIL_EMAIL")
 
 MAX_IMAGE_FILE_SIZE: int = 2 * 1024 * 1024
 ALLOWED_FILE_EXTENSIONS: list[str] = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp"]
 
+TOKEN_EXPIRATION: int = 3600
+
 banned_words_list: list[str] = ["forbidden"]
 banned_characters_list: list[str] = ["|"]
 
-USER_ROLES: list[str] = ["verified", "admin", "news"]
+# Roles
+VERIFIED_ROLE: str = "verified"
+ADMIN_ROLE: str = "admin"
+NEWS_ROLE: str = "news"
+USER_ROLES: list[str] = [VERIFIED_ROLE, ADMIN_ROLE, NEWS_ROLE]
+
+# Templates
+HOME_PAGE_TEMPLATE: str = "/news/all_news.html"
+LOGIN_TEMPLATE: str = "/auth/login.html"
+REGISTER_TEMPLATE: str = "/auth/register.html"
+SET_PASSWORD_TEMPLATE: str = "/auth/set_password.html"
+REQUEST_RESET_TEMPLATE: str = "/auth/request_reset.html"
+RESET_PASSWORD_TEMPLATE: str = "/auth/reset_password.html"
+
+ALL_NEWS_TEMPLATE: str = "/news/all_news.html"
+NEWS_TEMPLATE: str = "/news/news.html"
+USER_ADMIN_TEMPLATE: str = "/admin/user_admin.html"
+ADD_NEWS_TEMPLATE: str = "/admin/add_news.html"
+VERIFY_EMAIL_TEMPLATE: str = "/admin/verify_email.html"
+
+PROGRAMS_TEMPLATE: str = "/bakery/programs.html"
+INFO_TEMPLATE: str = "/bakery/info.html"
+SEARCH_TEMPLATE: str = "/bakery/search.html"
+
+EMAIL_TEMPLATE: str = "/admin/email.html"
+E_400_TEMPLATE: str = "/errors/400.html"
+E_401_TEMPLATE: str = "/errors/401.html"
+E_403_TEMPLATE: str = "/errors/403.html"
+E_404_TEMPLATE: str = "/errors/404.html"
+E_500_TEMPLATE: str = "/errors/500.html"
 
 # Redirects
 HOME_PAGE_REDIRECT: str = "news.all_news"
@@ -51,14 +83,27 @@ SET_PASSWORD_REDIRECT: str = "auth.set_password"
 REQUEST_RESET_REDIRECT: str = "auth.request_reset"
 RESET_PASSWORD_REDIRECT: str = "auth.reset_password"
 
+SEARCH_REDIRECT: str = "bakery.search"
+
 ALL_NEWS_REDIRECT: str = "news.all_news"
+NEWS_REDIRECT: str = "news.news"
 USER_ADMIN_REDIRECT: str = "admin.user_admin"
+VERIFY_EMAIL_REDIRECT: str = "admin.verify_email"
+
+# Errors
+E_400_REDIRECT: str = "errors.400"
+E_401_REDIRECT: str = "errors.401"
+E_403_REDIRECT: str = "errors.403"
+E_404_REDIRECT: str = "errors.404"
+E_498_REDIRECT: str = "errors.498"
+E_500_REDIRECT: str = "errors.500"
 
 # Flash messages
 NOT_AUTHORIZED_MSG: str = "You are not authorized to access this page."
 
 LOGIN_SUCCESS_MSG: str = "Logged in successfully"
 LOGOUT_SUCCESS_MSG: str = "Logged out successfully"
+FAST_LOGIN_FAILED_MSG: str = "Fast login failed"
 CREATE_ACCOUNT_MSG: str = "Create an account first"
 VERIFICATION_SEND_MSG: str = "If email exists, a verification email has been sent!"
 PASSWORD_RESET_SEND_MSG: str = "If email exists, a password reset email has been sent!"

@@ -32,13 +32,13 @@ class AuthenticationToken(server_db_.Model):
     __tablename__ = "authentication_tokens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("auth.id", ondelete="CASCADE"))
     user_email: Mapped[str] = mapped_column(String(75), nullable=True)
     token_type: Mapped[str] = mapped_column(String(32))
     token: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(CET))
-
-    user = relationship("User", back_populates="tokens")
+    
+    def set_token(self, token: str) -> None:
+        self.token = token
 
 
 class User(server_db_.Model, UserMixin):
@@ -108,12 +108,7 @@ class User(server_db_.Model, UserMixin):
     created_at: Mapped[datetime] = mapped_column(DateTime,
                                                  default=lambda: datetime.now(CET))
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
-    
-    tokens: Mapped[List[AuthenticationToken]] = relationship(
-        "AuthenticationToken",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
+
     comments: Mapped[list["Comment"]] = relationship(  # type: ignore
         "Comment",
         back_populates="author_user"
@@ -214,6 +209,9 @@ class User(server_db_.Model, UserMixin):
         roles = self.roles.split("|")
         roles.remove(role)
         self.roles = "|".join(roles)
+    
+    def has_role(self, role: str) -> bool:
+        return role in self.roles.split("|")
         
     @set_updated_at
     def set_new_email(self, new_email: str) -> None:

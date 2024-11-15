@@ -1,71 +1,82 @@
 import os
+import time
 from functools import wraps
-
+from typing import Callable
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import SignatureExpired, BadSignature
-from sqlalchemy import select, or_
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select, or_, delete
 
 from config.settings import (
-    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG
+    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, NOT_AUTHORIZED_MSG, ADMIN_ROLE,
+    ALL_NEWS_REDIRECT, RESET_PASSWORD_REDIRECT, VERIFY_EMAIL_REDIRECT,
+    USER_ADMIN_REDIRECT, GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION,
+    E_500_REDIRECT
 )
 from src.extensions import server_db_, serializer_, mail_, logger
 from src.models.auth_model.auth_mod import (
     User, AuthenticationToken
 )
-from src.utils.logger_config import get_logging_routes
+from src.utils.logger_config import log_routes, log_function
 
-def admin_required(f):
+def admin_required(f: Callable) -> Callable:
+    """
+    Decorator for admin-only routes.
+    Redirects to news.all_news if User is not authenticated or has no admin role.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated \
-                or "admin" not in current_user.roles.split("|"):
+        if not current_user.is_authenticated or not current_user.has_role(ADMIN_ROLE):
             flash(NOT_AUTHORIZED_MSG)
-            logger.warning(f"@admin_required {get_logging_routes()}")
-            return redirect(url_for("news.all_news"))
+            logger.warning(f"@admin_required failed {log_routes()}")
+            return redirect(url_for(ALL_NEWS_REDIRECT))
         return f(*args, **kwargs)
     return decorated_function
 
 
-def process_verification_token(email: str, token_type: str,
+def start_verification_process(email: str, token_type: str,
                                allow_unknown: bool = False) -> bool:
     """
-    Generate a token, reset it in the database, and send an email with a 
+    Generates a token, resets it in the database and sends an email with a
     verification link and instructions.
-    allow_unknown: if True, do not check if the user exists (for email verification)
+    - allow_unknown: if True, do not check if the user exists (for email verification)
     """
     if not allow_unknown:
         user = get_user_by_email(email)
         if not user:
-            # time.sleep(0.2)
+            logger.info(f"User not found {log_function()} {log_routes()}")
+            time.sleep(0.3)  # TODO: remove delay
             return False
-    token = generate_authentication_token(email, token_type)
+
+    token = get_authentication_token(email, token_type)
     reset_authentication_token(token_type, token, email)
     send_authentication_email(email, token_type, token)
     return True
 
 
-def generate_authentication_token(email: str, token_type: str) -> str:
-    token = serializer_.dumps(email, salt=os.environ.get(f"{token_type.upper()}_SALT"))
+def get_authentication_token(email: str, token_type: str) -> str:
+    salt = os.environ.get(f"{token_type.upper()}_SALT")
+    if not salt:
+        logger.critical(f"Salt not found for: {token_type} {log_function()} {log_routes()}")
+        return url_for(E_500_REDIRECT)
+    token = serializer_.dumps(email, salt=salt)
     return token
 
 
 def reset_authentication_token(token_type: str, token: str, email: str) -> None:
     """
     Reset the specified authentication token.
-    If no User with the given email exists, return False.
-    If the token already exists, update it and return True.
-    If the token does not exist, create a new one and return True.
+    If an old token exists, overwrite it, else create a new one.
     """
-    id_ = get_user_by_email(email).id
-    existing_token = server_db_.session.query(AuthenticationToken).filter_by(
-        user_id=id_, token_type=token_type).first_or_none()
+    existing_token = server_db_.session.execute(
+        select(AuthenticationToken).filter_by(
+            user_email=email,
+            token_type=token_type)).scalar_one_or_none()
     if existing_token:
-        existing_token.token = token
+        existing_token.set_token(token)
     else:
-        new_token = AuthenticationToken(user_id=id_, user_email=email,
+        new_token = AuthenticationToken(user_email=email,
                                         token_type=token_type, token=token)
         server_db_.session.add(new_token)
         server_db_.session.commit()
@@ -74,131 +85,153 @@ def reset_authentication_token(token_type: str, token: str, email: str) -> None:
 def send_authentication_email(email: str, token_type: str, token: str) -> None:
     """
     Send an email with a authentication link and instructions.
-    Verifications:
+    Verification [token] types:
     - EMAIL_VERIFICATION [set email verified]
     - PASSWORD_VERIFICATION [reset password]
     """
-    user: User | None = get_user_by_email(email)
-    if not user:
-        return
-
     if token_type == EMAIL_VERIFICATION:
-        url_ = "admin.verify_email"
+        url_ = VERIFY_EMAIL_REDIRECT
         subject = "Email Verification"
         redirect_title = "To verify your email, "
     elif token_type == PASSWORD_VERIFICATION:
-        url_ = "auth.reset_password"
+        url_ = RESET_PASSWORD_REDIRECT
         subject = "Password Reset"
         redirect_title = "To reset your password, "
     else:
-        raise ValueError(f"Invalid token type: {token_type}")
+        logger.error(f"Wrong token_type: {token_type} {log_function()} {log_routes()}")
+        return redirect(url_for(E_500_REDIRECT))
 
-    verification_url = url_for(url_, token=token, _external=True)
-    settings_url = url_for("admin.user_admin",
-                           _anchor="notifications-wrapper",
-                           _external=True)
+    try:
+        verification_url = url_for(url_,
+                                   token=token,
+                                   _external=True)
+        settings_url = url_for(USER_ADMIN_REDIRECT,
+                               _anchor="notifications-wrapper",
+                               _external=True)
+    except Exception as e:
+        logger.error(f"Error generating url_for: {e} {log_function()} {log_routes()}")
+        return redirect(url_for(E_500_REDIRECT))
 
-    html_body = render_template(
-        "admin/email.html",
+    try:
+        html_body = render_template(
+            EMAIL_TEMPLATE,
         title=subject,
         redirect_title=redirect_title,
         redirect_url=verification_url,
         notification_settings="You can change your notification settings below.",
-        settings_url=settings_url
-    )
+            settings_url=settings_url
+        )
+    except Exception as e:
+        logger.error(f"Error rendering email template: {e} {log_function()} {log_routes()}")
+        return redirect(url_for(E_500_REDIRECT))
 
     message = Message(
         subject=subject,
-        sender=os.environ.get("GMAIL_EMAIL"),
+        sender=GMAIL_EMAIL,
         recipients=[email],
         html=html_body
     )
-    mail_.send(message)
+    try:
+        mail_.send(message)
+    except SMTPRecipientsRefused as e:
+        logger.error(f"Recipients refused: {e} {log_function()} {log_routes()}")
+        return redirect(url_for(E_500_REDIRECT))
+    except Exception as e:
+        logger.error(f"Error sending verification: {e} {log_function()} {log_routes()}")
+        return redirect(url_for(E_500_REDIRECT))
 
 
 def confirm_authentication_token(token: str, token_type: str,
-                                 expiration: int = 3600) -> str | None:
+                                 expiration: int = TOKEN_EXPIRATION) -> str | None:
     """
     Confirm the specified authentication token.
     Verifications:
     - EMAIL_VERIFICATION [set email verified | set new email]
     - PASSWORD_VERIFICATION [reset password]
     """
+    salt = os.environ.get(f"{token_type.upper()}_SALT")
+    if not salt:
+        logger.critical(f"Salt not found for: {token_type} {log_function()} {log_routes()}")
+        return url_for(E_500_REDIRECT)
+
     try:
         email = serializer_.loads(
             token,
-            salt=os.environ.get(f"{token_type.upper()}_SALT"),
+            salt=salt,
             max_age=expiration
         )
-        stored_token = server_db_.session.query(AuthenticationToken).filter_by(
-            user_email=email, token_type=token_type).first()
+        stored_token = server_db_.session.execute(
+            select(AuthenticationToken).filter_by(
+                user_email=email,
+                token_type=token_type)).scalar_one_or_none()
 
         if stored_token and stored_token.token == token:
-            # delete_authentication_token(token_type, token)
             return email
 
-        # elif get_user_by_email(email) is None:
-        #     print("email not found")
-        #     return -1
-
         else:
+            logger.warning(f"Email token not confirmed {log_function()} {log_routes()}")
             return None
 
-    except (SignatureExpired, BadSignature):
+    except (SignatureExpired, BadSignature) as e:
+        logger.warning(f"Email token expired: {e} {log_function()} {log_routes()}")
         return None
 
 
 def delete_authentication_token(token_type: str, token: str) -> None:
     """Delete the specified authentication token."""
-    try:
-        server_db_.session.query(AuthenticationToken).filter_by(
-            token_type=token_type, token=token).delete()
-        server_db_.session.commit()
-    except Exception as e:
-        print(e)
+    server_db_.session.execute(
+        delete(AuthenticationToken).filter_by(
+            token_type=token_type,
+            token=token))
+    server_db_.session.commit()
 
 
-def get_user_by_email(email: str) -> User | None:
-    return server_db_.session.execute(
-        select(User).filter_by(email=email)
-    ).scalar_one_or_none()
+
+def get_user_by_email(email: str, new_email: bool = False) -> User | None:
+    """
+    Get a user by email.
+    If new_email is True, check if the user exists by new_email.
+    """
+    result = server_db_.session.execute(
+        select(User).filter_by(email=email)).scalar_one_or_none()
+    if result is None and new_email:
+        result = server_db_.session.execute(
+            select(User).filter_by(new_email=email)
+        ).scalar_one_or_none()
+    return result
 
 
 def get_user_by_email_or_username(email_or_username: str) -> User | None:
     return server_db_.session.execute(
         select(User).filter(
-            or_(User.email == email_or_username, User.username == email_or_username)
-        )
-    ).scalar_one_or_none()
+            or_(User.email == email_or_username,
+                User.username == email_or_username))).scalar_one_or_none()
 
 
 def get_user_by_fast_name(fast_name: str) -> User | None:
     return server_db_.session.execute(
-        select(User).filter_by(fast_name=fast_name)
-    ).scalar_one_or_none()
+        select(User).filter_by(fast_name=fast_name)).scalar_one_or_none()
 
 
 def delete_user_by_id(id_: int) -> None:
-    server_db_.session.delete(server_db_.session.get(User, id_))
+    """Delete a user by id. Used in cli."""
+    server_db_.session.execute(delete(User).filter_by(id=id_))
     server_db_.session.commit()
 
 
 def get_new_user(email: str, username: str, password: str) -> User | None:
     # noinspection PyArgumentList
-    try:
-        new_user = User(
-            email=email,
-            username=username,
-            password=password,
-        )
-        server_db_.session.add(new_user)
-        server_db_.session.commit()
-        return new_user
-    except IntegrityError:
-        return None
+    new_user = User(
+        email=email,
+        username=username,
+        password=password,
+    )
+    server_db_.session.add(new_user)
+    server_db_.session.commit()
+    return new_user
 
 
-def _init_user() -> User | None:
+def _init_user() -> str | None:
     """
     Initializer function for cli.
     No internal use.

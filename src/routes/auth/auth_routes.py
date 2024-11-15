@@ -22,7 +22,7 @@ from src.routes.auth.auth_route_utils import (
 )
 from src.models.auth_model.auth_mod import User
 from src.models.auth_model.auth_mod_utils import (
-    process_verification_token, confirm_authentication_token, get_user_by_email,
+    start_verification_process, confirm_authentication_token, get_user_by_email,
     get_new_user
 )
 from src.models.state_model.state_mod_utils import (
@@ -33,7 +33,9 @@ from config.settings import (
     SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
     USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG, SESSION_ERROR_MSG,
     AUTHENTICATION_LINK_ERROR_MSG, UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
-    PASSWORD_RESET_SEND_MSG, CREATE_ACCOUNT_MSG, PASSWORD_UPDATE_MSG, HOME_PAGE_REDIRECT
+    PASSWORD_RESET_SEND_MSG, PASSWORD_UPDATE_MSG, HOME_PAGE_REDIRECT,
+    FAST_LOGIN_FAILED_MSG, LOGIN_TEMPLATE, REGISTER_TEMPLATE, SET_PASSWORD_TEMPLATE,
+    REQUEST_RESET_TEMPLATE, RESET_PASSWORD_TEMPLATE
 )
 
 
@@ -64,7 +66,7 @@ def handle_fast_login(view_func):
                         return redirect(url_for(f"auth.{view_func.__name__}"))
                 
                 session["form_errors"] = fast_login_form.errors
-                flash("Fast login failed.")
+                flash(FAST_LOGIN_FAILED_MSG)
                 return redirect(url_for(f"auth.{view_func.__name__}"))
 
         return view_func(*args, **kwargs)
@@ -119,7 +121,7 @@ def login():
     form_errors = session.pop("form_errors", None)
     
     return render_template(
-        "/auth/login.html",
+        LOGIN_TEMPLATE,
         login_form=login_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -218,7 +220,7 @@ def set_password():
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        "/auth/set_password.html",
+        SET_PASSWORD_TEMPLATE,
         set_password_form=set_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -260,7 +262,7 @@ def register():
         register_form.email.data = fill_email
 
     return render_template(
-        "/auth/register.html",
+        REGISTER_TEMPLATE,
         register_form=register_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -281,7 +283,7 @@ def request_reset():
 
     if request.method == "POST":
         if request_reset_form.validate_on_submit():
-            process_verification_token(request_reset_form.email.data,
+            start_verification_process(request_reset_form.email.data,
                                        token_type=PASSWORD_VERIFICATION)
             flash(PASSWORD_RESET_SEND_MSG)
             session["email"] = request_reset_form.email.data
@@ -293,7 +295,7 @@ def request_reset():
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        "/auth/request_reset.html",
+        REQUEST_RESET_TEMPLATE,
         request_reset_form=request_reset_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -316,11 +318,6 @@ def reset_password(token):
     if not email:
         flash(AUTHENTICATION_LINK_ERROR_MSG)
         return redirect(url_for(REQUEST_RESET_REDIRECT))
-
-    # if email == -1:  # Fix workaroud for email == -1
-    #     flash(CREATE_ACCOUNT_MSG)
-    #     session["fill_email"] = session.pop("email")
-    #     return redirect(url_for(REGISTER_REDIRECT))
     
     user: User | None = server_db_.session.execute(
         select(User).filter_by(email=email)).scalar_one_or_none()
@@ -342,7 +339,7 @@ def reset_password(token):
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        "auth/reset_password.html",
+        RESET_PASSWORD_TEMPLATE,
         reset_password_form=reset_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,

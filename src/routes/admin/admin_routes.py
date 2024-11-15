@@ -4,11 +4,12 @@ from flask import (
 from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
+from src.utils.logger_config import log_routes, log_function
 from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import (
-    get_user_by_email, confirm_authentication_token, process_verification_token,
-    process_verification_token, admin_required, delete_authentication_token
+    get_user_by_email, confirm_authentication_token,
+    start_verification_process, admin_required, delete_authentication_token
 )
 from src.routes.admin.admin_route_utils import (
     add_news_message, process_admin_form, process_profile_picture, clean_up_form_fields,
@@ -21,7 +22,8 @@ from config.settings import (
     EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
     AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT, ALL_NEWS_REDIRECT,
     VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE, PROFILE_FORM_TYPE,
-    NOTIFICATIONS_FORM_TYPE
+    NOTIFICATIONS_FORM_TYPE, EMAIL_TEMPLATE, ADD_NEWS_TEMPLATE, USER_ADMIN_TEMPLATE,
+    E_404_TEMPLATE
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -49,7 +51,7 @@ def user_admin():
     if request.method == "POST":
         if form_type == VERIFY_FORM_TYPE:
             if verify_email_form.validate_on_submit():
-                process_verification_token(email=verify_email_form.email.data,
+                start_verification_process(email=verify_email_form.email.data,
                                            token_type=EMAIL_VERIFICATION)
                 flash(VERIFICATION_SEND_MSG)
                 session["flash_type"] = "verify"  # To indicate flash position
@@ -129,7 +131,7 @@ def user_admin():
     _anchor = session.pop("_anchor", None)
 
     return render_template(
-        "admin/user_admin.html",
+        USER_ADMIN_TEMPLATE,
         verify_email_form=verify_email_form,
         verify_email_errors=verify_email_errors,
         
@@ -169,9 +171,11 @@ def add_news():
 
     add_news_errors = session.pop("add_news_errors", None)
     
-    return render_template("admin/add_news.html",
-                           add_news_form=add_news_form,
-                           add_news_errors=add_news_errors)
+    return render_template(
+        ADD_NEWS_TEMPLATE,
+        add_news_form=add_news_form,
+        add_news_errors=add_news_errors
+    )
 
 
 @admin_bp.route("/admin/verify-email/<token>", methods=["GET"])
@@ -181,7 +185,8 @@ def verify_email(token):
     """
     email = confirm_authentication_token(token, EMAIL_VERIFICATION)
     if email:
-        user: User = get_user_by_email(email)
+        user: User = get_user_by_email(email, new_email=True)
+
         if user:
             user.set_email(email)
             user.reset_new_email()
@@ -191,7 +196,7 @@ def verify_email(token):
             flash(EMAIL_VERIFIED_MSG)
             return redirect(url_for(USER_ADMIN_REDIRECT))
     
-
+    logger.warning(f"Email token not confirmed {log_function()} {log_routes()}")
     session["flash_type"] = "verify"
     flash(AUTHENTICATION_LINK_ERROR_MSG)
 
@@ -211,7 +216,7 @@ def profile_icon(filename):
     flash("Updated profile icon")
         
     return redirect(url_for(
-        "admin.user_admin",
+        USER_ADMIN_REDIRECT,
         _anchor="profile-wrapper"
     ))
 
@@ -224,7 +229,7 @@ def email():
     notification_settings = "You receive these emails because you signed up for notifications."
     
     return render_template(
-        "admin/email.html",
+        EMAIL_TEMPLATE,
         title=title,
         redirect_title=redirect_title,
         notification_settings=notification_settings

@@ -13,7 +13,10 @@ from src.routes.news.news_forms import CommentForm
 from src.routes.news.news_route_utils import (
     allow_only_styling, clean_news_session
 )
-from config.settings import COMMENT_SUCCESS_MSG
+from config.settings import (
+    COMMENT_SUCCESS_MSG, ALL_NEWS_TEMPLATE, NEWS_TEMPLATE, NEWS_REDIRECT,
+    E_404_TEMPLATE
+)
 
 news_bp = Blueprint("news", __name__)
 
@@ -27,7 +30,7 @@ def all_news():
     flash_type = "all_news"
 
     return render_template(
-        "news/all_news.html",
+        ALL_NEWS_TEMPLATE,
         all_news_dict=all_news_dict,
         flash_type=flash_type,
     )
@@ -58,11 +61,11 @@ def news(id_: int):
             flash(COMMENT_SUCCESS_MSG)
             session["post_comment"] = True
             session["flash_type"] = "comment"
-            return redirect(url_for("news.news", id_=id_, _anchor="comment-flash"))
+            return redirect(url_for(NEWS_REDIRECT, id_=id_, _anchor="comment-flash"))
         
         session["comment_form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for("news.news", id_=id_, _anchor="post-comment-wrapper"))
+        return redirect(url_for(NEWS_REDIRECT, id_=id_, _anchor="post-comment-wrapper"))
 
     if form_data:
         comment_form.process(MultiDict(form_data))
@@ -75,7 +78,7 @@ def news(id_: int):
     flash_type = session.pop("flash_type", None)      # for flash messages location
     
     return render_template(
-        "news/news.html",
+        NEWS_TEMPLATE,
         comment_form=comment_form,
         comment_form_errors=comment_form_errors,
         news_dict=news_dict,
@@ -91,12 +94,12 @@ def news(id_: int):
 def like_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
-        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
+        return render_template(E_404_REDIRECT, info=f"News item with ID {id_} not found"), 404
         
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
-        "news.news",
+        NEWS_REDIRECT,
         id_=id_,
         _anchor="like-dislike"
     ))
@@ -107,12 +110,12 @@ def like_news(id_: int):
 def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
-        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
+        return render_template(E_404_TEMPLATE, info=f"News item with ID {id_} not found"), 404
         
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
-        "news.news",
+        NEWS_REDIRECT,
         id_=id_,
         _anchor="like-dislike"
     ))
@@ -123,12 +126,12 @@ def dislike_news(id_: int):
 def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
-        return render_template("errors/404.html", info=f"Comment with ID {id_} not found"), 404
+        return render_template(E_404_TEMPLATE, info=f"Comment with ID {id_} not found"), 404
         
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(
-        "news.news",
+        NEWS_REDIRECT,
         id_=comment_item.news_id,
         _anchor=f"comment-{id_}"
     ))
@@ -139,12 +142,12 @@ def like_comment(id_: int):
 def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
-        return render_template("errors/404.html", info=f"Comment with ID {id_} not found"), 404
+        return render_template(E_404_TEMPLATE, info=f"Comment with ID {id_} not found"), 404
         
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(
-        "news.news",
+        NEWS_REDIRECT,
         id_=comment_item.news_id,
         _anchor=f"comment-{id_}"
     ))
@@ -156,7 +159,7 @@ def unread():
     all_news_dict = get_all_unread_dict(current_user.id)
     
     return render_template(
-        "news/all_news.html",
+        ALL_NEWS_TEMPLATE,
         all_news_dict=all_news_dict,
     )
 
@@ -168,7 +171,7 @@ def profile_icons(filename):
     if referrer:
         return redirect(referrer)
     else:
-        return redirect(url_for("news.all_news"))  # Fallback if no referrer is available
+        return redirect(url_for(ALL_NEWS_REDIRECT))  # Fallback if no referrer is available
 
 
 

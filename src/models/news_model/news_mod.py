@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 from typing import Optional
 
 from src.extensions import server_db_
@@ -54,7 +55,7 @@ class News(server_db_.Model):
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(CET)
+        DateTime, default=lambda: CET.localize(func.now())
     )
 
     comments: Mapped[list["Comment"]] = relationship(
@@ -200,8 +201,7 @@ class Comment(server_db_.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(CET)
-    )
+        DateTime, default=lambda: CET.localize(func.now()))
     
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")

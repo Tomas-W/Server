@@ -4,7 +4,7 @@ from flask import (
 from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
-from src.utils.logger_config import log_routes, log_function
+from src.utils.logger import log_routes, log_function
 from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import (

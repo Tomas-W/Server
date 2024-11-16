@@ -1,5 +1,5 @@
 from flask import (
-    render_template, Blueprint, request, redirect, url_for, flash, session
+    render_template, Blueprint, request, redirect, url_for, flash, session, abort
 )
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
@@ -15,7 +15,7 @@ from src.routes.news.news_route_utils import (
 )
 from config.settings import (
     COMMENT_SUCCESS_MSG, ALL_NEWS_TEMPLATE, NEWS_TEMPLATE, NEWS_REDIRECT,
-    E_404_TEMPLATE
+    E_404_TEMPLATE, E_404_REDIRECT
 )
 
 news_bp = Blueprint("news", __name__)
@@ -46,7 +46,8 @@ def news(id_: int):
     """
     news_item = get_news_by_id(id_)
     if not news_item:
-        return render_template("errors/404.html", info=f"News item with ID {id_} not found"), 404
+        session["error_info"] = f"News item with ID {id_} not found"
+        abort(404)
 
     news_dict = get_news_dict_by_id(id_)
     comment_form = CommentForm()

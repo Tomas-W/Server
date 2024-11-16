@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import os
 import time
 from functools import wraps
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user
 from flask_mail import Message
@@ -16,10 +18,10 @@ from config.settings import (
     E_500_REDIRECT
 )
 from src.extensions import server_db_, serializer_, mail_, logger
-from src.models.auth_model.auth_mod import (
-    User, AuthenticationToken
-)
-from src.utils.logger_config import log_routes, log_function
+from src.utils.logger import log_routes, log_function
+
+if TYPE_CHECKING:
+    from src.models.auth_model.auth_mod import User
 
 def admin_required(f: Callable) -> Callable:
     """
@@ -71,6 +73,7 @@ def reset_authentication_token(token_type: str, token: str, email: str) -> None:
     Reset the specified authentication token.
     If an old token exists, overwrite it, else create a new one.
     """
+    from src.models.auth_model.auth_mod import AuthenticationToken
     existing_token = server_db_.session.execute(
         select(AuthenticationToken).filter_by(
             user_email=email,
@@ -157,6 +160,7 @@ def confirm_authentication_token(token: str, token_type: str,
     - EMAIL_VERIFICATION [set email verified | set new email]
     - PASSWORD_VERIFICATION [reset password]
     """
+    from src.models.auth_model.auth_mod import AuthenticationToken
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
         errors = f"Salt not found for: {token_type}", log_function(), log_routes()
@@ -190,6 +194,7 @@ def confirm_authentication_token(token: str, token_type: str,
 
 def delete_authentication_token(token_type: str, token: str) -> None:
     """Delete the specified authentication token."""
+    from src.models.auth_model.auth_mod import AuthenticationToken
     server_db_.session.execute(
         delete(AuthenticationToken).filter_by(
             token_type=token_type,
@@ -198,11 +203,12 @@ def delete_authentication_token(token_type: str, token: str) -> None:
 
 
 
-def get_user_by_email(email: str, new_email: bool = False) -> User | None:
+def get_user_by_email(email: str, new_email: bool = False) -> "User" | None:
     """
     Get a user by email.
     If new_email is True, check if the user exists by new_email.
     """
+    from src.models.auth_model.auth_mod import User
     result = server_db_.session.execute(
         select(User).filter_by(email=email)).scalar_one_or_none()
     if result is None and new_email:
@@ -212,26 +218,42 @@ def get_user_by_email(email: str, new_email: bool = False) -> User | None:
     return result
 
 
-def get_user_by_email_or_username(email_or_username: str) -> User | None:
+def get_user_by_username(username: str) -> "User" | None:
+    from src.models.auth_model.auth_mod import User
+    return server_db_.session.execute(
+        select(User).filter_by(username=username)).scalar_one_or_none()
+
+
+def get_user_by_email_or_username(email_or_username: str) -> "User" | None:
+    from src.models.auth_model.auth_mod import User
     return server_db_.session.execute(
         select(User).filter(
             or_(User.email == email_or_username,
                 User.username == email_or_username))).scalar_one_or_none()
 
 
-def get_user_by_fast_name(fast_name: str) -> User | None:
+def get_user_by_display_name(display_name: str) -> "User" | None:
+    from src.models.auth_model.auth_mod import User
+    return server_db_.session.execute(
+        select(User).filter_by(display_name=display_name)).scalar_one_or_none()
+
+
+def get_user_by_fast_name(fast_name: str) -> "User" | None:
+    from src.models.auth_model.auth_mod import User
     return server_db_.session.execute(
         select(User).filter_by(fast_name=fast_name)).scalar_one_or_none()
 
 
 def delete_user_by_id(id_: int) -> None:
     """Delete a user by id. Used in cli."""
+    from src.models.auth_model.auth_mod import User
     server_db_.session.execute(delete(User).filter_by(id=id_))
     server_db_.session.commit()
 
 
-def get_new_user(email: str, username: str, password: str) -> User | None:
+def get_new_user(email: str, username: str, password: str) -> "User" | None:
     # noinspection PyArgumentList
+    from src.models.auth_model.auth_mod import User
     new_user = User(
         email=email,
         username=username,
@@ -255,7 +277,7 @@ def _init_user() -> str | None:
             fast_name="tomas",
             fast_code=("00000"),
             email_verified=True,
-            roles="admin|"
+            roles="admin"
         )
         server_db_.session.add(new_user)
         server_db_.session.commit()

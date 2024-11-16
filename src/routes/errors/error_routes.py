@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template
-from functools import wraps
+from flask import session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from src.extensions import logger, server_db_
-from src.utils.logger_config import log_function, log_routes
+from src.utils.logger import log_function, log_routes
 from config.settings import (
     E_400_TEMPLATE, E_401_TEMPLATE, E_403_TEMPLATE, E_404_TEMPLATE,
     E_500_TEMPLATE
@@ -42,7 +42,8 @@ def forbidden(error):
 @errors_bp.app_errorhandler(404)
 def not_found(error):
     logger.warning(f"Not found: {error} {log_function()} {log_routes()}")
-    return render_template(E_404_TEMPLATE), 404
+    info = session.pop("error_info", None)
+    return render_template(E_404_TEMPLATE, info=info), 404
 
 
 @errors_bp.app_errorhandler(500)

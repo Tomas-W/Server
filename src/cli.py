@@ -333,7 +333,7 @@ def _auth_cli(app_: Flask) -> None:
             click.echo(f"'{col_name}' length must be between {MIN_FAST_NAME_LENGTH} and {MAX_FAST_NAME_LENGTH} characters.")
             return
 
-        user: User | None = server_db_.session.get_or_none(User, id_)
+        user: User | None = server_db_.session.get(User, id_)
         if not user:
             click.echo(f"No User with id {id_} found.")
             return

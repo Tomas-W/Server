@@ -17,7 +17,7 @@ from config.settings import (
     DISPLAY_NAME_TAKEN_MSG, MIN_NEWS_HEADER_LENGTH, MAX_NEWS_HEADER_LENGTH,
     NEWS_CODE_LENGTH, NEWS_CODE_LENGTH_ERROR_MSG, NEWS_CODE_NUMERIC_ERROR_MSG,
     MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
-    MAX_NEWS_LENGTH
+    MAX_NEWS_LENGTH, EMAIL_REGEX
 )
 from src.models.auth_model.auth_mod import User
 
@@ -39,7 +39,7 @@ class VerifyEmailCheck:
         if not field.data and current_user.is_authenticated:
             field.data = current_user.email
             return
-        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', field.data):
+        if not re.match(EMAIL_REGEX, field.data):
             raise ValidationError(self.invalid_message)
         if len(field.data) < MIN_EMAIL_LENGTH:
             raise ValidationError(self.min_length_message)
@@ -59,7 +59,7 @@ class EmailCheck:
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', field.data):
+        if not re.match(EMAIL_REGEX, field.data):
             raise ValidationError(self.invalid_message)
 
 

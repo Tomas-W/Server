@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy import Boolean, Integer, String, Float, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, func
 
 from src.extensions import server_db_
 from config.settings import CET
@@ -71,10 +71,10 @@ class BakeryItem(server_db_.Model):
     image: Mapped[str] = mapped_column(String(255), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET))
+                                                 default=lambda: CET.localize(func.now()))
     updated_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET),
-                                                 onupdate=lambda: datetime.now(CET))
+                                                 default=lambda: CET.localize(func.now()),
+                                                 onupdate=lambda: CET.localize(func.now()))
     
     search_field: Mapped[str] = mapped_column(Text, nullable=True)
 

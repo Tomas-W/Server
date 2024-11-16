@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import func
 from src.extensions import server_db_
 from config.settings import CET
 from datetime import datetime
@@ -26,7 +27,7 @@ class EmailStrorage(server_db_.Model):
     bakery_id = Column(Integer, nullable=True)
     add_update = Column(String(20), nullable=True)
     
-    added_at = Column(DateTime, default=lambda: datetime.now(CET))
+    added_at = Column(DateTime, default=lambda: CET.localize(func.now()))
     
     def __init__(self, email_type: str, recipient_email: str, news_id: int,
                  comment_id: int, bakery_id: int, add_update: str):

@@ -4,7 +4,6 @@ from flask import (
 from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
-from src.utils.logger import log_routes, log_function
 from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import (
@@ -196,7 +195,6 @@ def verify_email(token):
             flash(EMAIL_VERIFIED_MSG)
             return redirect(url_for(USER_ADMIN_REDIRECT))
     
-    logger.warning(f"Email token not confirmed {log_function()} {log_routes()}")
     session["flash_type"] = "verify"
     flash(AUTHENTICATION_LINK_ERROR_MSG)
 
@@ -211,7 +209,7 @@ def profile_icon(filename):
     """
     Updates or loads profile icon.
     """
-    current_user.profile_icon = filename
+    current_user.set_profile_icon(filename)
     session["flash_type"] = "profile"
     flash("Updated profile icon")
         

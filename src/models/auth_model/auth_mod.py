@@ -4,7 +4,7 @@ import random
 import re
 from datetime import datetime
 from typing import Optional
-from flask import redirect, url_for
+from flask import redirect, url_for, session, abort
 from flask_login import UserMixin
 from sqlalchemy import (
     Integer, String, DateTime, Boolean, Text
@@ -18,7 +18,6 @@ from src.models.mod_utils import (
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_username, get_user_by_fast_name, get_user_by_display_name
 )
-from src.utils.logger import log_function, log_routes
 from config.settings import (
     CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES, E_500_REDIRECT,
     EMAIL_REGEX, COUNTRY_CHOICES, MAX_ABOUT_ME_LENGTH
@@ -42,7 +41,7 @@ class AuthenticationToken(server_db_.Model):
     token_type: Mapped[str] = mapped_column(String(32))
     token: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: CET.localize(func.now()))
+                                                 default=lambda: datetime.now(CET))
     
     def set_token(self, token: str) -> None:
         self.token = token
@@ -110,13 +109,13 @@ class User(server_db_.Model, UserMixin):
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
     last_setting_update: Mapped[Optional[str]] = mapped_column(String(32))
     updated_setting_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: CET.localize(func.now()))
+                                                 default=lambda: datetime.now(CET))
 
     last_seen_at: Mapped[datetime] = mapped_column(DateTime,
-                                                   default=lambda: CET.localize(func.now()))
+                                                   default=lambda: datetime.now(CET))
     tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: CET.localize(func.now()))
+                                                 default=lambda: datetime.now(CET))
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     comments: Mapped[list["Comment"]] = relationship(  # type: ignore
@@ -146,17 +145,15 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_email(self, email: str) -> None:
         if not re.match(EMAIL_REGEX, email):
-            errors = f"Invalid email: {email}, {log_function()}, {log_routes()}"
-            logger.error(errors)
-            return redirect(url_for(E_500_REDIRECT, errors=errors))
+            session["error_msg"] = f"Invalid email: {email}"
+            abort(500)
         self.email = email
 
     @set_updated_at
     def set_username(self, username: str) -> None:
         if get_user_by_username(username):
-            errors = f"Username already taken: {username}, {log_function()}, {log_routes()}"
-            logger.error(errors)
-            return redirect(url_for(E_500_REDIRECT, errors=errors))
+            session["error_msg"] = f"Username taken: {username}"
+            abort(500)
         self.username = username
 
     @set_updated_at
@@ -166,9 +163,8 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_fast_name(self, fast_name: str) -> None:
         if get_user_by_fast_name(fast_name):
-            errors = f"Fast name already taken: {fast_name}, {log_function()}, {log_routes()}"
-            logger.error(errors)
-            return redirect(url_for(E_500_REDIRECT, errors=errors))
+            session["error_msg"] = f"Fast name taken: {fast_name}"
+            abort(500)
         self.fast_name = fast_name
 
     @set_updated_at
@@ -178,15 +174,15 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_display_name(self, display_name: str) -> None:
         if get_user_by_display_name(display_name):
-            errors = f"Display name already taken: {display_name}, {log_function()}, {log_routes()}"
-            logger.error(errors)
+            session["error_msg"] = f"Display name taken: {display_name}"
+            abort(500)
         else:
             self.display_name = display_name
 
     @set_updated_at
     def set_country(self, country: str) -> None:
         if country not in COUNTRY_CHOICES:
-            errors = f"Invalid country: {country}, {log_function()}, {log_routes()}"
+            errors = f"Invalid country: {country} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.country = country
@@ -194,7 +190,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_profile_icon(self, profile_icon: str) -> None:
         if profile_icon not in os.listdir(PROFILE_ICONS_FOLDER):
-            errors = f"Invalid profile icon: {profile_icon}, {log_function()}, {log_routes()}"
+            errors = f"Invalid profile icon: {profile_icon} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.profile_icon = profile_icon
@@ -208,11 +204,11 @@ class User(server_db_.Model, UserMixin):
         except FileNotFoundError:
             return
         except PermissionError as e:
-            errors = f"PermissionError: {e}, {log_function()}, {log_routes()}"
+            errors = f"PermissionError: {e} - {logger.get_log_info()}"
             logger.critical(errors)
             return
         except Exception as e:
-            errors = f"Error setting profile picture: {e}, {log_function()}, {log_routes()}"
+            errors = f"Error setting profile picture: {e} - {logger.get_log_info()}"
             logger.critical(errors)
             return
         self.profile_picture = profile_picture
@@ -220,7 +216,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_about_me(self, about_me: str) -> None:
         if len(about_me) > MAX_ABOUT_ME_LENGTH:
-            errors = f"About me too long: {about_me}, {log_function()}, {log_routes()}"
+            errors = f"About me too long: {about_me} - {logger.get_log_info()}"
             logger.error(errors)
         else:    
             self.about_me = about_me
@@ -228,7 +224,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_news_notifications(self, news_notifications: bool) -> None:
         if not isinstance(news_notifications, bool):
-            errors = f"Invalid news notifications type: {type(news_notifications)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid news notifications type: {type(news_notifications)} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.news_notifications = news_notifications
@@ -236,7 +232,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_comment_notifications(self, comment_notifications: bool) -> None:
         if not isinstance(comment_notifications, bool):
-            errors = f"Invalid comment notifications type: {type(comment_notifications)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid comment notifications type: {type(comment_notifications)} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.comment_notifications = comment_notifications
@@ -244,7 +240,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_bakery_notifications(self, bakery_notifications: bool) -> None:
         if not isinstance(bakery_notifications, bool):
-            errors = f"Invalid bakery notifications type: {type(bakery_notifications)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid bakery notifications type: {type(bakery_notifications)} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.bakery_notifications = bakery_notifications
@@ -258,7 +254,7 @@ class User(server_db_.Model, UserMixin):
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
-                    errors = f"Invalid role: {role}, {log_function()}, {log_routes()}"
+                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
                     logger.error(errors)
                     return
                 if role in user_roles:
@@ -267,15 +263,15 @@ class User(server_db_.Model, UserMixin):
             self.update_roles(user_roles)
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
-                errors = f"Invalid role: {roles}, {log_function()}, {log_routes()}"
+                errors = f"Invalid role: {roles} - {logger.get_log_info()}"
                 logger.error(errors)
-                return redirect(url_for(E_500_REDIRECT, errors=errors))
+                return
             if roles in user_roles:
                 return
             user_roles.append(roles)
             self.update_roles(user_roles)
         else:
-            errors = f"Invalid role type: {type(roles)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
             logger.error(errors)
 
     @set_updated_at
@@ -284,31 +280,34 @@ class User(server_db_.Model, UserMixin):
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
-                    errors = f"Invalid role: {role}, {log_function()}, {log_routes()}"
+                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
                     logger.error(errors)
                     continue
                 if role not in user_roles:
-                    errors = f"User does not have role: {role}, {log_function()}, {log_routes()}"
+                    errors = f"User does not have role: {role} - {logger.get_log_info()}"
                     logger.warning(errors)
                     continue
                 user_roles.remove(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
-                errors = f"Invalid role: {roles}, {log_function()}, {log_routes()}"
+                errors = f"Invalid role: {roles} - {logger.get_log_info()}"
                 logger.error(errors)
                 return
             if roles not in user_roles:
-                errors = f"User does not have role: {roles}, {log_function()}, {log_routes()}"
+                errors = f"User does not have role: {roles} - {logger.get_log_info()}"
                 logger.warning(errors)
                 return
             user_roles.remove(roles)
             self.update_roles(user_roles)
         else:
-            errors = f"Invalid role type: {type(roles)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
             logger.error(errors)
 
     def update_roles(self, roles: list[str] | str) -> None:
+        """
+        Sets the Users roles to the provided roles.
+        """
         if not roles:
             self.roles = ""
             return
@@ -318,7 +317,7 @@ class User(server_db_.Model, UserMixin):
         elif isinstance(roles, str):
             self.roles = roles if not roles.endswith("|") else roles + "|"
         else:
-            errors = f"Invalid roles type: {type(roles)}, {log_function()}, {log_routes()}"
+            errors = f"Invalid roles type: {type(roles)} - {logger.get_log_info()}"
             logger.error(errors)
 
     def has_role(self, role: str) -> bool:
@@ -327,7 +326,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_new_email(self, new_email: str) -> None:
         if not re.match(EMAIL_REGEX, new_email):
-            errors = f"Invalid new email: {new_email}, {log_function()}, {log_routes()}"
+            errors = f"Invalid new email: {new_email} - {logger.get_log_info()}"
             logger.error(errors)
         else:
             self.new_email = new_email
@@ -337,6 +336,10 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:
+        if not isinstance(verified, bool):
+            errors = f"Invalid email verified type: {type(verified)} - {logger.get_log_info()}"
+            logger.error(errors)
+            return
         if verified:
             self.add_roles("verified")
         else:
@@ -345,6 +348,10 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_remember_me(self, remember: bool) -> None:
+        if not isinstance(remember, bool):
+            errors = f"Invalid remember me type: {type(remember)} - {logger.get_log_info()}"
+            logger.error(errors)
+            return
         self.remember_me = remember
 
     def update_last_seen(self) -> None:
@@ -360,7 +367,7 @@ class User(server_db_.Model, UserMixin):
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
-                    errors = f"Invalid role: {role}, {log_function()}, {log_routes()}"
+                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
                     logger.error(errors)
                 user_roles.append(role)
         elif isinstance(roles, str):
@@ -377,9 +384,8 @@ class User(server_db_.Model, UserMixin):
         try:
             return argon2_.hash(plain_password)
         except Exception as e:
-            errors = f"Error hashing password: {e}, {log_function()}, {log_routes()}"
-            logger.critical(errors)
-            return redirect(url_for(E_500_REDIRECT, errors=errors))
+            session["error_msg"] = f"Error hashing password: {e} - {logger.get_log_info()}"
+            abort(500)
 
     def __repr__(self) -> str:
         return (f"User:"

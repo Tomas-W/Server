@@ -55,8 +55,7 @@ class News(server_db_.Model):
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: CET.localize(func.now())
-    )
+        DateTime, default=lambda: datetime.now(CET))
 
     comments: Mapped[list["Comment"]] = relationship(
         "Comment",
@@ -201,7 +200,7 @@ class Comment(server_db_.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: CET.localize(func.now()))
+        DateTime, default=lambda: datetime.now(CET))
     
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")

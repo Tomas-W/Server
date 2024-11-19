@@ -54,7 +54,7 @@ class BakeryItem(server_db_.Model):
     vegan: Mapped[bool] = mapped_column(Boolean, default=False)
     lactose_free: Mapped[bool] = mapped_column(Boolean, default=False)
     nutri_score: Mapped[str] = mapped_column(String(1), nullable=False)
-    
+
     type: Mapped[str] = mapped_column(String(225), nullable=False)
     tags: Mapped[str] = mapped_column(String(225), nullable=False)
     package_type: Mapped[Optional[str]] = mapped_column(String(75))
@@ -64,18 +64,18 @@ class BakeryItem(server_db_.Model):
     defrost_time: Mapped[Optional[str]] = mapped_column(String(75))
     cooldown_time: Mapped[Optional[str]] = mapped_column(String(75))
     make_halves: Mapped[Optional[bool]] = mapped_column(Boolean)
-    
+
     contains: Mapped[str] = mapped_column(String(255), nullable=False)
     may_contain: Mapped[str] = mapped_column(String(255), nullable=False)
     
     image: Mapped[str] = mapped_column(String(255), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: CET.localize(func.now()))
+                                                 default=lambda: datetime.now(CET))
     updated_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: CET.localize(func.now()),
-                                                 onupdate=lambda: CET.localize(func.now()))
-    
+                                                 default=lambda: datetime.now(CET),
+                                                 onupdate=lambda: datetime.now(CET))
+
     search_field: Mapped[str] = mapped_column(Text, nullable=True)
 
     def __init__(self, name: str, category: str, program: int, nasa: int, price: float,
@@ -90,11 +90,11 @@ class BakeryItem(server_db_.Model):
         self.program = program
         self.nasa = nasa
         self.price = price
-        
+
         self.vegan = vegan
         self.lactose_free = lactose_free
         self.nutri_score = nutri_score
-        
+
         self.type = self._join(type)
         self.tags = self._join(tags)
         self.package_type = package_type
@@ -104,12 +104,12 @@ class BakeryItem(server_db_.Model):
         self.defrost_time = defrost_time
         self.cooldown_time = cooldown_time
         self.make_halves = make_halves
-        
+
         self.contains = self._join(contains)
         self.may_contain = self._join(may_contain)
-        
+
         self.image = image
-    
+        
     def update_search_field(self):
         fields_to_search = [
             self.name.lower(),
@@ -119,13 +119,6 @@ class BakeryItem(server_db_.Model):
             self.contains.lower(),
         ]
         self.search_field = self._join(fields_to_search)
-
-    @staticmethod
-    def search(query: str):
-        # Add wildcard characters to match any occurrence within `search_content`
-        search_term = f"%{query}%"
-        stmt = select(BakeryItem).filter(BakeryItem.search_field.like(search_term))
-        return server_db_.session.execute(stmt).scalars().all()
     
     @staticmethod
     def _join(list_: list[str]) -> str:

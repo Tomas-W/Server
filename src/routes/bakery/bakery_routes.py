@@ -50,7 +50,7 @@ def info(id_: int):
         return (render_template(E_404_TEMPLATE,
                                 info=f"Item with ID {id_} not in database"),
                 404)
-        
+    # For side panel
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])
 
     return render_template(

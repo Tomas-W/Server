@@ -6,44 +6,38 @@ from src.models.bakery_model.bakery_mod import BakeryItem
 from src.routes.bakery.bakery_items import get_bakery_dict
 
 
-def get_items_by_column(column_name: str, value: str) -> list[BakeryItem]:
-    result = server_db_.session.execute(
-        select(BakeryItem).filter_by(**{column_name: value})
-    ).scalars().all()
-    return result
-
-
 def get_program_items_dicts(program: int) -> list[dict]:
-    result = server_db_.session.execute(
-        select(BakeryItem).filter_by(program=program)
-    ).scalars().all()
+    stmt = select(BakeryItem).filter_by(program=program)
+    result = server_db_.session.execute(stmt).scalars().all()
     return [item.to_dict() for item in result]
 
 
 def get_program_ids_and_names(program: int) -> list[dict]:
-    items = server_db_.session.execute(
-        select(BakeryItem).filter_by(program=program)
-    ).scalars().all()
+    stmt = select(BakeryItem).filter_by(program=program)
+    items = server_db_.session.execute(stmt).scalars().all()
     return [{"id": item.id, "name": item.name} for item in items]
 
 
 def get_item_by_id(id_: int) -> Optional[BakeryItem]:
-    result = server_db_.session.execute(
-            select(BakeryItem).filter_by(id=id_)
-    ).scalar_one_or_none()
-    return result
+    stmt = select(BakeryItem).filter_by(id=id_)
+    return server_db_.session.execute(stmt).scalar_one_or_none()
 
 
 def get_item_by_id_dict(id_: int) -> Optional[dict]:
-    result = server_db_.session.execute(
-            select(BakeryItem).filter_by(id=id_)
-    ).scalar_one_or_none()
+    stmt = select(BakeryItem).filter_by(id=id_)
+    result = server_db_.session.execute(stmt).scalar_one_or_none()
     return result.to_dict() if result else None
 
 
 def delete_item_by_id(id_: int) -> None:
     server_db_.session.delete(server_db_.session.get(BakeryItem, id_))
     server_db_.session.commit()
+
+
+def search_bakery_items(query: str) -> list[BakeryItem]:
+    search_term = f"%{query}%"
+    stmt = select(BakeryItem).filter(BakeryItem.search_field.like(search_term))
+    return server_db_.session.execute(stmt).scalars().all()
 
 
 def clear_bakery_db() -> None:

@@ -46,7 +46,7 @@ def news(id_: int):
     """
     news_item = get_news_by_id(id_)
     if not news_item:
-        session["error_info"] = f"News item with ID {id_} not found"
+        session["error_user_info"] = f"News item with ID {id_} not found"
         abort(404)
 
     news_dict = get_news_dict_by_id(id_)

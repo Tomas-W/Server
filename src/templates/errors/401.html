@@ -4,7 +4,9 @@
 
 <div class="error-header">
     <p class="error-title">401 Unauthorized</p>
-    <p class="error-sub-title">{{ info }}</p>
+    {% if info %}
+        <p class="error-sub-title">{{ info }}</p>
+    {% endif %}
     <p class="referrer">
         <a href="javascript:history.back()"><span style="text-decoration: underline;">Go back</span> to the previous page</a>
     </p>

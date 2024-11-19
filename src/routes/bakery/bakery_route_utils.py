@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from src.extensions import server_db_
 from src.models.bakery_model.bakery_mod import BakeryItem
-
+from src.models.bakery_model.bakery_mod_utils import search_bakery_items
 
 # def refine_bakery_search(bakery_items: list[BakeryItem], form: FlaskForm):
 #     if form.search_field.data:
@@ -34,7 +34,7 @@ def process_bakery_form(form: FlaskForm):
     bakery_items = []
     search_terms = form.search_field.data.split(" ")
     for term in search_terms:
-        bakery_items.extend(BakeryItem.search(term))
+        bakery_items.extend(search_bakery_items(term))
 
     if form.lactose_free.data:
         bakery_items = [item for item in bakery_items if item.lactose_free]

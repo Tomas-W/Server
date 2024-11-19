@@ -101,7 +101,7 @@ E_498_REDIRECT: str = "errors.498"
 E_500_REDIRECT: str = "errors.500"
 
 # Flash messages
-NOT_AUTHORIZED_MSG: str = "You are not authorized to access this page."
+NOT_AUTHORIZED_MSG: str = "You tried to access a page you are not authorized to."
 
 LOGIN_SUCCESS_MSG: str = "Logged in successfully"
 LOGOUT_SUCCESS_MSG: str = "Logged out successfully"

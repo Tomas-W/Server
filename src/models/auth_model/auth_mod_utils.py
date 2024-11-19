@@ -288,7 +288,14 @@ def _init_user() -> str | None:
             email_verified=True,
             roles="admin"
         )
+        delete_user = User(
+            email="deleted@user.com",
+            username="Deleted user",
+            password="TomasTomas1!",
+            display_name="Deleted user",
+        )
         server_db_.session.add(new_user)
+        server_db_.session.add(delete_user)
         server_db_.session.commit()
         return repr(new_user)
 

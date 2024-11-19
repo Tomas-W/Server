@@ -70,10 +70,10 @@ def get_comment_by_id(id_: int):
     return result
 
 
-def add_new_comment(news_id: int, author_id: int, content: str) -> None:
+def add_new_comment(news_id: int, user_id: int, content: str) -> None:
     comment = Comment(
         news_id=news_id,
-        author_id=author_id,
+        user_id=user_id,
         content=content,
     )
     server_db_.session.add(comment)

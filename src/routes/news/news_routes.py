@@ -48,6 +48,7 @@ def news(id_: int):
     if not news_item:
         session["error_user_info"] = f"News item with ID {id_} not found"
         abort(404)
+    news_item.set_seen_by(current_user.id)
 
     news_dict = get_news_dict_by_id(id_)
     comment_form = CommentForm()
@@ -57,7 +58,7 @@ def news(id_: int):
     if request.method == "POST":
         if comment_form.validate_on_submit():
             sanitized_comment = allow_only_styling(comment_form.content.data)
-            add_new_comment(news_id=id_, author_id=current_user.id, content=sanitized_comment)
+            add_new_comment(news_id=id_, user_id=current_user.id, content=sanitized_comment)
             clean_news_session()
             flash(COMMENT_SUCCESS_MSG)
             session["post_comment"] = True

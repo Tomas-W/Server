@@ -56,6 +56,9 @@ class News(server_db_.Model):
     
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(CET))
+    
+    user_id: Mapped[int] = mapped_column(ForeignKey("auth.id"), nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="news_articles")
 
     comments: Mapped[list["Comment"]] = relationship(
         "Comment",
@@ -65,7 +68,7 @@ class News(server_db_.Model):
     
     def __init__(self, title: str, header: str, code: int, important: str,
                  grid_cols: list[str], grid_rows: list[str], info_cols: list[str],
-                 info_rows: list[str], author: str):
+                 info_rows: list[str], author: str, user_id: int):
         """
         _cols and _rows are lists of strings that are joined
         with '|' to form a single string to be stored in the database.
@@ -80,6 +83,7 @@ class News(server_db_.Model):
         self.info_cols = self._join(info_cols)
         self.info_rows = self._join(info_rows)
         self.author = author
+        self.user_id=user_id
 
     
     def grid_len(self) -> int:
@@ -205,30 +209,18 @@ class Comment(server_db_.Model):
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
-    news_id: Mapped[int] = mapped_column(ForeignKey(
-        "news.id",
-        ondelete="CASCADE"),
-        nullable=False
-    )
-    news: Mapped["News"] = relationship(
-        "News",
-        back_populates="comments"
-    )
+    news_id: Mapped[int] = mapped_column(ForeignKey("news.id"), nullable=False)
+    news: Mapped["News"] = relationship("News", back_populates="comments")
     
-    author_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
-        "auth.id", ondelete="SET NULL"),
-        nullable=True
-    )
-    author_user: Mapped["User"] = relationship(  # type: ignore
-        "User",
-        back_populates="comments"
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("auth.id"), nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="comments")
 
     def __repr__(self) -> str:
         return (f"Comment:"
                 f" (id={self.id},"
                 f" news_id={self.news_id},"
-                f" author='{self.author}')"
+                f" user_id='{self.user_id}')"
+                f" username='{self.user.username}')"
                 )
     
     @staticmethod
@@ -243,8 +235,8 @@ class Comment(server_db_.Model):
         return {
             "id": self.id,
             "content": self.content,
-            "author_id": self.author_id,
-            "author_username": self.author_user.username,
+            "user_id": self.user_id,
+            "username": self.user.username,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
             "liked_by": [num for num in self._split(str(self.liked_by)) if num],
             "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],

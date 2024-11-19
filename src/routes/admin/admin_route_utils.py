@@ -10,7 +10,7 @@ from config.settings import PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION
 
 
 def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[str],
-                     info_cols: list[str], info_rows: list[str]) -> None:
+                     info_cols: list[str], info_rows: list[str], user_id: int) -> None:
     from src.models.news_model.news_mod import News
     # noinspection PyArgumentList
     new_news = News(
@@ -22,7 +22,8 @@ def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[st
         grid_rows=grid_rows,
         info_cols=info_cols,
         info_rows=info_rows,
-        author=form.author.data
+        author=form.author.data,
+        user_id=current_user.id
     )
     server_db_.session.add(new_news)
     server_db_.session.commit()

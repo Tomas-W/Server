@@ -163,7 +163,8 @@ def add_news():
                              grid_cols,
                              grid_rows,
                              info_cols,
-                             info_rows)
+                             info_rows,
+                             current_user.id)
             return redirect(url_for(ALL_NEWS_REDIRECT))
         
         session["news_errors"] = add_news_form.errors

@@ -185,7 +185,7 @@ class User(server_db_.Model, UserMixin):
     def set_country(self, country: str) -> None:
         if country not in COUNTRY_CHOICES:
             errors = f"Invalid country: {country} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.country = country
 
@@ -193,7 +193,7 @@ class User(server_db_.Model, UserMixin):
     def set_profile_icon(self, profile_icon: str) -> None:
         if profile_icon not in os.listdir(PROFILE_ICONS_FOLDER):
             errors = f"Invalid profile icon: {profile_icon} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.profile_icon = profile_icon
 
@@ -207,11 +207,11 @@ class User(server_db_.Model, UserMixin):
             return
         except PermissionError as e:
             errors = f"PermissionError: {e} - {logger.get_log_info()}"
-            logger.critical(errors)
+            logger.log.critical(errors)
             return
         except Exception as e:
             errors = f"Error setting profile picture: {e} - {logger.get_log_info()}"
-            logger.critical(errors)
+            logger.log.critical(errors)
             return
         self.profile_picture = profile_picture
 
@@ -219,7 +219,7 @@ class User(server_db_.Model, UserMixin):
     def set_about_me(self, about_me: str) -> None:
         if len(about_me) > MAX_ABOUT_ME_LENGTH:
             errors = f"About me too long: {about_me} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:    
             self.about_me = about_me
 
@@ -227,7 +227,7 @@ class User(server_db_.Model, UserMixin):
     def set_news_notifications(self, news_notifications: bool) -> None:
         if not isinstance(news_notifications, bool):
             errors = f"Invalid news notifications type: {type(news_notifications)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.news_notifications = news_notifications
 
@@ -235,7 +235,7 @@ class User(server_db_.Model, UserMixin):
     def set_comment_notifications(self, comment_notifications: bool) -> None:
         if not isinstance(comment_notifications, bool):
             errors = f"Invalid comment notifications type: {type(comment_notifications)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.comment_notifications = comment_notifications
 
@@ -243,7 +243,7 @@ class User(server_db_.Model, UserMixin):
     def set_bakery_notifications(self, bakery_notifications: bool) -> None:
         if not isinstance(bakery_notifications, bool):
             errors = f"Invalid bakery notifications type: {type(bakery_notifications)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.bakery_notifications = bakery_notifications
 
@@ -257,7 +257,7 @@ class User(server_db_.Model, UserMixin):
             for role in roles:
                 if role not in USER_ROLES:
                     errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.error(errors)
+                    logger.log.error(errors)
                     return
                 if role in user_roles:
                     continue
@@ -266,7 +266,7 @@ class User(server_db_.Model, UserMixin):
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
                 errors = f"Invalid role: {roles} - {logger.get_log_info()}"
-                logger.error(errors)
+                logger.log.error(errors)
                 return
             if roles in user_roles:
                 return
@@ -274,7 +274,7 @@ class User(server_db_.Model, UserMixin):
             self.update_roles(user_roles)
         else:
             errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
 
     @set_updated_at
     def remove_roles(self, roles: list[str] | str) -> None:
@@ -283,28 +283,28 @@ class User(server_db_.Model, UserMixin):
             for role in roles:
                 if role not in USER_ROLES:
                     errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.error(errors)
+                    logger.log.error(errors)
                     continue
                 if role not in user_roles:
                     errors = f"User does not have role: {role} - {logger.get_log_info()}"
-                    logger.warning(errors)
+                    logger.log.warning(errors)
                     continue
                 user_roles.remove(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
                 errors = f"Invalid role: {roles} - {logger.get_log_info()}"
-                logger.error(errors)
+                logger.log.error(errors)
                 return
             if roles not in user_roles:
                 errors = f"User does not have role: {roles} - {logger.get_log_info()}"
-                logger.warning(errors)
+                logger.log.warning(errors)
                 return
             user_roles.remove(roles)
             self.update_roles(user_roles)
         else:
             errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
 
     def update_roles(self, roles: list[str] | str) -> None:
         """
@@ -320,7 +320,7 @@ class User(server_db_.Model, UserMixin):
             self.roles = roles if not roles.endswith("|") else roles + "|"
         else:
             errors = f"Invalid roles type: {type(roles)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
 
     def has_role(self, role: str) -> bool:
         return role in self.roles.split("|")
@@ -329,7 +329,7 @@ class User(server_db_.Model, UserMixin):
     def set_new_email(self, new_email: str) -> None:
         if not re.match(EMAIL_REGEX, new_email):
             errors = f"Invalid new email: {new_email} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
         else:
             self.new_email = new_email
 
@@ -340,7 +340,7 @@ class User(server_db_.Model, UserMixin):
     def set_email_verified(self, verified: bool) -> None:
         if not isinstance(verified, bool):
             errors = f"Invalid email verified type: {type(verified)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
             return
         if verified:
             self.add_roles("verified")
@@ -352,7 +352,7 @@ class User(server_db_.Model, UserMixin):
     def set_remember_me(self, remember: bool) -> None:
         if not isinstance(remember, bool):
             errors = f"Invalid remember me type: {type(remember)} - {logger.get_log_info()}"
-            logger.error(errors)
+            logger.log.error(errors)
             return
         self.remember_me = remember
 
@@ -370,7 +370,7 @@ class User(server_db_.Model, UserMixin):
             for role in roles:
                 if role not in USER_ROLES:
                     errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.error(errors)
+                    logger.log.error(errors)
                 user_roles.append(role)
         elif isinstance(roles, str):
             user_roles.append(roles)

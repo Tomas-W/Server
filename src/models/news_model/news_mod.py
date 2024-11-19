@@ -1,10 +1,8 @@
 from datetime import datetime
 from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
-from typing import Optional
 
-from src.extensions import server_db_
+from src.extensions import server_db_, logger
 from src.models.auth_model.auth_mod import User
 from src.models.email_model.email_mod_utils import add_notification_email_to_db
 from config.settings import CET
@@ -33,7 +31,9 @@ class News(server_db_.Model):
     
     - CREATED_AT (datetime): Timestamp of when the news article was created [Default: CET]
     
-    - COMMENTS (list[Comment]): Relationship to the associated Comment object
+    - USER_ID (int): Foreign key referencing the associated User object
+    - USER: Relationship to the associated User object
+    - COMMENTS (list[Comment]): Relationship to the associated Comment objects
     """
     __tablename__ = 'news'  # noqa
 
@@ -144,6 +144,8 @@ class News(server_db_.Model):
             return "blue"
         elif str(code).startswith("2"):
             return "orange"
+        elif str(code).startswith("5"):
+            return "green"
         elif str(code).startswith("9"):
             return "red"
         else:
@@ -154,26 +156,31 @@ class News(server_db_.Model):
         Returns a dictionary representation of the News object
         for easy frontend display.
         """	
-        return {
-            "id": self.id,
-            "title": self.title,
-            "header": self.header,
-            "code": self.code,
-            "color": self.color,
-            "important": self.important,
-            "grid_cols": self._split(str(self.grid_cols)),
-            "grid_rows": self._get_grid_rows(),
-            "info_cols": self._split(str(self.info_cols)),
-            "info_rows": self._split(str(self.info_rows)),
-            "author": self.author,
-            "seen_by": [num for num in self._split(str(self.seen_by)) if num],
-            "accepted_by": self._split(str(self.accepted_by)),
-            "liked_by": [num for num in self._split(str(self.liked_by)) if num],
-            "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
-            "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
-            "comments": [comment.to_dict() for comment in self.comments],
-        }
-    
+        try:
+            return {
+                "id": self.id,
+                "title": self.title,
+                "header": self.header,
+                "code": self.code,
+                "color": self.color,
+                "important": self.important,
+                "grid_cols": self._split(str(self.grid_cols)),
+                "grid_rows": self._get_grid_rows(),
+                "info_cols": self._split(str(self.info_cols)),
+                "info_rows": self._split(str(self.info_rows)),
+                "author": self.author,
+                "seen_by": [num for num in self._split(str(self.seen_by)) if num],
+                "accepted_by": self._split(str(self.accepted_by)),
+                "liked_by": [num for num in self._split(str(self.liked_by)) if num],
+                "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
+                "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
+                "comments": [comment.to_dict() for comment in self.comments],
+            }
+        except KeyError as e:
+            errors = f"KeyError: {e} - {logger.get_log_info()}"
+            logger.log.error(errors)
+            return {}
+          
     def __repr__(self) -> str:
         return (f"News:"
                 f" (id={self.id},"
@@ -198,6 +205,9 @@ class Comment(server_db_.Model):
     
     - NEWS_ID (int): Foreign key referencing the associated news article
     - NEWS: Relationship to the associated News object
+    
+    - USER_ID (int): Foreign key referencing the associated User object
+    - USER: Relationship to the associated User object
     """
     __tablename__ = "comments"  # noqa
 
@@ -236,7 +246,7 @@ class Comment(server_db_.Model):
             "id": self.id,
             "content": self.content,
             "user_id": self.user_id,
-            "username": self.user.username,
+            "display_name": self.user.display_name if self.user.display_name else self.user.username,
             "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
             "liked_by": [num for num in self._split(str(self.liked_by)) if num],
             "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],

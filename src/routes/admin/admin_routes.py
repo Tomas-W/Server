@@ -61,8 +61,6 @@ def user_admin():
             
         elif form_type == AUTHENTICATION_FORM_TYPE:
             if authentication_form.validate_on_submit():
-                logger.info("Authentication form submitted")
-
                 if clean_up_form_fields(authentication_form):
                     flash("No changes made")
 

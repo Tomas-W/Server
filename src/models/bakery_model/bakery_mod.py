@@ -3,9 +3,8 @@ from typing import Optional
 
 from sqlalchemy import Boolean, Integer, String, Float, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.sql import select, func
 
-from src.extensions import server_db_
+from src.extensions import server_db_, logger
 from config.settings import CET
 
 
@@ -133,46 +132,40 @@ class BakeryItem(server_db_.Model):
         return value.replace("|", " ")
     
     def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "category": self.category,
-            "program": self.program,
-            "nasa": self.nasa,
-            "price": self.price,
+        try:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "category": self.category,
+                "program": self.program,
+                "nasa": self.nasa,
+                "price": self.price,
+                
+                "vegan": self.vegan,
+                "lactose_free": self.lactose_free,
+                "nutri_score": self.nutri_score,
+                
+                "type": self._space(self.type),
+                "tags": self._split(self.tags),
+                "package_type": self.package_type,
+                "per_package": self.per_package,
+                "rack_type": self.rack_type,
+                "per_rack": self.per_rack,
+                "defrost_time": self.defrost_time,
+                "cooldown_time": self.cooldown_time,
+                "make_halves": self.make_halves,
+                
+                "contains": self._split(self.contains),
+                "may_contain": self._split(self.may_contain),
+                "search_field": self._split(self.search_field),
             
-            "vegan": self.vegan,
-            "lactose_free": self.lactose_free,
-            "nutri_score": self.nutri_score,
-            
-            "type": self._space(self.type),
-            "tags": self._split(self.tags),
-            "package_type": self.package_type,
-            "per_package": self.per_package,
-            "rack_type": self.rack_type,
-            "per_rack": self.per_rack,
-            "defrost_time": self.defrost_time,
-            "cooldown_time": self.cooldown_time,
-            "make_halves": self.make_halves,
-            
-            "contains": self._split(self.contains),
-            "may_contain": self._split(self.may_contain),
-            "search_field": self._split(self.search_field),
-            
-            "image": self.image,
-        }
-    
-    def to_search_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "category": self.category,
-            "type": self._split(self.type),
-            "tags": self._split(self.tags),
-            "contains": self._split(self.contains),
-            "may_contain": self._split(self.may_contain),
-        }
-    
+                "image": self.image,
+            }
+        except KeyError as e:
+            errors = f"KeyError: {e} - {logger.get_log_info()}"
+            logger.log.error(errors)
+            return {}
+
     def __repr__(self) -> str:
         return (f"BakeryItem:"
                 f" (id={self.id},"

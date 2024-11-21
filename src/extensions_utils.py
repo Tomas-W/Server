@@ -50,7 +50,7 @@ css_bundle = [
             "name": "all_news_css",
             "files": [
                 "css/news/news_base.css",
-                "css/news/all_news.css"
+                "css/news/all.css"
             ],
             "filters": "rcssmin",
             "output": "dist/all_news_css.min.css"
@@ -63,6 +63,15 @@ css_bundle = [
             ],
             "filters": "rcssmin",
             "output": "dist/news_css.min.css"
+        },
+        {
+            "name": "delete_news_css",
+            "files": [
+                "css/news/news_base.css",
+                "css/news/delete.css"
+            ],
+            "filters": "rcssmin",
+            "output": "dist/delete_news_css.min.css"
         },
         {
             "name": "info_css",

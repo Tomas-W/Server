@@ -29,12 +29,6 @@
     margin-bottom: 30px;
 }
 
-.admin-panel-label {
-    margin: 20px 0 5px 0;
-    font-style: italic;
-    color: var(--label-color);
-}
-
 .alinea-content-gap {
     margin: 0 0 100px 0;
 }
@@ -46,11 +40,6 @@
 #info-fields .master-admin-button:nth-last-child(2),
 #info-fields .master-admin-button:nth-last-child(1) {
     margin: 0 0 30px 0;
-}
-
-.admin-panel-item {
-    padding-top: 0;
-    margin-bottom: 10px;
 }
 
 .admin-content {

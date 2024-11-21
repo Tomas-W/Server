@@ -13,8 +13,16 @@ News
 <div class="news-content blur-target">
     <div class="news-item">
 
+        {% if is_admin %}
+            <a class="news-delete-link" href="{{ url_for("news.delete", id_=news_dict.id) }}">
+                <img class="news-delete-icon" src="{{ url_for("static",
+                                                           filename="images/delete_icon.png") }}" 
+                                                           alt="Delete" 
+                                                           type="image/png">
+            </a>
+        {% endif %}
         <!-- News header -->
-        <div class="news-header outline-bottom">
+        <div class="news-header outline-bottom {{ "outline-top" if is_admin else "" }}">
             <p class="news-code {{ news_dict.color }}">{{ news_dict.code }}</p>
             <p class="news-title outline-left">{{ news_dict.title }}</p>
         </div>
@@ -151,9 +159,23 @@ News
 
         <!-- Comments -->
         <div class="comments-wrapper">
+            {% if flash_type == "delete_comment" and get_flashed_messages() %}
+                    <div id="comment-flash" class="comment-flash">
+                        <p>{{ get_flashed_messages()[0] }}</p>    
+                    </div>
+            {% endif %}
+
             {% for comment in news_dict.comments %}
-                    <div class="comment-item outline {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
-                        <div class="comment-info">
+                {% if is_admin %}
+                    <a class="comment-delete-link" href="{{ url_for("news.delete_comment", id_=comment.id) }}">
+                        <img class="comment-delete-icon" src="{{ url_for("static",
+                                                                          filename="images/delete_icon.png") }}" 
+                                                                          alt="Delete" 
+                                                                          type="image/png">
+                    </a>
+                {% endif %}
+                <div class="comment-item outline {% if post_comment and loop.last %}post-comment{% endif %}" id="comment-{{ comment.id }}">
+                    <div class="comment-info">
 
                             <!-- Comment header -->
                             <div class="comment-header">
@@ -165,10 +187,12 @@ News
                                                                           type="image/png">
                                     {% endif %}
                                 </div>
+
                                 <div>
                                     <p class="comment-author italic">{{ comment.display_name }}</p>
                                     <p class="comment-author italic">{{ comment.created_at }}</p>
                                 </div>
+                                
                             </div>
 
                             <!-- Comment content -->

@@ -1,7 +1,16 @@
 <div class="top-panel" id="top-panel" style="display: none;">
     <div class="top-panel-list">
-        <li><p class="top-panel-item"><a href="{{ url_for('news.all_news') }}">All</a></p></li>
+        <li><p class="top-panel-item"><a href="{{ url_for('news.all') }}">All</a></p></li>
         <li><p class="top-panel-item"><a href="{{ url_for('news.unread') }}">Unread</a></p></li>
-        <li><p class="top-panel-item"><a>Unchecked</a></p></li>
+        
+        {% if is_admin %}
+            <p class="admin-panel-label admin-panel-label-top">Admin Panel</p>
+            <li><p class="top-panel-item admin-panel-item">
+                <a href="{{ url_for("news.add") }}">Add News</a>
+            </p></li>
+            <li><p class="top-panel-item admin-panel-item">
+                <a href="{{ url_for("news.delete") }}">Delete News</a>
+            </p></li>
+        {% endif %}
     </div>
 </div>

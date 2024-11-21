@@ -1,7 +1,16 @@
 <div class="side-panel">
     <ul class="side-panel-list">
-        <li><p class="side-panel-item"><a href="{{ url_for('news.all_news') }}">All</a></p></li>
+        <li><p class="side-panel-item"><a href="{{ url_for('news.all') }}">All</a></p></li>
         <li><p class="side-panel-item"><a href="{{ url_for('news.unread') }}">Unread</a></p></li>
-        <li><p class="side-panel-item"><a>Unchecked</a></p></li>
+        {% if is_admin %}
+            <p class="admin-panel-label">Admin Panel</p>
+            <li><p class="side-panel-item admin-panel-item" data-target="add-news-wrapper">
+                <a href="{{ url_for("news.add") }}">Add News</a>
+            </p></li>
+            <li><p class="side-panel-item admin-panel-item">
+                <a href="{{ url_for("news.delete") }}">Delete News</a>
+            </p></li>
+        {% endif %}
     </ul>
 </div>
+    

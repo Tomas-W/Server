@@ -1,32 +1,14 @@
 import os
 
+from flask import flash, session, abort
 from flask_login import current_user
 from flask_wtf import FlaskForm
 
-from src.extensions import server_db_
+from src.extensions import logger
 from src.models.auth_model.auth_mod_utils import start_verification_process
-from src.routes.admin.admin_forms import AddNewsForm
-from config.settings import PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION
-
-
-def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[str],
-                     info_cols: list[str], info_rows: list[str], user_id: int) -> None:
-    from src.models.news_model.news_mod import News
-    # noinspection PyArgumentList
-    new_news = News(
-        title=form.title.data,
-        header=form.header.data,
-        code=form.code.data,
-        important=form.important.data,
-        grid_cols=grid_cols,
-        grid_rows=grid_rows,
-        info_cols=info_cols,
-        info_rows=info_rows,
-        author=form.author.data,
-        user_id=current_user.id
-    )
-    server_db_.session.add(new_news)
-    server_db_.session.commit()
+from config.settings import (
+    PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION, PROFILE_PICTURE_ERROR_MSG
+)
 
 
 def clean_up_form_fields(form: FlaskForm) -> bool:
@@ -88,7 +70,7 @@ def process_new_email_address(form: FlaskForm) -> bool:
     
     new_email_address = form.email.data
     if new_email_address != current_user.email:
-        current_user.new_email = new_email_address
+        current_user.set_new_email(new_email_address)
         del form._fields["email"]
         start_verification_process(email=new_email_address,
                                    token_type=EMAIL_VERIFICATION,
@@ -103,13 +85,26 @@ def process_profile_picture(form: FlaskForm) -> None:
       and removes the profile picture from the form to be processed further.
     """
     if form.profile_picture.data:
-        current_user.set_profile_picture(form.profile_picture.data.filename)
         profile_picture_data = form.profile_picture.data
         if profile_picture_data:
-            profile_picture_data.save(os.path.join(
-                PROFILE_PICTURES_FOLDER,
-                f"{current_user.id}_{profile_picture_data.filename}",
-            ))
+            try:
+                profile_picture_data.save(os.path.join(
+                    PROFILE_PICTURES_FOLDER,
+                    f"{current_user.id}_{profile_picture_data.filename}",
+                ))
+                current_user.set_profile_picture(form.profile_picture.data.filename)
+            except FileNotFoundError as e:
+                errors = f"{e} - {logger.get_log_info()}"
+                logger.log.error(errors)
+                flash(PROFILE_PICTURE_ERROR_MSG)
+                return False
+            except PermissionError as e:
+                session["error_msg"] = f"{e} - {logger.get_log_info()}"
+                abort(500)
+            except Exception as e:
+                session["error_msg"] = f"{e} - {logger.get_log_info()}"
+                abort(500)
+            
         del form["profile_picture"]
         return True
     

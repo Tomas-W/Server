@@ -9,6 +9,7 @@ from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests  # noqa
+from google.auth.exceptions import GoogleAuthError
 from sqlalchemy import select
 
 from src.extensions import server_db_, flow_
@@ -28,8 +29,9 @@ from src.models.auth_model.auth_mod_utils import (
 from src.models.state_model.state_mod_utils import (
     save_oauth_state, get_and_delete_oauth_state
 )
+from src.extensions import logger
 from config.settings import (
-    PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT, FAST_LOGIN_FORM_TYPE,
+    PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT,
     SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
     USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG, SESSION_ERROR_MSG,
     AUTHENTICATION_LINK_ERROR_MSG, UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
@@ -79,19 +81,6 @@ def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
         return redirect(url_for(HOME_PAGE_REDIRECT))
-    return redirect(url_for(LOGIN_REDIRECT))
-
-
-@auth_bp.route("/fresh")
-def base():
-    """Creates a dummy account after db reset and serves login page."""
-    new_user = User(email="100pythoncourse@gmail.com",
-                    username="tomas",
-                    password="TomasTomas1!",
-                    fast_name="tomas",
-                    fast_code="00000")
-    server_db_.session.add(new_user)
-    server_db_.session.commit()
     return redirect(url_for(LOGIN_REDIRECT))
 
 
@@ -150,6 +139,7 @@ def callback():
     try:
         flow_.fetch_token(authorization_response=request.url)
     except Exception as e:
+        logger.log.warning(f"{e} - {logger.get_log_info()}")
         flash(TOKEN_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
 
@@ -157,6 +147,7 @@ def callback():
     oauth_state = get_and_delete_oauth_state(state_in_request)
 
     if not oauth_state:
+        logger.log.warning(f"Wrong 0Auth state - {logger.get_log_info()}")
         flash(STATE_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
 
@@ -165,11 +156,21 @@ def callback():
     cached_session = cachecontrol.CacheControl(request_session)
     token_request = google.auth.transport.requests.Request(session=cached_session)
 
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials.id_token,
-        request=token_request,
-        audience=os.environ.get("GOOGLE_CLIENT_ID"),
-    )
+    try:
+        id_info = id_token.verify_oauth2_token(
+            id_token=credentials.id_token,
+            request=token_request,
+            audience=os.environ.get("GOOGLE_CLIENT_ID"),
+        )
+    except GoogleAuthError as e:
+        logger.log.warning(f"{e} - {logger.get_log_info()}")
+        flash(TOKEN_ERROR_MSG)
+        return redirect(url_for(LOGIN_REDIRECT))
+    except ValueError as e:
+        logger.log.warning(f"{e} - {logger.get_log_info()}")
+        flash(TOKEN_ERROR_MSG)
+        return redirect(url_for(LOGIN_REDIRECT))
+    
     email = id_info.get("email")
     user = get_user_by_email(email)
 
@@ -254,7 +255,6 @@ def register():
                 return redirect(url_for(REGISTER_REDIRECT))
 
         session["form_errors"] = register_form.errors
-        flash("T0000STER")
 
     form_errors = session.pop("form_errors", None)
     fill_email = session.pop("fill_email", None)
@@ -290,7 +290,6 @@ def request_reset():
             return redirect(url_for(REQUEST_RESET_REDIRECT))
         
         session["form_errors"] = request_reset_form.errors
-        flash("T0000STER")
 
     form_errors = session.pop("form_errors", None)
 

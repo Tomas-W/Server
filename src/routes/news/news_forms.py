@@ -1,9 +1,63 @@
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
+from src.utils.form_utils import (
+    CommentLengthCheck, ForbiddenCheck, NewsHeaderLengthCheck,
+    NewsTitleLengthCheck, NewsCodeCheck, NewsImportantLengthCheck
+)
 
-from src.utils.form_utils import CommentLengthCheck, ForbiddenCheck
-from config.settings import REQUIRED_FIELD_MSG
+
+class AddNewsForm(FlaskForm):
+    """
+    Used on admin.news.add-news page to add news.
+    
+    Fields:
+    - TITLE [TextAreaField] [Required]
+    - CONTENT [TextAreaField] [Required]
+    - FORM_TYPE [HiddenField]
+    """
+    header = TextAreaField(
+        label="Header",
+        render_kw={},
+        validators=[
+            NewsHeaderLengthCheck(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+    title = TextAreaField(
+        label="Title",
+        render_kw={},
+        validators=[
+            NewsTitleLengthCheck(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+    code = TextAreaField(
+        label="Code",
+        render_kw={},
+        validators=[
+            NewsCodeCheck(),
+        ]
+    )
+    important = TextAreaField(
+        label="Important",
+        render_kw={},
+        validators=[
+            NewsImportantLengthCheck(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+
+    author = TextAreaField(
+        label="Author",
+        render_kw={},
+        validators=[
+            DataRequired(),
+            ForbiddenCheck(admin=True),
+        ]
+    )
+    form_type = HiddenField(default="news_form")
+    submit = SubmitField("Submit")
 
 
 class CommentForm(FlaskForm):

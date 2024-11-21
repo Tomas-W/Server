@@ -4,13 +4,12 @@ import random
 import re
 from datetime import datetime
 from typing import Optional
-from flask import redirect, url_for, session, abort
+from flask import session, abort
 from flask_login import UserMixin
 from sqlalchemy import (
     Integer, String, DateTime, Boolean, Text
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
 from src.extensions import server_db_, argon2_, logger
 from src.models.mod_utils import (
     set_updated_at
@@ -19,7 +18,7 @@ from src.models.auth_model.auth_mod_utils import (
     get_user_by_username, get_user_by_fast_name, get_user_by_display_name
 )
 from config.settings import (
-    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES, E_500_REDIRECT,
+    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES,
     EMAIL_REGEX, COUNTRY_CHOICES, MAX_ABOUT_ME_LENGTH
 )
 
@@ -185,7 +184,7 @@ class User(server_db_.Model, UserMixin):
     def set_country(self, country: str) -> None:
         if country not in COUNTRY_CHOICES:
             errors = f"Invalid country: {country} - {logger.get_log_info()}"
-            logger.log.error(errors)
+            logger.log.warning(errors)
         else:
             self.country = country
 
@@ -193,7 +192,7 @@ class User(server_db_.Model, UserMixin):
     def set_profile_icon(self, profile_icon: str) -> None:
         if profile_icon not in os.listdir(PROFILE_ICONS_FOLDER):
             errors = f"Invalid profile icon: {profile_icon} - {logger.get_log_info()}"
-            logger.log.error(errors)
+            logger.log.warning(errors)
         else:
             self.profile_icon = profile_icon
 

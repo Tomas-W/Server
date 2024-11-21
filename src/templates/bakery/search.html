@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const topPanel = document.getElementById('top-panel');
 
     if (devider && topPanel) {
+        // Apply hover effect to the devider
         devider.addEventListener('mouseenter', function () {
             topPanel.style.borderBottomColor = 'var(--white-100)';
         });
-
         devider.addEventListener('mouseleave', function () {
-            topPanel.style.borderBottomColor = ''; // Reset to original color or remove style
+            topPanel.style.borderBottomColor = '';
         });
     }
 });

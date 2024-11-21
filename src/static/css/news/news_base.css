@@ -1,15 +1,19 @@
 .news-flash {
-    margin-bottom: var(--news-gap)
+    margin-bottom: var(--news-gap);
+}
+
+.news-flash p {
+    font-style: italic;
 }
 
 .comment-flash {
     padding-top: var(--news-gap);
-    font-style: italic;
 }
 
 .comment-flash p {
     margin: 0;
     text-align: center;
     color: var(--text-color);
+    font-style: italic;
     font-size: var(--auth-flash-size);
 }

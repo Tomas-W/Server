@@ -8,7 +8,27 @@
 
 .news-item {
     width: 100%;
+    display: flex;
+    flex-direction: column;
     outline: 1px solid var(--gray3);
+}
+
+.news-delete-link {
+    display: flex;
+    padding: 7px 0;
+    justify-content: center;
+    transition: filter 0.3s ease-in-out,
+                background-color 0.3s ease-in-out;
+}
+
+.news-delete-link:hover {
+    background-color: var(--bg-highlight);
+    filter: brightness(2);
+}
+
+.news-delete-icon {
+    width: 20px;
+    height: 20px;
 }
 
 .news-header {
@@ -100,6 +120,7 @@
 .dislike-wrapper {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .like-icon,
@@ -108,11 +129,11 @@
 }
 
 .like-icon {
-    padding: 0 20px 0 20px;
+    padding: 5px 20px 0 20px;
 }
 
 .dislike-icon {
-    padding: 0 20px 0 20px;
+    padding: 8px 20px 0 20px;
 }
 
 .like-icon:hover,
@@ -120,6 +141,34 @@
     filter: brightness(2);
     cursor: pointer;
     transition: filter 0.3s ease-in-out;
+}
+
+.comment-flash {
+    padding: 0 0 30px 0;
+}
+
+.comment-delete-link {
+    display: flex;
+    padding: 7px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--gray3);
+    border-bottom: none;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.comment-delete-link:hover {
+    background-color: var(--bg-highlight);
+}
+
+.comment-delete-link:hover .comment-delete-icon {
+    filter: brightness(2);
+    transition: filter 0.3s ease-in-out;
+}
+
+.comment-delete-icon {
+    width: 16px;
+    height: 16px;
 }
 
 .author-date-wrapper {
@@ -239,7 +288,6 @@
 }
 
 .comment-author {
-    /* padding: 0 0 0 20px; */
     font-size: var(--news-author-size);
 }
 
@@ -261,14 +309,16 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
-    transition: filter 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    transition: filter 0.3s ease-in-out,
+                border-color 0.3s ease-in-out;
 }
 
 .comment-like:hover,
 .comment-dislike:hover {
     filter: brightness(1.5);
     cursor: pointer;
-    transition: filter 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    transition: filter 0.3s ease-in-out,
+                border-color 0.3s ease-in-out;
 }
 
 .like-dislike-comment {
@@ -347,6 +397,9 @@
     }
     .news-item {
         outline: none;
+    }
+    .news-delete-link {
+        border-top: 1px solid var(--gray3);
     }
     .news-header {
         border-top: 1px solid var(--gray3);

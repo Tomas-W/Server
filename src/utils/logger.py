@@ -43,37 +43,41 @@ class Logger:
         self.log.addHandler(file_handler)
         self.log.addHandler(stream_handler)
     
+    def get_errors(self, error):
+        error_msg = session.pop("error_msg", None)
+        if error_msg is None:
+            error_msg = str(error).split("\n")[0].split(":")[0]
+        log_errors = f"{error_msg} - {self.get_log_info()}"
+        html_errors = error_msg, *self.get_log_info()
+        
+        return log_errors, html_errors
+    
     def get_log_info(self):
         return (self.get_log_trigger(),
                 self.get_log_user(),
                 self.get_log_routes())
     
-    def get_log_trigger(self):
+    @staticmethod
+    def get_log_trigger():
         log_trigger = session.pop("log_trigger", None)
         if log_trigger:
             return f"TRIGGER[{log_trigger}]"
         return f"TRIGGER[{inspect.currentframe().f_back.f_code.co_name}]"
     
-    def get_log_user(self):
+    @staticmethod
+    def get_log_user():
         if current_user.is_authenticated:
             return f"USER[{current_user.id} {current_user.username}]"        
         return "USER[Anonymous]"
 
-    def get_log_routes(self):
+    @staticmethod
+    def get_log_routes():
         try:
             referrer = request.referrer.split('/')[-2:]
             referrer = ".".join(referrer)
         except AttributeError:
             referrer = "Direct access"
         return f"ROUTE[{referrer} >> {request.endpoint}]"
-
-    def get_errors(self, error):
-        error_msg = session.pop("error_msg", None)
-        if error_msg is None:
-            error_msg = str(error).split("\n")[0].split(":")[0]
-        errors = f"{error_msg} - {self.get_log_info()}"
-        
-        return errors
     
     @staticmethod
     def get_user_info():

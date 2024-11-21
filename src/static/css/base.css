@@ -233,9 +233,9 @@
 
 .side-panel {
     width: auto;
-    max-width: 200px;
+    max-width: 210px;
     display: inline-block;
-    padding: 55px 40px;
+    padding: 55px 35px;
     border-right: 1px solid var(--gray3);
     background-color: var(--gray2);
 }
@@ -319,6 +319,25 @@
 
 .side-panel-link.active::after {
     content: var(--arrow-up);
+}
+
+.admin-panel-label {
+    margin: 20px 0 5px 0;
+    font-style: italic;
+    white-space: nowrap;
+    color: var(--label-color);
+}
+
+.admin-panel-label-top {
+    width: 100%;
+    grid-column: 1 / -1;
+    margin: 10px 0 5px 0;
+    text-align: center;
+}
+
+.admin-panel-item {
+    padding-top: 0;
+    margin-bottom: 10px;
 }
 
 .top-panel {

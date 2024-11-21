@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy import func
 from src.extensions import server_db_
 from config.settings import CET
 from datetime import datetime

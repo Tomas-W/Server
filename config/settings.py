@@ -53,17 +53,18 @@ NEWS_ROLE: str = "news"
 USER_ROLES: list[str] = [VERIFIED_ROLE, ADMIN_ROLE, NEWS_ROLE]
 
 # Templates
-HOME_PAGE_TEMPLATE: str = "/news/all_news.html"
+HOME_PAGE_TEMPLATE: str = "/news/all.html"
 LOGIN_TEMPLATE: str = "/auth/login.html"
 REGISTER_TEMPLATE: str = "/auth/register.html"
 SET_PASSWORD_TEMPLATE: str = "/auth/set_password.html"
 REQUEST_RESET_TEMPLATE: str = "/auth/request_reset.html"
 RESET_PASSWORD_TEMPLATE: str = "/auth/reset_password.html"
 
-ALL_NEWS_TEMPLATE: str = "/news/all_news.html"
+ALL_NEWS_TEMPLATE: str = "/news/all.html"
 NEWS_TEMPLATE: str = "/news/news.html"
+ADD_NEWS_TEMPLATE: str = "/news/add.html"
+DELETE_NEWS_TEMPLATE: str = "/news/delete.html"
 USER_ADMIN_TEMPLATE: str = "/admin/user_admin.html"
-ADD_NEWS_TEMPLATE: str = "/admin/add_news.html"
 VERIFY_EMAIL_TEMPLATE: str = "/admin/verify_email.html"
 
 PROGRAMS_TEMPLATE: str = "/bakery/programs.html"
@@ -78,7 +79,7 @@ E_404_TEMPLATE: str = "/errors/404.html"
 E_500_TEMPLATE: str = "/errors/500.html"
 
 # Redirects
-HOME_PAGE_REDIRECT: str = "news.all_news"
+HOME_PAGE_REDIRECT: str = "news.all"
 LOGIN_REDIRECT: str = "auth.login"
 REGISTER_REDIRECT: str = "auth.register"
 SET_PASSWORD_REDIRECT: str = "auth.set_password"
@@ -87,8 +88,9 @@ RESET_PASSWORD_REDIRECT: str = "auth.reset_password"
 
 SEARCH_REDIRECT: str = "bakery.search"
 
-ALL_NEWS_REDIRECT: str = "news.all_news"
+ALL_NEWS_REDIRECT: str = "news.all"
 NEWS_REDIRECT: str = "news.news"
+DELETE_NEWS_REDIRECT: str = "news.delete"
 USER_ADMIN_REDIRECT: str = "admin.user_admin"
 VERIFY_EMAIL_REDIRECT: str = "admin.verify_email"
 
@@ -111,6 +113,9 @@ VERIFICATION_SEND_MSG: str = "If email exists, a verification email has been sen
 PASSWORD_RESET_SEND_MSG: str = "If email exists, a password reset email has been sent!"
 EMAIL_VERIFIED_MSG: str = "Your email has been verified!"
 PASSWORD_UPDATE_MSG: str = "Your password has been updated!"
+CHECK_INBOX_MSG: str = "Check inbox for email verification!"
+NO_CHANGES_MSG: str = "No changes made"
+UPDATED_DATA_MSG: str = "Updated data"
 
 TOKEN_ERROR_MSG: str = "Token authentication failed"
 STATE_ERROR_MSG: str = "State authentication failed"
@@ -119,6 +124,8 @@ AUTHENTICATION_LINK_ERROR_MSG: str = "Authentication link invalid or expired"
 CREDENTIALS_ERROR_MSG: str = "Incorrect credentials"
 VERIFICATION_ERROR_MSG: str = "Verification error"
 UNEXPECTED_ERROR_MSG: str = "Unexpected error"
+
+PROFILE_PICTURE_ERROR_MSG: str = "Error saving profile picture"
 
 COMMENT_SUCCESS_MSG: str = "Comment submitted successfully!"
 

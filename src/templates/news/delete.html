@@ -1,0 +1,48 @@
+{% extends "news/news_base.html" %}
+
+{% block scripts %}
+<link rel="preload" href="{{ url_for("static", filename="dist/delete_news_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
+{% endblock %}
+
+{% block title %}
+Delete news
+{% endblock %}
+
+{% block news_content %}
+<div class="delete-news-content blur-target">
+
+    <!-- Flashed messages -->
+    {% if get_flashed_messages() %}
+        <div class="news-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+            </div>
+    {% endif %}
+
+        <!-- All news -->
+        {% for news in all_news_dict %}
+            <div class="news-item-wrapper outline">
+                <div class="news-header-wrapper">
+
+                    <!-- News header -->
+                    <div class="news-header">
+                        <div class="code-wrapper">
+                            <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
+                            <a class="news-delete-link outline-bot-left" href="{{ url_for("news.delete", id_=news.id) }}">
+                                <img class="news-delete-icon" src="{{ url_for("static",
+                                                                            filename="images/delete_icon.png") }}" 
+                                                                            alt="Delete" 
+                                                                            type="image/png">
+                            </a>
+                        </div>
+                        <p class="news-title">{{ news.header }}</p>
+                    </div>
+                </div>
+
+                <!-- News date and important -->
+                <p class="news-date">{{ news.created_at }}</p>
+                <p class="news-important">{{ news.important }}</p>
+                
+            </div>  
+        {% endfor %}
+</div>
+{% endblock %}

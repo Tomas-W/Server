@@ -8,8 +8,8 @@ class BaseConfig(object):
     CONFIG_NAME = "base"
     SECRET_KEY = os.environ.get("FLASK_KEY")
     
-    # SEND_FILE_MAX_AGE_DEFAULT = timedelta(days=7)
-    # ASSETS_DEBUG = True
+    SEND_FILE_MAX_AGE_DEFAULT = timedelta(days=7)
+    ASSETS_DEBUG = True
     
     COMPRESS_ALGORITHM = "gzip"
     COMPRESS_LEVEL = 6

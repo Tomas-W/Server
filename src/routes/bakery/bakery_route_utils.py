@@ -1,33 +1,10 @@
+from flask import session
 from flask_wtf import FlaskForm
 from sqlalchemy import select
 
 from src.extensions import server_db_
 from src.models.bakery_model.bakery_mod import BakeryItem
 from src.models.bakery_model.bakery_mod_utils import search_bakery_items
-
-# def refine_bakery_search(bakery_items: list[BakeryItem], form: FlaskForm):
-#     if form.search_field.data:
-#         search_terms = form.search_field.data.lower().split()
-#         bakery_items = [item for item in bakery_items if any(term in word.lower() for word in item["search_field"] for term in search_terms)]
-    
-#     if form.lactose_free.data:
-#         bakery_items = [item for item in bakery_items if item["lactose_free"]]
-        
-#     if form.vegan.data:
-#         bakery_items = [item for item in bakery_items if item["vegan"]]
-    
-#     if form.nutri_score.data:
-#         bakery_items = [item for item in bakery_items if item["nutri_score"].lower() == form.nutri_score.data.lower()]
-
-#     if not form.min_price.data:
-#         form.min_price.data = 0
-#     if not form.max_price.data:
-#         form.max_price.data = 999
-#     min_price = max(0, float(form.min_price.data))
-#     max_price = min(float(form.max_price.data), 999)
-#     bakery_items = [item for item in bakery_items if min_price < item["price"] < max_price]
-
-#     return [item for item in bakery_items]
 
 
 def process_bakery_form(form: FlaskForm):
@@ -68,3 +45,11 @@ def get_bakery_items_by_column(form: FlaskForm) -> list[BakeryItem] | None:
             ).scalars().all()
             bakery_items.extend(result)
     return bakery_items
+
+
+def update_bakery_search_form() -> None:
+    input = session.get("bakery_search_input", None)
+    if input:
+        input.process(data=input)
+        input.min_price.data = f"{float(input.min_price.data):.2f}"
+        input.max_price.data = f"{float(input.max_price.data):.2f}"

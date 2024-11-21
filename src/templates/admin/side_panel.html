@@ -4,10 +4,14 @@
         <li><p class="side-panel-item" data-target="profile-wrapper">Profile</p></li>
         <li><p class="side-panel-item" data-target="notifications-wrapper">Notifications</p></li>
         <li><p class="side-panel-item" data-target="settings-wrapper">Settings</p></li>
-        {% set roles = current_user.roles.split("|") %}
+        {% if is_admin %}
             <p class="admin-panel-label">Admin Panel</p>
-            <li><p class="side-panel-item admin-panel-item" data-target="add-news-wrapper">
-                <a href="{{ url_for("admin.add_news") }}">Add News</a>
+            <li><p class="side-panel-item admin-panel-item">
+                <a href="{{ url_for("news.add") }}">Add News</a>
             </p></li>
+            <li><p class="side-panel-item admin-panel-item">
+                <a href="{{ url_for("news.delete") }}">Delete News</a>
+            </p></li>
+        {% endif %}
     </ul>
 </div>

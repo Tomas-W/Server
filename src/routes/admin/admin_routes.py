@@ -4,25 +4,24 @@ from flask import (
 from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
-from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token,
-    start_verification_process, admin_required, delete_authentication_token
+    start_verification_process, delete_authentication_token
 )
 from src.routes.admin.admin_route_utils import (
-    add_news_message, process_admin_form, process_profile_picture, clean_up_form_fields,
+    process_admin_form, process_profile_picture, clean_up_form_fields,
     process_new_email_address
 )
 from src.routes.admin.admin_forms import (
-    AddNewsForm, VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
+    VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
 )
 from config.settings import (
     EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
-    AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT, ALL_NEWS_REDIRECT,
+    AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT,
     VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE, PROFILE_FORM_TYPE,
-    NOTIFICATIONS_FORM_TYPE, EMAIL_TEMPLATE, ADD_NEWS_TEMPLATE, USER_ADMIN_TEMPLATE,
-    E_404_TEMPLATE
+    NOTIFICATIONS_FORM_TYPE, EMAIL_TEMPLATE, USER_ADMIN_TEMPLATE,
+    NO_CHANGES_MSG, UPDATED_DATA_MSG, CHECK_INBOX_MSG
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -62,13 +61,13 @@ def user_admin():
         elif form_type == AUTHENTICATION_FORM_TYPE:
             if authentication_form.validate_on_submit():
                 if clean_up_form_fields(authentication_form):
-                    flash("No changes made")
+                    flash(NO_CHANGES_MSG)
 
                 if process_new_email_address(authentication_form):
-                    flash("Check inbox for email verification!")
+                    flash(CHECK_INBOX_MSG)
                 
                 if process_admin_form(authentication_form):
-                    flash("Updated authentication data")
+                    flash(UPDATED_DATA_MSG)
                                 
                 session["flash_type"] = "authentication"  # To indicate flash position
                 session["_anchor"] = "authentication-wrapper"
@@ -81,13 +80,13 @@ def user_admin():
         elif form_type == PROFILE_FORM_TYPE:
             if profile_form.validate_on_submit():
                 if clean_up_form_fields(profile_form):
-                    flash("No changes made")
+                    flash(NO_CHANGES_MSG)
 
                 if process_profile_picture(profile_form):
-                    flash("Updated profile picture")
+                    flash(UPDATED_DATA_MSG)
                     
                 if process_admin_form(profile_form):
-                    flash("Updated profile data")
+                    flash(UPDATED_DATA_MSG)
                     
                 session["flash_type"] = "profile"  # To indicate flash position
                 session["_anchor"] = "profile-wrapper"
@@ -100,12 +99,12 @@ def user_admin():
         elif form_type == NOTIFICATIONS_FORM_TYPE:
             if notifications_form.validate_on_submit():
                 if clean_up_form_fields(notifications_form):
-                    flash("No changes made")
+                    flash(NO_CHANGES_MSG)
                     
                 if process_admin_form(notifications_form):
-                    flash("Updated notification settings")
+                    flash(UPDATED_DATA_MSG)
                 else:
-                    flash("No changes made")
+                    flash(NO_CHANGES_MSG)
                     
                 session["flash_type"] = "notifications"  # To indicate flash position
                 session["_anchor"] = "notification-settings-wrapper"
@@ -145,37 +144,6 @@ def user_admin():
     )
 
 
-@admin_bp.route("/admin/add-news", methods=["GET", "POST"])
-@login_required
-@admin_required
-def add_news():
-    add_news_form: AddNewsForm = AddNewsForm()
-    
-    if request.method == "POST":
-        if add_news_form.validate_on_submit():
-            grid_cols = request.form.getlist("table_cols[]")
-            grid_rows = [row.replace("\n", "|") for row in request.form.getlist("table_rows[]")]
-            info_cols = request.form.getlist("alinea_headers[]")
-            info_rows = request.form.getlist("alinea_contents[]")
-            add_news_message(add_news_form,
-                             grid_cols,
-                             grid_rows,
-                             info_cols,
-                             info_rows,
-                             current_user.id)
-            return redirect(url_for(ALL_NEWS_REDIRECT))
-        
-        session["news_errors"] = add_news_form.errors
-
-    add_news_errors = session.pop("add_news_errors", None)
-    
-    return render_template(
-        ADD_NEWS_TEMPLATE,
-        add_news_form=add_news_form,
-        add_news_errors=add_news_errors
-    )
-
-
 @admin_bp.route("/admin/verify-email/<token>", methods=["GET"])
 def verify_email(token):
     """
@@ -208,10 +176,13 @@ def profile_icon(filename):
     """
     Updates or loads profile icon.
     """
-    current_user.set_profile_icon(filename)
+    if not filename == current_user.profile_icon:
+        current_user.set_profile_icon(filename)
+        session["flash_type"] = "profile"
+        flash("Updated profile icon")
+    
     session["flash_type"] = "profile"
-    flash("Updated profile icon")
-        
+    flash("Invalid profile icon")    
     return redirect(url_for(
         USER_ADMIN_REDIRECT,
         _anchor="profile-wrapper"

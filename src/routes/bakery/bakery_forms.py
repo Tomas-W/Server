@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, HiddenField, SubmitField, BooleanField,
-                     SelectField
+from wtforms import (
+    StringField, HiddenField, SubmitField, BooleanField, SelectField
 )
-from config.settings import (BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE,
-                             NUTRI_CHOICES
+from config.settings import (BAKERY_SEARCH_FORM_TYPE, NUTRI_CHOICES
 )
 
 

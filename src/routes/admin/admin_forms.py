@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
-    FileField, BooleanField, IntegerField
+    FileField, BooleanField
 )
 from wtforms.validators import EqualTo, DataRequired
 
@@ -178,58 +178,6 @@ class NotificationsForm(FlaskForm):
     bakery_notifications = BooleanField(label="bakery notifications")
     form_type = HiddenField(default="notifications_form")
     submit = SubmitField(label="Update")
-
-class AddNewsForm(FlaskForm):
-    """
-    Used on admin.news.add-news page to add news.
-    
-    Fields:
-    - TITLE [TextAreaField] [Required]
-    - CONTENT [TextAreaField] [Required]
-    - FORM_TYPE [HiddenField]
-    """
-    header = TextAreaField(
-        label="Header",
-        render_kw={},
-        validators=[
-            NewsHeaderLengthCheck(),
-            ForbiddenCheck(admin=True),
-        ]
-    )
-    title = TextAreaField(
-        label="Title",
-        render_kw={},
-        validators=[
-            NewsTitleLengthCheck(),
-            ForbiddenCheck(admin=True),
-        ]
-    )
-    code = TextAreaField(
-        label="Code",
-        render_kw={},
-        validators=[
-            NewsCodeCheck(),
-        ]
-    )
-    important = TextAreaField(
-        label="Important",
-        render_kw={},
-        validators=[
-            NewsImportantLengthCheck(),
-            ForbiddenCheck(admin=True),
-        ]
-    )
-
-    author = TextAreaField(
-        label="Author",
-        render_kw={},
-        validators=[
-            DataRequired(),
-            ForbiddenCheck(admin=True),
-        ]
-    )
-    form_type = HiddenField(default="news_form")
-    submit = SubmitField("Submit")
 
 
 class CommentForm(FlaskForm):

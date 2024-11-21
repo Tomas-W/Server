@@ -125,7 +125,7 @@ def _configure_requests(app_: Flask) -> None:
     app_.before_request(handle_user_activity)
     app_.before_request(make_nonce)
     # app_.after_request(add_security_headers)
-    # app_.after_request(add_cache_control_headers)
+    app_.after_request(add_cache_control_headers)
 
 
 def _configure_cli(app_: Flask) -> None:

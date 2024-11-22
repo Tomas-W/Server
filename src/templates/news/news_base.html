@@ -4,21 +4,18 @@
 {% endblock %}
 
 {% block content %}
-<section class="main-section">
-    <div class="main-wrapper">
-        
-        {% include "news/side_panel.html" %}
-        
-        <div class="main-content">
-            <input type="checkbox" id="toggle-top-panel" style="display: none;">
-                <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">News</label>
 
-            {% include "news/top_panel.html" %}
-            
-            {% block news_content %}
-            {% endblock %}
+{% include "news/side_panel.html" %}
+        
+    <div class="main-content">
+        <input type="checkbox" id="toggle-top-panel" style="display: none;">
+            <label class="side-panel-link" for="toggle-top-panel" onclick="toggleTopPanel()">News</label>
 
-        </div>        
-    </div>
-</section>
+        {% include "news/top_panel.html" %}
+        
+        {% block news_content %}
+        {% endblock %}
+
+    </div>        
+
 {% endblock %}

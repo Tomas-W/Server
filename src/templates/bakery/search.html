@@ -28,232 +28,229 @@ Search
 {% endblock %}
 
 {% block content %}
-<section class="main-section">
-    <div class="main-wrapper">
-        <!-- Side panel -->
-        <div class="side-panel">
-            {% if bakery_search_results_dicts %}
-                <div class="reset-search-wrapper reset-search-side">
-                    <a href="{{ url_for("bakery.search",
-                       reset=True) }}" 
-                       class="reset-search-btn">Reset</a>
-                </div>
-            {% endif %}
-            <p class="search-header">Search</p>
-                <div class="bakery-form-wrapper">
-                    <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.search_field(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.search_field.label }}</div>
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.contains(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.contains.label }}</div>
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.may_contain(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.may_contain.label }}</div>
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <div class="flex-space-between">
-                                <label class="custom-checkbox-wrapper">
-                                    {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
-                                    <span class="medium-checkbox-box"></span>
-                                    <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-item">
-                            <div class="flex-space-between">
-                                <label class="custom-checkbox-wrapper">
-                                    {{ bakery_search_form.vegan(class="custom-checkbox") }}
-                                    <span class="medium-checkbox-box"></span>
-                                    <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-item border-bottom">
-                            <div class="flex-space-between">
-                                {{ bakery_search_form.nutri_score(class="main-input-field nutri-label nutri-select-field") }}
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <div class="input-error-wrapper outline-bottom">
-                                <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
-                            </div>
-                        </div>
-
-                        <div class="form-item">
-                            <div class="input-error-wrapper outline-bottom">
-                                <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
-                            </div>
-                        </div>
-
-                        <div class="form-item last-form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.nasa(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.nasa.label }}</div>
-                            </div>
-                        </div>
-
-                        {% if bakery_search_results_dicts %}
-                            {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
-                        {% else %}
-                            {{ bakery_search_form.form_type }}
-                        {% endif %}
-                        {{ bakery_search_form.hidden_tag() }}
-                        <div class="admin-devider"> 
-                            {{ bakery_search_form.submit(class="admin-btn")}}
-                        </div>
-                </form>
+    <!-- Side panel -->
+    <div class="side-panel">
+        {% if bakery_search_results_dicts %}
+            <div class="reset-search-wrapper reset-search-side">
+                <a href="{{ url_for("bakery.search",
+                    reset=True) }}" 
+                    class="reset-search-btn">Reset</a>
             </div>
-        </div>
-
-        <div class="main-content">
-
-            <div class="search-reset-wrapper">
-                <input type="checkbox"
-                       id="toggle-top-panel" 
-                       style="display: none;">
-                <label class="side-panel-link" 
-                       for="toggle-top-panel" 
-                       onclick="toggleTopPanel()">Search</label>
-                {% if bakery_search_results_dicts %}
-                    <div class="reset-search-wrapper reset-search-top">
-                        <a href="{{ url_for("bakery.search",
-                           reset=True) }}" 
-                           class="reset-search-btn">Reset</a>
+        {% endif %}
+        <p class="search-header">Search</p>
+            <div class="bakery-form-wrapper">
+                <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.search_field(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.search_field.label }}</div>
+                        </div>
                     </div>
-                {% endif %}
-            </div>
-            <!-- Top panel -->
-            <div class="top-panel" id="top-panel" style="display: none;">
-                <div class="bakery-form-wrapper">
-                    <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.search_field(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.search_field.label }}</div>
-                            </div>
-                        </div>
 
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.contains(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.contains.label }}</div>
-                            </div>
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.contains(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.contains.label }}</div>
                         </div>
+                    </div>
 
-                        <div class="form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.may_contain(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.may_contain.label }}</div>
-                            </div>
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.may_contain(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.may_contain.label }}</div>
                         </div>
+                    </div>
 
-                        <div class="form-item">
-                            <div class="flex-space-between">
-                                <label class="custom-checkbox-wrapper">
-                                    <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
-                                    {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
-                                    <span class="medium-checkbox-box"></span>
-                                </label>
-                            </div>
+                    <div class="form-item">
+                        <div class="flex-space-between">
+                            <label class="custom-checkbox-wrapper">
+                                {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
+                                <span class="medium-checkbox-box"></span>
+                                <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
+                            </label>
                         </div>
-                        
-                        <div class="form-item">
-                            <div class="flex-space-between">
-                                <label class="custom-checkbox-wrapper">
-                                    <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
-                                    {{ bakery_search_form.vegan(class="custom-checkbox") }}
-                                    <span class="medium-checkbox-box"></span>
-                                </label>
-                            </div>
+                    </div>
+                    
+                    <div class="form-item">
+                        <div class="flex-space-between">
+                            <label class="custom-checkbox-wrapper">
+                                {{ bakery_search_form.vegan(class="custom-checkbox") }}
+                                <span class="medium-checkbox-box"></span>
+                                <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
+                            </label>
                         </div>
+                    </div>
 
-                        <div class="form-item border-bottom">
-                            <div class="flex-space-between">
-                                {{ bakery_search_form.nutri_score(class="main-input-field nutri-label") }}
-                            </div>
+                    <div class="form-item border-bottom">
+                        <div class="flex-space-between">
+                            {{ bakery_search_form.nutri_score(class="main-input-field nutri-label nutri-select-field") }}
                         </div>
+                    </div>
 
-                        <div class="form-item">
-                            <div class="input-error-wrapper outline-bottom">
-                                <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
-                            </div>
+                    <div class="form-item">
+                        <div class="input-error-wrapper outline-bottom">
+                            <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
                         </div>
+                    </div>
 
-                        <div class="form-item">
-                            <div class="input-error-wrapper outline-bottom">
-                                <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
-                            </div>
+                    <div class="form-item">
+                        <div class="input-error-wrapper outline-bottom">
+                            <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
                         </div>
+                    </div>
 
-                        <div class="form-item last-form-item">
-                            <div class="input-error-wrapper">
-                                {{ bakery_search_form.nasa(class="main-input-field") }}
-                                <div class="admin-form-label">{{ bakery_search_form.nasa.label }}</div>
-                            </div>
+                    <div class="form-item last-form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.nasa(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.nasa.label }}</div>
                         </div>
+                    </div>
 
-                        {% if bakery_search_results_dicts %}
-                            {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
-                        {% else %}
-                            {{ bakery_search_form.form_type }}
-                        {% endif %}
-                        {{ bakery_search_form.hidden_tag() }}
-                        <div class="admin-devider top-panel-admin-devider"> 
-                            {{ bakery_search_form.submit(class="admin-btn")}}
-                        </div>
-                </form>
-            </div>
-            </div>
-
-            <!-- If single item selected after search-->
-            {% if bakery_item_dict %}
-                {% include "bakery/item_info.html" %}
-            {% else %}
-
-            <!-- Content -->
-            <div class="programs-content blur-target">
-                <!-- All clickable search results -->
-                <div class="image-grid">
                     {% if bakery_search_results_dicts %}
-                        {% for item in bakery_search_results_dicts %}
-                            <div class="grid-item">
-                                <a href="{{ url_for("bakery.search",
-                                   id_=item.id) }}">
-                                    <p class="item-name">{{ item.name }}</p>
-                                    <img class="grid-item-image" 
-                                         src="{{ url_for("static", 
-                                         filename=item.image) }}" 
-                                         alt="{{ item.name }}"
-                                         type="image/png">
-                            </a>
-                            </div>
-                        {% endfor %}
+                        {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
+                    {% else %}
+                        {{ bakery_search_form.form_type }}
                     {% endif %}
-                </div>
-            </div>
-            {% endif %}
+                    {{ bakery_search_form.hidden_tag() }}
+                    <div class="admin-devider"> 
+                        {{ bakery_search_form.submit(class="admin-btn")}}
+                    </div>
+            </form>
         </div>
     </div>
-</section>
+
+    <div class="main-content">
+
+        <div class="search-reset-wrapper">
+            <input type="checkbox"
+                    id="toggle-top-panel" 
+                    style="display: none;">
+            <label class="side-panel-link" 
+                    for="toggle-top-panel" 
+                    onclick="toggleTopPanel()">Search</label>
+            {% if bakery_search_results_dicts %}
+                <div class="reset-search-wrapper reset-search-top">
+                    <a href="{{ url_for("bakery.search",
+                        reset=True) }}" 
+                        class="reset-search-btn">Reset</a>
+                </div>
+            {% endif %}
+        </div>
+        <!-- Top panel -->
+        <div class="top-panel" id="top-panel" style="display: none;">
+            <div class="bakery-form-wrapper">
+                <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.search_field(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.search_field.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.contains(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.contains.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.may_contain(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.may_contain.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <div class="flex-space-between">
+                            <label class="custom-checkbox-wrapper">
+                                <span class="notification-label lactose-label">{{ bakery_search_form.lactose_free.label }}</span>
+                                {{ bakery_search_form.lactose_free(class="custom-checkbox") }}
+                                <span class="medium-checkbox-box"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-item">
+                        <div class="flex-space-between">
+                            <label class="custom-checkbox-wrapper">
+                                <span class="notification-label vegan-label">{{ bakery_search_form.vegan.label }}</span>
+                                {{ bakery_search_form.vegan(class="custom-checkbox") }}
+                                <span class="medium-checkbox-box"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-item border-bottom">
+                        <div class="flex-space-between">
+                            {{ bakery_search_form.nutri_score(class="main-input-field nutri-label") }}
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <div class="input-error-wrapper outline-bottom">
+                            <p class="euro-sign">€</p> {{ bakery_search_form.min_price(class="main-input-field euro-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.min_price.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <div class="input-error-wrapper outline-bottom">
+                            <p class="euro-sign">€</p> {{ bakery_search_form.max_price(class="main-input-field euro-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.max_price.label }}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-item last-form-item">
+                        <div class="input-error-wrapper">
+                            {{ bakery_search_form.nasa(class="main-input-field") }}
+                            <div class="admin-form-label">{{ bakery_search_form.nasa.label }}</div>
+                        </div>
+                    </div>
+
+                    {% if bakery_search_results_dicts %}
+                        {{ bakery_search_form.form_type(value=BAKERY_REFINE_SEARCH_FORM_TYPE) }}
+                    {% else %}
+                        {{ bakery_search_form.form_type }}
+                    {% endif %}
+                    {{ bakery_search_form.hidden_tag() }}
+                    <div class="admin-devider top-panel-admin-devider"> 
+                        {{ bakery_search_form.submit(class="admin-btn")}}
+                    </div>
+            </form>
+        </div>
+        </div>
+
+        <!-- If single item selected after search-->
+        {% if bakery_item_dict %}
+            {% include "bakery/item_info.html" %}
+        {% else %}
+
+        <!-- Content -->
+        <div class="programs-content blur-target">
+            <!-- All clickable search results -->
+            <div class="image-grid">
+                {% if bakery_search_results_dicts %}
+                    {% for item in bakery_search_results_dicts %}
+                        <div class="grid-item">
+                            <a href="{{ url_for("bakery.search",
+                                id_=item.id) }}">
+                                <p class="item-name">{{ item.name }}</p>
+                                <img class="grid-item-image" 
+                                        src="{{ url_for("static", 
+                                        filename=item.image) }}" 
+                                        alt="{{ item.name }}"
+                                        type="image/png">
+                        </a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
 {% endblock %}
 

@@ -25,7 +25,7 @@ def process_bakery_form(form: FlaskForm):
     if not form.min_price.data:
         form.min_price.data = 0
     if not form.max_price.data:
-        form.max_price.data = 999
+        form.max_price.data = 9.99
     form.min_price.data = str(form.min_price.data).replace(",", ".")
     form.max_price.data = str(form.max_price.data).replace(",", ".")
     min_price = max(0, float(form.min_price.data))
@@ -47,9 +47,9 @@ def get_bakery_items_by_column(form: FlaskForm) -> list[BakeryItem] | None:
     return bakery_items
 
 
-def update_bakery_search_form() -> None:
+def update_bakery_search_form(form: FlaskForm) -> None:
     input = session.get("bakery_search_input", None)
     if input:
-        input.process(data=input)
-        input.min_price.data = f"{float(input.min_price.data):.2f}"
-        input.max_price.data = f"{float(input.max_price.data):.2f}"
+        form.process(data=input)
+        form.min_price.data = f"{float(form.min_price.data):.2f}"
+        form.max_price.data = f"{float(form.max_price.data):.2f}"

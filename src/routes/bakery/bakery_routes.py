@@ -96,7 +96,7 @@ def search(id_: int | None = None, reset: bool = False):
             
             session["bakery_search_errors"] = bakery_search_form.errors
 
-    update_bakery_search_form()
+    update_bakery_search_form(bakery_search_form)
     
     bakery_search_errors = session.pop("bakery_search_errors", None)
     bakery_search_results_dicts = session.get("bakery_search_results", None)

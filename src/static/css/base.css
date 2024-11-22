@@ -41,34 +41,38 @@
     text-decoration: none;
     color: var(--text-color);
     white-space: nowrap;
-}
-
-.nav-link::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -3px;
-    right: 0;
-    background-color: var(--text-color);
+    cursor: pointer;
+    transition: filter 0.3s ease-in-out;
 }
 
 .nav-link:hover,
-.nav-link:focus,
-.nav-link:focus-within {
-    color: var(--white-100)!important;
-    transition: color 0.3s ease-in-out;
+.route-link:hover {
+    filter: brightness(2);
+    transition: filter 0.3s ease-in-out;
 }
 
-.nav-link:hover::after,
-.nav-link:focus::after,
-.nav-link:focus-within::after {
-    width: 100%;
+.routes {
+    display: flex;
+    position: absolute;
     left: 0;
-    right: auto;
-    background-color: var(--text-color-hover);
-    transition: width 0.3s ease-in-out,
-                background-color 0.3s ease-in-out;
+    right: 0;
+    margin: 14px auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+
+.news-routes,
+.bakery-routes,
+.admin-routes {
+    display: none;
+}
+
+.route-link {
+    padding: 0 15px;
+    font-weight: 600;
+    font-size: var(--nav-route-link-size);
+    transition: filter 0.3s ease-in-out;
 }
 
 .logout {

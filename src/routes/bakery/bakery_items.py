@@ -906,7 +906,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20141,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Volkoren", "Meerzaden"],
             "tags": ["Volkoren", "Meerzaden"],
             "package_type": None,
@@ -930,7 +930,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20142,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Volkoren", "Meerzaden"],
             "tags": ["Volkoren", "Meerzaden"],
             "package_type": None,
@@ -953,7 +953,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20145,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Wit", "Meerzaden"],
             "tags": ["Wit", "Meerzaden"],
             "package_type": None,
@@ -975,7 +975,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20144,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Wit"],
             "tags": ["Wit", "Mais", "Cornflakes"],
             "package_type": None,
@@ -997,7 +997,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20143,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Bruin", "Meerzaden"],
             "tags": ["Bruin", "Meerzaden", "Brouwgraan"],
             "package_type": None,
@@ -1019,7 +1019,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 20134,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Wit"],
             "tags": ["Wit", "Mais", "Peper", "Zout"],
             "package_type": None,
@@ -1043,7 +1043,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 820315,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Spelt", "Wit"],
             "tags": ["Spelt", "Wit"],
             "package_type": None,
@@ -1067,7 +1067,7 @@ def get_small_bread_dict() -> dict:
             "category": "Kleinbrood",
             "program": 3,
             "nasa": 28612,
-            "price": 0.00,
+            "price": 0.69,
             "type": ["Wit", "Meerzaden"],
             "tags": ["Wit", "Meerzaden"],
             "package_type": None,
@@ -3020,6 +3020,9 @@ def get_regular_bread() -> dict:
                                   "rond_volkoren_half.png"),
         },
     }
+    return data
+    
+    
 def get_bakery_dict() -> dict:
     dict_ = {}
     dict_.update(get_lp_bread_dict())

@@ -5,23 +5,18 @@ Admin
 {% endblock %}
 
 {% block content %}
-<section class="main-section">
-    <div class="main-wrapper">
-        
-        {% include "admin/side_panel.html" %}
-        
-        <div class="main-content">
-            <input type="checkbox" id="toggle-top-panel" style="display: none;">
-            <label class="side-panel-link"
-                   for="toggle-top-panel"
-                   onclick="toggleTopPanel()">Admin</label>
-            {% include "admin/top_panel.html" %}
-            
-            {% block admin_content %}
-            {% endblock %}
-        </div>        
 
-    </div>
-</section>
+{% include "admin/side_panel.html" %}
+        
+    <div class="main-content">
+        <input type="checkbox" id="toggle-top-panel" style="display: none;">
+        <label class="side-panel-link"
+                for="toggle-top-panel"
+                onclick="toggleTopPanel()">Admin</label>
+        {% include "admin/top_panel.html" %}
+        
+        {% block admin_content %}
+        {% endblock %}
+    </div>        
 
 {% endblock %}

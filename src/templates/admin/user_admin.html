@@ -103,18 +103,6 @@ User Admin
                 fileNamePlaceholder.textContent = "Choose file";
             }
         });
-
-        // Remove the hash from the URL if present
-        if (window.location.hash) {
-            history.replaceState(null, "", window.location.href.split("#")[0]);
-        }
-
-        document.querySelectorAll(".side-panel-item").forEach(item => {
-            item.addEventListener("click", function() {
-                const targetElement = document.getElementById(item.dataset.target);
-                targetElement?.scrollIntoView({ behavior: "smooth" });
-            });
-        });
     });
 </script>
 {% endblock %}

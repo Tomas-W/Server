@@ -40,10 +40,9 @@
             </a>
             
             <div class="navbar-links">
-                <a class="nav-link" href="{{ url_for("news.all") }}">News</a>
-                <a class="nav-link" href="{{ url_for("bakery.programs") }}">Programs</a>
-                <a class="nav-link" href="{{ url_for("bakery.search") }}">Search</a>
-                <a class="nav-link" href="{{ url_for("admin.user_admin") }}">Admin</a>
+                <a class="nav-link" data-target="news-routes" href="{{ url_for("news.all") }}">News</a>
+                <a class="nav-link" data-target="bakery-routes" href="{{ url_for("bakery.programs") }}">Bakery</a>
+                <a class="nav-link" data-target="admin-routes" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
             <div class="logout">
@@ -75,12 +74,39 @@
         </div>
 
     </nav>
+
+    <div class="routes">
+
+        <div class="news-routes">
+            <a class="route-link route-link" href="{{ url_for("news.all") }}">All</a>
+            <a class="route-link route-link" href="{{ url_for("news.unread") }}">Unread</a>
+        </div>
+
+        <div class="bakery-routes">
+            <a class="route-link route-link" href="{{ url_for("bakery.programs") }}">Programs</a>
+            <a class="route-link route-link" href="{{ url_for("bakery.search") }}">Search</a>
+        </div>
+
+        <div class="admin-routes">
+            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="authentication-wrapper") }}">Authentication</a>
+            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="profile-wrapper") }}">Profile</a>
+            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="notifications-wrapper") }}">Notifications</a>
+            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="settings-wrapper") }}">Settings</a>
+        </div>
+
+    </div>
+
 </section>
 
 {% set is_admin = "admin" in current_user.roles.split("|") %}
 
-{% block content %}
-{% endblock %}
+<section class="main-section">
+
+    <div class="main-wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
+</section>
 
 <section class="footer-section">
     <div class="footer-section-wrapper">
@@ -97,14 +123,23 @@
 </section>
 
 <script>
-    window.onload = function() {
-      if (window.location.hash) {
-        var offset = 150;
-        var element = document.querySelector(window.location.hash);
-        window.scrollTo(0, element.offsetTop - offset);
-      }
-    };
-    
+    function applyOffset() {
+        if (window.location.hash) {
+            var offset = 75;
+            var element = document.querySelector(window.location.hash);
+            // Apply href scroll offset
+            if (element) {
+                var elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({
+                    top: elementPosition - offset,
+                });
+            }
+        }
+    }
+
+    window.onload = applyOffset;
+    window.addEventListener("hashchange", applyOffset);
+
     function toggleTopPanel() {
         var topPanel = document.getElementById("top-panel");
         var sidePanelLink = document.querySelector(".side-panel-link");
@@ -165,6 +200,28 @@
             });
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var navLinks = document.querySelectorAll(".nav-link");
+        var routes = document.querySelectorAll(".routes > div");
+
+        navLinks.forEach(function(link) {
+            link.addEventListener("mouseenter", function() {
+                // Hide all routes
+                routes.forEach(function(route) {
+                    route.style.display = "none";
+                });
+
+                // Show the corresponding route
+                var target = link.getAttribute("data-target");
+                var targetRoute = document.querySelector("." + target);
+                if (targetRoute) {
+                    targetRoute.style.display = "flex";
+                }
+            });
+        });
+    });
+
 </script>
 
 {% block scripts %}

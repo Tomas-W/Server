@@ -20,15 +20,20 @@ def clean_up_form_fields(form: FlaskForm) -> bool:
     delete_fields = {"form_type", "submit", "csrf_token"}
     empty_fields_to_delete = []
 
-    for field in form:   
+    for field in form:
+        if field.name == "country":
+            if field.data == current_user.country:
+                empty_fields_to_delete.append(field.name)
+
         if field.data is None or field.data == "":
             empty_fields_to_delete.append(field.name)
+
 
     all_fields_to_delete = delete_fields.union(empty_fields_to_delete)
     for field_name in all_fields_to_delete:
         if field_name in form._fields:
             del form._fields[field_name]
-
+    logger.log.info(form._fields)
     return len(form._fields) == 0
 
 
@@ -86,13 +91,20 @@ def process_profile_picture(form: FlaskForm) -> None:
     """
     if form.profile_picture.data:
         profile_picture_data = form.profile_picture.data
+        logger.log.info(f"Profile picture data: {profile_picture_data}")
+        logger.log.info(f"Current user's profile picture: {current_user.profile_picture}")
+        if profile_picture_data.filename == current_user.profile_picture:
+            del form._fields["profile_picture"]
+            logger.log.info("Profile picture is the same as the current user's profile picture")
+            return False
+        
         if profile_picture_data:
             try:
                 profile_picture_data.save(os.path.join(
                     PROFILE_PICTURES_FOLDER,
                     f"{current_user.id}_{profile_picture_data.filename}",
                 ))
-                current_user.set_profile_picture(form.profile_picture.data.filename)
+                current_user.set_profile_picture(profile_picture_data.filename)
             except FileNotFoundError as e:
                 errors = f"{e} - {logger.get_log_info()}"
                 logger.log.error(errors)

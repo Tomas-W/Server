@@ -2,8 +2,11 @@ from flask import Blueprint, render_template, abort
 from flask_login import login_required
 from flask import request, redirect, url_for, session
 
+from src.extensions import logger
+from src.models.auth_model.auth_mod_utils import admin_required
 from src.models.bakery_model.bakery_mod_utils import (
-    get_program_items_dicts, get_item_by_id_dict, get_program_ids_and_names
+    get_program_items_dicts, get_item_by_id_dict, get_program_ids_and_names,
+    get_bakery_programs_info, delete_item_by_id
 )
 from src.routes.bakery.bakery_forms import (
     BakerySearchForm
@@ -14,11 +17,23 @@ from src.routes.bakery.bakery_route_utils import (
 from config.settings import (
     BAKERY_SEARCH_FORM_TYPE, BAKERY_REFINE_SEARCH_FORM_TYPE,
     PROGRAMS_TEMPLATE, INFO_TEMPLATE, SEARCH_TEMPLATE, SEARCH_REDIRECT,
-    ALL_NEWS_REDIRECT
+    ALL_NEWS_REDIRECT, BAKERY_TEMPLATE, DELETE_BAKERY_TEMPLATE,
+    PROGRAMS_REDIRECT, DELETE_BAKERY_REDIRECT
 )
 
 
 bakery_bp = Blueprint("bakery", __name__)
+
+
+@bakery_bp.route("/bakery")
+@login_required
+def bakery():
+    bakery_programs_info = get_bakery_programs_info()
+    logger.log.info(bakery_programs_info)
+    return render_template(
+        BAKERY_TEMPLATE,
+        bakery_programs_info=bakery_programs_info,
+    )
 
 
 @bakery_bp.route("/bakery/programs")
@@ -125,3 +140,23 @@ def bakery_health(filename):
         return redirect(referrer)
     else:
         return redirect(url_for(ALL_NEWS_REDIRECT))  # Fallback if no referrer is available
+
+
+@bakery_bp.route("/bakery/add")
+@login_required
+@admin_required
+def add():
+    return render_template(
+        BAKERY_TEMPLATE,
+    )
+
+@bakery_bp.route("/bakery/delete/<id_>")
+@login_required
+@admin_required
+def delete(id_: int):
+    delete_item_by_id(id_)
+    referrer = request.headers.get("Referer")
+    if referrer:
+        return redirect(referrer)
+    else:
+        return redirect(url_for(PROGRAMS_REDIRECT))

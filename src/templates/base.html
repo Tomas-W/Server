@@ -41,7 +41,7 @@
             
             <div class="navbar-links">
                 <a class="nav-link" data-target="news-routes" href="{{ url_for("news.all") }}">News</a>
-                <a class="nav-link" data-target="bakery-routes" href="{{ url_for("bakery.programs") }}">Bakery</a>
+                <a class="nav-link" data-target="bakery-routes" href="{{ url_for("bakery.bakery") }}">Bakery</a>
                 <a class="nav-link" data-target="admin-routes" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
@@ -75,7 +75,7 @@
 
     </nav>
 
-    <div class="routes">
+    <!-- <div class="routes">
 
         <div class="news-routes">
             <a class="route-link route-link" href="{{ url_for("news.all") }}">All</a>
@@ -94,7 +94,7 @@
             <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="settings-wrapper") }}">Settings</a>
         </div>
 
-    </div>
+    </div> -->
 
 </section>
 
@@ -103,12 +103,22 @@
 <section class="main-section">
 
     <div class="main-wrapper">
+
+        <div id="confirmModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <p>Are you sure you want to delete this item?</p>
+                <button id="confirmBtn">Yes</button>
+                <button id="cancelBtn">No</button>
+            </div>
+        </div>
+
         {% block content %}
         {% endblock %}
     </div>
 </section>
 
-<section class="footer-section">
+<!-- <section class="footer-section">
     <div class="footer-section-wrapper">
 
         <p class="footer-title">Special thanks to:</p>
@@ -120,7 +130,7 @@
         </ul>
 
     </div>
-</section>
+</section> -->
 
 <script>
     function applyOffset() {
@@ -201,23 +211,54 @@
         });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        var navLinks = document.querySelectorAll(".nav-link");
-        var routes = document.querySelectorAll(".routes > div");
 
-        navLinks.forEach(function(link) {
-            link.addEventListener("mouseenter", function() {
-                // Hide all routes
-                routes.forEach(function(route) {
-                    route.style.display = "none";
-                });
+    document.addEventListener("DOMContentLoaded", function () {
+    let deleteUrl = "";
 
-                // Show the corresponding route
-                var target = link.getAttribute("data-target");
-                var targetRoute = document.querySelector("." + target);
-                if (targetRoute) {
-                    targetRoute.style.display = "flex";
-                }
+    // Show the modal when a delete link is clicked
+    function confirmDeletion(event, url) {
+        event.preventDefault(); // Prevent default navigation
+        deleteUrl = url; // Store the delete URL
+        const modal = document.getElementById("confirmModal");
+        const overlay = document.querySelector(".modal-overlay");
+
+        modal.style.display = "block"; // Show the modal
+        overlay.classList.add("blur"); // Add blur effect
+        overlay.style.display = "block"; // Show the overlay
+    }
+
+    // Redirect to the stored delete URL on confirm
+    document.getElementById("confirmBtn").onclick = function () {
+        window.location.href = deleteUrl;
+    };
+
+    // Hide the modal on cancel
+    document.getElementById("cancelBtn").onclick = function () {
+        const modal = document.getElementById("confirmModal");
+        const overlay = document.querySelector(".modal-overlay");
+
+        modal.style.display = "none"; // Hide the modal
+        overlay.classList.remove("blur"); // Remove blur effect
+        overlay.style.display = "none"; // Hide the overlay
+    };
+
+    // Hide the modal when clicking outside of it
+    window.onclick = function (event) {
+        const modal = document.getElementById("confirmModal");
+        const overlay = document.querySelector(".modal-overlay");
+        if (event.target === overlay) {
+            modal.style.display = "none";
+            overlay.classList.remove("blur");
+            overlay.style.display = "none";
+        }
+    };
+
+    // Attach confirmDeletion to all delete links
+    const deleteLinks = document.querySelectorAll(".item-delete-link, .news-delete-link, .comment-delete-link");
+
+deleteLinks.forEach(link => {
+    link.addEventListener("click", function (event) {
+        confirmDeletion(event, this.href);
             });
         });
     });

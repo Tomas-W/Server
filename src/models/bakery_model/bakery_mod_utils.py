@@ -4,6 +4,20 @@ from sqlalchemy import select, event
 from src.extensions import server_db_
 from src.models.bakery_model.bakery_mod import BakeryItem
 from src.routes.bakery.bakery_items import get_bakery_dict
+from src.extensions import logger
+
+from sqlalchemy import func, and_
+
+def get_bakery_programs_info() -> list[dict]:
+    subquery = (
+        select(BakeryItem.program, func.min(BakeryItem.id).label("min_id"))
+        .where(BakeryItem.name != "Worstenbroodje")
+        .group_by(BakeryItem.program)
+        .subquery()
+    )
+    stmt = select(BakeryItem).join(subquery, BakeryItem.id == subquery.c.min_id)
+    result = server_db_.session.execute(stmt).scalars().all()
+    return [item.to_dict("program", "image") for item in result]
 
 
 def get_program_items_dicts(program: int) -> list[dict]:

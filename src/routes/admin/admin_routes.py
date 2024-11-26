@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
 
+from src.extensions import logger
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token,
     start_verification_process, delete_authentication_token
@@ -81,12 +82,16 @@ def user_admin():
             if profile_form.validate_on_submit():
                 if clean_up_form_fields(profile_form):
                     flash(NO_CHANGES_MSG)
-
+                    
                 if process_profile_picture(profile_form):
                     flash(UPDATED_DATA_MSG)
+                else:
+                    flash(NO_CHANGES_MSG)
                     
                 if process_admin_form(profile_form):
                     flash(UPDATED_DATA_MSG)
+                else:
+                    flash(NO_CHANGES_MSG)
                     
                 session["flash_type"] = "profile"  # To indicate flash position
                 session["_anchor"] = "profile-wrapper"

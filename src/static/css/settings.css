@@ -21,9 +21,13 @@
 
     --gray: var(--text-color); /* #a0a0a0 */
     --red: rgba(138, 0, 0, 1); /* #8a0000 */
+    --red-light: rgba(178, 0, 0, 1); /* #b20000 */
     --orange: rgba(191, 83, 0, 1); /* #bf5300 */
+    --orange-light: rgba(220, 120, 0, 1); /* #d47800 */
     --blue: rgba(0, 0, 178, 1); /* #0000b2 */
+    --blue-light: rgba(0, 0, 220, 1); /* #0000d4 */
     --green: rgba(20, 90, 0, 1); /* #135a00 */
+    --green-light: rgba(20, 120, 0, 1); /* #147800 */
     --red-border: rgba(138, 0, 0, 0.4); /* #8a0000 */
     --green-border: rgba(20, 90, 0, 0.4); /* #135a00 */
 
@@ -89,6 +93,7 @@
     --comment-padding-s: 40px;
 
     --bakery-item-info-size: 1.1rem;
+    --bakery-header-size: 1.3rem;
 
     --error-content-padding: 75px 15%;
     --error-title-size: 4.4rem;

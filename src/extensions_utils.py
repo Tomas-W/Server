@@ -74,6 +74,15 @@ css_bundle = [
             "output": "dist/delete_news_css.min.css"
         },
         {
+            "name": "bakery_css",
+            "files": [
+                "css/bakery/bakery_base.css",
+                "css/bakery/programs.css",
+            ],
+            "filters": "rcssmin",
+            "output": "dist/bakery_css.min.css"
+        },
+        {
             "name": "info_css",
             "files": [
                 "css/bakery/bakery_base.css",

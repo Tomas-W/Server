@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<link rel="preload" href="{{ url_for("static", filename="dist/bakery_css.min.css") }}" as="style" onload="this.rel='stylesheet'">
+{% endblock %}
+
+{% block title %}
+Programs
+{% endblock %}
+
+{% block content %}
+
+{% if is_admin %}
+    <div class="side-panel">
+        <ul class="side-panel-list">
+            <p class="admin-panel-label">Admin Panel</p>
+            <li><p class="side-panel-item admin-panel-item">
+                <a href="{{ url_for("bakery.add") }}">Add item</a>
+            </p></li>
+        </ul>
+    </div>
+
+{% endif %}
+    <!-- Content -->
+    <div class="main-content">
+        {% if is_admin %}
+        <input type="checkbox" id="toggle-top-panel" style="display: none;">
+        <label class="side-panel-link"
+                for="toggle-top-panel" 
+                onclick="toggleTopPanel()">Programs</label>
+        <div class="top-panel" id="top-panel" style="display: none;">
+            <div class="top-panel-list">
+                <div class="top-panel-item"><a href="{{ url_for("bakery.add") }}">Add item</a></div>
+
+            </div>
+        </div>
+        {% endif %}
+        <!-- Programs grid -->
+        <div class="programs-content blur-target">
+            <div class="search-info">
+                <p class="search-text">
+                    <a href="{{ url_for("bakery.search") }}" class="search-link">Search</a>
+                    the bakery database to find items based on name, program, ingredients, and more.
+                </p>
+                <p class="search-text">
+                    Or view all items per program.
+                </p>
+            </div>
+
+            <div class="image-grid">
+                {% for item in bakery_programs_info %}
+                <div class="grid-item">
+                <!-- Clickable items -->
+                    <a href="{{ url_for("bakery.program",
+                        program=item.program) }}">
+                        <p class="item-name">Program {{ item.program }}</p>
+                        <img class="grid-item-image" 
+                                src="{{ url_for("static", 
+                                filename=item.image) }}" 
+                                alt="{{ item.name }}"
+                                type="image/png">
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+{% endblock %}

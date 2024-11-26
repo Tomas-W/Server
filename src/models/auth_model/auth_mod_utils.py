@@ -109,7 +109,9 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         abort(500)
 
     redirect_url = get_authentication_url(url_, token=token, _external=True)
-    settings_url = get_authentication_url(USER_ADMIN_REDIRECT, _anchor="notifications-wrapper")
+    settings_url = get_authentication_url(USER_ADMIN_REDIRECT,
+                                          _external=True,
+                                          _anchor="notifications-wrapper")
 
     html_body = get_authentication_email_template(
         template_name=EMAIL_TEMPLATE,

@@ -1,3 +1,23 @@
+.bakery-base-content {
+    width: 100%;
+    padding: 100px 200px;
+}
+
+.search-info {
+    padding: 25px 100px 50px 100px;
+}
+
+.search-text {
+    font-size: var(--bakery-header-size);
+    color: var(--text-color);
+}
+
+.search-link {
+    text-decoration: underline;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
 .bakery-header {
     padding: 0 0 10px 0;
     font-size: var(--admin-header-size);
@@ -32,7 +52,7 @@
     color: inherit;
 }
 
-.grid-item:hover {
+.grid-item a:hover {
     background-color: var(--bg-highlight);
     color: var(--text-color-hover);
 }
@@ -61,6 +81,9 @@
 
 
 @media (max-width: 474.98px) {
+    .search-info {
+        padding: 25px 20px 50px 20px;
+    }
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
@@ -68,12 +91,18 @@
 }
 
 @media (min-width: 475px) and (max-width: 767.98px) {
+    .search-info {
+        padding: 25px 35px 50px 35px;
+    }
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 }
 
 @media (min-width: 768px) and (max-width: 991.98px) {
+    .search-info {
+        padding: 25px 65px 50px 65px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199.98px) {

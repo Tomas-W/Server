@@ -3,6 +3,27 @@
     padding: 75px;
 }
 
+.item-delete-link {
+    max-height: 35px;
+    padding: 6px 0;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.item-delete-link:hover {
+    background-color: var(--bg-highlight);
+}
+
+.item-delete-link:hover .item-delete-icon {
+    filter: brightness(2);
+}
+
+.item-delete-icon {
+    width: 20px;
+    height: 20px;
+    transition: filter 0.3s ease-in-out;
+}
+
+
 @media (max-width: 474.98px) {
     .programs-content {
         padding: 40px;

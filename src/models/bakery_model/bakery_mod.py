@@ -131,9 +131,9 @@ class BakeryItem(server_db_.Model):
     def _space(value: str) -> str:
         return value.replace("|", " ")
     
-    def to_dict(self) -> dict:
+    def to_dict(self, *keys) -> dict:
         try:
-            return {
+            all_data = {
                 "id": self.id,
                 "name": self.name,
                 "category": self.category,
@@ -161,6 +161,10 @@ class BakeryItem(server_db_.Model):
             
                 "image": self.image,
             }
+            
+            if keys:
+                return {key: all_data[key] for key in keys if key in all_data}
+            return all_data
         except KeyError as e:
             errors = f"KeyError: {e} - {logger.get_log_info()}"
             logger.log.error(errors)

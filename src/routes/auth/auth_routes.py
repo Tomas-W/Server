@@ -105,7 +105,6 @@ def login():
                 flash(message)
 
         session["form_errors"] = login_form.errors
-        flash(f"Remember me: {login_form.remember.data}")
 
     form_errors = session.pop("form_errors", None)
     

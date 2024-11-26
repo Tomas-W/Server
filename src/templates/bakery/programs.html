@@ -51,9 +51,18 @@ Programs
         <!-- Programs grid -->
         <div class="programs-content blur-target">
             <div class="image-grid">
-                <!-- Clickable items -->
                 {% for item in bakery_items_dicts %}
                 <div class="grid-item">
+                    <!-- Delete button -->
+                    {% if is_admin %}
+                    <a class="item-delete-link outline-bottom" href="{{ url_for("bakery.delete", id_=item.id) }}" onclick="confirmDeletion(event, this.href)">
+                        <img class="item-delete-icon" src="{{ url_for("static",
+                                                           filename="images/delete_icon.png") }}" 
+                                                           alt="Delete" 
+                                                           type="image/png">
+                    </a>
+                {% endif %}
+                <!-- Clickable items -->
                     <a href="{{ url_for("bakery.info",
                         id_=item.id) }}">
                         <p class="item-name">{{ item.name }}</p>

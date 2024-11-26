@@ -67,7 +67,9 @@ DELETE_NEWS_TEMPLATE: str = "/news/delete.html"
 USER_ADMIN_TEMPLATE: str = "/admin/user_admin.html"
 VERIFY_EMAIL_TEMPLATE: str = "/admin/verify_email.html"
 
+BAKERY_TEMPLATE: str = "/bakery/bakery.html"
 PROGRAMS_TEMPLATE: str = "/bakery/programs.html"
+DELETE_BAKERY_TEMPLATE: str = "/bakery/delete.html"
 INFO_TEMPLATE: str = "/bakery/info.html"
 SEARCH_TEMPLATE: str = "/bakery/search.html"
 
@@ -86,6 +88,9 @@ SET_PASSWORD_REDIRECT: str = "auth.set_password"
 REQUEST_RESET_REDIRECT: str = "auth.request_reset"
 RESET_PASSWORD_REDIRECT: str = "auth.reset_password"
 
+BAKERY_REDIRECT: str = "bakery.bakery"
+PROGRAMS_REDIRECT: str = "bakery.programs"
+DELETE_BAKERY_REDIRECT: str = "bakery.delete"
 SEARCH_REDIRECT: str = "bakery.search"
 
 ALL_NEWS_REDIRECT: str = "news.all"

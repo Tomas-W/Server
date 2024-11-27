@@ -20,6 +20,7 @@ from config.settings import (
 )
 from src.extensions import server_db_, serializer_, mail_, logger
 
+
 if TYPE_CHECKING:
     from src.models.auth_model.auth_mod import User
 
@@ -280,13 +281,15 @@ def _init_user() -> str | None:
     Initializer function for cli.
     No internal use.
     """
+    from src.models.auth_model.auth_mod import User
     if not server_db_.session.query(User).count():
         new_user = User(
             email="100pythoncourse@gmail.com",
-            username="100python",
+            username="Admin",
             password="TomasTomas1!",
-            fast_name="tomas",
+            fast_name="admin",
             fast_code=("00000"),
+            display_name="Server Admin",
             email_verified=True,
             roles="admin"
         )

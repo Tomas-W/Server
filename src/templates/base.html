@@ -65,8 +65,7 @@
                         </a>
                     </li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("news.all") }}">News</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.programs") }}">Programs</a></div></li>
-                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.search") }}">Search</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.bakery") }}">Bakery</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("admin.user_admin") }}">Admin</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("auth.logout") }}">Logout</a></div></li>
                 </ul>
@@ -74,27 +73,6 @@
         </div>
 
     </nav>
-
-    <!-- <div class="routes">
-
-        <div class="news-routes">
-            <a class="route-link route-link" href="{{ url_for("news.all") }}">All</a>
-            <a class="route-link route-link" href="{{ url_for("news.unread") }}">Unread</a>
-        </div>
-
-        <div class="bakery-routes">
-            <a class="route-link route-link" href="{{ url_for("bakery.programs") }}">Programs</a>
-            <a class="route-link route-link" href="{{ url_for("bakery.search") }}">Search</a>
-        </div>
-
-        <div class="admin-routes">
-            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="authentication-wrapper") }}">Authentication</a>
-            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="profile-wrapper") }}">Profile</a>
-            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="notifications-wrapper") }}">Notifications</a>
-            <a class="route-link route-link" href="{{ url_for("admin.user_admin", _anchor="settings-wrapper") }}">Settings</a>
-        </div>
-
-    </div> -->
 
 </section>
 

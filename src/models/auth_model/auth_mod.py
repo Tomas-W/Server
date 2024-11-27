@@ -126,7 +126,8 @@ class User(server_db_.Model, UserMixin):
 
     def __init__(self, email: str, username: str, password: str,
                  fast_name: Optional[str] = None, fast_code: Optional[str] = None,
-                 email_verified: bool = False, roles: Optional[str] = None):
+                 display_name: Optional[str] = None, email_verified: bool = False,
+                 roles: Optional[str] = None):
         """
         Initialize a new User instance.
         Applies argon2 hashing to the password.
@@ -142,6 +143,7 @@ class User(server_db_.Model, UserMixin):
         self.about_me = "Share something interesting about yourself..."
         self.email_verified = email_verified
         self._init_roles(roles)
+        self.display_name = display_name
 
     @set_updated_at
     def set_email(self, email: str) -> None:

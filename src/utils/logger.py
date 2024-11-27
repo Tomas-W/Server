@@ -8,12 +8,15 @@ from logging.handlers import RotatingFileHandler
 
 
 class Logger:
-    def __init__(self, name="app", log_dir="logs", log_file="app.log"):
+    def __init__(self, name="app", log_dir="logs", log_file="app.log", test=False):
         self.log = logging.getLogger(name)
         self.log.setLevel(logging.INFO)
         
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
+        
+        if test:
+            log_file = "test.log"
         
         file_handler = RotatingFileHandler(
             os.path.join(log_dir, log_file),

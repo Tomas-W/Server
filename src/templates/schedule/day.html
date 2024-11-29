@@ -1,0 +1,72 @@
+{% if display_table %}
+    <div class="today-content" style="position: relative;">
+        <table class="day-table">
+            <tr class="time-row">
+                <th colspan="4" class="time">06</th>
+                <th colspan="4" class="time">07</th>
+                <th colspan="4" class="time">08</th>
+                <th colspan="4" class="time">09</th>
+                <th colspan="4" class="time">10</th>
+                <th colspan="4" class="time">11</th>
+                <th colspan="4" class="time">12</th>
+                <th colspan="4" class="time">13</th>
+                <th colspan="4" class="time">14</th>
+                <th colspan="4" class="time">15</th>
+                <th colspan="4" class="time">16</th>
+                <th colspan="4" class="time">17</th>
+                <th colspan="4" class="time">18</th>
+                <th colspan="4" class="time">19</th>
+                <th colspan="4" class="time">20</th>
+                <th colspan="4" class="time">21</th>
+            </tr>
+    
+            {% for person in schedule %}
+                <tr class="person-row">
+                    {% for quarter in range(4*16) %}
+                        <td class="quarter {{ quarter }} {% if person[1] <= quarter <= person[2] %}on-duty{% endif %}"></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+            {% for person in schedule %}
+                <p class="name first" id="name-{{ loop.index }}" style="position: absolute; top: {{ 22 + 20 * loop.index0 }}px; left: calc((100% / 64) * {{ person[1] + 1 }});">{{ person[3] }}</p>
+                <p class="name second" id="second-{{ loop.index }}" style="position: absolute; top: {{ 22 + 20 * loop.index0 }}px;">{{ person[0] }}</p>
+                <p class="name third" id="third-{{ loop.index }}" style="position: absolute; top: {{ 22 + 20 * loop.index0 }}px;">{{ person[4] }}</p>
+            {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+{% for person in schedule %}
+    #second-{{ loop.index }} {
+        left: calc((100% / 64) * {{ (person[1] + person[2] - 1) / 2 }});
+    }
+    #third-{{ loop.index }} {
+        left: calc((100% / 64) * {{ person[2] - 2 }});
+    }
+
+    @media (max-width: 500px) {
+        #second-{{ loop.index }} {
+            left: calc((100% / 64) * {{ person[1] }} + 10px);
+        }
+    }
+
+    @media (min-width: 500px) and (max-width: 800px) {
+        #second-{{ loop.index }} {
+            left: calc((100% / 64) * {{ (person[1] + person[2] - 1) / 2 }} - 5%);
+        }
+        #third-{{ loop.index }} {
+            left: calc((100% / 64) * {{ person[2] - 2 }} - 5%);
+        }
+    }
+
+    @media (min-width: 800px) and (max-width: 1200px) {
+        #second-{{ loop.index }} {
+            left: calc((100% / 64) * {{ (person[1] + person[2] - 1) / 2 }} - 2%);
+        }
+        #third-{{ loop.index }} {
+            left: calc((100% / 64) * {{ person[2] - 2 }} - 2%);
+        }
+    }
+{% endfor %}
+</style>

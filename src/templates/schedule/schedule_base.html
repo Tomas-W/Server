@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="side-panel">
+        <ul class="side-panel-list">
+            <li><p class="side-panel-item"><a href="#">Today</a></p></li>
+            <li><p class="side-panel-item"><a href="#">Calendar</a></p></li>
+            <li><p class="side-panel-item"><a href="#">Personal</a></p></li>
+            
+            {% if is_admin %}
+                <p class="admin-panel-label">Admin Panel</p>
+            {% endif %}
+        </ul>
+    </div>
+   
+    <div class="main-content">
+        <input type="checkbox" id="toggle-top-panel" style="display: none;">
+        <label class="side-panel-link"
+                for="toggle-top-panel"
+                onclick="toggleTopPanel()">Schedule</label>
+        
+        <div class="top-panel" id="top-panel" style="display: none;">
+            <div class="top-panel-list">
+                <li><p class="top-panel-item"><a href="#">Today</a></p></li>
+                <li><p class="top-panel-item"><a href="#">Calendar</a></p></li>
+                <li><p class="top-panel-item"><a href="#">Personal</a></p></li>
+                {% if is_admin %}
+                    <p class="admin-panel-label admin-panel-label-top">Admin Panel</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% block schedule_content %}
+        {% endblock %}
+    </div>        
+
+{% endblock %}
+
+

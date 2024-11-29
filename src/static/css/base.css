@@ -70,6 +70,7 @@
 
 .navbar {
     width: 100%;
+    height: 55px;
     display: flex;
     justify-content: center;
 }
@@ -101,7 +102,7 @@
 }
 
 .nav-link {
-    position: relative;
+    /* position: relative; */
     font-size: var(--nav-link-size);
     text-decoration: none;
     color: var(--text-color);
@@ -155,13 +156,9 @@
     z-index: 100;
 }
 
-.navbar-s-menu {
-    padding: var(--navbar-padding-inside);
-}
-
 .navbar-s-link {
     width: 100%;
-    height: 100%;
+    height: 56px;
     display: none;
     background-color: var(--s-menu-color);
     text-align: center;
@@ -210,7 +207,7 @@
 .s-link {
     width: 100%;
     height: 100%;
-    padding: var(--navbar-padding-inside);
+    padding: 15px 0 0 0;
 }
 
 .navbar-s-content {

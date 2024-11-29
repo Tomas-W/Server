@@ -5,7 +5,6 @@ from flask_login import login_required, current_user
 
 from src.models.auth_model.auth_mod import User
 
-from src.extensions import logger
 from src.models.auth_model.auth_mod_utils import (
     get_user_by_email, confirm_authentication_token,
     start_verification_process, delete_authentication_token

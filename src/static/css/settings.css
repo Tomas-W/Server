@@ -38,7 +38,7 @@
     
     --navbar-padding: 7%;
     --navbar-wrapper-padding: calc(2 * var(--navbar-padding));
-    --navbar-padding-inside: 15px 55px 15px 55px;
+    --navbar-padding-inside: 0 55px 0 55px;
     --nav-brand-size: 1.8rem;
     --nav-link-size: 1.2rem;
     --nav-route-link-size: 1.05rem;

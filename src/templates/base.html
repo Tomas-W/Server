@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,6 +42,7 @@
             <div class="navbar-links">
                 <a class="nav-link" data-target="news-routes" href="{{ url_for("news.all") }}">News</a>
                 <a class="nav-link" data-target="bakery-routes" href="{{ url_for("bakery.bakery") }}">Bakery</a>
+                <a class="nav-link" data-target="schedule-routes" href="{{ url_for("schedule.today") }}">Schedule</a>
                 <a class="nav-link" data-target="admin-routes" href="{{ url_for("admin.user_admin") }}">Admin</a>
             </div>
             
@@ -67,6 +68,7 @@
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("news.all") }}">News</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("bakery.bakery") }}">Bakery</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("admin.user_admin") }}">Admin</a></div></li>
+                    <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("schedule.today") }}">Schedule</a></div></li>
                     <li><div class="navbar-s-link"><a class="s-link" href="{{ url_for("auth.logout") }}">Logout</a></div></li>
                 </ul>
             </div>
@@ -75,10 +77,13 @@
     </nav>
 
 </section>
+{% if current_user.is_authenticated %}
+    {% set is_admin = "admin" in current_user.roles.split("|") %}
+{% endif %}
 
-{% set is_admin = "admin" in current_user.roles.split("|") %}
 
 <section class="main-section">
+{% include "schedule/day.html" %}
 
     <div class="main-wrapper">
 
@@ -94,6 +99,7 @@
         {% block content %}
         {% endblock %}
     </div>
+
 </section>
 
 <!-- <section class="footer-section">

@@ -11,13 +11,12 @@ from src.models.auth_model.auth_mod_utils import (
     get_user_by_email_or_username, get_user_by_fast_name
 )
 from config.settings import (
-    LOGIN_SUCCESS_MSG, CREDENTIALS_ERROR_MSG, VERIFICATION_ERROR_MSG,
+    CREDENTIALS_ERROR_MSG, VERIFICATION_ERROR_MSG,
     UNEXPECTED_ERROR_MSG, ALL_NEWS_REDIRECT
 )
 
 
-def handle_user_login(user: User, remember: bool = False, fresh: bool = True,
-                      flash_: bool = True) -> None:
+def handle_user_login(user: User, remember: bool = False, fresh: bool = True) -> None:
     """
     Logs in user and sets up the session.
     Session is NOT fresh or permanent unless specified (fast_login).
@@ -29,14 +28,10 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True,
     current_user.set_remember_me(remember)
     session.permanent = remember
     session["user_id"] = user.id
-    if flash_:
-        flash(LOGIN_SUCCESS_MSG)
 
 
 def handle_user_logout() -> None:
-    """
-    Logs out user and removes session data.
-    """
+    """Logs out user and removes session data."""
     logout_user()
     session.clear()
 
@@ -57,6 +52,9 @@ def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:
     try:
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
             handle_user_login(user)
+            next_url = session.pop("next", None)
+            if next_url:
+                return redirect(next_url), None
             return redirect(url_for(ALL_NEWS_REDIRECT)), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
@@ -82,6 +80,9 @@ def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
         if argon2_.verify(user.password, login_form.password.data):
             remember = login_form.remember.data
             handle_user_login(user, remember=remember, fresh=True)
+            next_url = session.pop("next", None)
+            if next_url:
+                return redirect(next_url), None
             return redirect(url_for(ALL_NEWS_REDIRECT)), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)

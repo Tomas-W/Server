@@ -95,6 +95,9 @@ def login():
     login_form = LoginForm()
     fast_login_form = FastLoginForm()
     fast = session.pop("fast_login", False)
+    next_url = request.args.get("next")
+    if next_url:
+        session["next"] = next_url
 
     if request.method == "POST":
         if login_form.validate_on_submit():
@@ -325,7 +328,7 @@ def reset_password(token):
             user.set_password(reset_password_form.password.data)
             user.set_email_verified(True)
             delete_authentication_token(PASSWORD_VERIFICATION, token)
-            handle_user_login(user, remember=False, flash_=False)
+            handle_user_login(user, remember=False)
             
             flash(PASSWORD_UPDATE_MSG)
             session["flash_type"] = "authentication"

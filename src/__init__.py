@@ -18,7 +18,7 @@ from src.extensions import (
 )
 from src.models.mod_utils import load_user
 from src.cli import _auth_cli, _server_cli
-from src.extensions_utils import clear_webassets_cache, css_bundle
+from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
 
 HEADERS = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -90,11 +90,13 @@ def _configure_blueprints(app_: Flask) -> None:
     from src.routes.admin.admin_routes import admin_bp
     from src.routes.bakery.bakery_routes import bakery_bp
     from src.routes.errors.error_routes import errors_bp
+    from src.routes.schedule.schedule_routes import schedule_bp
     app_.register_blueprint(news_bp)
     app_.register_blueprint(auth_bp)
     app_.register_blueprint(admin_bp)
     app_.register_blueprint(bakery_bp)
     app_.register_blueprint(errors_bp)
+    app_.register_blueprint(schedule_bp)
 
 
 def _configure_requests(app_: Flask) -> None:
@@ -116,10 +118,18 @@ def _configure_requests(app_: Flask) -> None:
 
     def add_cache_control_headers(response):
         content_type = response.headers.get("Content-Type", "")
-        if "text/css" in content_type or "application/javascript" in content_type or "image/" in content_type:
+        if "application/javascript" in content_type or "image/" in content_type:
             response.cache_control.public = True
             response.cache_control.max_age = 3600 * 24 * 7  # 7 days
             response.expires = 3600 * 24 * 7
+        #########################################################################
+        # Prevent caching of HTML and CSS
+        #########################################################################
+        elif "text/html" in content_type or "text/css" in content_type:
+            response.cache_control.no_store = True  # Prevent caching of HTML
+            response.cache_control.no_cache = True
+            response.cache_control.max_age = 0
+            response.expires = 0
         return response
 
     app_.before_request(handle_user_activity)
@@ -159,6 +169,7 @@ def _configure_url_rules(app_: Flask) -> None:
 
 
 def _configure_css(assets_: Environment) -> None:
+    css_bundle = get_all_css_bundles()
     for bundle in css_bundle:
         assets_.register(
             bundle["name"],

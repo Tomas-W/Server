@@ -22,6 +22,8 @@ BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
 BAKERY_HEALTH_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "health")
 
 ADMIN_FOLDER = os.path.join(SRC_FOLDER, "routes", "admin")
+SCHEDULE_FOLDER = os.path.join(ADMIN_FOLDER, "schedule")
+SCHEDULE_PATH = os.path.join(SCHEDULE_FOLDER, "schedule.json")
 
 # Bakery paths [relative]
 BREAD_IMAGES_FOLDER = "images/bakery/bread/"
@@ -45,7 +47,7 @@ ALLOWED_FILE_EXTENSIONS: list[str] = ["jpg", "jpeg", "png", "gif", "bmp", "tiff"
 
 TOKEN_EXPIRATION: int = 3600
 
-banned_words_list: list[str] = ["forbidden"]
+banned_words_list: list[str] = ["forbidden", "admin", "server"]
 banned_characters_list: list[str] = ["|"]
 
 # Roles
@@ -74,6 +76,9 @@ PROGRAMS_TEMPLATE: str = "/bakery/programs.html"
 DELETE_BAKERY_TEMPLATE: str = "/bakery/delete.html"
 INFO_TEMPLATE: str = "/bakery/info.html"
 SEARCH_TEMPLATE: str = "/bakery/search.html"
+
+SCHEDULE_TEMPLATE: str = "/schedule/today.html"
+TODAY_TEMPLATE: str = "/schedule/today.html"
 
 EMAIL_TEMPLATE: str = "/admin/email.html"
 E_400_TEMPLATE: str = "/errors/400.html"

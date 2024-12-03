@@ -1,24 +1,36 @@
-from flask import Blueprint, render_template
-
+from flask import Blueprint, render_template, request
+from datetime import datetime, timedelta
+from src.models.schedule_model.schedule_mod import Schedule
 from config.settings import SCHEDULE_TEMPLATE
-
-
+from src.extensions import logger
+from src.routes.schedule.schedule_route_utils import test_update_schedule
 schedule_bp = Blueprint("schedule", __name__)
 
 
 @schedule_bp.route("/schedule/today", methods=["GET"])
-def today():
+@schedule_bp.route("/schedule/<date>", methods=["GET"])
+def today(date: str = None):
+    sub = request.args.get("sub", "False") == "True"
+    add = request.args.get("add", "False") == "True"
     
-    schedule = [
-        ("Andreas C", 0, 6*4 - 1, "06:00", "12:00"),
-        ("Tomas W", 0, 7*4 - 1, "06:00", "13:00"),
-        ("Bart de B", 4, 9*4 - 1, "07:00", "15:00"),
-        ("Nataliya van de R", 7*4, 16*4 - 1, "13:00", "20:15"),
-        ("Tomas W", 7*4, 16*4 - 1, "13:00", "20:15"),
-    ]
+    if not date:
+        today_date = datetime.now().date()
+    else:
+        today_date = datetime.strptime(date, "%Y-%m-%d").date()
+        
+    if sub:
+        today_date -= timedelta(days=1)
+    elif add:
+        today_date += timedelta(days=1)
+        
+    today_schedule = Schedule.query.filter_by(date=today_date).first()
+
+    today_schedule_dict = today_schedule.date_to_dict() if today_schedule else {}
+    
+    test_update_schedule()
     
     return render_template(
         SCHEDULE_TEMPLATE,
         display_table=True,
-        schedule=schedule
+        schedule=today_schedule_dict
         )

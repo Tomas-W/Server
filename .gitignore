@@ -25,12 +25,14 @@ dist/
 client_secret.json
 .flaskenv
 schedule.json
+schedule2.json
 
 # Ignore backups
 backups/
 
 # Ignore databases
 db/
+migrations/
 
 # Ignore uploaded files
 profile_pictures/

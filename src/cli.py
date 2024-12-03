@@ -1,4 +1,5 @@
 import click
+import json
 from flask import Flask, current_app
 from sqlalchemy import inspect
 
@@ -12,13 +13,15 @@ from src.models.news_model.news_mod import News
 from src.models.news_model.news_mod_utils import (
     get_news_by_id, delete_news_by_id, _init_news, clear_news_db
 )
-from src.models.auth_model.auth_mod_utils import delete_user_by_id, _init_user
-
+from src.models.auth_model.auth_mod_utils import (
+    delete_user_by_id, _init_user, update_schedule_name, update_schedule_name
+)
+from src.models.schedule_model.schedule_mod_utils import _init_schedule
 from src.routes.bakery.bakery_items import get_bakery_dict
 from src.routes.news.news_items import get_news_dict
 
 from config.settings import (
-    MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH
+    MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH, SCHEDULE_PATH
 )
 
 
@@ -106,6 +109,52 @@ def _auth_cli(app_: Flask) -> None:
         if v:
             click.echo(f"Successfully added {item_count} items to the BakeryItems Table.")
 
+    
+    @auth.command("init-schedule")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_schedule(c: bool, v: bool) -> None:
+        """
+        Adds schedule items to the Schedule Table.
+        """
+        with open(SCHEDULE_PATH, "r") as json_file:
+            schedule_data = json.load(json_file)
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to add {len(schedule_data)} weeks to the Schedule Table?"):
+            click.echo("Adding Schedule Items cancelled.")
+            return
+        
+        _init_schedule()
+        
+        if v:
+            click.echo(f"Successfully added {len(schedule_data)} items to the Schedule Table.")
+        
+        
+    @auth.command("set-schedule-name")
+    @click.argument("id_", type=int)
+    @click.argument("name", type=str)
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def set_schedule_name(id_: int, name: str, c: bool, v: bool) -> None:
+        """
+        Sets the schedule name for user with <id_>.
+        """
+        user: User | None = server_db_.session.get(User, id_)
+        if not user:
+            click.echo(f"No User with id {id_} found.")
+            return
+        
+        if not c and not click.confirm(
+                f"Are you sure you want to set the schedule name for User:\n{repr(user)}\nto\n'{name}'?\n"):
+            click.echo("Setting schedule name cancelled.")
+            return
+        
+        update_schedule_name(id_, name)
+        if v:
+            click.echo(repr(user))
+        
+        
     
     @auth.command("remove-news")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")

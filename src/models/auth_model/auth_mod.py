@@ -15,7 +15,8 @@ from src.models.mod_utils import (
     set_updated_at
 )
 from src.models.auth_model.auth_mod_utils import (
-    get_user_by_username, get_user_by_fast_name, get_user_by_display_name
+    get_user_by_username, get_user_by_fast_name, get_user_by_display_name,
+    get_user_by_schedule_name
 )
 from config.settings import (
     CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES,
@@ -101,6 +102,7 @@ class User(server_db_.Model, UserMixin):
     comment_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
     bakery_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    schedule_name: Mapped[Optional[str]] = mapped_column(String(32), unique=True, default=None)
     roles: Mapped[list[str]] = mapped_column(String(255), default="")
 
     new_email: Mapped[Optional[str]] = mapped_column(String(75))
@@ -247,6 +249,15 @@ class User(server_db_.Model, UserMixin):
             logger.log.error(errors)
         else:
             self.bakery_notifications = bakery_notifications
+    
+    @set_updated_at
+    def set_schedule_name(self, schedule_name: str) -> None:
+        if get_user_by_schedule_name(schedule_name):
+            errors = f"Schedule name taken: {schedule_name} - {logger.get_log_info()}"
+            logger.log.error(errors)
+        else:
+            logger.log.info(f"Setting schedule name for User: {self.username} to {schedule_name}")
+            self.schedule_name = schedule_name
 
     def get_roles(self) -> list[str]:
         return self.roles.split("|")
@@ -394,5 +405,6 @@ class User(server_db_.Model, UserMixin):
         return (f"User:"
                 f" (id={self.id},"
                 f" username={self.username},"
-                f" email={self.email})"
+                f" email={self.email}),"
+                f" schedule_name={self.schedule_name})"
                 )

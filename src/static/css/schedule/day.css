@@ -1,10 +1,25 @@
-.quarter {
-    border-right: 1px solid rgba(0, 0, 0, 0);
-    border-bottom: 1px solid var(--border-color);
-}
-
 .main-section {
     padding: 25px var(--navbar-padding) 50px var(--navbar-padding);
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.schedule-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.schedule-button {
+    padding: 0 10px;
+    color: var(--text-color);
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .schedule-content {
@@ -42,6 +57,11 @@
     text-align: left;
 }
 
+.quarter {
+    border-right: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid var(--border-color);
+}
+
 .person-row {
     height: 20px;
     min-width: 100%;
@@ -55,7 +75,11 @@
 }
 
 .on-duty {
-    background-color: var(--green);
+    background-color: var(--green-dark);
+}
+
+.user-on-duty {
+    background-color: var(--green-light);
 }
 
 .name {

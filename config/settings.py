@@ -21,8 +21,9 @@ PROFILE_ICONS_FOLDER = os.path.join(UPLOAD_FOLDER, "profile_icons")
 BAKERY_IMAGES_FOLDER = os.path.join(IMAGES_FOLDER, "bakery")
 BAKERY_HEALTH_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "health")
 
-ADMIN_FOLDER = os.path.join(SRC_FOLDER, "routes", "admin")
-SCHEDULE_FOLDER = os.path.join(ADMIN_FOLDER, "schedule")
+ROUTES_FOLDER = os.path.join(SRC_FOLDER, "routes")
+ADMIN_FOLDER = os.path.join(ROUTES_FOLDER, "admin")
+SCHEDULE_FOLDER = os.path.join(ROUTES_FOLDER, "schedule")
 SCHEDULE_PATH = os.path.join(SCHEDULE_FOLDER, "schedule.json")
 
 # Bakery paths [relative]

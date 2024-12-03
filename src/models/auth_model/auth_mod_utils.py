@@ -212,7 +212,6 @@ def delete_authentication_token(token_type: str, token: str) -> None:
     server_db_.session.commit()
 
 
-
 def get_user_by_email(email: str, new_email: bool = False) -> "User" | None:
     """
     Get a user by email.
@@ -254,6 +253,22 @@ def get_user_by_fast_name(fast_name: str) -> "User" | None:
     stmt = select(User).filter_by(fast_name=fast_name)
     return server_db_.session.execute(stmt).scalar_one_or_none()
 
+
+def get_user_by_schedule_name(schedule_name: str) -> "User" | None:
+    from src.models.auth_model.auth_mod import User
+    stmt = select(User).filter_by(schedule_name=schedule_name)
+    return server_db_.session.execute(stmt).scalar_one_or_none()
+
+
+def update_schedule_name(id_: int, schedule_name: str) -> None:
+    """
+    Set the schedule name for a User by id. Used in cli.
+    """
+    from src.models.auth_model.auth_mod import User
+    user = server_db_.session.get(User, id_)
+    user.set_schedule_name(schedule_name)
+    server_db_.session.commit()
+    
 
 def delete_user_by_id(id_: int) -> None:
     """Delete a user by id. Used in cli."""

@@ -1,9 +1,11 @@
+import os
 from flask import Blueprint, render_template, request
 from datetime import datetime, timedelta
 from src.models.schedule_model.schedule_mod import Schedule
 from config.settings import SCHEDULE_TEMPLATE
 from src.extensions import logger
 from src.routes.schedule.schedule_route_utils import test_update_schedule
+
 schedule_bp = Blueprint("schedule", __name__)
 
 
@@ -26,8 +28,6 @@ def today(date: str = None):
     today_schedule = Schedule.query.filter_by(date=today_date).first()
 
     today_schedule_dict = today_schedule.date_to_dict() if today_schedule else {}
-    
-    test_update_schedule()
     
     return render_template(
         SCHEDULE_TEMPLATE,

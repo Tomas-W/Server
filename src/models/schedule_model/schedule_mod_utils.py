@@ -17,7 +17,6 @@ def _init_schedule() -> None:
     with open(SCHEDULE_PATH, "r") as json_file:
         schedule_data = json.load(json_file)
     
-    year = datetime.now().year
     for week_number, week_data in schedule_data.items():
         for day, day_data in week_data.items():
             names = day_data["names"]

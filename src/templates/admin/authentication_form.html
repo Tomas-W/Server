@@ -69,7 +69,7 @@
 
             <div class="form-item last-form-item">
                 <div class="input-error-wrapper">
-                    {{ authentication_form.fast_code(class="main-input-field") }}
+                    {{ authentication_form.fast_code(class="main-input-field", placeholder="[ ••••• ]" if current_user.fast_code else "") }}
                     {% if authentication_errors["fast_code"] %}
                         <div class="admin-form-error"><strong>{{ authentication_errors["fast_code"][0] }}</strong></div>
                     {% endif %}

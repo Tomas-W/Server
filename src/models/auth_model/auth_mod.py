@@ -68,6 +68,7 @@ class User(server_db_.Model, UserMixin):
     - COMMENT_NOTIFICATIONS (bool): User wants comment notifications [False]
     - BAKERY_NOTIFICATIONS (bool): User wants bakery notifications [False]
 
+    - SCHEDULE_NAME (str): User's schedule name [Optional]
     - ROLES (str): User's roles [Default: ""] ['|' separated]
 
     - NEW_EMAIL (str): User's new (temporary) email [Optional]
@@ -260,11 +261,15 @@ class User(server_db_.Model, UserMixin):
             self.schedule_name = schedule_name
 
     def get_roles(self) -> list[str]:
+        if not self.roles:
+            return []
         return self.roles.split("|")
 
     @set_updated_at
     def add_roles(self, roles: list[str] | str) -> None:
         user_roles = self.get_roles()
+        logger.log.info(f"Adding roles to User: {self.username}")
+        logger.log.info(f"Current roles: {user_roles}")
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
@@ -326,10 +331,14 @@ class User(server_db_.Model, UserMixin):
             self.roles = ""
             return
         if isinstance(roles, list):
+            logger.log.info(f"Updating list of roles to: {roles}")
             self.roles = "|".join(roles)
             self.roles += "|"
+            logger.log.info(f"New roles: {self.roles}")
         elif isinstance(roles, str):
+            logger.log.info(f"Updating role to: {roles}")
             self.roles = roles if not roles.endswith("|") else roles + "|"
+            logger.log.info(f"New roles: {self.roles}")
         else:
             errors = f"Invalid roles type: {type(roles)} - {logger.get_log_info()}"
             logger.log.error(errors)

@@ -126,14 +126,14 @@ schedule_css = [
         "output": "dist/schedule_css.min.css"
     },
     {
-        "name": "today_css",
+        "name": "personal_css",
         "files": [
             "css/schedule/schedule_base.css",
-            "css/schedule/today.css",
+            "css/schedule/personal.css",
             "css/schedule/day.css",
         ],
         "filters": "rcssmin",
-        "output": "dist/today_css.min.css"
+        "output": "dist/personal_css.min.css"
     }
 ]
 

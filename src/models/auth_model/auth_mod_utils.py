@@ -14,9 +14,9 @@ from jinja2 import TemplateNotFound, TemplateSyntaxError, UndefinedError
 from smtplib import SMTPRecipientsRefused, SMTPSenderRefused
 
 from config.settings import (
-    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, ADMIN_ROLE,
+    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, EMPLOYEE_VERIFICATION, ADMIN_ROLE,
     RESET_PASSWORD_REDIRECT, VERIFY_EMAIL_REDIRECT, USER_ADMIN_REDIRECT,
-    GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION
+    GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION, VERIFY_EMPLOYEE_REDIRECT
 )
 from src.extensions import server_db_, serializer_, mail_, logger
 
@@ -101,10 +101,17 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         url_ = VERIFY_EMAIL_REDIRECT
         subject = "Email Verification"
         redirect_title = "To verify your email, "
+        _anchor = "notifications-wrapper"
     elif token_type == PASSWORD_VERIFICATION:
         url_ = RESET_PASSWORD_REDIRECT
         subject = "Password Reset"
         redirect_title = "To reset your password, "
+        _anchor = "notifications-wrapper"
+    elif token_type == EMPLOYEE_VERIFICATION:
+        url_ = VERIFY_EMPLOYEE_REDIRECT
+        subject = "Employee Verification"
+        redirect_title = "To verify your employee account, "
+        _anchor = "schedule-wrapper"
     else:
         session["error_msg"] = f"Wrong token_type: {token_type}"
         abort(500)
@@ -112,7 +119,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
     redirect_url = get_authentication_url(url_, token=token, _external=True)
     settings_url = get_authentication_url(USER_ADMIN_REDIRECT,
                                           _external=True,
-                                          _anchor="notifications-wrapper")
+                                          _anchor=_anchor)
 
     html_body = get_authentication_email_template(
         template_name=EMAIL_TEMPLATE,
@@ -299,13 +306,14 @@ def _init_user() -> str | None:
     from src.models.auth_model.auth_mod import User
     if not server_db_.session.query(User).count():
         new_user = User(
-            email="100pythoncourse@gmail.com",
+            email=GMAIL_EMAIL,
             username="Admin",
             password="TomasTomas1!",
             fast_name="admin",
             fast_code=("00000"),
             display_name="Server Admin",
             email_verified=True,
+            schedule_name="Tomas W",
             roles="admin"
         )
         delete_user = User(

@@ -2,62 +2,60 @@
 
 {% if schedule %}
 <div class="schedule-header">
-    <a href="{{ url_for('schedule.today', date=schedule['date'], sub=True) }}" class="schedule-button">
+    <a href="{{ url_for('schedule.personal', date=schedule['date'], sub=True) }}" class="schedule-button">
         <<
     </a>
     <p class="schedule-title">
         
             {{ schedule["day"] }} {{ schedule["date"] }}
     </p>
-    <a href="{{ url_for('schedule.today', date=schedule['date'], add=True) }}" class="schedule-button">
+    <a href="{{ url_for('schedule.personal', date=schedule['date'], add=True) }}" class="schedule-button">
         >>
     </a>
 </div>
+
+<div class="today-content" style="position: relative;">
+    <table class="day-table">
+        <tr class="time-row">
+            <th colspan="4" class="time">06</th>
+            <th colspan="4" class="time">07</th>
+            <th colspan="4" class="time">08</th>
+            <th colspan="4" class="time">09</th>
+            <th colspan="4" class="time">10</th>
+            <th colspan="4" class="time">11</th>
+            <th colspan="4" class="time">12</th>
+            <th colspan="4" class="time">13</th>
+            <th colspan="4" class="time">14</th>
+            <th colspan="4" class="time">15</th>
+            <th colspan="4" class="time">16</th>
+            <th colspan="4" class="time">17</th>
+            <th colspan="4" class="time">18</th>
+            <th colspan="4" class="time">19</th>
+            <th colspan="4" class="time">20</th>
+        </tr>
+
+        {% for i in range(schedule["names"]|length) %}
+            <tr class="person-row">
+                {% for quarter in range(max_quarter) %}
+                    <td class="quarter {{ quarter }} {% if schedule['starts'][i] <= quarter < schedule['ends'][i] %}{% if current_user.schedule_name == schedule['names'][i] %}user-on-duty{% else %}on-duty{% endif %}{% endif %}"></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    {% for i in range(schedule["names"]|length) %}
+        {% if schedule['ends'][i] - schedule['starts'][i] >= 8 %}
+            <p class="name first" id="name-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ schedule['starts'][i] + 1 }});">{{ schedule['start_hours'][i] }}</p>
+            <p class="name third" id="third-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px;">{{ schedule['end_hours'][i] }}</p>
+        {% endif %}
+        {% if schedule['ends'][i] - schedule['starts'][i] < 8 %}
+            <p class="name second" id="second-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ (schedule["starts"][i] + schedule["ends"][i] - 3) / 2 }});">{{ schedule["names"][i] }}</p>
+        {% else %}
+            <p class="name second" id="second-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ (schedule["starts"][i] + schedule["ends"][i] - 1) / 2 }});">{{ schedule["names"][i] }}</p>
+        {% endif %}
+    {% endfor %}
+</div>
 {% else %}
     <p class="schedule-title">Schedule not found</p>
-{% endif %}
-
-{% if display_table %}
-    <div class="today-content" style="position: relative;">
-        <table class="day-table">
-            <tr class="time-row">
-                <th colspan="4" class="time">06</th>
-                <th colspan="4" class="time">07</th>
-                <th colspan="4" class="time">08</th>
-                <th colspan="4" class="time">09</th>
-                <th colspan="4" class="time">10</th>
-                <th colspan="4" class="time">11</th>
-                <th colspan="4" class="time">12</th>
-                <th colspan="4" class="time">13</th>
-                <th colspan="4" class="time">14</th>
-                <th colspan="4" class="time">15</th>
-                <th colspan="4" class="time">16</th>
-                <th colspan="4" class="time">17</th>
-                <th colspan="4" class="time">18</th>
-                <th colspan="4" class="time">19</th>
-                <th colspan="4" class="time">20</th>
-            </tr>
-    
-            {% for i in range(schedule["names"]|length) %}
-                <tr class="person-row">
-                    {% for quarter in range(max_quarter) %}
-                        <td class="quarter {{ quarter }} {% if schedule['starts'][i] <= quarter < schedule['ends'][i] %}{% if current_user.schedule_name == schedule['names'][i] %}user-on-duty{% else %}on-duty{% endif %}{% endif %}"></td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
-        {% for i in range(schedule["names"]|length) %}
-            {% if schedule['ends'][i] - schedule['starts'][i] >= 8 %}
-                <p class="name first" id="name-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ schedule['starts'][i] + 1 }});">{{ schedule['start_hours'][i] }}</p>
-                <p class="name third" id="third-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px;">{{ schedule['end_hours'][i] }}</p>
-            {% endif %}
-            {% if schedule['ends'][i] - schedule['starts'][i] < 8 %}
-                <p class="name second" id="second-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ (schedule["starts"][i] + schedule["ends"][i] - 3) / 2 }});">{{ schedule["names"][i] }}</p>
-            {% else %}
-                <p class="name second" id="second-{{ i + 1 }}" style="position: absolute; top: {{ 22 + 20 * i }}px; left: calc((100% / {{ max_quarter }}) * {{ (schedule["starts"][i] + schedule["ends"][i] - 1) / 2 }});">{{ schedule["names"][i] }}</p>
-            {% endif %}
-        {% endfor %}
-    </div>
 {% endif %}
 
 <style>

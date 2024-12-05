@@ -67,13 +67,6 @@
     --auth-form-error-size: 0.9rem;
     --auth-form-error-color: var(--label-color-darker);
 
-    --admin-form-input-size: 1.2rem;
-    --admin-form-input-size-s: 0.9rem;
-    --admin-notification-label-size-s: 1rem;
-    --admin-header-size: 1.3rem;
-    --admin-form-error-size: 0.9rem;
-    --admin-flash-size: 1.3rem;
-
     --news-title-size: 1.2rem;
     --news-info-size: 1.1rem;
     --news-author-size: 0.9rem;
@@ -95,6 +88,15 @@
 
     --bakery-item-info-size: 1.1rem;
     --bakery-header-size: 1.3rem;
+
+    --schedule-request-header-size: 1.4rem;
+
+    --admin-form-input-size: 1.2rem;
+    --admin-form-input-size-s: 0.9rem;
+    --admin-notification-label-size-s: 1rem;
+    --admin-header-size: 1.3rem;
+    --admin-form-error-size: 0.9rem;
+    --admin-flash-size: 1.3rem;
 
     --error-content-padding: 75px 15%;
     --error-title-size: 4.4rem;

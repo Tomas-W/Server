@@ -3,7 +3,7 @@ import os
 import calendar
 
 from datetime import datetime, timedelta
-
+from flask import request
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,10 +16,29 @@ from src.extensions import logger
 from config.settings import SCHEDULE_PATH
 
 
-USERNAME = os.getenv("S_USERNAME")
-PASSWORD = os.getenv("S_PASSWORD")
-LOGIN_URL = os.getenv("S_LOGIN_URL")
-SCHEDULE_URL = os.getenv("S_SCHEDULE_URL")
+S_USERNAME = os.getenv("S_USERNAME")
+S_PASSWORD = os.getenv("S_PASSWORD")
+S_LOGIN_URL = os.getenv("S_LOGIN_URL")
+S_SCHEDULE_URL = os.getenv("S_SCHEDULE_URL")
+
+
+def get_requested_date(date: str | None = None) -> datetime.date:
+    sub = request.args.get("sub", "False") == "True"
+    add = request.args.get("add", "False") == "True"
+    
+    if not date:
+        today_date = datetime.now().date()
+        logger.log.info(f"date is: {today_date}")
+        logger.log.info(type(today_date))
+    else:
+        today_date = datetime.strptime(date, "%Y-%m-%d").date()
+        
+    if sub:
+        today_date -= timedelta(days=1)
+    elif add:
+        today_date += timedelta(days=1)
+
+    return today_date
 
 
 def get_week_number(date_str: str) -> int:
@@ -70,14 +89,14 @@ def get_five_weeks_dates() -> list[list[str]]:
 
 def log_in(driver: webdriver.Firefox) -> None:
     """ Logs in to PMT. """
-    driver.get(LOGIN_URL)
+    driver.get(S_LOGIN_URL)
     movement(driver)
     
     username_input = driver.find_element(By.ID, "loginUsername")
-    username_input.send_keys(USERNAME)
+    username_input.send_keys(S_USERNAME)
     
     password_input = driver.find_element(By.ID, "loginPassword")
-    password_input.send_keys(PASSWORD)
+    password_input.send_keys(S_PASSWORD)
     
     movement(driver)
     
@@ -93,7 +112,7 @@ def get_names_and_hours_per_day(driver: webdriver.Firefox,
     """
     Returns a tuple of lists of names and hours for a given date.
     """
-    url = f"{SCHEDULE_URL}{date}"
+    url = f"{S_SCHEDULE_URL}{date}"
     driver.get(url)
     logger.log.info(f"Navigated to {url}")
     movement(driver)

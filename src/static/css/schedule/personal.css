@@ -1,0 +1,81 @@
+h1 {
+    text-align: center;
+}
+
+.request-schedule-content {
+    padding: 100px 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--schedule-request-header-size);
+    color: var(--text-color);
+}
+
+.request-schedule-header {
+    padding: 0 0 60px 0;
+}
+
+.schedule-flash {
+    padding: 40px 0 40px 0;
+    font-style: italic;
+}
+
+.request-schedule-flash {
+    padding: 0 0 40px 0;
+    font-style: italic;
+}
+
+.schedule-flash p {
+    text-align: center;
+    color: var(--text-color);
+    font-size: var(--admin-flash-size);
+}
+
+.request-schedule-flash p {
+    margin: 0;
+    text-align: center;
+    color: var(--text-color);
+    font-size: var(--admin-flash-size);
+}
+
+.schedule-form-wrapper {
+    width: 100%;
+}
+
+.schedule-form-header {
+    padding: 0 0 20px 0;
+}
+
+.admin-form-label {
+    display: none;
+}
+
+.main-input-field:not(:placeholder-shown) + .admin-form-label {
+    display: block;
+}
+
+
+@media (max-width: 474.98px) {
+    .request-schedule-content {
+        padding: 75px 9%;
+    }
+}
+
+@media (min-width: 475px) and (max-width: 767.98px) {
+    .request-schedule-content {
+        padding: 75px 9%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .request-schedule-content {
+        padding: 100px 12%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+}
+
+@media (min-width: 1200px) {
+}

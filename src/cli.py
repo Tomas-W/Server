@@ -16,12 +16,15 @@ from src.models.news_model.news_mod_utils import (
 from src.models.auth_model.auth_mod_utils import (
     delete_user_by_id, _init_user, update_schedule_name, update_schedule_name
 )
-from src.models.schedule_model.schedule_mod_utils import _init_schedule
+from src.models.schedule_model.schedule_mod_utils import (
+    _init_schedule, _init_employees
+)
 from src.routes.bakery.bakery_items import get_bakery_dict
 from src.routes.news.news_items import get_news_dict
 
 from config.settings import (
-    MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH, SCHEDULE_PATH
+    MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH, FAST_CODE_LENGTH, SCHEDULE_PATH,
+    EMPLOYEES_PATH
 )
 
 
@@ -120,17 +123,40 @@ def _auth_cli(app_: Flask) -> None:
         with open(SCHEDULE_PATH, "r") as json_file:
             schedule_data = json.load(json_file)
         
+        nr_weeks = len(schedule_data)
         if not c and not click.confirm(
-                f"Are you sure you want to add {len(schedule_data)} weeks to the Schedule Table?"):
+                f"Are you sure you want to add {nr_weeks} weeks to the Schedule Table?"):
             click.echo("Adding Schedule Items cancelled.")
             return
         
         _init_schedule()
         
         if v:
-            click.echo(f"Successfully added {len(schedule_data)} items to the Schedule Table.")
+            click.echo(f"Successfully added {nr_weeks} weeks to the Schedule Table.")
+    
+    
+    @auth.command("init-employees")
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def init_employees(v: bool, c: bool) -> None:
+        """
+        Adds employees to the Employees Table.
+        """
+        with open(EMPLOYEES_PATH, "r") as json_file:
+            employees_data = json.load(json_file)
         
+        nr_employees = len(employees_data)
+        if not c and not click.confirm(
+                f"Are you sure you want to add {nr_employees} employees to the Employees Table?"):
+            click.echo("Adding Employees cancelled.")
+            return
         
+        _init_employees()
+        
+        if v:
+            click.echo(f"Successfully added {nr_employees} employees to the Employees Table.")
+    
+    
     @auth.command("set-schedule-name")
     @click.argument("id_", type=int)
     @click.argument("name", type=str)

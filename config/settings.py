@@ -25,6 +25,7 @@ ROUTES_FOLDER = os.path.join(SRC_FOLDER, "routes")
 ADMIN_FOLDER = os.path.join(ROUTES_FOLDER, "admin")
 SCHEDULE_FOLDER = os.path.join(ROUTES_FOLDER, "schedule")
 SCHEDULE_PATH = os.path.join(SCHEDULE_FOLDER, "schedule.json")
+EMPLOYEES_PATH = os.path.join(SCHEDULE_FOLDER, "employees.json")
 
 # Bakery paths [relative]
 BREAD_IMAGES_FOLDER = "images/bakery/bread/"
@@ -55,7 +56,8 @@ banned_characters_list: list[str] = ["|"]
 VERIFIED_ROLE: str = "verified"
 ADMIN_ROLE: str = "admin"
 NEWS_ROLE: str = "news"
-USER_ROLES: list[str] = [VERIFIED_ROLE, ADMIN_ROLE, NEWS_ROLE]
+EMPLOYEE_ROLE: str = "employee"
+USER_ROLES: list[str] = [VERIFIED_ROLE, ADMIN_ROLE, NEWS_ROLE, EMPLOYEE_ROLE]
 
 # Templates
 HOME_PAGE_TEMPLATE: str = "/news/all.html"
@@ -78,8 +80,7 @@ DELETE_BAKERY_TEMPLATE: str = "/bakery/delete.html"
 INFO_TEMPLATE: str = "/bakery/info.html"
 SEARCH_TEMPLATE: str = "/bakery/search.html"
 
-SCHEDULE_TEMPLATE: str = "/schedule/today.html"
-TODAY_TEMPLATE: str = "/schedule/today.html"
+SCHEDULE_PERSONAL_TEMPLATE: str = "/schedule/personal.html"
 
 EMAIL_TEMPLATE: str = "/admin/email.html"
 E_400_TEMPLATE: str = "/errors/400.html"
@@ -107,6 +108,8 @@ DELETE_NEWS_REDIRECT: str = "news.delete"
 USER_ADMIN_REDIRECT: str = "admin.user_admin"
 VERIFY_EMAIL_REDIRECT: str = "admin.verify_email"
 
+SCHEDULE_REDIRECT: str = "schedule.personal"
+VERIFY_EMPLOYEE_REDIRECT: str = "schedule.verify_employee"
 # Errors
 E_400_REDIRECT: str = "errors.400"
 E_401_REDIRECT: str = "errors.401"
@@ -124,6 +127,8 @@ FAST_LOGIN_FAILED_MSG: str = "Fast login failed"
 CREATE_ACCOUNT_MSG: str = "Create an account first"
 VERIFICATION_SEND_MSG: str = "If email exists, a verification email has been sent!"
 PASSWORD_RESET_SEND_MSG: str = "If email exists, a password reset email has been sent!"
+EMPLOYEE_VERIFICATION_SEND_MSG: str = "If email exists, an employee verification email has been sent!"
+EMPLOYEE_VERIFIED_MSG: str = "Your employee account has been verified!"
 EMAIL_VERIFIED_MSG: str = "Your email has been verified!"
 PASSWORD_UPDATE_MSG: str = "Your password has been updated!"
 CHECK_INBOX_MSG: str = "Check inbox for email verification!"
@@ -165,6 +170,9 @@ COMMENT_FORM_TYPE: str = "comment_form"
 BAKERY_SEARCH_FORM_TYPE: str = "bakery_search_form"
 BAKERY_REFINE_SEARCH_FORM_TYPE: str = "bakery_refine_search_form"
 
+SCHEDULE_REQUEST_FORM_TYPE: str = "schedule_request_form"
+ADD_EMPLOYEE_FORM_TYPE: str = "add_employee_form"
+
 # Form messages
 EMAIL_TAKEN_MSG: str = "Email taken"
 INVALID_EMAIL_MSG: str = "Invalid email"
@@ -181,6 +189,9 @@ LOWER_LETTER_MSG: str = "Lower case letter required"
 FORBIDDEN_WORD_MSG: str = "Banned word: "
 FORBIDDEN_CHAR_MSG: str = "Banned character: "
 REQUIRED_FIELD_MSG: str = "Field is required"
+
+SCHEDULE_NAME_ERROR_MSG: str = "Name must match name on schedule"
+
 FILE_EXTENSION_ERROR_MSG: str = "Invalid file extension"
 FILE_SIZE_ERROR_MSG: str = f"Max. file size: {MAX_IMAGE_FILE_SIZE // (1024)} kb"
 
@@ -214,5 +225,6 @@ MIN_COMMENT_LENGTH: int = 10
 MAX_COMMENT_LENGTH: int = 1_000
 
 # Tokens
-PASSWORD_VERIFICATION: str = "password_verification"
-EMAIL_VERIFICATION: str = "email_verification"
+PASSWORD_VERIFICATION: str = "PASSWORD_VERIFICATION"
+EMAIL_VERIFICATION: str = "EMAIL_VERIFICATION"
+EMPLOYEE_VERIFICATION: str = "EMPLOYEE_VERIFICATION"

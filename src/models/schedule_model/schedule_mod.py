@@ -1,8 +1,64 @@
 from datetime import datetime
-from sqlalchemy import Integer, String, Date, Text
+from sqlalchemy import Integer, String, Date, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.extensions import server_db_
+from src.models.auth_model.auth_mod import User
+from src.extensions import server_db_, logger
+from src.models.schedule_model.schedule_mod_utils import (
+    update_employee_json, add_employee_json
+)
+
+
+class Employees(server_db_.Model):
+    """
+    Stores the employee data.
+    """
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=True)
+    is_activated: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    def __init__(self, name: str):
+        name = self.crop_name(name)
+        employee = Employees.query.filter_by(name=name).first()
+        if not employee:
+            self.name = name
+            add_employee_json(self.name)
+        else:
+            logger.log.error(f"Employee name {name} already in database")
+       
+    def set_email(self, email: str) -> bool:
+        if self.email == email:
+            logger.log.error(f"Email {email} already set for employee {self.name}")
+            return False
+        
+        user: User | None = User.query.filter_by(email=email).first()
+        if user:
+            self.email = email
+            update_employee_json(self.name, email)
+            return True
+        else:
+            logger.log.error(f"User with email {email} not found")
+            return False
+    
+    def set_is_activated(self, is_activated: bool) -> None:
+        self.is_activated = is_activated
+        update_employee_json(self.name, is_verified=is_activated)
+    
+    def activate_employee(self, email: str) -> bool:
+        if self.set_email(email):
+            self.set_is_activated(True)
+            logger.log.info(f"Employee {self.name} activated")
+            return True
+        else:
+            logger.log.error(f"Failed to activate employee {self.name}")
+            return False
+    
+    @staticmethod
+    def crop_name(name: str) -> str:
+        parts = name.split()
+        last_name_initial = next((part[0].upper() for part in parts[1:] if part[0].isupper()), parts[-1][0].upper())
+        return f"{parts[0]} {last_name_initial}"
 
 
 class Schedule(server_db_.Model):

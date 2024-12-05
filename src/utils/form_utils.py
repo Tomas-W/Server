@@ -3,7 +3,7 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
-
+from src.models.schedule_model.schedule_mod import Employees
 from config.settings import (
     banned_words_list, banned_characters_list, REQUIRED_SYMBOLS,
     MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
@@ -17,7 +17,7 @@ from config.settings import (
     DISPLAY_NAME_TAKEN_MSG, MIN_NEWS_HEADER_LENGTH, MAX_NEWS_HEADER_LENGTH,
     NEWS_CODE_LENGTH, NEWS_CODE_LENGTH_ERROR_MSG, NEWS_CODE_NUMERIC_ERROR_MSG,
     MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
-    MAX_NEWS_LENGTH, EMAIL_REGEX
+    MAX_NEWS_LENGTH, EMAIL_REGEX, SCHEDULE_NAME_ERROR_MSG
 )
 from src.models.auth_model.auth_mod import User
 
@@ -221,6 +221,19 @@ class FastCodeLengthCheck:
         if self.admin and not field.data:
             return
         if len(field.data) != FAST_CODE_LENGTH:
+            raise ValidationError(self.message)
+
+
+class ScheduleNameCheck:
+    """
+    Validates schedule name by checking if it's in the database.
+    """
+    def __init__(self) -> None:
+        self.message: str = SCHEDULE_NAME_ERROR_MSG
+
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        employee: Employees | None = Employees.query.filter_by(name=field.data).first()
+        if employee:
             raise ValidationError(self.message)
 
 

@@ -2,7 +2,6 @@ from datetime import datetime
 from sqlalchemy import Integer, String, Date, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.models.auth_model.auth_mod import User
 from src.extensions import server_db_, logger
 from src.models.schedule_model.schedule_mod_utils import (
     update_employee_json, add_employee_json
@@ -32,6 +31,7 @@ class Employees(server_db_.Model):
             logger.log.error(f"Email {email} already set for employee {self.name}")
             return False
         
+        from src.models.auth_model.auth_mod import User
         user: User | None = User.query.filter_by(email=email).first()
         if user:
             self.email = email
@@ -200,3 +200,10 @@ class Schedule(server_db_.Model):
     @staticmethod
     def _split(value: str, make_int: bool = False) -> list[str]:
         return [int(item) if make_int else item for item in value.split("|")] if value else []
+
+    def cli_repr(self) -> str:
+        return f"ID- - - - - -{self.id}\n" \
+               f"DATE- - - - -{self.date}\n" \
+               f"WEEK NUMBER--{self.week_number}\n" \
+               f"DAY-- - - - -{self.day}\n"
+    

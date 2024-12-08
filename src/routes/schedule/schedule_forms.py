@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, HiddenField, EmailField
 from wtforms.validators import DataRequired
-from src.utils.form_utils import ScheduleNameCheck, EmailCheck
+from src.utils.form_utils import EmployeeNameCheck, EmailCheck
 from config.settings import SCHEDULE_REQUEST_FORM_TYPE, ADD_EMPLOYEE_FORM_TYPE
 
 class ScheduleRequestForm(FlaskForm):
@@ -9,7 +9,7 @@ class ScheduleRequestForm(FlaskForm):
         label="Name",
         render_kw={"placeholder": "name as on schedule"},
         validators=[
-            ScheduleNameCheck(),
+            EmployeeNameCheck(),
             DataRequired(),
         ]
     )
@@ -29,7 +29,7 @@ class AddEmployeeForm(FlaskForm):
         label="Name",
         render_kw={"placeholder": "name"},
         validators=[
-            ScheduleNameCheck(),
+            EmployeeNameCheck(),
             DataRequired(),
         ]
     )

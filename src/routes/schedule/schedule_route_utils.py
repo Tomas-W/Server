@@ -35,7 +35,7 @@ def get_personal_schedule_dicts() -> list[list[dict]]:
     schedules = []
     for i in range(0, len(latest_schedules), 7):
         week = latest_schedules[i:i+7]
-        week_dicts = [schedule.to_personal_dict(current_user.schedule_name) for schedule in week]
+        week_dicts = [schedule.to_personal_dict(current_user.employee_name) for schedule in week]
         schedules.append(week_dicts)
     
     return schedules
@@ -92,12 +92,31 @@ def update_schedule() -> None:
         break_times_list.append([break_time for break_time in break_times])
         work_times_list.append([work_time for work_time in work_times])
         
-        save_schedule_to_db(date, names, hours, break_times, work_times)
         
+        save_schedule_to_db(date, names, hours, break_times, work_times)
+
     save_schedule_to_json(date, names_list, hours_list, break_times_list, work_times_list)
 
     logger.log.info("New schedule has been added to JSON")
     driver.quit()
+    
+    unique_names = set(name for sublist in names_list for name in sublist)
+    check_for_new_employees(unique_names)
+
+
+def check_for_new_employees(names: list[str]) -> None:
+    """
+    Checks for new employees in the schedule and adds them to the DB and JSON.
+    """
+    if not names:
+        return
+    
+    from src.models.schedule_model.schedule_mod import Employees
+    from src.models.schedule_model.schedule_mod_utils import add_employee, add_employee_json
+    for name in names:
+        if not Employees.query.filter_by(name=name).first():
+            add_employee(name)
+            add_employee_json(name)
 
 
 def get_new_schedule_dates() -> list[str]:

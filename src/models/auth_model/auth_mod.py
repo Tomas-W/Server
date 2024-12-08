@@ -14,13 +14,17 @@ from src.extensions import server_db_, argon2_, logger
 from src.models.mod_utils import (
     set_updated_at
 )
-from src.models.auth_model.auth_mod_utils import (
-    get_user_by_username, get_user_by_fast_name, get_user_by_display_name,
-    get_user_by_schedule_name
-)
+
 from config.settings import (
     CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES,
-    EMAIL_REGEX, COUNTRY_CHOICES, MAX_ABOUT_ME_LENGTH
+    COUNTRY_CHOICES, MAX_ABOUT_ME_LENGTH
+)
+from wtforms.validators import ValidationError
+from src.utils.form_utils import (
+    FastCodeCheck, FastCodeLengthCheck, EmailCheck, EmailTakenCheck,
+    UsernameLengthCheck, UsernameTakenCheck, PasswordCheck, PasswordLengthCheck,
+    FastNameLengthCheck, DisplayNameLengthCheck, DisplayNameTakenCheck,
+    EmployeeNameCheck
 )
 
 
@@ -68,7 +72,7 @@ class User(server_db_.Model, UserMixin):
     - COMMENT_NOTIFICATIONS (bool): User wants comment notifications [False]
     - BAKERY_NOTIFICATIONS (bool): User wants bakery notifications [False]
 
-    - SCHEDULE_NAME (str): User's schedule name [Optional]
+    - EMPLOYEE_NAME (str): User's employee name [Optional]
     - ROLES (str): User's roles [Default: ""] ['|' separated]
 
     - NEW_EMAIL (str): User's new (temporary) email [Optional]
@@ -103,7 +107,7 @@ class User(server_db_.Model, UserMixin):
     comment_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
     bakery_notifications: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    schedule_name: Mapped[Optional[str]] = mapped_column(String(32), unique=True, default=None)
+    employee_name: Mapped[Optional[str]] = mapped_column(String(32), unique=True, default=None)
     roles: Mapped[list[str]] = mapped_column(String(255), default="")
 
     new_email: Mapped[Optional[str]] = mapped_column(String(75))
@@ -130,7 +134,7 @@ class User(server_db_.Model, UserMixin):
     def __init__(self, email: str, username: str, password: str,
                  fast_name: Optional[str] = None, fast_code: Optional[str] = None,
                  display_name: Optional[str] = None, email_verified: bool = False,
-                 schedule_name: Optional[str] = None, roles: Optional[str] = None):
+                 employee_name: Optional[str] = None, roles: Optional[str] = None):
         """
         Initialize a new User instance.
         Applies argon2 hashing to the password.
@@ -145,52 +149,79 @@ class User(server_db_.Model, UserMixin):
         self.profile_icon = self._init_profile_icon()
         self.about_me = "Share something interesting about yourself..."
         self.email_verified = email_verified
-        self.schedule_name = schedule_name
+        self.employee_name = employee_name
         self._init_roles(roles)
         self.display_name = display_name
 
     @set_updated_at
     def set_email(self, email: str) -> None:
-        if not re.match(EMAIL_REGEX, email):
-            session["error_msg"] = f"Invalid email: {email}"
-            abort(500)
-        self.email = email
+        regex_check = EmailCheck()
+        taken_check = EmailTakenCheck()
+        try:
+            regex_check(None, type("Field", (object,), {"data": email})())
+            taken_check(None, type("Field", (object,), {"data": email})())
+            self.email = email
+        except ValidationError as e:
+            raise ValueError(f"Email validation error: {e}")
+        
 
     @set_updated_at
     def set_username(self, username: str) -> None:
-        if get_user_by_username(username):
-            session["error_msg"] = f"Username taken: {username}"
-            abort(500)
-        self.username = username
+        taken_check = UsernameTakenCheck()
+        length_check = UsernameLengthCheck()
+        try:
+            taken_check(None, type("Field", (object,), {"data": username})())
+            length_check(None, type("Field", (object,), {"data": username})())
+            self.username = username
+        except ValidationError as e:
+            raise ValueError(f"Username validation error: {e}")
 
     @set_updated_at
     def set_password(self, plain_password: str) -> None:
-        self.password = self._get_hash(plain_password)
+        regex_check = PasswordCheck()
+        length_check = PasswordLengthCheck()
+        try:
+            regex_check(None, type("Field", (object,), {"data": plain_password})())
+            length_check(None, type("Field", (object,), {"data": plain_password})())
+            self.password = self._get_hash(plain_password)
+        except ValidationError as e:
+            raise ValueError(f"Password validation error: {e}")
 
     @set_updated_at
     def set_fast_name(self, fast_name: str) -> None:
-        if get_user_by_fast_name(fast_name):
-            session["error_msg"] = f"Fast name taken: {fast_name}"
-            abort(500)
-        self.fast_name = fast_name
+        length_check = FastNameLengthCheck()
+        try:
+            length_check(None, type("Field", (object,), {"data": fast_name})())
+            self.fast_name = fast_name.lower()
+        except ValidationError as e:
+            raise ValueError(f"Fast name validation error: {e}")
 
     @set_updated_at
     def set_fast_code(self, fast_code: str) -> None:
-        self.fast_code = self._get_hash(fast_code)
+        regex_check = FastCodeCheck()
+        length_check = FastCodeLengthCheck()
+        try:
+            regex_check(None, type("Field", (object,), {"data": fast_code})())
+            length_check(None, type("Field", (object,), {"data": fast_code})())
+            self.fast_code = self._get_hash(fast_code)
+        except ValidationError as e:
+            raise ValueError(f"Fast code validation error: {e}")
 
     @set_updated_at
     def set_display_name(self, display_name: str) -> None:
-        if get_user_by_display_name(display_name):
-            session["error_msg"] = f"Display name taken: {display_name}"
-            abort(500)
-        else:
+        taken_check = DisplayNameTakenCheck()
+        length_check = DisplayNameLengthCheck()
+        try:
+            taken_check(None, type("Field", (object,), {"data": display_name})())
+            length_check(None, type("Field", (object,), {"data": display_name})())
             self.display_name = display_name
+        except ValidationError as e:
+            raise ValueError(f"Display name validation error: {e}")
 
     @set_updated_at
     def set_country(self, country: str) -> None:
         if country not in COUNTRY_CHOICES:
-            errors = f"Invalid country: {country} - {logger.get_log_info()}"
-            logger.log.warning(errors)
+            raise ValueError(f"Invalid country: {country}")
         else:
             self.country = country
 
@@ -231,35 +262,29 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_news_notifications(self, news_notifications: bool) -> None:
         if not isinstance(news_notifications, bool):
-            errors = f"Invalid news notifications type: {type(news_notifications)} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:
-            self.news_notifications = news_notifications
+            raise ValueError(f"Invalid news notifications type: {type(news_notifications)}")
+        self.news_notifications = news_notifications
 
     @set_updated_at
     def set_comment_notifications(self, comment_notifications: bool) -> None:
         if not isinstance(comment_notifications, bool):
-            errors = f"Invalid comment notifications type: {type(comment_notifications)} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:
-            self.comment_notifications = comment_notifications
+            raise ValueError(f"Invalid comment notifications type: {type(comment_notifications)}")
+        self.comment_notifications = comment_notifications
 
     @set_updated_at
     def set_bakery_notifications(self, bakery_notifications: bool) -> None:
         if not isinstance(bakery_notifications, bool):
-            errors = f"Invalid bakery notifications type: {type(bakery_notifications)} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:
-            self.bakery_notifications = bakery_notifications
-    
+            raise ValueError(f"Invalid bakery notifications type: {type(bakery_notifications)}")
+        self.bakery_notifications = bakery_notifications
+
     @set_updated_at
-    def set_schedule_name(self, schedule_name: str) -> None:
-        if get_user_by_schedule_name(schedule_name):
-            errors = f"Schedule name taken: {schedule_name} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:
-            logger.log.info(f"Setting schedule name for User: {self.username} to {schedule_name}")
-            self.schedule_name = schedule_name
+    def set_employee_name(self, employee_name: str) -> None:
+        name_check = EmployeeNameCheck()
+        try:
+            name_check(None, type("Field", (object,), {"data": employee_name})())
+            self.employee_name = employee_name
+        except ValidationError as e:
+            raise ValueError(f"Employee name validation error: {e}")
 
     def get_roles(self) -> list[str]:
         if not self.roles:
@@ -349,11 +374,14 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_new_email(self, new_email: str) -> None:
-        if not re.match(EMAIL_REGEX, new_email):
-            errors = f"Invalid new email: {new_email} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:
+        regex_check = EmailCheck()
+        taken_check = EmailTakenCheck()
+        try:
+            regex_check(None, type("Field", (object,), {"data": new_email})())
+            taken_check(None, type("Field", (object,), {"data": new_email})())
             self.new_email = new_email
+        except ValidationError as e:
+            raise ValueError(f"New email validation error: {e}")
 
     def reset_new_email(self) -> None:
         self.new_email = None
@@ -361,9 +389,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_email_verified(self, verified: bool) -> None:
         if not isinstance(verified, bool):
-            errors = f"Invalid email verified type: {type(verified)} - {logger.get_log_info()}"
-            logger.log.error(errors)
-            return
+            raise ValueError(f"Invalid email verified type: {type(verified)}")
         if verified:
             self.add_roles("verified")
         else:
@@ -373,9 +399,7 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def set_remember_me(self, remember: bool) -> None:
         if not isinstance(remember, bool):
-            errors = f"Invalid remember me type: {type(remember)} - {logger.get_log_info()}"
-            logger.log.error(errors)
-            return
+            raise ValueError(f"Invalid remember me type: {type(remember)}")
         self.remember_me = remember
 
     def update_last_seen(self) -> None:
@@ -416,5 +440,14 @@ class User(server_db_.Model, UserMixin):
                 f" (id={self.id},"
                 f" username={self.username},"
                 f" email={self.email}),"
-                f" schedule_name={self.schedule_name})"
-                )
+                f" employee_name={self.employee_name})")
+
+    def cli_repr(self) -> str:
+        return f"ID- - - - - - -{self.id}\n" \
+               f"USERNAME- - - -{self.username}\n" \
+               f"EMAIL-- - - - -{self.email}\n" \
+               f"EMPLOYEE NAME--{self.employee_name}\n" \
+               f"DISPLAY NAME- -{self.display_name}\n" \
+               f"ROLES-- - - - -{self.roles.replace('|', ', ')}\n" \
+               f"LAST SEEN AT- -{self.last_seen_at.strftime('%d %b %Y @ %H:%M')}"
+                

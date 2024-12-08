@@ -189,6 +189,14 @@ class News(server_db_.Model):
                 f" important='{self.important}',"
                 f" author='{self.author}')"
                 )
+    
+    def cli_repr(self) -> str:
+        return f"ID- - - - -{self.id}\n" \
+               f"CREATED AT-{self.created_at.strftime('%d %b %Y @ %H:%M')}\n" \
+               f"TITLE-- - -{self.title[:50]}..\n" \
+               f"CODE- - - -{self.code}\n" \
+               f"AUTHOR- - -{self.author}\n" \
+               f"IMPORTANT--{self.important[:50]}.."
 
     
 class Comment(server_db_.Model):
@@ -232,6 +240,14 @@ class Comment(server_db_.Model):
                 f" user_id='{self.user_id}')"
                 f" username='{self.user.username}')"
                 )
+    
+    def cli_repr(self) -> str:
+        return f"COMMENT ID- -{self.id}\n" \
+               f"CREATED AT- -{self.created_at.strftime('%d %b %Y @ %H:%M')}\n" \
+               f"NEWS ID-- - -{self.news_id}\n" \
+               f"USERNAME- - -{self.user.username}\n" \
+               f"CONTENT-- - -{self.content[:40]}..\n" \
+               f"LIKE DISLIKE-{self.liked_by} / {self.disliked_by}"
     
     @staticmethod
     def _split(value: str) -> list[str]:

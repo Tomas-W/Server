@@ -17,7 +17,7 @@ from src.extensions import (
     compress_
 )
 from src.models.mod_utils import load_user
-from src.cli import _auth_cli, _server_cli
+from src.cli.cli import _auth_cli, _server_cli
 from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
 
 HEADERS = {

@@ -35,7 +35,7 @@ def update_employee(name: str, email: str | None = None) -> bool:
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
         employee.activate_employee(email)
-        current_user.set_schedule_name(employee_name)
+        current_user.set_employee_name(employee_name)
         current_user.add_roles(EMPLOYEE_ROLE)
         return True
     else:
@@ -87,7 +87,8 @@ def _get_schedule_paths() -> list[str]:
     """ Returns the paths of the schedule files in the schedule folder. """
     files = os.listdir(SCHEDULE_FOLDER)
     schedule_files = [file for file in files if file.startswith("schedule") and file.endswith(".json")]
-    return schedule_files
+    schedule_paths = [os.path.join(SCHEDULE_FOLDER, path) for path in schedule_files]
+    return schedule_paths
 
 
 def _date_from_week_and_day(week_number: int, day: str) -> datetime:
@@ -107,45 +108,59 @@ def _day_from_date(date_str: str) -> str:
     return calendar.day_name[date_obj.weekday()]
 
 
-def _init_employees() -> None:
+def _init_employees() -> bool | None:
     """
     Initializes the employees in the database. Used in cli.
     """
     from src.models.schedule_model.schedule_mod import Employees
-    with open(EMPLOYEES_PATH, "r") as json_file:
-        employees_data = json.load(json_file)
     
-    for employee, data in employees_data.items():
-        employee_obj = Employees(name=employee)
-        server_db_.session.add(employee_obj)
-    server_db_.session.commit()
+    if not server_db_.session.query(Employees).count():
+        try:
+            with open(EMPLOYEES_PATH, "r") as json_file:
+                employees_data = json.load(json_file)
+        except FileNotFoundError:
+            logger.log.error(f"File {EMPLOYEES_PATH} not found")
+            return False
+    
+        for employee, _ in employees_data.items():
+            employee_obj = Employees(name=employee)
+            server_db_.session.add(employee_obj)
+        server_db_.session.commit()
+        return True
+    else:
+        return False
 
 
-def _init_schedule() -> None:
+def _init_schedule() -> bool | None:
     """
     Initializes the schedule in the database. Used in cli.
     """
     from src.models.schedule_model.schedule_mod import Schedule
     
-    schedule_paths = _get_schedule_paths()
-    for path in schedule_paths:
-        with open(path, "r") as json_file:
-            schedule_data = json.load(json_file)
-        
-        for week_number, week_data in schedule_data.items():
-            for day, day_data in week_data.items():
-                date = _date_from_week_and_day(int(week_number), day).date()
-                names = day_data["names"]
-                hours = day_data["hours"]
-                break_times = day_data["break_times"]
-                work_times = day_data["work_times"]
-                
-                schedule_item = Schedule(date=date,
-                                        week_number=week_number,
-                                        day=day,
-                                        names=names,
-                                        hours=hours,
-                                        break_times=break_times,
-                                        work_times=work_times)
-                server_db_.session.add(schedule_item)
-    server_db_.session.commit()
+    if not server_db_.session.query(Schedule).count():
+        schedule_paths = _get_schedule_paths()
+        for path in schedule_paths:
+            with open(path, "r") as json_file:
+                schedule_data = json.load(json_file)
+            
+            for week_number, week_data in schedule_data.items():
+                for day, day_data in week_data.items():
+                    date = _date_from_week_and_day(int(week_number), day).date()
+                    names = day_data["names"]
+                    hours = day_data["hours"]
+                    break_times = day_data["break_times"]
+                    work_times = day_data["work_times"]
+                    
+                    schedule_item = Schedule(date=date,
+                                            week_number=week_number,
+                                            day=day,
+                                            names=names,
+                                            hours=hours,
+                                            break_times=break_times,
+                                            work_times=work_times)
+                    server_db_.session.add(schedule_item)
+        server_db_.session.commit()
+        return True
+    else:
+        return False
+

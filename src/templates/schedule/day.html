@@ -37,7 +37,7 @@
         {% for i in range(schedule["names"]|length) %}
             <tr class="person-row">
                 {% for quarter in range(max_quarter) %}
-                    <td class="quarter {{ quarter }} {% if schedule['starts'][i] <= quarter < schedule['ends'][i] %}{% if current_user.schedule_name == schedule['names'][i] %}user-on-duty{% else %}on-duty{% endif %}{% endif %}"></td>
+                    <td class="quarter {{ quarter }} {% if schedule['starts'][i] <= quarter < schedule['ends'][i] %}{% if current_user.employee_name == schedule['names'][i] %}user-on-duty{% else %}on-duty{% endif %}{% endif %}"></td>
                 {% endfor %}
             </tr>
         {% endfor %}

@@ -261,19 +261,19 @@ def get_user_by_fast_name(fast_name: str) -> "User" | None:
     return server_db_.session.execute(stmt).scalar_one_or_none()
 
 
-def get_user_by_schedule_name(schedule_name: str) -> "User" | None:
+def get_user_by_employee_name(employee_name: str) -> "User" | None:
     from src.models.auth_model.auth_mod import User
-    stmt = select(User).filter_by(schedule_name=schedule_name)
+    stmt = select(User).filter_by(employee_name=employee_name)
     return server_db_.session.execute(stmt).scalar_one_or_none()
 
 
-def update_schedule_name(id_: int, schedule_name: str) -> None:
+def update_employee_name(id_: int, employee_name: str) -> None:
     """
-    Set the schedule name for a User by id. Used in cli.
+    Set the employee_name for a User by id. Used in cli.
     """
     from src.models.auth_model.auth_mod import User
     user = server_db_.session.get(User, id_)
-    user.set_schedule_name(schedule_name)
+    user.set_employee_name(employee_name)
     server_db_.session.commit()
     
 
@@ -313,7 +313,7 @@ def _init_user() -> str | None:
             fast_code=("00000"),
             display_name="Server Admin",
             email_verified=True,
-            schedule_name="Tomas W",
+            employee_name="Tomas W",
             roles="admin"
         )
         delete_user = User(
@@ -325,6 +325,6 @@ def _init_user() -> str | None:
         server_db_.session.add(new_user)
         server_db_.session.add(delete_user)
         server_db_.session.commit()
-        return repr(new_user)
+        return new_user.cli_repr()
 
     return None

@@ -1,5 +1,3 @@
-import os
-from pprint import pformat
 from flask import (
     Blueprint, render_template, request, session, flash, redirect, url_for
 )
@@ -10,8 +8,7 @@ from config.settings import (
 )
 from src.extensions import logger
 from src.routes.schedule.schedule_route_utils import (
-    get_requested_date, get_personal_schedule_dicts, update_schedule,
-    get_five_weeks_dates
+    get_requested_date, get_personal_schedule_dicts
 )
 from src.models.auth_model.auth_mod_utils import (
     start_verification_process, confirm_authentication_token,
@@ -21,7 +18,8 @@ from src.routes.schedule.schedule_forms import ScheduleRequestForm
 from src.models.schedule_model.schedule_mod_utils import update_employee
 from config.settings import (
     EMPLOYEE_VERIFICATION, EMPLOYEE_VERIFICATION_SEND_MSG, SCHEDULE_REDIRECT,
-    UNEXPECTED_ERROR_MSG, EMPLOYEE_VERIFIED_MSG
+    EMPLOYEE_VERIFIED_MSG, EMPLOYEE_NOT_FOUND_MSG, SESSION_ERROR_MSG,
+    AUTHENTICATION_LINK_ERROR_MSG
 )
 
 schedule_bp = Blueprint("schedule", __name__)
@@ -54,6 +52,8 @@ def personal(date: str = None):
     personal_schedule_dicts = get_personal_schedule_dicts()
     
     schedule_request_errors = session.get("schedule_request_errors", None)   
+    logger.log.info(repr(current_user))
+
     flash("Test flash message")
     return render_template(
         SCHEDULE_PERSONAL_TEMPLATE,
@@ -77,16 +77,16 @@ def verify_employee(token):
     
     if not employee_name:
         logger.log.error(f"Employee name not in session for email: {email}")
-        flash(UNEXPECTED_ERROR_MSG)
+        flash(SESSION_ERROR_MSG)
         return redirect(url_for(SCHEDULE_REDIRECT))
     
     if not email:
         logger.log.error(f"Email not confirmed for token: {token}")
-        flash(UNEXPECTED_ERROR_MSG)
+        flash(AUTHENTICATION_LINK_ERROR_MSG)
         return redirect(url_for(SCHEDULE_REDIRECT))
     
     if not update_employee(employee_name, email):
-        flash(UNEXPECTED_ERROR_MSG)
+        flash(EMPLOYEE_NOT_FOUND_MSG + employee_name)
         logger.log.error(f"Failed to update employee {employee_name} with email {email}")
         return redirect(url_for(SCHEDULE_REDIRECT))
     

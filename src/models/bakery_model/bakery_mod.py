@@ -178,3 +178,10 @@ class BakeryItem(server_db_.Model):
                 f" program={self.program},"
                 f" nasa={self.nasa})"
                 )
+
+    def cli_repr(self) -> str:
+        return f"ID- - - - -{self.id}\n" \
+               f"NAME- - - -{self.name}\n" \
+               f"CATEGORY- -{self.category}\n" \
+               f"NASA- - - -{self.nasa}\n" \
+               f"PRICE-- - -{self.price}"

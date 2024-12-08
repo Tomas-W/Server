@@ -190,7 +190,8 @@ FORBIDDEN_WORD_MSG: str = "Banned word: "
 FORBIDDEN_CHAR_MSG: str = "Banned character: "
 REQUIRED_FIELD_MSG: str = "Field is required"
 
-SCHEDULE_NAME_ERROR_MSG: str = "Name must match name on schedule"
+EMPLOYEE_NAME_ERROR_MSG: str = "Name must match name on schedule"
+EMPLOYEE_NOT_FOUND_MSG: str = "Employee not found: "
 
 FILE_EXTENSION_ERROR_MSG: str = "Invalid file extension"
 FILE_SIZE_ERROR_MSG: str = f"Max. file size: {MAX_IMAGE_FILE_SIZE // (1024)} kb"

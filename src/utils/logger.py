@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler
 class Logger:
     def __init__(self, name="app", log_dir="logs", log_file="app.log", test=False):
         self.log = logging.getLogger(name)
-        self.log.setLevel(logging.INFO)
+        self.log.setLevel(logging.DEBUG)
         
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
@@ -29,7 +29,7 @@ class Logger:
             "%(log_color)s%(asctime)s - %(levelname)s - %(message)s",
             datefmt="%d-%m %H:%M:%S",
             log_colors={
-                "DEBUG": "white",
+                "DEBUG": "blue",
                 "INFO": "green",
                 "WARNING": "yellow",
                 "ERROR": "red",

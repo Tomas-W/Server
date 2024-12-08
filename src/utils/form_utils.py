@@ -17,9 +17,8 @@ from config.settings import (
     DISPLAY_NAME_TAKEN_MSG, MIN_NEWS_HEADER_LENGTH, MAX_NEWS_HEADER_LENGTH,
     NEWS_CODE_LENGTH, NEWS_CODE_LENGTH_ERROR_MSG, NEWS_CODE_NUMERIC_ERROR_MSG,
     MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
-    MAX_NEWS_LENGTH, EMAIL_REGEX, SCHEDULE_NAME_ERROR_MSG
+    MAX_NEWS_LENGTH, EMAIL_REGEX, EMPLOYEE_NAME_ERROR_MSG
 )
-from src.models.auth_model.auth_mod import User
 
 
 class VerifyEmailCheck:
@@ -36,7 +35,7 @@ class VerifyEmailCheck:
         self.max_length_message: str = f"Max. {MAX_EMAIL_LENGTH} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if not field.data and current_user.is_authenticated:
+        if not field.data and current_user and current_user.is_authenticated:
             field.data = current_user.email
             return
         if not re.match(EMAIL_REGEX, field.data):
@@ -71,8 +70,10 @@ class EmailTakenCheck:
         self.email_taken_message: str = EMAIL_TAKEN_MSG
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if current_user.is_authenticated and current_user.email == field.data:
+        if current_user and current_user.is_authenticated and current_user.email == field.data:
             return
+        
+        from src.models.auth_model.auth_mod import User
         user: User | None = User.query.filter_by(email=field.data).first()
         if user:
             raise ValidationError(self.email_taken_message)
@@ -105,8 +106,10 @@ class UsernameTakenCheck:
         self.username_taken_message: str = USERNAME_TAKEN_MSG
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if current_user.is_authenticated and current_user.username == field.data:
+        if current_user and current_user.is_authenticated and current_user.username == field.data:
             return
+        
+        from src.models.auth_model.auth_mod import User
         user: User | None = User.query.filter_by(username=field.data).first()
         if user:
             raise ValidationError(self.username_taken_message)
@@ -224,12 +227,12 @@ class FastCodeLengthCheck:
             raise ValidationError(self.message)
 
 
-class ScheduleNameCheck:
+class EmployeeNameCheck:
     """
-    Validates schedule name by checking if it's in the database.
+    Validates employee_name by checking if it's in the database.
     """
     def __init__(self) -> None:
-        self.message: str = SCHEDULE_NAME_ERROR_MSG
+        self.message: str = EMPLOYEE_NAME_ERROR_MSG
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         employee: Employees | None = Employees.query.filter_by(name=field.data).first()
@@ -245,13 +248,28 @@ class DisplayNameTakenCheck:
         self.display_name_taken_message: str = DISPLAY_NAME_TAKEN_MSG
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if current_user.is_authenticated and current_user.display_name == field.data:
+        if current_user and current_user.is_authenticated and current_user.display_name == field.data:
             return
+        
+        from src.models.auth_model.auth_mod import User
         user: User | None = User.query.filter_by(display_name=field.data).first()
         if user:
             raise ValidationError(self.display_name_taken_message)
 
 
+class DisplayNameLengthCheck:
+    """  
+    Validates display name by checking length.
+    """
+    def __init__(self) -> None:
+        self.min_length_message: str = f"Min. {MIN_USERNAME_LENGTH} characters"
+        self.max_length_message: str = f"Max. {MAX_USERNAME_LENGTH} characters"
+    
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if len(field.data) < MIN_USERNAME_LENGTH:
+            raise ValidationError(self.min_length_message)
+        if len(field.data) > MAX_USERNAME_LENGTH:
+            raise ValidationError(self.max_length_message)
 
 class AboutMeLengthCheck:
     """

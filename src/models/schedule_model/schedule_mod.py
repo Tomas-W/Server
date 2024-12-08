@@ -70,7 +70,15 @@ class Schedule(server_db_.Model):
     - WEEK_NUMBER (str): Week number of the schedule
     - DAY (str): Day of the schedule
     - NAMES (list[str]): Names of the schedule
-    - HOURS (list[str]): Hours of the schedule
+    
+    - START_HOURS (str): Start hours of the schedule
+    - END_HOURS (str): End hours of the schedule
+    - STARTS (str): Starts of the schedule
+    - ENDS (str): Ends of the schedule
+    
+    - BREAK_TIME (str): Break time of the schedule
+    - WORK_TIME (str): Work time of the schedule
+    
     """
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -78,23 +86,30 @@ class Schedule(server_db_.Model):
     week_number: Mapped[int] = mapped_column(Integer, nullable=False)
     day: Mapped[str] = mapped_column(String(255), nullable=False)
     names: Mapped[str] = mapped_column(Text, nullable=False)
+    
     start_hours: Mapped[str] = mapped_column(Text, nullable=False)
     end_hours: Mapped[str] = mapped_column(Text, nullable=False)
-    
     starts: Mapped[str] = mapped_column(Text)
     ends: Mapped[str] = mapped_column(Text)
+    
+    break_times: Mapped[str] = mapped_column(Text, nullable=False)
+    work_times: Mapped[str] = mapped_column(Text, nullable=False)
 
     def __init__(self, date: datetime, week_number: str, day: str,
-                 names: list[str], hours: list[str]):
+                 names: list[str], hours: list[str],
+                 break_times: list[str], work_times: list[str]):
         self.date = date
         self.week_number = week_number
         self.day = day
         self.names = self._join(self._crop_names(names))
+        
         self.start_hours = self._get_start_hours(hours)
         self.end_hours = self._get_end_hours(hours)
-        
         self.starts = self._get_starts(hours)
         self.ends = self._get_ends(hours)
+        
+        self.break_times = self._join(break_times)
+        self.work_times = self._join(work_times)
     
     def _crop_names(self, names: list[str]) -> list[str]:
         return [f"{name.split()[0]} {name.split()[1][0]}" for name in names]
@@ -130,14 +145,52 @@ class Schedule(server_db_.Model):
     
     def date_to_dict(self) -> dict:
         return {
-            "date": self.date,
+            "date": self.date.strftime("%d-%m-%Y"),
             "week_number": int(self.week_number),
             "day": self.day,
             "names": self._split(self.names),
+            
             "start_hours": self._split(self.start_hours),
             "end_hours": self._split(self.end_hours),
             "starts": self._split(self.starts, make_int=True),
-            "ends": self._split(self.ends, make_int=True)
+            "ends": self._split(self.ends, make_int=True),
+            
+            "break_times": self._split(self.break_times),
+            "work_times": self._split(self.work_times)
+        }
+    
+    def to_personal_dict(self, name: str) -> dict:
+        name = name if name in self.names else ""
+        names = self._split(self.names)
+        
+        start_hours = self._split(self.start_hours)
+        start_hour = start_hours[names.index(name)] if name in names else None
+        end_hours = self._split(self.end_hours)
+        end_hour = end_hours[names.index(name)] if name in names else None
+        
+        starts = self._split(self.starts, make_int=True)
+        start = int(starts[names.index(name)]) if name in names else None
+        ends = self._split(self.ends, make_int=True)
+        end = int(ends[names.index(name)]) if name in names else None
+        
+        break_times = self._split(self.break_times)
+        break_time = break_times[names.index(name)] if name in names else None
+        work_times = self._split(self.work_times)
+        work_time = work_times[names.index(name)] if name in names else None
+        
+        return {
+            "date": self.date.strftime("%d-%m-%Y"),
+            "week_number": int(self.week_number),
+            "day": self.day,
+            "name": name,
+            
+            "start_hour": start_hour,
+            "end_hour": end_hour,
+            "start": start,
+            "end": end,
+            
+            "break_time": break_time,
+            "work_time": work_time
         }
     
     @staticmethod
@@ -147,5 +200,3 @@ class Schedule(server_db_.Model):
     @staticmethod
     def _split(value: str, make_int: bool = False) -> list[str]:
         return [int(item) if make_int else item for item in value.split("|")] if value else []
-
-

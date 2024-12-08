@@ -24,10 +24,7 @@ dist/
 # Ignore secret files
 client_secret.json
 .flaskenv
-employees.json
-employees2.json
-schedule.json
-schedule2.json
+src/routes/schedule/*.json
 
 # Ignore backups
 backups/

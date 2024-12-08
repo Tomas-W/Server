@@ -1,6 +1,54 @@
-h1 {
-    text-align: center;
+.schedule-flash {
+    padding: 40px 0 40px 0;
+    font-style: italic;
 }
+
+.schedule-flash p {
+    text-align: center;
+    color: var(--text-color);
+    font-size: var(--admin-flash-size);
+}
+
+.week-number {
+    padding: 0 0 5px 0;
+    font-size: var(--schedule-week-size);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.schedule-content {
+    padding: 15px 50px 50px 50px;
+}
+
+.personal-content {
+    position: relative;
+    padding: 0 0 40px 0;
+}
+
+.week-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 25px 0;
+    border: 1px solid var(--border-color);
+}
+
+.personal-name {
+    width: 25px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.admin-form-label {
+    display: none;
+}
+
+.main-input-field:not(:placeholder-shown) + .admin-form-label {
+    display: block;
+}
+
+
+
 
 .request-schedule-content {
     padding: 100px 15%;
@@ -16,20 +64,9 @@ h1 {
     padding: 0 0 60px 0;
 }
 
-.schedule-flash {
-    padding: 40px 0 40px 0;
-    font-style: italic;
-}
-
 .request-schedule-flash {
     padding: 0 0 40px 0;
     font-style: italic;
-}
-
-.schedule-flash p {
-    text-align: center;
-    color: var(--text-color);
-    font-size: var(--admin-flash-size);
 }
 
 .request-schedule-flash p {
@@ -37,22 +74,6 @@ h1 {
     text-align: center;
     color: var(--text-color);
     font-size: var(--admin-flash-size);
-}
-
-.schedule-form-wrapper {
-    width: 100%;
-}
-
-.schedule-form-header {
-    padding: 0 0 20px 0;
-}
-
-.admin-form-label {
-    display: none;
-}
-
-.main-input-field:not(:placeholder-shown) + .admin-form-label {
-    display: block;
 }
 
 

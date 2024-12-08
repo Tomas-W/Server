@@ -1,5 +1,7 @@
 {% extends "schedule/schedule_base.html" %}
 
+{% set max_quarter = 4 * 15 %}
+
 {% block title %}
     Today
 {% endblock %}
@@ -13,66 +15,105 @@
 {% endblock %}
 
 {% block schedule_content %}
-<div class="schedule_wrapper">
+<div class="schedule-wrapper">
     {% if is_employee %}
-
+    
     {% if get_flashed_messages() %}
-            <div class="schedule-flash">
+        <div class="schedule-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+        </div>
+    {% endif %}
+
+    <div class="schedule-content">
+        {% for week_dicts in personal_schedule_dicts %}
+            <p class="week-number">
+                Week {{ week_dicts[0]["week_number"] }} {% if loop.index == 1 %} [ current ] {% endif %}
+            </p>
+            <div class="personal-content">
+                <table class="week-table">
+                    <tr class="time-row">
+                        <th colspan="4" class="time">06</th>
+                        <th colspan="4" class="time">07</th>
+                        <th colspan="4" class="time">08</th>
+                        <th colspan="4" class="time">09</th>
+                        <th colspan="4" class="time">10</th>
+                        <th colspan="4" class="time">11</th>
+                        <th colspan="4" class="time">12</th>
+                        <th colspan="4" class="time">13</th>
+                        <th colspan="4" class="time">14</th>
+                        <th colspan="4" class="time">15</th>
+                        <th colspan="4" class="time">16</th>
+                        <th colspan="4" class="time">17</th>
+                        <th colspan="4" class="time">18</th>
+                        <th colspan="4" class="time">19</th>
+                        <th colspan="4" class="time">20</th>
+                    </tr>
+
+                    {% for week_dict in week_dicts %}
+                        <tr class="person-row">
+
+                            {% for quarter in range(max_quarter) %}
+                                {% if week_dict["start"] is not none %}
+                                    <td class="quarter {{ quarter }} {% if week_dict["start"] <= quarter < week_dict["end"] %}user-on-duty{% endif %}"></td>
+                                {% else %}
+                                    <td class="quarter"></td>
+                                {% endif %}
+                            {% endfor %}
+                            <p class="personal-name" style="position: absolute; top: {{ 22 + 20 * (loop.index - 1) }}px; left: -30px;">{{ week_dict["day"][0] }}</p>
+                        </tr>
+
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="request-schedule-content">
+        <div class="request-schedule-header">
+            <p class="request-schedule-text">This page is available only for employees</p>
+            <p class="request-schedule-text">Request access by submitting the form below</p>
+        </div>
+
+        <!-- Request schedule flash messages -->
+        {% if get_flashed_messages() %}
+            <div class="request-schedule-flash">
                 <p>{{ get_flashed_messages()[0] }}</p>
             </div>
-        {% endif %} 
+        {% endif %}
 
-        <div class="schedule-content">
-            <h1>TIME TABLE</h1>
-        </div>
-        
-    {% else %}
-        <div class="request-schedule-content">
-            <div class="request-schedule-header">
-                <p class="request-schedule-text">This page is available only for employees</p>
-                <p class="request-schedule-text">Request access by submitting the form below</p>
-            </div>
-
-            <!-- Request schedule flash messages -->
-            {% if get_flashed_messages() %}
-                <div class="request-schedule-flash">
-                    <p>{{ get_flashed_messages()[0] }}</p>
+        <!-- Request schedule form -->
+        <div class="schedule-form-wrapper">
+            <p class="schedule-form-header smaller-padding">Request access</p>
+            <form method="POST" action="" novalidate class="schedule-form" enctype="multipart/form-data">
+                <div class="form-item">
+                    <div class="input-error-wrapper">
+                        {{ schedule_request_form.name(class="main-input-field") }}
+                        {% if schedule_request_errors["name"] %}
+                            <div class="admin-form-error"><strong>{{ schedule_request_errors["name"][0] }}</strong></div>
+                        {% endif %}
+                        <div class="admin-form-label">{{ schedule_request_form.name.label }}</div>
+                    </div>
                 </div>
-            {% endif %} 
 
-            <!-- Request schedule form -->
-            <div class="schedule-form-wrapper">
-                <p class="schedule-form-header smaller-padding">Request access</p>
-                <form method="POST" action="" novalidate class="schedule-form" enctype="multipart/form-data">
-                    
-                    <div class="form-item">
-                        <div class="input-error-wrapper">
-                            {{ schedule_request_form.name(class="main-input-field") }}
-                            {% if schedule_request_errors["name"] %}
-                                <div class="admin-form-error"><strong>{{ schedule_request_errors["name"][0] }}</strong></div>
-                            {% endif %}
-                            <div class="admin-form-label">{{ schedule_request_form.name.label }}</div>
-                        </div>
+                <div class="form-item last-form-item">
+                    <div class="input-error-wrapper">
+                        {{ schedule_request_form.email(class="main-input-field", readonly=True) }}
+                        {% if schedule_request_errors["email"] %}
+                            <div class="admin-form-error"><strong>{{ schedule_request_errors["email"][0] }}</strong></div>
+                        {% endif %}
+                        <div class="admin-form-label">{{ schedule_request_form.email.label }}</div>
                     </div>
+                </div>
 
-                    <div class="form-item last-form-item">
-                        <div class="input-error-wrapper">
-                            {{ schedule_request_form.email(class="main-input-field", readonly=True) }}
-                            {% if schedule_request_errors["email"] %}
-                                <div class="admin-form-error"><strong>{{ schedule_request_errors["email"][0] }}</strong></div>
-                            {% endif %}
-                            <div class="admin-form-label">{{ schedule_request_form.email.label }}</div>
-                        </div>
-                    </div>
-
-                    {{ schedule_request_form.form_type }}
-                    {{ schedule_request_form.hidden_tag() }}
-                    <div class="admin-devider"> 
-                        {{ schedule_request_form.submit(class="admin-btn") }}
-                    </div>
-                </form>
-            </div>
+                {{ schedule_request_form.form_type }}
+                {{ schedule_request_form.hidden_tag() }}
+                <div class="admin-devider">
+                    {{ schedule_request_form.submit(class="admin-btn") }}
+                </div>
+            </form>
         </div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

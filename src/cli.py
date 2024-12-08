@@ -496,5 +496,6 @@ def _server_cli(app_: Flask) -> None:
         ctx.invoke(app_.cli.commands["auth"].commands["init-bakery"], v=v, c=c)
         ctx.invoke(app_.cli.commands["auth"].commands["init-news"], v=v, c=c)
         ctx.invoke(app_.cli.commands["auth"].commands["init-schedule"], v=v, c=c)
+        ctx.invoke(app_.cli.commands["auth"].commands["init-employees"], v=v, c=c)
 
     app_.cli.add_command(server)

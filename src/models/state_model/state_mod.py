@@ -19,9 +19,3 @@ class State(server_db_.Model):
 
     def __init__(self, state: Mapped[str]):
         self.state = state
-
-    def __repr__(self) -> str:
-        return (f"State:"
-                f" (id={self.id!r},"
-                f" state={self.state!r})"
-                )

@@ -24,7 +24,6 @@ BAKERY_HEALTH_IMAGES_FOLDER = os.path.join(BAKERY_IMAGES_FOLDER, "health")
 ROUTES_FOLDER = os.path.join(SRC_FOLDER, "routes")
 ADMIN_FOLDER = os.path.join(ROUTES_FOLDER, "admin")
 SCHEDULE_FOLDER = os.path.join(ROUTES_FOLDER, "schedule")
-SCHEDULE_PATH = os.path.join(SCHEDULE_FOLDER, "schedule.json")
 EMPLOYEES_PATH = os.path.join(SCHEDULE_FOLDER, "employees.json")
 
 # Bakery paths [relative]

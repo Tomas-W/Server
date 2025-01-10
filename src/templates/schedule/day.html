@@ -2,16 +2,20 @@
 
 {% if schedule %}
 <div class="day-schedule-header">
-    <a href="{{ url_for('schedule.personal', date=schedule['date'], sub=True) }}" class="day-schedule-button">
-        <<
-    </a>
+    {% if may_prev %}
+        <a href="{{ url_for('schedule.personal', date=schedule['date'], sub=True) }}" class="day-schedule-button">
+            <<
+        </a>
+    {% endif %}
     <p class="day-schedule-title">
         
             {{ schedule["day"] }} {{ schedule["date"] }}
     </p>
-    <a href="{{ url_for('schedule.personal', date=schedule['date'], add=True) }}" class="day-schedule-button">
-        >>
-    </a>
+    {% if may_next %}
+        <a href="{{ url_for('schedule.personal', date=schedule['date'], add=True) }}" class="day-schedule-button">
+            >>
+        </a>
+    {% endif %}
 </div>
 
 <div class="day-content" style="position: relative;">

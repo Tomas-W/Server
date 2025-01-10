@@ -69,6 +69,11 @@ def clear_news_db() -> None:
     server_db_.session.commit()
 
 
+def clear_comments_db() -> None:
+    server_db_.session.query(Comment).delete()
+    server_db_.session.commit()
+
+
 def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[str],
                      info_cols: list[str], info_rows: list[str]) -> None:
     from src.models.news_model.news_mod import News

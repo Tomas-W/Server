@@ -314,7 +314,7 @@ def _init_user() -> str | None:
             display_name="Server Admin",
             email_verified=True,
             employee_name="Tomas W",
-            roles="admin"
+            roles=["admin", "employee"]
         )
         delete_user = User(
             email="deleted@user.com",

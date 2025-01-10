@@ -191,12 +191,12 @@ class News(server_db_.Model):
                 )
     
     def cli_repr(self) -> str:
-        return f"ID- - - - -{self.id}\n" \
-               f"CREATED AT-{self.created_at.strftime('%d %b %Y @ %H:%M')}\n" \
-               f"TITLE-- - -{self.title[:50]}..\n" \
-               f"CODE- - - -{self.code}\n" \
-               f"AUTHOR- - -{self.author}\n" \
-               f"IMPORTANT--{self.important[:50]}.."
+        return (f"{'ID':<13}{self.id}\n"
+                f"{'CREATED AT':<13}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
+                f"{'TITLE':<13}{self.title[:50]}..\n"
+                f"{'CODE':<13}{self.code}\n"
+                f"{'AUTHOR':<13}{self.author}\n"
+                f"{'IMPORTANT':<13}{self.important[:50]}..")
 
     
 class Comment(server_db_.Model):
@@ -232,26 +232,6 @@ class Comment(server_db_.Model):
     
     user_id: Mapped[int] = mapped_column(ForeignKey("auth.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="comments")
-
-    def __repr__(self) -> str:
-        return (f"Comment:"
-                f" (id={self.id},"
-                f" news_id={self.news_id},"
-                f" user_id='{self.user_id}')"
-                f" username='{self.user.username}')"
-                )
-    
-    def cli_repr(self) -> str:
-        return f"COMMENT ID- -{self.id}\n" \
-               f"CREATED AT- -{self.created_at.strftime('%d %b %Y @ %H:%M')}\n" \
-               f"NEWS ID-- - -{self.news_id}\n" \
-               f"USERNAME- - -{self.user.username}\n" \
-               f"CONTENT-- - -{self.content[:40]}..\n" \
-               f"LIKE DISLIKE-{self.liked_by} / {self.disliked_by}"
-    
-    @staticmethod
-    def _split(value: str) -> list[str]:
-        return value.split("|") if value else []
     
     def to_dict(self) -> dict:
         """
@@ -288,3 +268,24 @@ class Comment(server_db_.Model):
     
     def _remove_disliked_by(self, user_id: int) -> None:
         self.disliked_by = self.disliked_by.replace(f"{user_id}|", "")
+    
+    @staticmethod
+    def _split(value: str) -> list[str]:
+        return value.split("|") if value else []
+
+    def __repr__(self) -> str:
+        return (f"Comment:"
+                f" (id={self.id},"
+                f" news_id={self.news_id},"
+                f" user_id='{self.user_id}')"
+                f" username='{self.user.username}')"
+                )
+    
+    def cli_repr(self) -> str:
+        return (f"{'COMMENT ID':<13}{self.id}\n"
+                f"{'CREATED AT':<13}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
+                f"{'NEWS ID':<13}{self.news_id}\n"
+                f"{'USERNAME':<13}{self.user.username}\n"
+                f"{'CONTENT':<13}{self.content[:40]}..\n"
+                f"{'LIKE/DISLIKE':<13}{self.liked_by} / {self.disliked_by}")
+    

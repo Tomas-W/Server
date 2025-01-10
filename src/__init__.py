@@ -1,7 +1,7 @@
 import os
 import secrets
 
-from flask import Flask, send_from_directory, request, render_template
+from flask import Flask, send_from_directory, request
 from flask_login import current_user
 from flask_assets import Environment, Bundle
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,15 +9,19 @@ from config.app_config import DebugConfig, DeployConfig, TestConfig
 from config.settings import (
     DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
     PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
-    BAKERY_HEALTH_IMAGES_FOLDER, E_500_TEMPLATE
+    BAKERY_HEALTH_IMAGES_FOLDER
 )
 
 from src.extensions import (
     server_db_, mail_, csrf_, login_manager_, migrater_, limiter_, session_,
-    compress_
+    logger, compress_
 )
 from src.models.mod_utils import load_user
-from src.cli.cli import _auth_cli, _server_cli
+from src.cli.user_cli import user_cli
+from src.cli.news_cli import news_cli
+from src.cli.schedule_cli import schedule_cli
+from src.cli.server_cli import server_cli
+from src.cli.bakery_cli import bakery_cli
 from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
 
 HEADERS = {
@@ -131,16 +135,35 @@ def _configure_requests(app_: Flask) -> None:
             response.cache_control.max_age = 0
             response.expires = 0
         return response
+    
+    def manage_db_sessions(exception=None):
+        """
+        Ensure the database session is properly committed or rolled back
+        after each request.
+        """
+        if exception:
+            server_db_.session.rollback()
+        else:
+            try:
+                server_db_.session.commit()
+            except SQLAlchemyError as e:
+                server_db_.session.rollback()
+                logger.log.error(f"Database commit failed: {e}")
+            finally:
+                server_db_.session.remove()
 
     app_.before_request(handle_user_activity)
     app_.before_request(make_nonce)
     # app_.after_request(add_security_headers)
     app_.after_request(add_cache_control_headers)
-
+    app_.teardown_request(manage_db_sessions)
 
 def _configure_cli(app_: Flask) -> None:
-    _auth_cli(app_)
-    _server_cli(app_)
+    user_cli(app_)
+    schedule_cli(app_)
+    news_cli(app_)
+    bakery_cli(app_)
+    server_cli(app_)
 
 
 def _configure_database(app_: Flask) -> None:

@@ -3,10 +3,9 @@ from sqlalchemy import Integer, String, Date, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.extensions import server_db_, logger
-from src.models.schedule_model.schedule_mod_utils import (
+from src.utils.schedule import (
     update_employee_json, add_employee_json
 )
-
 
 class Employees(server_db_.Model):
     """
@@ -16,16 +15,7 @@ class Employees(server_db_.Model):
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=True)
     is_activated: Mapped[bool] = mapped_column(Boolean, default=False)
-    
-    def __init__(self, name: str):
-        name = self.crop_name(name)
-        employee = Employees.query.filter_by(name=name).first()
-        if not employee:
-            self.name = name
-            add_employee_json(self.name)
-        else:
-            logger.log.error(f"Employee name {name} already in database")
-       
+
     def set_email(self, email: str) -> bool:
         if self.email == email:
             logger.log.error(f"Email {email} already set for employee {self.name}")
@@ -55,10 +45,29 @@ class Employees(server_db_.Model):
             return False
     
     @staticmethod
+    def add_employee(name: str):
+        cropped_name = Employees.crop_name(name)
+        employee = Employees.query.filter_by(name=cropped_name).first()
+        if not employee:
+            employee = Employees(name=cropped_name)
+            server_db_.session.add(employee)
+            server_db_.session.commit()
+            add_employee_json(cropped_name)
+            logger.log.info(f"Employee {cropped_name} added to database")
+        else:
+            logger.log.error(f"Employee name {cropped_name} already in database")
+
+    @staticmethod
     def crop_name(name: str) -> str:
         parts = name.split()
         last_name_initial = next((part[0].upper() for part in parts[1:] if part[0].isupper()), parts[-1][0].upper())
         return f"{parts[0]} {last_name_initial}"
+
+    def cli_repr(self) -> str:
+        return (f"{'ID':<13}{self.id}\n"
+                f"{'NAME':<13}{self.name}\n"
+                f"{'EMAIL':<13}{self.email}\n"
+                f"{'IS ACTIVATED':<13}{self.is_activated}")
 
 
 class Schedule(server_db_.Model):
@@ -202,8 +211,8 @@ class Schedule(server_db_.Model):
         return [int(item) if make_int else item for item in value.split("|")] if value else []
 
     def cli_repr(self) -> str:
-        return f"ID- - - - - -{self.id}\n" \
-               f"DATE- - - - -{self.date}\n" \
-               f"WEEK NUMBER--{self.week_number}\n" \
-               f"DAY-- - - - -{self.day}\n"
-    
+        return (f"{'ID':<13}{self.id}\n"
+                f"{'DATE':<13}{self.date}\n"
+                f"{'WEEK NUMBER':<13}{self.week_number}\n"
+                f"{'DAY':<13}{self.day}\n"
+                f"{'NAMES':<13}{self.names}")

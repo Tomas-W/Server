@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import (
     Blueprint, render_template, request, session, flash, redirect, url_for
 )
@@ -16,6 +17,7 @@ from src.models.auth_model.auth_mod_utils import (
 )
 from src.routes.schedule.schedule_forms import ScheduleRequestForm
 from src.models.schedule_model.schedule_mod_utils import update_employee
+from src.utils.schedule import _week_from_date, _now
 from config.settings import (
     EMPLOYEE_VERIFICATION, EMPLOYEE_VERIFICATION_SEND_MSG, SCHEDULE_REDIRECT,
     EMPLOYEE_VERIFIED_MSG, EMPLOYEE_NOT_FOUND_MSG, SESSION_ERROR_MSG,
@@ -26,7 +28,7 @@ schedule_bp = Blueprint("schedule", __name__)
 
 
 @schedule_bp.route("/schedule/personal", methods=["GET", "POST"])
-@schedule_bp.route("/schedule/<date>", methods=["GET", "POST"])
+@schedule_bp.route("/schedule/<date>", methods=["GET"])
 def personal(date: str = None):
     schedule_reqest_form = ScheduleRequestForm()
     schedule_reqest_form.email.data = current_user.email
@@ -46,22 +48,29 @@ def personal(date: str = None):
             session["schedule_request_errors"] = schedule_reqest_form.errors
     
     requested_date = get_requested_date(date)
-    requested_schedule = Schedule.query.filter_by(date=requested_date).first()
-    requested_schedule_dict = requested_schedule.date_to_dict() if requested_schedule else {}
-    
-    personal_schedule_dicts = get_personal_schedule_dicts()
-    
-    schedule_request_errors = session.get("schedule_request_errors", None)   
-    logger.log.info(repr(current_user))
+    requested_schedule = Schedule.query.filter_by(date=requested_date).one_or_none()
+    prev_date = requested_date - timedelta(days=1)
+    prev_date_schedule = Schedule.query.filter_by(date=prev_date).one_or_none()
+    next_date = requested_date + timedelta(days=1)
+    next_date_schedule = Schedule.query.filter_by(date=next_date).one_or_none()
+    may_prev = prev_date_schedule is not None
+    may_next = next_date_schedule is not None
 
-    flash("Test flash message")
+    requested_schedule_dict = requested_schedule.date_to_dict() if requested_schedule else {}
+    personal_schedule_dicts = get_personal_schedule_dicts()
+
+    schedule_request_errors = session.get("schedule_request_errors", None)   
+    current_week_num = _week_from_date(_now())
+
     return render_template(
         SCHEDULE_PERSONAL_TEMPLATE,
-        display_table=True,
         schedule=requested_schedule_dict,
         schedule_request_form=schedule_reqest_form,
         schedule_request_errors=schedule_request_errors,
-        personal_schedule_dicts=personal_schedule_dicts
+        personal_schedule_dicts=personal_schedule_dicts,
+        current_week_num=current_week_num,
+        may_prev=may_prev,
+        may_next=may_next
         )
 
 

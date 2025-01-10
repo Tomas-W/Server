@@ -27,7 +27,7 @@
     <div class="schedule-content">
         {% for week_dicts in personal_schedule_dicts %}
             <p class="week-number">
-                Week {{ week_dicts[0]["week_number"] }} {% if loop.index == 1 %} [ current ] {% endif %}
+                Week {{ week_dicts[0]["week_number"] }} {% if week_dicts[0]["week_number"] == current_week_num %} [ current ] {% endif %}
             </p>
             <div class="personal-content">
                 <table class="week-table">

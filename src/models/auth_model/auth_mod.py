@@ -285,6 +285,22 @@ class User(server_db_.Model, UserMixin):
             self.employee_name = employee_name
         except ValidationError as e:
             raise ValueError(f"Employee name validation error: {e}")
+    
+    def _init_roles(self, roles: str | list[str] | None) -> str:
+        if roles is None:
+            return ""
+        user_roles = []
+        if isinstance(roles, list):
+            for role in roles:
+                if role not in USER_ROLES:
+                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
+                    logger.log.error(errors)
+                else:
+                    user_roles.append(role)
+        elif isinstance(roles, str):
+            user_roles.append(roles)
+
+        self.update_roles(user_roles)
 
     def get_roles(self) -> list[str]:
         if not self.roles:
@@ -357,12 +373,12 @@ class User(server_db_.Model, UserMixin):
             self.roles = ""
             return
         if isinstance(roles, list):
-            logger.log.info(f"Updating list of roles to: {roles}")
+            logger.log.info(f"Updating roles to: {[role for role in roles]}")
             self.roles = "|".join(roles)
             self.roles += "|"
             logger.log.info(f"New roles: {self.roles}")
         elif isinstance(roles, str):
-            logger.log.info(f"Updating role to: {roles}")
+            logger.log.info(f"Updating roles to: {roles}")
             self.roles = roles if not roles.endswith("|") else roles + "|"
             logger.log.info(f"New roles: {self.roles}")
         else:
@@ -408,21 +424,6 @@ class User(server_db_.Model, UserMixin):
     def increment_tot_logins(self) -> None:
         self.tot_logins += 1
 
-    def _init_roles(self, roles: str | list[str] | None) -> str:
-        if roles is None:
-            return ""
-        user_roles = []
-        if isinstance(roles, list):
-            for role in roles:
-                if role not in USER_ROLES:
-                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.log.error(errors)
-                user_roles.append(role)
-        elif isinstance(roles, str):
-            user_roles.append(roles)
-
-        self.update_roles(user_roles)
-
     @staticmethod
     def _init_profile_icon() -> str:
         return random.choice([file for file in os.listdir(PROFILE_ICONS_FOLDER)])
@@ -443,11 +444,11 @@ class User(server_db_.Model, UserMixin):
                 f" employee_name={self.employee_name})")
 
     def cli_repr(self) -> str:
-        return f"ID- - - - - - -{self.id}\n" \
-               f"USERNAME- - - -{self.username}\n" \
-               f"EMAIL-- - - - -{self.email}\n" \
-               f"EMPLOYEE NAME--{self.employee_name}\n" \
-               f"DISPLAY NAME- -{self.display_name}\n" \
-               f"ROLES-- - - - -{self.roles.replace('|', ', ')}\n" \
-               f"LAST SEEN AT- -{self.last_seen_at.strftime('%d %b %Y @ %H:%M')}"
+        return (f"{'ID':<13}{self.id}\n"
+                f"{'USERNAME':<13}{self.username}\n"
+                f"{'EMAIL':<13}{self.email}\n"
+                f"{'EMPLOYEE NAME':<13}{self.employee_name}\n"
+                f"{'DISPLAY NAME':<13}{self.display_name}\n"
+                f"{'ROLES':<13}{self.roles.replace('|', ', ')}\n"
+                f"{'LAST SEEN AT':<13}{self.last_seen_at.strftime('%d %b %Y @ %H:%M')}")
                 

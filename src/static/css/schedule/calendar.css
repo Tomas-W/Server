@@ -1,0 +1,62 @@
+.calendar-content {
+    padding: 100px 50px 50px 50px;
+}
+
+.calendar-grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.week-numbers-column {
+    display: grid;
+    grid-template-rows: 40px repeat(5, 85px);
+    gap: 20px;
+}
+
+.week-number {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.calendar-wrapper {
+    display: grid;
+    grid-template-columns: repeat(7, 85px);
+    grid-template-rows: 40px repeat(5, 85px);
+    gap: 20px;
+}
+
+.day {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.day-number {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.day-date {
+    font-size: 10px;
+    color: var(--text-color);
+}
+
+.weekday {
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.adjacent-month {
+    opacity: 0.5;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.on-duty {
+    background-color: var(--green-border);
+}

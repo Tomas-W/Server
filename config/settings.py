@@ -80,6 +80,8 @@ INFO_TEMPLATE: str = "/bakery/info.html"
 SEARCH_TEMPLATE: str = "/bakery/search.html"
 
 SCHEDULE_PERSONAL_TEMPLATE: str = "/schedule/personal.html"
+SCHEDULE_CALENDAR_TEMPLATE: str = "/schedule/calendar.html"
+SCHEDULE_CALENDAR_FORM_TYPE: str = "calendar_form"
 
 EMAIL_TEMPLATE: str = "/admin/email.html"
 E_400_TEMPLATE: str = "/errors/400.html"

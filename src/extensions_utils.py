@@ -134,6 +134,15 @@ schedule_css = [
         ],
         "filters": "rcssmin",
         "output": "dist/personal_css.min.css"
+    },
+    {
+        "name": "calendar_css",
+        "files": [
+            "css/schedule/schedule_base.css",
+            "css/schedule/calendar.css",
+        ],
+        "filters": "rcssmin",
+        "output": "dist/calendar_css.min.css"
     }
 ]
 

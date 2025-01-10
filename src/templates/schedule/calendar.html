@@ -1,0 +1,67 @@
+{% extends "schedule/schedule_base.html" %}
+
+{% block title %}
+    Calendar
+{% endblock %}
+
+{% block scripts %}
+<link rel="preload"
+      href="{{ url_for("static",
+      filename="dist/calendar_css.min.css") }}" 
+      as="style" 
+      onload="this.rel='stylesheet'">
+{% endblock %}
+
+{% block schedule_content %}
+<div class="schedule-wrapper">
+    
+    {% if get_flashed_messages() %}
+        <div class="schedule-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+        </div>
+    {% endif %}
+
+    <div class="calendar-content">
+        <div class="calendar-grid">
+            <!-- Week numbers column -->
+            <div class="week-numbers-column">
+                <div class="weekday"></div>
+                {% for week_num in week_numbers %}
+                    <div class="weekday week-number">wk {{ week_num }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Calendar grid -->
+            <div class="calendar-wrapper">
+                {% for day in week_days %}
+                    <div class="weekday">{{ day }}</div>
+                {% endfor %}
+                
+                <!-- Previous month days -->
+                {% for date in prev_month_days %}
+                    <div class="day outline adjacent-month {% if date in on_duty_days %}on-duty{% endif %}">
+                        <p class="day-number">{{ date.split('-')[0] }}</p>
+                        <p class="day-date">{{ date }}</p>
+                    </div>
+                {% endfor %}
+                
+                <!-- Current month days -->
+                {% for date in dates %}
+                    <div class="day outline {% if date in on_duty_days %}on-duty{% endif %}">
+                        <p class="day-number">{{ loop.index }}</p>
+                        <p class="day-date">{{ date }}</p>
+                    </div>
+                {% endfor %}
+                
+                <!-- Next month days -->
+                {% for date in next_month_days %}
+                    <div class="day outline adjacent-month {% if date in on_duty_days %}on-duty{% endif %}">
+                        <p class="day-number">{{ date.split('-')[0] }}</p>
+                        <p class="day-date">{{ date }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

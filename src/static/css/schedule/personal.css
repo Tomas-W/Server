@@ -1,14 +1,3 @@
-.schedule-flash {
-    padding: 40px 0 40px 0;
-    font-style: italic;
-}
-
-.schedule-flash p {
-    text-align: center;
-    color: var(--text-color);
-    font-size: var(--admin-flash-size);
-}
-
 .week-number {
     padding: 0 0 5px 0;
     font-size: var(--schedule-week-size);
@@ -16,11 +5,11 @@
     color: var(--text-color);
 }
 
-.schedule-content {
+.personal-content {
     padding: 75px 50px 50px 50px;
 }
 
-.personal-content {
+.week-content {
     position: relative;
     padding: 0 0 40px 0;
 }

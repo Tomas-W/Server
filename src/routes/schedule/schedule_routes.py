@@ -1,22 +1,29 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from flask import (
     Blueprint, render_template, request, session, flash, redirect, url_for
 )
-from flask_login import current_user
+from flask_login import login_required, current_user
 from src.models.schedule_model.schedule_mod import Schedule
 from config.settings import (
-    SCHEDULE_PERSONAL_TEMPLATE, SCHEDULE_REQUEST_FORM_TYPE
+    SCHEDULE_PERSONAL_TEMPLATE, SCHEDULE_CALENDAR_TEMPLATE,
+    SCHEDULE_REQUEST_FORM_TYPE
 )
 from src.extensions import logger
 from src.routes.schedule.schedule_route_utils import (
-    get_requested_date, get_personal_schedule_dicts
+    get_requested_date, get_personal_schedule_dicts, get_calendar_dates,
+    get_prev_month_days, get_next_month_days, get_calendar_week_numbers,
+    get_shortened_week_days
 )
 from src.models.auth_model.auth_mod_utils import (
     start_verification_process, confirm_authentication_token,
     delete_authentication_token
 )
-from src.routes.schedule.schedule_forms import ScheduleRequestForm
-from src.models.schedule_model.schedule_mod_utils import update_employee
+from src.routes.schedule.schedule_forms import (
+    ScheduleRequestForm, CalendarForm
+)
+from src.models.schedule_model.schedule_mod_utils import (
+    update_employee, get_calendar_on_duty_days
+)
 from src.utils.schedule import _week_from_date, _now
 from config.settings import (
     EMPLOYEE_VERIFICATION, EMPLOYEE_VERIFICATION_SEND_MSG, SCHEDULE_REDIRECT,
@@ -27,6 +34,7 @@ from config.settings import (
 schedule_bp = Blueprint("schedule", __name__)
 
 
+@login_required
 @schedule_bp.route("/schedule/personal", methods=["GET", "POST"])
 @schedule_bp.route("/schedule/<date>", methods=["GET"])
 def personal(date: str = None):
@@ -74,11 +82,46 @@ def personal(date: str = None):
         )
 
 
-@schedule_bp.route("/schedule/personal/calendar", methods=["POST"])
+@login_required
+@schedule_bp.route("/schedule/calendar", methods=["GET", "POST"])
 def calendar():
-    pass
+    calendar_form = CalendarForm()
+
+    if request.method == "POST":
+        if calendar_form.validate_on_submit():
+            pass
+            
+    dates = get_calendar_dates(1, 2025)
+    first_date = datetime.strptime(dates[0], '%d-%m-%Y')
+    first_day_offset = first_date.weekday()
+    
+    prev_month_days = get_prev_month_days(first_date, first_day_offset)
+    next_month_days = get_next_month_days(first_date, first_day_offset + len(dates))
+
+    all_days = prev_month_days + dates + next_month_days
+    on_duty_days = get_calendar_on_duty_days(all_days)
+    
+    week_numbers = get_calendar_week_numbers(dates, first_day_offset)
+    week_days = get_shortened_week_days()
+
+    logger.log.info(f"All days: {all_days}")
+    logger.log.info("D")
+    logger.log.info(f"On duty days: {on_duty_days}")
+
+    return render_template(
+        SCHEDULE_CALENDAR_TEMPLATE,
+        calendar_form=calendar_form,
+        dates=dates,
+        first_day_offset=first_day_offset,
+        prev_month_days=prev_month_days,
+        next_month_days=next_month_days,
+        week_numbers=week_numbers,
+        week_days=week_days,
+        on_duty_days=on_duty_days
+    )
 
 
+@login_required
 @schedule_bp.route("/schedule/verify-employee/<token>", methods=["GET"])
 def verify_employee(token):    
     email = confirm_authentication_token(token, EMPLOYEE_VERIFICATION)

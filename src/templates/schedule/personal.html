@@ -24,12 +24,12 @@
         </div>
     {% endif %}
 
-    <div class="schedule-content">
+    <div class="personal-content">
         {% for week_dicts in personal_schedule_dicts %}
             <p class="week-number">
                 Week {{ week_dicts[0]["week_number"] }} {% if week_dicts[0]["week_number"] == current_week_num %} [ current ] {% endif %}
             </p>
-            <div class="personal-content">
+            <div class="week-content">
                 <table class="week-table">
                     <tr class="time-row">
                         <th colspan="4" class="time">06</th>

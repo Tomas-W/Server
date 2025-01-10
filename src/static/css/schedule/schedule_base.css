@@ -1,0 +1,13 @@
+.schedule-wrapper {
+}
+
+.schedule-flash {
+    padding: 40px 0 40px 0;
+    font-style: italic;
+}
+
+.schedule-flash p {
+    text-align: center;
+    color: var(--text-color);
+    font-size: var(--admin-flash-size);
+}

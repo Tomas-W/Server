@@ -1,12 +1,29 @@
 import json
 import os
 from flask_login import current_user
+from datetime import datetime
 
-from src.utils.schedule import _date_from_week_day_year
+from src.models.schedule_model.schedule_mod import Schedule
 from src.extensions import server_db_, logger
 from config.settings import (
     EMPLOYEES_PATH, EMPLOYEE_ROLE
 )
+
+
+def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
+    """
+    Returns the list of dates where the current user is on duty.
+    """
+    date_objects = [datetime.strptime(date, '%d-%m-%Y').date() for date in dates]
+    schedules = Schedule.query.filter(Schedule.date.in_(date_objects)).all()
+    
+    on_duty_dates = []
+    for schedule in schedules:
+        names = schedule.names.split('|')
+        if current_user.employee_name in names:
+            on_duty_dates.append(schedule.date.strftime('%d-%m-%Y'))
+    
+    return on_duty_dates
 
 
 def update_employee(name: str, email: str | None = None) -> bool:

@@ -84,7 +84,6 @@ class News(server_db_.Model):
         self.info_rows = self._join(info_rows)
         self.author = author
         self.user_id=user_id
-
     
     def grid_len(self) -> int:
         return len(self.grid_cols.split("|")) if self.grid_cols else 0
@@ -156,31 +155,26 @@ class News(server_db_.Model):
         Returns a dictionary representation of the News object
         for easy frontend display.
         """	
-        try:
-            return {
-                "id": self.id,
-                "title": self.title,
-                "header": self.header,
-                "code": self.code,
-                "color": self.color,
-                "important": self.important,
-                "grid_cols": self._split(str(self.grid_cols)),
-                "grid_rows": self._get_grid_rows(),
-                "info_cols": self._split(str(self.info_cols)),
-                "info_rows": self._split(str(self.info_rows)),
-                "author": self.author,
-                "seen_by": [num for num in self._split(str(self.seen_by)) if num],
-                "accepted_by": self._split(str(self.accepted_by)),
-                "liked_by": [num for num in self._split(str(self.liked_by)) if num],
-                "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
-                "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
-                "comments": [comment.to_dict() for comment in self.comments],
-            }
-        except KeyError as e:
-            errors = f"KeyError: {e} - {logger.get_log_info()}"
-            logger.log.error(errors)
-            return {}
-          
+        return {
+            "id": self.id,
+            "title": self.title,
+            "header": self.header,
+            "code": self.code,
+            "color": self.color,
+            "important": self.important,
+            "grid_cols": self._split(str(self.grid_cols)),
+            "grid_rows": self._get_grid_rows(),
+            "info_cols": self._split(str(self.info_cols)),
+            "info_rows": self._split(str(self.info_rows)),
+            "author": self.author,
+            "seen_by": [num for num in self._split(str(self.seen_by)) if num],
+            "accepted_by": self._split(str(self.accepted_by)),
+            "liked_by": [num for num in self._split(str(self.liked_by)) if num],
+            "disliked_by": [num for num in self._split(str(self.disliked_by)) if num],
+            "created_at": self.created_at.strftime("%d %b %Y @ %H:%M"),
+            "comments": [comment.to_dict() for comment in self.comments],
+        }
+
     def __repr__(self) -> str:
         return (f"News:"
                 f" (id={self.id},"
@@ -191,12 +185,12 @@ class News(server_db_.Model):
                 )
     
     def cli_repr(self) -> str:
-        return (f"{'ID':<13}{self.id}\n"
-                f"{'CREATED AT':<13}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
-                f"{'TITLE':<13}{self.title[:50]}..\n"
-                f"{'CODE':<13}{self.code}\n"
-                f"{'AUTHOR':<13}{self.author}\n"
-                f"{'IMPORTANT':<13}{self.important[:50]}..")
+        return (f"{'ID':<18}{self.id}\n"
+                f"{'CREATED AT':<18}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
+                f"{'TITLE':<18}{self.title[:50]}..\n"
+                f"{'CODE':<18}{self.code}\n"
+                f"{'AUTHOR':<18}{self.author}\n"
+                f"{'IMPORTANT':<18}{self.important[:50]}..")
 
     
 class Comment(server_db_.Model):
@@ -282,10 +276,10 @@ class Comment(server_db_.Model):
                 )
     
     def cli_repr(self) -> str:
-        return (f"{'COMMENT ID':<13}{self.id}\n"
-                f"{'CREATED AT':<13}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
-                f"{'NEWS ID':<13}{self.news_id}\n"
-                f"{'USERNAME':<13}{self.user.username}\n"
-                f"{'CONTENT':<13}{self.content[:40]}..\n"
-                f"{'LIKE/DISLIKE':<13}{self.liked_by} / {self.disliked_by}")
+        return (f"{'COMMENT ID':<18}{self.id}\n"
+                f"{'CREATED AT':<18}{self.created_at.strftime('%d %b %Y @ %H:%M')}\n"
+                f"{'NEWS ID':<18}{self.news_id}\n"
+                f"{'USERNAME':<18}{self.user.username}\n"
+                f"{'CONTENT':<18}{self.content[:40]}..\n"
+                f"{'LIKE/DISLIKE':<18}{self.liked_by} / {self.disliked_by}")
     

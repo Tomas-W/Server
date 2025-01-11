@@ -7,12 +7,12 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from google.oauth2 import id_token  # noqa
+from google.auth.exceptions import GoogleAuthError
 from pip._vendor import cachecontrol  # noqa
 import google.auth.transport.requests  # noqa
-from google.auth.exceptions import GoogleAuthError
 from sqlalchemy import select
 
-from src.extensions import server_db_, flow_
+from src.extensions import server_db_, flow_, logger
 from src.models.auth_model.auth_mod_utils import delete_authentication_token
 from src.routes.auth.auth_forms import (
     LoginForm, FastLoginForm, RegisterForm, RequestResetForm, SetPasswordForm,
@@ -29,7 +29,6 @@ from src.models.auth_model.auth_mod_utils import (
 from src.models.state_model.state_mod_utils import (
     save_oauth_state, get_and_delete_oauth_state
 )
-from src.extensions import logger
 from config.settings import (
     PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT,
     SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
@@ -140,8 +139,11 @@ def callback():
     """
     try:
         flow_.fetch_token(authorization_response=request.url)
+    except GoogleAuthError as e:
+        flash(TOKEN_ERROR_MSG)
+        return redirect(url_for(LOGIN_REDIRECT))
     except Exception as e:
-        logger.log.warning(f"{e} - {logger.get_log_info()}")
+        logger.warning(f"[AUTH] OAUTH ERROR {e}")
         flash(TOKEN_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
 
@@ -149,7 +151,7 @@ def callback():
     oauth_state = get_and_delete_oauth_state(state_in_request)
 
     if not oauth_state:
-        logger.log.warning(f"Wrong 0Auth state - {logger.get_log_info()}")
+        logger.error(f"[AUTH] WRONG OAUTH STATE")
         flash(STATE_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
 
@@ -165,11 +167,10 @@ def callback():
             audience=os.environ.get("GOOGLE_CLIENT_ID"),
         )
     except GoogleAuthError as e:
-        logger.log.warning(f"{e} - {logger.get_log_info()}")
         flash(TOKEN_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
     except ValueError as e:
-        logger.log.warning(f"{e} - {logger.get_log_info()}")
+        logger.error(f"[AUTH] OAUTH TOKEN VALIDATION ERROR: {credentials.id_token[:20]}.. {e}")
         flash(TOKEN_ERROR_MSG)
         return redirect(url_for(LOGIN_REDIRECT))
     

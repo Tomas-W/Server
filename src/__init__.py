@@ -1,15 +1,18 @@
 import os
 import secrets
 
+from dotenv import load_dotenv
+load_dotenv('.flaskenv')
 from flask import Flask, send_from_directory, request
 from flask_login import current_user
 from flask_assets import Environment, Bundle
 from sqlalchemy.exc import SQLAlchemyError
-from config.app_config import DebugConfig, DeployConfig, TestConfig
+
+from config.app_config import DebugConfig, DeployConfig
 from config.settings import (
     DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
     PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
-    BAKERY_HEALTH_IMAGES_FOLDER
+    BAKERY_HEALTH_IMAGES_FOLDER, UPLOAD_FOLDER
 )
 
 from src.extensions import (
@@ -24,36 +27,28 @@ from src.cli.server_cli import server_cli
 from src.cli.bakery_cli import bakery_cli
 from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
 
-HEADERS = {
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-    "X-Frame-Options": "SAMEORIGIN",
-    "X-XSS-Protection": "1; mode=block",
-    "X-Content-Type-Options": "nosniff",
-    "Content-Security-Policy": (
-        "default-src 'self'; "
-        "object-src 'none'; "
-        "script-src 'self' 'nonce-{request.csp_nonce}' cdn.jsdelivr.net kit.fontawesome.com; "
-        "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com ka-f.fontawesome.com; "
-        "font-src 'self' fonts.gstatic.com ka-f.fontawesome.com; "
-        "base-uri 'self'; "
-        "require-trusted-types-for 'script';"
-    ),
-    "Referrer-Policy": "strict-origin-when-cross-origin"
-}
 
-
-def _configure_server(app_: Flask, testing: bool = False) -> Flask:
-    _configure_paths()
+def _configure_server(app_: Flask) -> Flask:
+    """Configure the Flask application."""
+    _configure_paths(app_)
+    
+    # Get environment setting
     environment = os.environ.get("FLASK_ENV", "debug").lower()
-    if testing:
-        config_obj = TestConfig()
-    elif environment == "debug":
+    
+    # Select configuration based on environment
+    if environment == "debug":
         config_obj = DebugConfig()
+        os.environ["FLASK_DEBUG"] = "1"
+        app_.logger.warning("Detected debug environment")
+
     elif environment == "deploy":
         config_obj = DeployConfig()
+        os.environ["FLASK_DEBUG"] = "0"
+        app_.logger.warning("Detected deployment environment")
     else:
-        raise ValueError(f"Expected 'debug' or 'deploy' but received '{environment}'")
+        raise ValueError(f"Invalid FLASK_ENV value: '{environment}'. Expected 'debug' or 'deploy'")
 
+    # Apply configuration
     app_.config.from_object(config_obj)
     app_.config["INSTANCE"] = config_obj
 
@@ -67,12 +62,14 @@ def _configure_server(app_: Flask, testing: bool = False) -> Flask:
     return app_
 
 
-def _configure_paths() -> None:
-    if not os.path.exists(DB_FOLDER):
-        os.mkdir(DB_FOLDER)
+def _configure_paths(app_: Flask) -> None:
+    for folder in [DB_FOLDER, UPLOAD_FOLDER, PROFILE_PICTURES_FOLDER, PROFILE_ICONS_FOLDER, DB_FOLDER]:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
 
 
 def _configure_extensions(app_: Flask) -> None:
+    logger.init_app(app_)
     server_db_.init_app(app_)
     mail_.init_app(app_)
     csrf_.init_app(app_)
@@ -87,6 +84,7 @@ def _configure_extensions(app_: Flask) -> None:
     app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
     app_.context_processor(lambda: {"assets": assets_})
     compress_.init_app(app_)
+
 
 def _configure_blueprints(app_: Flask) -> None:
     from src.routes.news.news_routes import news_bp
@@ -108,55 +106,41 @@ def _configure_requests(app_: Flask) -> None:
         if current_user.is_authenticated:
             current_user.update_last_seen()
 
-    def make_nonce():
-        if not getattr(request, "csp_nonce", None):
-            request.csp_nonce = secrets.token_urlsafe(18)[:18]
-
     def add_security_headers(resp):
-        resp.headers.update(HEADERS)
-        csp_header = resp.headers.get("Content-Security-Policy")
-        if csp_header and "nonce" not in csp_header:
-            resp.headers["Content-Security-Policy"] = \
-                csp_header.replace("script-src", f"script-src 'nonce-{request.csp_nonce}'")
+        resp.headers.update(app_.config['SECURITY_HEADERS'])
         return resp
 
     def add_cache_control_headers(response):
         content_type = response.headers.get("Content-Type", "")
         if "application/javascript" in content_type or "image/" in content_type:
             response.cache_control.public = True
-            response.cache_control.max_age = 3600 * 24 * 7  # 7 days
+            response.cache_control.max_age = 3600 * 24 * 7
             response.expires = 3600 * 24 * 7
-        #########################################################################
-        # Prevent caching of HTML and CSS
-        #########################################################################
         elif "text/html" in content_type or "text/css" in content_type:
-            response.cache_control.no_store = True  # Prevent caching of HTML
+            response.cache_control.no_store = True
             response.cache_control.no_cache = True
             response.cache_control.max_age = 0
             response.expires = 0
         return response
     
     def manage_db_sessions(exception=None):
-        """
-        Ensure the database session is properly committed or rolled back
-        after each request.
-        """
         if exception:
             server_db_.session.rollback()
+            app_.logger.error(f"Database error: {exception}")
         else:
             try:
                 server_db_.session.commit()
             except SQLAlchemyError as e:
                 server_db_.session.rollback()
-                logger.log.error(f"Database commit failed: {e}")
+                app_.logger.error(f"Database commit failed: {e}")
             finally:
                 server_db_.session.remove()
 
     app_.before_request(handle_user_activity)
-    app_.before_request(make_nonce)
-    # app_.after_request(add_security_headers)
+    app_.after_request(add_security_headers)
     app_.after_request(add_cache_control_headers)
     app_.teardown_request(manage_db_sessions)
+
 
 def _configure_cli(app_: Flask) -> None:
     user_cli(app_)
@@ -202,12 +186,12 @@ def _configure_css(assets_: Environment) -> None:
         )
 
 
-def get_app(testing: bool = False) -> Flask:
+def get_app() -> Flask:
     app_: Flask = Flask(
         import_name=__name__.split('.', maxsplit=1)[0],
         template_folder="templates",
         static_folder="static"
     )
-    app_ = _configure_server(app_, testing=testing)
+    app_ = _configure_server(app_)
     clear_webassets_cache()    
     return app_

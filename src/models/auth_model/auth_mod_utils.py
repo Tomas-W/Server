@@ -16,7 +16,8 @@ from smtplib import SMTPRecipientsRefused, SMTPSenderRefused
 from config.settings import (
     PASSWORD_VERIFICATION, EMAIL_VERIFICATION, EMPLOYEE_VERIFICATION, ADMIN_ROLE,
     RESET_PASSWORD_REDIRECT, VERIFY_EMAIL_REDIRECT, USER_ADMIN_REDIRECT,
-    GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION, VERIFY_EMPLOYEE_REDIRECT
+    GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION, VERIFY_EMPLOYEE_REDIRECT,
+    EMPLOYEE_ROLE
 )
 from src.extensions import server_db_, serializer_, mail_, logger
 
@@ -27,14 +28,30 @@ if TYPE_CHECKING:
 
 def admin_required(f: Callable) -> Callable:
     """
-    Decorator for admin-only routes.
+    Decorator for Admin-only routes.
     Redirects to ALL_NEWS_REDIRECT if User has no admin role.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.has_role(ADMIN_ROLE):
-            session["log_trigger"] = "admin_required"
-            abort(401)
+            logger.warning(f"[AUTH] ADMIN ACCESS DENIED: {current_user.username}.")
+            description = f"This page requires Admin access."
+            abort(401, description=description)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def employee_required(f: Callable) -> Callable:
+    """
+    Decorator for Employee-only routes.
+    Redirects to USER_ADMIN_REDIRECT if User has no employee role.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.has_role(EMPLOYEE_ROLE):
+            logger.warning(f"[AUTH] EMPLOYEE ACCESS DENIED: {current_user.username}.")
+            description = f"This page requires Employee access."
+            abort(401, description=description)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -49,8 +66,6 @@ def start_verification_process(email: str, token_type: str,
     if not allow_unknown:
         user = get_user_by_email(email)
         if not user:
-            errors = f"User not found - {logger.get_log_info()}"
-            logger.log.info(errors)
             time.sleep(0.3)  # TODO: remove delay
             return False
 
@@ -63,7 +78,7 @@ def start_verification_process(email: str, token_type: str,
 def get_authentication_token(email: str, token_type: str) -> str:
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
-        session["error_msg"] = f"Salt not found for: {token_type=}"
+        logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
         abort(500)
     token = serializer_.dumps(email, salt=salt)
     return token
@@ -113,7 +128,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         redirect_title = "To verify your employee account, "
         _anchor = "schedule-wrapper"
     else:
-        session["error_msg"] = f"Wrong token_type: {token_type}"
+        logger.error(f"[VALIDATION] WRONG TOKEN TYPE: {token_type}")
         abort(500)
 
     redirect_url = get_authentication_url(url_, token=token, _external=True)
@@ -143,7 +158,7 @@ def get_authentication_url(endpoint: str, **values: Any) -> str:
     try:
         return url_for(endpoint, **values)
     except (BuildError, KeyError, ValueError) as e:
-        session["error_msg"] = f"Error generating url_for: {e}"
+        logger.error(f"[VALIDATION] ERROR GENERATING URL: {e}")
         abort(500)
 
 
@@ -151,7 +166,7 @@ def get_authentication_email_template(template_name: str, **context: Any) -> str
     try:
         return render_template(template_name, **context)
     except (TemplateNotFound, TemplateSyntaxError, UndefinedError) as e:
-        session["error_msg"] = f"Error rendering email template: {e}"
+        logger.error(f"[VALIDATION] ERROR RENDERING EMAIL TEMPLATE: {e}")
         abort(500)
 
 
@@ -159,13 +174,13 @@ def send_email(message: Message) -> None:
     try:
         mail_.send(message)
     except SMTPRecipientsRefused as e:
-        session["error_msg"] = f"Recipients refused: {e}"
+        logger.info(f"[VALIDATION] RECIPIENTS REFUSED: {e}")
         abort(500)
     except SMTPSenderRefused as e:
-        session["error_msg"] = f"Sender refused: {e}"
+        logger.critical(f"[VALIDATION] SENDER REFUSED: {e}")
         abort(500)
     except Exception as e:
-        session["error_msg"] = f"Error sending verification: {e}"
+        logger.error(f"[VALIDATION] ERROR SENDING VERIFICATION: {e}")
         abort(500)
 
 def confirm_authentication_token(token: str, token_type: str,
@@ -179,7 +194,7 @@ def confirm_authentication_token(token: str, token_type: str,
     from src.models.auth_model.auth_mod import AuthenticationToken
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
-        session["error_msg"] = f"Salt not found for: {token_type}"
+        logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
         abort(500)
 
     try:
@@ -198,13 +213,10 @@ def confirm_authentication_token(token: str, token_type: str,
             return email
 
         else:
-            errors = f"Email token not confirmed - {logger.get_log_info()}"
-            logger.log.warning(errors)
+            logger.info(f"[VALIDATION] EMAIL TOKEN NOT CONFIRMED: {email}")
             return None
 
     except (SignatureExpired, BadSignature) as e:
-        errors = f"Email token expired: {e} - {logger.get_log_info()}"
-        logger.log.warning(errors)
         return None
 
 
@@ -277,12 +289,14 @@ def update_employee_name(id_: int, employee_name: str) -> None:
     server_db_.session.commit()
     
 
-def delete_user_by_id(id_: int) -> None:
+def delete_user_by_id(id_: int, cli: bool = False) -> None:
     """Delete a user by id. Used in cli."""
     from src.models.auth_model.auth_mod import User
     stmt = delete(User).filter_by(id=id_)
     server_db_.session.execute(stmt)
     server_db_.session.commit()
+    if not cli:
+        logger.warning(f"[DEL] DELETE USER: {id_} DELETED")
 
 
 def get_new_user(email: str, username: str, password: str) -> "User" | None:
@@ -295,10 +309,11 @@ def get_new_user(email: str, username: str, password: str) -> "User" | None:
     )
     server_db_.session.add(new_user)
     server_db_.session.commit()
+    logger.info(f"[ADD] USER CREATED: {new_user.username}")
     return new_user
 
 
-def _init_user() -> str | None:
+def _init_user() -> str | bool:
     """
     Initializer function for cli.
     No internal use.
@@ -316,15 +331,15 @@ def _init_user() -> str | None:
             employee_name="Tomas W",
             roles=["admin", "employee"]
         )
-        delete_user = User(
+        deleted_user = User(
             email="deleted@user.com",
             username="Deleted user",
             password="TomasTomas1!",
             display_name="Deleted user",
         )
         server_db_.session.add(new_user)
-        server_db_.session.add(delete_user)
+        server_db_.session.add(deleted_user)
         server_db_.session.commit()
         return new_user.cli_repr()
 
-    return None
+    return False

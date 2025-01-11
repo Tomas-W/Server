@@ -44,9 +44,10 @@ def get_item_by_id_dict(id_: int) -> Optional[dict]:
 
 
 def delete_item_by_id(id_: int) -> None:
-    server_db_.session.delete(server_db_.session.get(BakeryItem, id_))
+    item = server_db_.session.get(BakeryItem, id_)
+    server_db_.session.delete(item)
     server_db_.session.commit()
-
+    logger.warning(f"[DEL] BAKERY ITEM WITH ID {id_} named {item.name} DELETED")
 
 def search_bakery_items(query: str) -> list[BakeryItem]:
     search_term = f"%{query}%"
@@ -65,7 +66,7 @@ def update_search_field(mapper, connection, target):
     target.update_search_field()
 
 
-def _init_bakery() -> bool | None:
+def _init_bakery() -> bool:
     """
     Initializer function for cli.
     No internal use.
@@ -99,4 +100,4 @@ def _init_bakery() -> bool | None:
         server_db_.session.commit()
         return True
     
-    return None
+    return False

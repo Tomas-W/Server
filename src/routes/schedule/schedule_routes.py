@@ -16,13 +16,13 @@ from src.routes.schedule.schedule_route_utils import (
 )
 from src.models.auth_model.auth_mod_utils import (
     start_verification_process, confirm_authentication_token,
-    delete_authentication_token
+    delete_authentication_token, employee_required
 )
 from src.routes.schedule.schedule_forms import (
     ScheduleRequestForm, CalendarForm
 )
 from src.models.schedule_model.schedule_mod_utils import (
-    update_employee, get_calendar_on_duty_days
+    activate_employee, get_calendar_on_duty_days
 )
 from src.utils.schedule import _week_from_date, _now
 from config.settings import (
@@ -34,9 +34,12 @@ from config.settings import (
 schedule_bp = Blueprint("schedule", __name__)
 
 
-@login_required
+
+
 @schedule_bp.route("/schedule/personal", methods=["GET", "POST"])
 @schedule_bp.route("/schedule/<date>", methods=["GET"])
+@employee_required
+@login_required
 def personal(date: str = None):
     schedule_reqest_form = ScheduleRequestForm()
     schedule_reqest_form.email.data = current_user.email
@@ -83,6 +86,7 @@ def personal(date: str = None):
 
 
 @login_required
+@employee_required
 @schedule_bp.route("/schedule/calendar", methods=["GET", "POST"])
 def calendar():
     calendar_form = CalendarForm()
@@ -104,10 +108,6 @@ def calendar():
     week_numbers = get_calendar_week_numbers(dates, first_day_offset)
     week_days = get_shortened_week_days()
 
-    logger.log.info(f"All days: {all_days}")
-    logger.log.info("D")
-    logger.log.info(f"On duty days: {on_duty_days}")
-
     return render_template(
         SCHEDULE_CALENDAR_TEMPLATE,
         calendar_form=calendar_form,
@@ -128,18 +128,15 @@ def verify_employee(token):
     employee_name = session.pop("employee_name", None)
     
     if not employee_name:
-        logger.log.error(f"Employee name not in session for email: {email}")
         flash(SESSION_ERROR_MSG)
         return redirect(url_for(SCHEDULE_REDIRECT))
     
     if not email:
-        logger.log.error(f"Email not confirmed for token: {token}")
         flash(AUTHENTICATION_LINK_ERROR_MSG)
         return redirect(url_for(SCHEDULE_REDIRECT))
     
-    if not update_employee(employee_name, email):
+    if not activate_employee(employee_name, email):
         flash(EMPLOYEE_NOT_FOUND_MSG + employee_name)
-        logger.log.error(f"Failed to update employee {employee_name} with email {email}")
         return redirect(url_for(SCHEDULE_REDIRECT))
     
     delete_authentication_token(EMPLOYEE_VERIFICATION, token)

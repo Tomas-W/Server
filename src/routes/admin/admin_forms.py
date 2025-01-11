@@ -11,7 +11,7 @@ from src.utils.form_utils import (
     FastNameLengthCheck, FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
     NewsTitleLengthCheck, CommentLengthCheck, ImageUploadCheck,
     DisplayNameTakenCheck, NewsHeaderLengthCheck, NewsCodeCheck,
-    NewsImportantLengthCheck
+    NewsImportantLengthCheck, AboutMeLengthCheck
 )
 from config.settings import (
     PWD_MATCH_MSG, COUNTRY_CHOICES
@@ -163,6 +163,7 @@ class ProfileForm(FlaskForm):
         },
         validators=[
             ForbiddenCheck(),
+            AboutMeLengthCheck(),
         ]
     )
     form_type = HiddenField(default="profile_form")

@@ -1,7 +1,7 @@
 import click
 from flask import Flask, current_app
 
-from src.extensions import server_db_
+from src.extensions import server_db_, logger
 
 from src.cli.schedule_cli import schedule_cli
 from src.cli.bakery_cli import bakery_cli
@@ -28,7 +28,7 @@ def server_cli(app_: Flask) -> None:
         if v:
             app_info = {
                 "App name": current_app.name,
-                "Debug mode": current_app.debug,
+                "Environment": current_app.config["CONFIG_NAME"],
                 "View functions": "\n" + "\n".join(
                     f"{' ' * 16} {view}" for view in current_app.view_functions)
             }
@@ -52,7 +52,9 @@ def server_cli(app_: Flask) -> None:
                 f"Are you sure you want to rollback the Database?"):
             click.echo("Database rollback cancelled.")
             return
+        
         server_db_.session.rollback()
+        logger.critical(f"[CLI] DATABASE ROLLBACK: Database rolled back.")
         if v:
             click.echo("Database rolled back.")
     

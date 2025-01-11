@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 from src.models.schedule_model.schedule_mod import Employees
+from src.extensions import logger
 from config.settings import (
     banned_words_list, banned_characters_list, REQUIRED_SYMBOLS,
     MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
@@ -280,6 +281,8 @@ class AboutMeLengthCheck:
         self.max_length_message: str = f"Max. {MAX_ABOUT_ME_LENGTH} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
+        if field.data == "":
+            return
         if len(field.data) < MIN_ABOUT_ME_LENGTH:
             raise ValidationError(self.min_length_message)
         if len(field.data) > MAX_ABOUT_ME_LENGTH:

@@ -62,9 +62,8 @@ def news(id_: int):
     """
     news_item = get_news_by_id(id_)
     if not news_item:
-        session["error_msg"] = f"News item with ID {id_} not found"
-        session["error_user_info"] = f"News item with ID {id_} not found"
-        abort(404)
+        description = f"News item with ID {id_} not found"
+        abort(404, description=description)
     news_item.set_seen_by(current_user.id)
 
     news_dict = get_news_dict_by_id(id_)
@@ -145,6 +144,10 @@ def add():
 @admin_required
 def delete(id_: int):
     if id_:
+        news_item = get_news_by_id(id_)
+        if not news_item:
+            description = f"News item with ID {id_} not found"
+            abort(404, description=description)
         delete_news_by_id(id_)
         flash(f"News ID {id_} deleted")
         return redirect(url_for(DELETE_NEWS_REDIRECT))
@@ -161,9 +164,8 @@ def delete(id_: int):
 def like_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
-        session["error_msg"] = f"News item with ID {id_} not found"
-        session["error_user_info"] = f"News item with ID {id_} not found"
-        abort(404)
+        description = f"News item with ID {id_} not found"
+        abort(404, description=description)
         
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
@@ -179,9 +181,8 @@ def like_news(id_: int):
 def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
-        session["error_msg"] = f"News item with ID {id_} not found"
-        session["error_user_info"] = f"News item with ID {id_} not found"
-        abort(404)
+        description = f"News item with ID {id_} not found"
+        abort(404, description=description)
         
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
@@ -196,11 +197,11 @@ def dislike_news(id_: int):
 @login_required
 @admin_required
 def delete_comment(id_: int):
-    news_id = get_news_id_by_comment_id(id_)
     if delete_comment_by_id(id_):
         session["flash_type"] = "delete_comment"
         flash("Comment deleted")
     
+    news_id = get_news_id_by_comment_id(id_)
     return redirect(url_for(
         NEWS_REDIRECT,
         id_=news_id,
@@ -213,9 +214,8 @@ def delete_comment(id_: int):
 def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
-        session["error_msg"] = f"Comment with ID {id_} not found"
-        session["error_user_info"] = f"Comment with ID {id_} not found"
-        abort(404)
+        description = f"Comment with ID {id_} not found"
+        abort(404, description=description)
         
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
@@ -231,9 +231,8 @@ def like_comment(id_: int):
 def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
-        session["error_msg"] = f"Comment with ID {id_} not found"
-        session["error_user_info"] = f"Comment with ID {id_} not found"
-        abort(404)
+        description = f"Comment with ID {id_} not found"
+        abort(404, description=description)
         
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)

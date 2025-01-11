@@ -227,10 +227,7 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_profile_icon(self, profile_icon: str) -> None:
-        if profile_icon not in os.listdir(PROFILE_ICONS_FOLDER):
-            errors = f"Invalid profile icon: {profile_icon} - {logger.get_log_info()}"
-            logger.log.warning(errors)
-        else:
+        if profile_icon in os.listdir(PROFILE_ICONS_FOLDER):
             self.profile_icon = profile_icon
 
     @set_updated_at
@@ -242,39 +239,34 @@ class User(server_db_.Model, UserMixin):
         except FileNotFoundError:
             return
         except PermissionError as e:
-            errors = f"PermissionError: {e} - {logger.get_log_info()}"
-            logger.log.critical(errors)
+            logger.critical(f"[SYS] PERMISSION ERROR while removing profile picture: {str(e)}", exc_info=True)
             return
         except Exception as e:
-            errors = f"Error setting profile picture: {e} - {logger.get_log_info()}"
-            logger.log.critical(errors)
+            logger.error(f"[SYS] UNEXPECTED ERROR while setting profile picture: {str(e)}", exc_info=True)
             return
         self.profile_picture = profile_picture
 
     @set_updated_at
     def set_about_me(self, about_me: str) -> None:
-        if len(about_me) > MAX_ABOUT_ME_LENGTH:
-            errors = f"About me too long: {about_me} - {logger.get_log_info()}"
-            logger.log.error(errors)
-        else:    
+        if len(about_me) <= MAX_ABOUT_ME_LENGTH:
             self.about_me = about_me
 
     @set_updated_at
     def set_news_notifications(self, news_notifications: bool) -> None:
         if not isinstance(news_notifications, bool):
-            raise ValueError(f"Invalid news notifications type: {type(news_notifications)}")
+            raise ValueError(f"[AUTH] INVALID NEWS NOTIFICATIONS TYPE: {type(news_notifications)}")
         self.news_notifications = news_notifications
 
     @set_updated_at
     def set_comment_notifications(self, comment_notifications: bool) -> None:
         if not isinstance(comment_notifications, bool):
-            raise ValueError(f"Invalid comment notifications type: {type(comment_notifications)}")
+            raise ValueError(f"[AUTH] INVALID COMMENT NOTIFICATIONS TYPE: {type(comment_notifications)}")
         self.comment_notifications = comment_notifications
 
     @set_updated_at
     def set_bakery_notifications(self, bakery_notifications: bool) -> None:
         if not isinstance(bakery_notifications, bool):
-            raise ValueError(f"Invalid bakery notifications type: {type(bakery_notifications)}")
+            raise ValueError(f"[AUTH] INVALID BAKERY NOTIFICATIONS TYPE: {type(bakery_notifications)}")
         self.bakery_notifications = bakery_notifications
 
     @set_updated_at
@@ -284,7 +276,7 @@ class User(server_db_.Model, UserMixin):
             name_check(None, type("Field", (object,), {"data": employee_name})())
             self.employee_name = employee_name
         except ValidationError as e:
-            raise ValueError(f"Employee name validation error: {e}")
+            raise ValueError(f"[AUTH] EMPLOYEE NAME VALIDATION ERROR: {e}")
     
     def _init_roles(self, roles: str | list[str] | None) -> str:
         if roles is None:
@@ -292,10 +284,7 @@ class User(server_db_.Model, UserMixin):
         user_roles = []
         if isinstance(roles, list):
             for role in roles:
-                if role not in USER_ROLES:
-                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.log.error(errors)
-                else:
+                if role in USER_ROLES:
                     user_roles.append(role)
         elif isinstance(roles, str):
             user_roles.append(roles)
@@ -310,30 +299,23 @@ class User(server_db_.Model, UserMixin):
     @set_updated_at
     def add_roles(self, roles: list[str] | str) -> None:
         user_roles = self.get_roles()
-        logger.log.info(f"Adding roles to User: {self.username}")
-        logger.log.info(f"Current roles: {user_roles}")
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
-                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.log.error(errors)
-                    return
+                    logger.warning(f"[AUTH] INVALID ROLE: {role} for user: {self.username}")
+                    continue
                 if role in user_roles:
                     continue
                 user_roles.append(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
-                errors = f"Invalid role: {roles} - {logger.get_log_info()}"
-                logger.log.error(errors)
+                logger.warning(f"[AUTH] INVALID ROLE: {roles} for user: {self.username}")
                 return
             if roles in user_roles:
                 return
             user_roles.append(roles)
             self.update_roles(user_roles)
-        else:
-            errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
-            logger.log.error(errors)
 
     @set_updated_at
     def remove_roles(self, roles: list[str] | str) -> None:
@@ -341,29 +323,22 @@ class User(server_db_.Model, UserMixin):
         if isinstance(roles, list):
             for role in roles:
                 if role not in USER_ROLES:
-                    errors = f"Invalid role: {role} - {logger.get_log_info()}"
-                    logger.log.error(errors)
+                    logger.warning(f"[AUTH] INVALID ROLE: {role} for user: {self.username}")
                     continue
                 if role not in user_roles:
-                    errors = f"User does not have role: {role} - {logger.get_log_info()}"
-                    logger.log.warning(errors)
+                    logger.warning(f"[AUTH] INVALID ROLE: {role} for user: {self.username}")
                     continue
                 user_roles.remove(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
             if roles not in USER_ROLES:
-                errors = f"Invalid role: {roles} - {logger.get_log_info()}"
-                logger.log.error(errors)
+                logger.warning(f"[AUTH] INVALID ROLE: {roles} for user: {self.username}")
                 return
             if roles not in user_roles:
-                errors = f"User does not have role: {roles} - {logger.get_log_info()}"
-                logger.log.warning(errors)
+                logger.warning(f"[AUTH] INVALID ROLE: {roles} for user: {self.username}")
                 return
             user_roles.remove(roles)
             self.update_roles(user_roles)
-        else:
-            errors = f"Invalid role type: {type(roles)} - {logger.get_log_info()}"
-            logger.log.error(errors)
 
     def update_roles(self, roles: list[str] | str) -> None:
         """
@@ -373,17 +348,10 @@ class User(server_db_.Model, UserMixin):
             self.roles = ""
             return
         if isinstance(roles, list):
-            logger.log.info(f"Updating roles to: {[role for role in roles]}")
             self.roles = "|".join(roles)
             self.roles += "|"
-            logger.log.info(f"New roles: {self.roles}")
         elif isinstance(roles, str):
-            logger.log.info(f"Updating roles to: {roles}")
             self.roles = roles if not roles.endswith("|") else roles + "|"
-            logger.log.info(f"New roles: {self.roles}")
-        else:
-            errors = f"Invalid roles type: {type(roles)} - {logger.get_log_info()}"
-            logger.log.error(errors)
 
     def has_role(self, role: str) -> bool:
         return role in self.roles.split("|")
@@ -433,7 +401,7 @@ class User(server_db_.Model, UserMixin):
         try:
             return argon2_.hash(plain_password)
         except Exception as e:
-            session["error_msg"] = f"Error hashing password: {e} - {logger.get_log_info()}"
+            logger.critical(f"[SYS] ERROR HASHING PASSWORD: {e}")
             abort(500)
 
     def __repr__(self) -> str:
@@ -444,11 +412,11 @@ class User(server_db_.Model, UserMixin):
                 f" employee_name={self.employee_name})")
 
     def cli_repr(self) -> str:
-        return (f"{'ID':<13}{self.id}\n"
-                f"{'USERNAME':<13}{self.username}\n"
-                f"{'EMAIL':<13}{self.email}\n"
-                f"{'EMPLOYEE NAME':<13}{self.employee_name}\n"
-                f"{'DISPLAY NAME':<13}{self.display_name}\n"
-                f"{'ROLES':<13}{self.roles.replace('|', ', ')}\n"
-                f"{'LAST SEEN AT':<13}{self.last_seen_at.strftime('%d %b %Y @ %H:%M')}")
+        return (f"{'ID':<18}{self.id}\n"
+                f"{'USERNAME':<18}{self.username}\n"
+                f"{'EMAIL':<18}{self.email}\n"
+                f"{'EMPLOYEE NAME':<18}{self.employee_name}\n"
+                f"{'DISPLAY NAME':<18}{self.display_name}\n"
+                f"{'ROLES':<18}{self.roles.replace('|', ', ')}\n"
+                f"{'LAST SEEN AT':<18}{self.last_seen_at.strftime('%d %b %Y @ %H:%M')}")
                 

@@ -41,6 +41,10 @@ DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
 CET: pytz.timezone = pytz.timezone('CET')
 GMAIL_EMAIL: str = os.environ.get("GMAIL_EMAIL")
 
+NORMAL_LOGIN: str = "normal_login"
+FAST_LOGIN: str = "fast_login"
+GOOGLE_LOGIN: str = "google_login"
+
 EMAIL_REGEX: str = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
 MAX_IMAGE_FILE_SIZE: int = 2 * 1024 * 1024

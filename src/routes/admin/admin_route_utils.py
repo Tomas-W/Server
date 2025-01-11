@@ -30,10 +30,10 @@ def clean_up_form_fields(form: FlaskForm) -> bool:
 
 
     all_fields_to_delete = delete_fields.union(empty_fields_to_delete)
+    logger.info(f"[DEBUG] All fields to delete: {all_fields_to_delete}")
     for field_name in all_fields_to_delete:
         if field_name in form._fields:
             del form._fields[field_name]
-    logger.log.info(form._fields)
     return len(form._fields) == 0
 
 
@@ -83,43 +83,50 @@ def process_new_email_address(form: FlaskForm) -> bool:
         return True
     return False
 
-def process_profile_picture(form: FlaskForm) -> None:
+def process_profile_picture(form: FlaskForm) -> bool:
     """
     Takes the profile picture data from the form,
-      saves its path to the database, stores the file in the UPLOAD_FOLDER
-      and removes the profile picture from the form to be processed further.
-    """
-    if form.profile_picture.data:
-        profile_picture_data = form.profile_picture.data
-        logger.log.info(f"Profile picture data: {profile_picture_data}")
-        logger.log.info(f"Current user's profile picture: {current_user.profile_picture}")
-        if profile_picture_data.filename == current_user.profile_picture:
-            del form._fields["profile_picture"]
-            logger.log.info("Profile picture is the same as the current user's profile picture")
-            return False
-        
-        if profile_picture_data:
-            try:
-                profile_picture_data.save(os.path.join(
-                    PROFILE_PICTURES_FOLDER,
-                    f"{current_user.id}_{profile_picture_data.filename}",
-                ))
-                current_user.set_profile_picture(profile_picture_data.filename)
-            except FileNotFoundError as e:
-                errors = f"{e} - {logger.get_log_info()}"
-                logger.log.error(errors)
-                flash(PROFILE_PICTURE_ERROR_MSG)
-                return False
-            except PermissionError as e:
-                session["error_msg"] = f"{e} - {logger.get_log_info()}"
-                abort(500)
-            except Exception as e:
-                session["error_msg"] = f"{e} - {logger.get_log_info()}"
-                abort(500)
-            
-        del form["profile_picture"]
-        return True
+    saves its path to the database, stores the file in the UPLOAD_FOLDER.
     
-    del form["profile_picture"]
+    Returns:
+        bool: True if profile picture was updated, False otherwise
+    """
+    if not form.profile_picture.data:
+        if "profile_picture" in form._fields:
+            del form._fields["profile_picture"]
+        return False
+
+    profile_picture_data = form.profile_picture.data
+    if profile_picture_data.filename == current_user.profile_picture:
+        del form._fields["profile_picture"]
+        return False
+    
+    try:
+        # Generate filename with user ID to ensure uniqueness
+        filename = f"{current_user.id}_{profile_picture_data.filename}"
+        file_path = os.path.join(PROFILE_PICTURES_FOLDER, filename)
+        
+        # Save file to disk first
+        profile_picture_data.save(file_path)
+        
+        # Then save only the filename to the database
+        current_user.set_profile_picture(profile_picture_data.filename)
+        
+        del form._fields["profile_picture"]
+        return True
+        
+    except FileNotFoundError:
+        flash(PROFILE_PICTURE_ERROR_MSG)
+        logger.error("[USER] Profile picture folder not found")
+        
+    except PermissionError as e:
+        logger.critical(f"[SYS] PROFILE PICTURE PERMISSION ERROR: {e}")
+        abort(500)
+    except Exception as e:
+        logger.error(f"[SYS] PROFILE PICTURE ERROR: {e}")
+        abort(500)
+    
+    if "profile_picture" in form._fields:
+        del form._fields["profile_picture"]
     return False
 

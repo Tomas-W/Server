@@ -111,12 +111,3 @@ def get_shortened_week_days() -> list[str]:
     """
     day_names = [calendar.day_name[day][:3] for day in range(7)]
     return day_names
-
-
-# def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
-#     """
-#     Returns the list of dates that are on duty.
-#     """
-#     from src.models.schedule_model.schedule_mod import Schedule
-#     on_duty_days = Schedule.query.filter(Schedule.date.in_(dates)).all()
-#     return on_duty_days

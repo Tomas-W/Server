@@ -15,11 +15,10 @@ from argon2 import PasswordHasher
 from itsdangerous import URLSafeTimedSerializer
 
 from config.settings import CLIENTS_SECRETS_PATH, DEFAULT_LIMITS, LIMITER_URI
-from src.utils.logger import Logger
+from src.utils.logger import ServerLogger
 
 
-logger = Logger()
-
+logger = ServerLogger()
 server_db_: SQLAlchemy = SQLAlchemy()
 mail_: Mail = Mail()
 argon2_: PasswordHasher = PasswordHasher()

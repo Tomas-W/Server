@@ -180,9 +180,9 @@ class BakeryItem(server_db_.Model):
                 )
 
     def cli_repr(self) -> str:
-        return (f"{'ID':<13}{self.id}\n"
-                f"{'NAME':<13}{self.name}\n"
-                f"{'CATEGORY':<13}{self.category}\n"
-                f"{'NASA':<13}{self.nasa}\n"
-                f"{'PRICE':<13}{self.price}")
+        return (f"{'ID':<18}{self.id}\n"
+                f"{'NAME':<18}{self.name}\n"
+                f"{'CATEGORY':<18}{self.category}\n"
+                f"{'NASA':<18}{self.nasa}\n"
+                f"{'PRICE':<18}{self.price}")
 

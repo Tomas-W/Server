@@ -30,8 +30,8 @@ src/routes/schedule/*.json
 backups/
 
 # Ignore databases
-db/
-migrations/
+db/*.db
+migrations/*
 
 # Ignore uploaded files
 profile_pictures/

@@ -34,9 +34,7 @@
             {% endblock %}
 
             <div class="error-message"></div>
-                {% for error in errors %}
-                    <p class="message">{{ error }}</p>
-                {% endfor %}
+                    <p class="message">{{ error_msg }}</p>
             </div>
         
         {% if not current_user.is_authenticated %}

@@ -22,7 +22,7 @@ S_LOGIN_URL = os.getenv("S_LOGIN_URL")
 S_SCHEDULE_URL = os.getenv("S_SCHEDULE_URL")
 
 
-def update_schedule(week_number: int = None) -> None:
+def update_schedule(week_number: int | None = None) -> None:
     """
     If week_number is not provided the schedule 2 weeks from now is collected.
     Data is saved to the database and json file.
@@ -34,9 +34,11 @@ def update_schedule(week_number: int = None) -> None:
     
     if week_number is None:
         dates = get_new_schedule_dates()
+        logger.info(f"[ADD] Getting new schedules for week: {_week_from_date(dates[0])}")
     else:
         dates = get_new_schedule_dates_by_week(week_number)
-    
+        logger.info(f"[ADD] Getting new schedules for week: {week_number}")
+
     names_list = []
     hours_list = []
     break_times_list = []
@@ -45,7 +47,6 @@ def update_schedule(week_number: int = None) -> None:
 
     for date in dates:
         names, hours, break_times, work_times = get_schedule_info_per_date(driver, date)
-        logger.log.info(names)
         
         names_list.append([name for name in names])
         hours_list.append([hour for hour in hours])
@@ -57,7 +58,6 @@ def update_schedule(week_number: int = None) -> None:
 
     save_schedule_to_json(date, names_list, hours_list, break_times_list, work_times_list)
 
-    logger.log.info("New schedule has been added to JSON")
     driver.quit()
     
     unique_names = set(name for sublist in names_list for name in sublist)
@@ -79,7 +79,7 @@ def log_in(driver: webdriver.Firefox) -> None:
         EC.element_to_be_clickable((By.ID, "login-button"))
     )
     driver.execute_script("arguments[0].click();", login_btn)
-    logger.log.info("Logged in to PMT")
+    logger.info("[ADD] Logged in to PMT")
     time.sleep(2)
 
 
@@ -168,7 +168,7 @@ def save_schedule_to_db(date: str, names: list[str], hours: list[str],
                             work_times=work_times)
     server_db_.session.add(schedule_item)
     server_db_.session.commit()
-    logger.log.info(f"Saved schedule to db for date: '{date}'")
+    logger.info(f"[ADD] Saved schedule to db for date: {date}")
 
 
 def save_schedule_to_json(date: str, names: list[str], hours: list[str],
@@ -194,19 +194,27 @@ def save_schedule_to_json(date: str, names: list[str], hours: list[str],
     data_to_save = {
         str(week_number): week_data
     }
-    if os.path.exists(schedule_path):
-        with open(schedule_path, "r") as json_file:
-            existing_data = json.load(json_file)
-
-        existing_data.update(data_to_save)
-        with open(schedule_path, "w") as json_file:
-            json.dump(existing_data, json_file, indent=4)
-
-    else:
-        with open(schedule_path, "w") as json_file:
-            json.dump(data_to_save, json_file, indent=4)
     
-    logger.log.info(f"Saved schedule to json for week: '{week_number}'")
+    try:
+        if os.path.exists(schedule_path):
+            with open(schedule_path, "r", encoding="utf-8") as json_file:
+                existing_data = json.load(json_file)
+
+            existing_data.update(data_to_save)
+            with open(schedule_path, "w", encoding="utf-8") as json_file:
+                json.dump(existing_data, json_file, indent=4)
+        else:
+            with open(schedule_path, "w", encoding="utf-8") as json_file:
+                json.dump(data_to_save, json_file, indent=4)
+                
+        logger.info(f"[ADD] Saved schedule to json for week: {week_number}")
+    
+    except PermissionError:
+        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {schedule_path}")
+        return
+    except Exception as e:
+        logger.warning(f"[ERROR] UNEXPECTED ERROR saving schedule to json: {str(e)}")
+        return
 
 
 def check_for_new_employees(names: list[str]) -> None:
@@ -233,8 +241,15 @@ def add_employee_json(name: str, email: str = None, is_verified: bool = None) ->
     employees_data[name] = {"email": email, "is_verified": is_verified}
     
     sorted_employees_data = dict(sorted(employees_data.items()))
-    with open(EMPLOYEES_PATH, "w") as json_file:
-        json.dump(sorted_employees_data, json_file, indent=4)
+    try:
+        with open(EMPLOYEES_PATH, "w") as json_file:
+            json.dump(sorted_employees_data, json_file, indent=4)
+    except PermissionError:
+        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {EMPLOYEES_PATH}")
+        return
+    except Exception as e:
+        logger.warning(f"[ERROR] UNEXPECTED ERROR adding Employees to json: {str(e)}")
+        return
 
 
 def _now() -> datetime.date:
@@ -286,8 +301,15 @@ def update_employee_json(name: str, email: str | None = None,
         if is_verified is not None:
             employees_data[name]["is_verified"] = is_verified
     
-    with open(EMPLOYEES_PATH, "w") as json_file:
-        json.dump(employees_data, json_file, indent=4)
+    try:
+        with open(EMPLOYEES_PATH, "w") as json_file:
+            json.dump(employees_data, json_file, indent=4)
+    except PermissionError:
+        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {EMPLOYEES_PATH}")
+        return
+    except Exception as e:
+        logger.warning(f"[ERROR] UNEXPECTED ERROR updating Employees in json: {str(e)}")
+        return
 
 
 def _get_schedule_paths() -> list[str]:

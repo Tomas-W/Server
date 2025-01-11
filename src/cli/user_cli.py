@@ -1,7 +1,7 @@
 import click
 from sqlalchemy import inspect
 from flask import Flask
-from src.extensions import server_db_
+from src.extensions import server_db_, logger
 from src.models.auth_model.auth_mod import User
 
 from src.models.auth_model.auth_mod_utils import (
@@ -31,11 +31,13 @@ def user_cli(app_: Flask) -> None:
             click.echo("User creation cancelled.")
             return
         
-        user_repr: str | None = _init_user()
+        user_repr: str | bool = _init_user()
         if not user_repr:
             click.echo("User creation failed.\n"
                        "User table not empty.")
             return
+        
+        logger.info(f"[CLI] INIT USER: Admin and DeletedUser created.")
         if v:
             click.echo(f"User created: {user_repr}")
 
@@ -78,7 +80,8 @@ def user_cli(app_: Flask) -> None:
             click.echo("User deletion cancelled.")
             return
 
-        delete_user_by_id(id_)
+        delete_user_by_id(id_, cli=True)
+        logger.warning(f"[CLI] DELETE USER: {user.username} removed.")
         if v:
             click.echo(f"User has been removed from the table.")
         
@@ -147,9 +150,11 @@ def user_cli(app_: Flask) -> None:
         try:
             method(col_value)
             server_db_.session.commit()
+            logger.info(f"[CLI] SET COLUMN: {col_name} set to {col_value} User {id_}.")
             click.echo(f"Column '{col_name}' set to '{col_value}' for User ID {id_}.")
         except ValueError as e:
             click.echo(f"Error: {e}")
+            return
 
         if v:
             user_repr = user.cli_repr()

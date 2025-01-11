@@ -2,6 +2,7 @@ import click
 import json
 from flask import Flask
 
+from src.extensions import logger
 from src.models.schedule_model.schedule_mod_utils import (
     _init_schedule, _init_employees
 )
@@ -38,12 +39,13 @@ def schedule_cli(app_: Flask) -> None:
             click.echo("Adding ScheduleItems cancelled.")
             return
         
-        may_init_schedule: bool | None = _init_schedule()
+        may_init_schedule: bool = _init_schedule()
         if not may_init_schedule:
             click.echo("Adding ScheduleItems failed.\n"
                        "Schedule Table not empty.")
             return
         
+        logger.info(f"[CLI] INIT SCHEDULE: {nr_weeks} weeks added.")
         if v:
             click.echo(f"Successfully added {nr_weeks} weeks to the Schedule Table.")
 
@@ -64,6 +66,7 @@ def schedule_cli(app_: Flask) -> None:
         
         
         update_schedule(week_number)
+        logger.info(f"[CLI] ADD SCHEDULE: week {week_number} added.")
         if v:
             click.echo(f"Successfully added Schedule for week {week_number}.")
 
@@ -85,12 +88,13 @@ def schedule_cli(app_: Flask) -> None:
             click.echo("Adding Employees cancelled.")
             return
         
-        may_init_employees: bool | None = _init_employees()
+        may_init_employees: bool = _init_employees()
         if not may_init_employees:
             click.echo("Adding Employees failed.\n"
                        "Employees Table not empty.")
             return
         
+        logger.info(f"[CLI] INIT EMPLOYEES: {nr_employees} employees added.")
         if v:
             click.echo(f"Successfully added {nr_employees} Employees to the Employees Table.")
 

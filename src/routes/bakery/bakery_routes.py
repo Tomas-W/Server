@@ -29,7 +29,6 @@ bakery_bp = Blueprint("bakery", __name__)
 @login_required
 def bakery():
     bakery_programs_info = get_bakery_programs_info()
-    logger.log.info(bakery_programs_info)
     return render_template(
         BAKERY_TEMPLATE,
         bakery_programs_info=bakery_programs_info,
@@ -49,9 +48,8 @@ def programs():
 def program(program: int):
     bakery_items_dicts = get_program_items_dicts(program)
     if not bakery_items_dicts:
-        session["error_msg"] = f"Program {program} not in database"
-        session["error_user_info"] = f"Program {program} not in database"
-        abort(404)
+        description = f"No bakery items found for program {program}"
+        abort(404, description=description)
 
     return render_template(
         PROGRAMS_TEMPLATE,
@@ -64,9 +62,8 @@ def program(program: int):
 def info(id_: int):
     bakery_item_dict = get_item_by_id_dict(id_)
     if not bakery_item_dict:
-        session["error_msg"] = f"Item with ID {id_} not in database"
-        session["error_user_info"] = f"Item with ID {id_} not in database"
-        abort(404)
+        description = f"Bakery item with ID {id_} not found"
+        abort(404, description=description)
         
     # For side panel
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])

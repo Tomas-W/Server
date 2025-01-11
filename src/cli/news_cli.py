@@ -1,6 +1,6 @@
 import click
 from flask import Flask
-from src.extensions import server_db_
+from src.extensions import server_db_, logger
 
 from src.models.news_model.news_mod import News, Comment
 from src.models.news_model.news_mod_utils import (
@@ -34,12 +34,13 @@ def news_cli(app_: Flask) -> None:
             click.echo("Adding NewsItems cancelled.")
             return
 
-        may_init_news: bool | None = _init_news()
+        may_init_news: bool = _init_news()
         if not may_init_news:
             click.echo("Adding NewsItems failed.\n"
                        "News Table not empty.")
             return
         
+        logger.info(f"[CLI] INIT NEWS: {item_count} items added.")
         if v:
             click.echo(f"Successfully added {item_count} NewsItems to the News Table.")
 
@@ -85,7 +86,8 @@ def news_cli(app_: Flask) -> None:
             click.echo("NewsItem removal cancelled.")
             return
         
-        delete_news_by_id(id_)
+        delete_news_by_id(id_, cli=True)
+        logger.warning(f"[CLI] DELETE NEWS: {news_item.title[:10]} removed.")
         if v:
             click.echo(f"Successfully removed NewsItem: {news_repr}.")
 
@@ -106,6 +108,7 @@ def news_cli(app_: Flask) -> None:
             return
 
         clear_news_db()
+        logger.warning(f"[CLI] CLEAR NEWS: {item_count} items removed.")
         if v:
             click.echo(f"Successfully removed {item_count} NewsItems from the News Table.")
     
@@ -150,7 +153,8 @@ def news_cli(app_: Flask) -> None:
             click.echo("Comment removal cancelled.")
             return
         
-        delete_comment_by_id(id_)
+        delete_comment_by_id(id_, cli=True)
+        logger.warning(f"[CLI] DELETE COMMENT: {comment.content[:10]} by {comment.author} removed.")
         if v:
             click.echo(f"Successfully removed Comment:\n"
                        f"{comment.cli_repr()}.")
@@ -172,6 +176,7 @@ def news_cli(app_: Flask) -> None:
             return
         
         clear_comments_db()
+        logger.warning(f"[CLI] CLEAR COMMENTS: {comment_count} items removed.")
         if v:
             click.echo(f"Successfully removed {comment_count} CommentItems from the Comments Table.")
 

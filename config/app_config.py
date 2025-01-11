@@ -1,13 +1,14 @@
 from datetime import timedelta
 import os
+from typing import Final
 
 from config.settings import DATABASE_URI, DEFAULT_LIMITS
-
 
 class BaseConfig(object):
     CONFIG_NAME = "base"
     SECRET_KEY = os.environ.get("FLASK_KEY")
     
+    # Basic Flask Configuration
     SEND_FILE_MAX_AGE_DEFAULT = timedelta(days=7)
     ASSETS_DEBUG = True
     
@@ -22,15 +23,60 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = DATABASE_URI
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
-    SESSION_COOKIE_HTTPONLY = False
     SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 587
+    # Mail settings remain in base as they're the same for all environments
+    MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get("GMAIL_EMAIL")
     MAIL_PASSWORD = os.environ.get("GMAIL_PASS")
+    
+    # Simpler CSP that only allows resources from your domain
+    SECURITY_HEADERS: Final = {
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Security-Policy': "default-src 'self'; style-src 'self' fonts.googleapis.com; font-src fonts.gstatic.com",
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'X-XSS-Protection': '1; mode=block'
+    }
+    
+    # Security Headers
+    SECURITY_HEADERS: Final = {
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'X-XSS-Protection': '1; mode=block'
+    }
+    
+    # Rate Limiting
+    RATELIMIT_ENABLED = True
+    RATELIMIT_HEADERS_ENABLED = True
+    RATELIMIT_STORAGE_URL = "memory://"  # Change to redis:// in production
+    
+    # Cookie Settings
+    SESSION_COOKIE_NAME = "secure_session"
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"  # Move to base config
+    
+    # Logging Configuration
+    LOG_DIR = "logs"
+    LOG_FILE = "app.log"
+    LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    LOG_LEVEL = 'INFO'
+    LOG_MAX_BYTES =  8 * 1024 * 1024  # 8MB
+    LOG_BACKUP_COUNT = 5
+    LOG_DATE_FORMAT = "%d-%m %H:%M:%S"
+    
+    # Color logging for development
+    LOG_COLORS = {
+        "DEBUG": "blue",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold_red",
+    }
 
     def config_name(self):
         return self.CONFIG_NAME
@@ -38,11 +84,24 @@ class BaseConfig(object):
 
 class DebugConfig(BaseConfig):
     CONFIG_NAME = "debug"
+    DEBUG = True
+    DEVELOPMENT = True
     TEMPLATES_AUTO_RELOAD = True
-    EXPLAIN_TEMPLATE_LOADING = True
-    SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_SECURE = False
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Allow HTTP traffic
+    EXPLAIN_TEMPLATE_LOADING = False
+    
+    # Logging configuration
+    LOG_LEVEL = 'DEBUG'
+    LOG_DIR = 'logs/debug'
+    LOG_FILE = 'debug.log'
+    
+    # Development-specific security settings
+    SESSION_COOKIE_HTTPONLY = False  # Allow JavaScript access in development
+    SESSION_COOKIE_SECURE = False    # Allow HTTP in development
+    SESSION_COOKIE_SAMESITE = "Lax" # More permissive for development
+    PREFERRED_URL_SCHEME = 'http'
+    
+    # Allow OAuth over HTTP in development
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     def config_name(self):
         return self.CONFIG_NAME
@@ -50,26 +109,28 @@ class DebugConfig(BaseConfig):
 
 class DeployConfig(BaseConfig):
     CONFIG_NAME = "deploy"
+    DEBUG = False
+    DEVELOPMENT = False
     TEMPLATES_AUTO_RELOAD = False
     EXPLAIN_TEMPLATE_LOADING = False
-    SESSION_COOKIE_SAMESITE = "Strict"
-    SESSION_COOKIE_SECURE = True
+    
+    # Logging configuration
+    LOG_LEVEL = 'INFO'  # Only log warnings and above in production
+    LOG_DIR = 'logs/production'
+    LOG_FILE = 'production.log'
+    
+    # Production security settings
     SESSION_COOKIE_HTTPONLY = True
-
-    def config_name(self):
-        return self.CONFIG_NAME
-
-
-class TestConfig(BaseConfig):
-    CONFIG_NAME = "test"
-    WTF_CSRF_ENABLED = False
-    SERVER_NAME = 'localhost'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    TEMPLATES_AUTO_RELOAD = True
-    EXPLAIN_TEMPLATE_LOADING = True
-    SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_SECURE = False
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Allow HTTP traffic
+    SESSION_COOKIE_SECURE = True     # Ensure cookies only sent over HTTPS
+    SESSION_COOKIE_SAMESITE = "Strict"
+    PREFERRED_URL_SCHEME = 'https'   # Force HTTPS for url_for
+    
+    # Security headers for HTTPS
+    SECURITY_HEADERS = {
+        **BaseConfig.SECURITY_HEADERS,
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+        'Content-Security-Policy': "upgrade-insecure-requests"  # Force HTTPS upgrades
+    }
 
     def config_name(self):
         return self.CONFIG_NAME

@@ -3,6 +3,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import random
 import time
 
+from src.extensions import logger
+
 
 def movement(driver: webdriver.Firefox) -> None:
     """
@@ -39,7 +41,8 @@ def get_undetectable_driver(proxy: str | None = None) -> webdriver.Firefox:
     window_sizes = [(1920, 1080), (1366, 768), (1536, 864), (1440, 900)]
     random_size = random.choice(window_sizes)
     driver.set_window_size(*random_size)
-    
+
+    logger.info(f"[ADD] Driver created with window size: {random_size}")
     return driver
 
 

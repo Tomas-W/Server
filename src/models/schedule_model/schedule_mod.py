@@ -18,7 +18,6 @@ class Employees(server_db_.Model):
 
     def set_email(self, email: str) -> bool:
         if self.email == email:
-            logger.log.error(f"Email {email} already set for employee {self.name}")
             return False
         
         from src.models.auth_model.auth_mod import User
@@ -28,22 +27,23 @@ class Employees(server_db_.Model):
             update_employee_json(self.name, email)
             return True
         else:
-            logger.log.error(f"User with email {email} not found")
+            logger.error(f"[AUTH] USER WITH EMAIL {email} NOT FOUND")
             return False
     
     def set_is_activated(self, is_activated: bool) -> None:
-        self.is_activated = is_activated
-        update_employee_json(self.name, is_verified=is_activated)
+        if not self.is_activated == is_activated:
+            self.is_activated = is_activated
+            update_employee_json(self.name, is_verified=is_activated)
+            logger.log.info(f"[AUTH] EMPLOYEE {self.name} ACTIVATED")
     
     def activate_employee(self, email: str) -> bool:
         if self.set_email(email):
             self.set_is_activated(True)
-            logger.log.info(f"Employee {self.name} activated")
             return True
         else:
-            logger.log.error(f"Failed to activate employee {self.name}")
+            logger.error(f"[AUTH] FAILED TO ACTIVATE EMPLOYEE {self.name}")
             return False
-    
+
     @staticmethod
     def add_employee(name: str):
         cropped_name = Employees.crop_name(name)
@@ -53,9 +53,9 @@ class Employees(server_db_.Model):
             server_db_.session.add(employee)
             server_db_.session.commit()
             add_employee_json(cropped_name)
-            logger.log.info(f"Employee {cropped_name} added to database")
+            logger.info(f"[ADD] EMPLOYEE {cropped_name} ADDED")
         else:
-            logger.log.error(f"Employee name {cropped_name} already in database")
+            logger.warning(f"[AUTH] EMPLOYEE NAME {cropped_name} ALREADY IN DATABASE")
 
     @staticmethod
     def crop_name(name: str) -> str:
@@ -64,10 +64,10 @@ class Employees(server_db_.Model):
         return f"{parts[0]} {last_name_initial}"
 
     def cli_repr(self) -> str:
-        return (f"{'ID':<13}{self.id}\n"
-                f"{'NAME':<13}{self.name}\n"
-                f"{'EMAIL':<13}{self.email}\n"
-                f"{'IS ACTIVATED':<13}{self.is_activated}")
+        return (f"{'ID':<18}{self.id}\n"
+                f"{'NAME':<18}{self.name}\n"
+                f"{'EMAIL':<18}{self.email}\n"
+                f"{'IS ACTIVATED':<18}{self.is_activated}")
 
 
 class Schedule(server_db_.Model):
@@ -211,8 +211,9 @@ class Schedule(server_db_.Model):
         return [int(item) if make_int else item for item in value.split("|")] if value else []
 
     def cli_repr(self) -> str:
-        return (f"{'ID':<13}{self.id}\n"
-                f"{'DATE':<13}{self.date}\n"
-                f"{'WEEK NUMBER':<13}{self.week_number}\n"
-                f"{'DAY':<13}{self.day}\n"
-                f"{'NAMES':<13}{self.names}")
+        return (f"{'ID':<18}{self.id}\n"
+                f"{'DATE':<18}{self.date}\n"
+                f"{'WEEK NUMBER':<18}{self.week_number}\n"
+                f"{'DAY':<18}{self.day}\n"
+                f"{'NAMES':<18}{self.names}")
+

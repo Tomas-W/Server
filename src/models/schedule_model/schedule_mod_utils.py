@@ -26,8 +26,8 @@ def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
     return on_duty_dates
 
 
-def update_employee(name: str, email: str | None = None) -> bool:
-    """ Updates the employee in the database. """
+def activate_employee(name: str, email: str | None = None) -> bool:
+    """ Activates the employee in the database. """
     from src.models.schedule_model.schedule_mod import Employees
     employee_name = Employees.crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
@@ -37,11 +37,11 @@ def update_employee(name: str, email: str | None = None) -> bool:
         current_user.add_roles(EMPLOYEE_ROLE)
         return True
     else:
-        logger.log.error(f"Employee {employee_name} not found")
+        logger.error(f"[AUTH] EMPLOYEE {employee_name} NOT FOUND")
         return False
 
 
-def _init_employees() -> bool | None:
+def _init_employees() -> bool:
     """
     Initializes the employees in the database. Used in cli.
     """
@@ -52,7 +52,7 @@ def _init_employees() -> bool | None:
             with open(EMPLOYEES_PATH, "r") as json_file:
                 employees_data = json.load(json_file)
         except FileNotFoundError:
-            logger.log.error(f"File {EMPLOYEES_PATH} not found")
+            logger.critical(f"[SYS] FILE {EMPLOYEES_PATH} NOT FOUND")
             return False
     
         for employee, _ in employees_data.items():
@@ -64,7 +64,7 @@ def _init_employees() -> bool | None:
         return False
 
 
-def _init_schedule() -> bool | None:
+def _init_schedule() -> bool:
     """
     Initializes the schedule in the database. Used in cli.
     """
@@ -75,12 +75,15 @@ def _init_schedule() -> bool | None:
         schedule_paths = _get_schedule_paths()
         
         for path in schedule_paths:
-            # Extract filename from path
             filename = os.path.basename(path)
             year = int(filename.split('schedule')[1].split('.json')[0])
 
-            with open(path, "r") as json_file:
-                schedule_data = json.load(json_file)
+            try:
+                with open(path, "r") as json_file:
+                    schedule_data = json.load(json_file)
+            except FileNotFoundError:
+                logger.critical(f"[SYS] FILE {path} NOT FOUND")
+                return False
             
             for week_number, week_data in schedule_data.items():
                 for day, day_data in week_data.items():

@@ -36,12 +36,16 @@ def get_news_dict_by_id(id_: int):
 
 def get_news_id_by_comment_id(id_: int):
     comment = server_db_.session.get(Comment, id_)
-    return comment.news_id
+    if comment:
+        return comment.news_id
+    return None
 
 
-def delete_news_by_id(id_: int) -> None:
+def delete_news_by_id(id_: int, cli: bool = False) -> None:
     server_db_.session.delete(server_db_.session.get(News, id_))
     server_db_.session.commit()
+    if not cli:
+        logger.warning(f"[DEL] DELETE NEWS: {id_} DELETED")
 
 
 def get_comment_by_id(id_: int):
@@ -49,19 +53,15 @@ def get_comment_by_id(id_: int):
     return result
 
 
-def delete_comment_by_id(id_: int) -> bool:
+def delete_comment_by_id(id_: int, cli: bool = False) -> bool:
     comment = server_db_.session.get(Comment, id_)
     if comment is not None:
         server_db_.session.delete(server_db_.session.get(Comment, id_))
         server_db_.session.commit()
-        logger.log.info(f"Comment with ID {id_} deleted")
+        if not cli:
+            logger.warning(f"[DEL] DELETE COMMENT: {comment.content[:10]}.. by {comment.user.username} removed.")
         return True
-    else:
-        error_msg = f"Comment with ID {id_} not found"
-        session["error_msg"] = error_msg
-        session["error_user_info"] = error_msg
-        logger.log.error(error_msg)
-        abort(404)
+    return False
 
 
 def clear_news_db() -> None:
@@ -92,9 +92,9 @@ def add_news_message(form: AddNewsForm, grid_cols: list[str], grid_rows: list[st
     )
     server_db_.session.add(new_news)
     server_db_.session.commit()
+    logger.info(f"[ADD] NEWS CREATED: {new_news.title}")
 
-
-def _init_news() -> bool | None:
+def _init_news() -> bool:
     """
     Initializer function for cli.
     No internal use.
@@ -118,7 +118,7 @@ def _init_news() -> bool | None:
         server_db_.session.commit()
         return True
     
-    return None
+    return False
 
 def get_comment_by_id(id_: int):
     result = server_db_.session.get(Comment, id_)
@@ -133,3 +133,4 @@ def add_new_comment(news_id: int, user_id: int, content: str) -> None:
     )
     server_db_.session.add(comment)
     server_db_.session.commit()
+    logger.info(f"[ADD] COMMENT CREATED: {comment.content[:10]}.. by {comment.user.username}")

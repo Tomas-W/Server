@@ -1,10 +1,17 @@
-import click
 from flask import Flask
 
-from src.extensions import logger, server_db_
+import click
+
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from src.models.bakery_model.bakery_mod import BakeryItem
 from src.models.bakery_model.bakery_mod_utils import (
-    get_bakery_dict, _init_bakery, clear_bakery_db
+    _init_bakery,
+    clear_bakery_db,
+    get_bakery_dict,
 )
 
 

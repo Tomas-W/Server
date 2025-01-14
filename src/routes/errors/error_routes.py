@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template
+from flask import (
+    Blueprint,
+    render_template,
+)
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.extensions import logger
+
 from config.settings import (
-    TEMPLATE
+    TEMPLATE,
 )
 
 errors_bp = Blueprint("errors", __name__)

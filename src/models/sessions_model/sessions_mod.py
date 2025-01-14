@@ -1,8 +1,15 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import String, LargeBinary, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    DateTime,
+    LargeBinary,
+    String,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
 from src.extensions import server_db_
 

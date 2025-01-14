@@ -1,12 +1,19 @@
 from typing import Optional
-from sqlalchemy import select, event
+from sqlalchemy import (
+    event,
+    func,
+    select,
+)
 
-from src.extensions import server_db_
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from src.models.bakery_model.bakery_mod import BakeryItem
-from src.routes.bakery.bakery_items import get_bakery_dict
-from src.extensions import logger
 
-from sqlalchemy import func
+from src.routes.bakery.bakery_items import get_bakery_dict
+
 
 def get_bakery_programs_info() -> list[dict]:
     subquery = (

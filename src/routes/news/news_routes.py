@@ -1,25 +1,44 @@
 from flask import (
-    render_template, Blueprint, request, redirect, url_for, flash, session, abort
+    abort,
+    Blueprint,
+    flash,
+    redirect,
+    render_template, 
+    request,
+    session,
+    url_for,
 )
-from flask_login import login_required, current_user
+from flask_login import (
+    current_user,
+    login_required,
+)
 from werkzeug.datastructures import MultiDict
 
 from src.models.news_model.news_mod_utils import (
-    get_all_news_dict, get_all_unread_dict,
-    get_news_by_id, get_news_dict_by_id,
-    get_comment_by_id, add_new_comment
+    add_new_comment,
+    add_news_message,
+    delete_comment_by_id,
+    delete_news_by_id,
+    get_all_news_dict,
+    get_all_unread_dict,
+    get_comment_by_id,
+    get_news_by_id,
+    get_news_dict_by_id,
+    get_news_id_by_comment_id,
 )
 from src.models.auth_model.auth_mod_utils import admin_required
-from src.routes.news.news_forms import CommentForm, AddNewsForm
-from src.models.news_model.news_mod_utils import (
-    delete_news_by_id, add_news_message, delete_comment_by_id,
-    get_news_id_by_comment_id
-)
+
 from src.routes.news.news_route_utils import (
-    allow_only_styling, clean_news_session
+    allow_only_styling,
+    clean_news_session,
 )
+
+from src.routes.news.news_forms import AddNewsForm, CommentForm
+
 from config.settings import (
-    REDIRECT, TEMPLATE, MESSAGE
+    MESSAGE,
+    REDIRECT,
+    TEMPLATE,
 )
 
 news_bp = Blueprint("news", __name__)

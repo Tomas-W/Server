@@ -1,11 +1,17 @@
 import click
-from sqlalchemy import inspect
-from flask import Flask
-from src.extensions import server_db_, logger
-from src.models.auth_model.auth_mod import User
 
+from flask import Flask
+from sqlalchemy import inspect
+
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
+from src.models.auth_model.auth_mod import User
 from src.models.auth_model.auth_mod_utils import (
-    delete_user_by_id, _init_user
+    _init_user,
+    delete_user_by_id,
 )
 
 

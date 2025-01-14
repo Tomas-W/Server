@@ -1,10 +1,18 @@
 import os
 
-from flask import render_template, url_for
+from flask import (
+    render_template,
+    url_for,
+)
 from flask_mail import Message
-from src.extensions import server_db_, mail_
-from src.models.email_model.email_mod import EmailStrorage
+
+from src.extensions import (
+    mail_,
+    server_db_,
+)
+
 from src.models.auth_model.auth_mod import User
+from src.models.email_model.email_mod import EmailStrorage
 
 
 def add_notification_email_to_db(email_type: str, recipient_email: str, news_id: int = None,

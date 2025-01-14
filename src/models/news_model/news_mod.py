@@ -1,8 +1,22 @@
 from datetime import datetime
-from sqlalchemy import Integer, String, Text, DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import (
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
-from src.extensions import server_db_, logger
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from src.models.auth_model.auth_mod import User
 from src.models.email_model.email_mod_utils import add_notification_email_to_db
 from config.settings import SERVER

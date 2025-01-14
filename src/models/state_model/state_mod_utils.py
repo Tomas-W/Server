@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
 from src.extensions import server_db_
+
 from src.models.state_model.state_mod import State
 
 

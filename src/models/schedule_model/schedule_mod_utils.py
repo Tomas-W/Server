@@ -1,11 +1,28 @@
 import json
 import os
-from flask_login import current_user
-from datetime import datetime
 
-from src.models.schedule_model.schedule_mod import Schedule
-from src.extensions import server_db_, logger
-from config.settings import (PATH, SERVER)
+from datetime import datetime
+from flask_login import current_user
+
+from src.models.schedule_model.schedule_mod import (
+    Employees,
+    Schedule,
+)
+
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
+from src.utils.schedule import (
+    _date_from_week_day_year,
+    _get_schedule_paths,
+)
+
+from config.settings import (
+    PATH,
+    SERVER,
+)
 
 
 def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
@@ -26,7 +43,6 @@ def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
 
 def activate_employee(name: str, email: str | None = None) -> bool:
     """ Activates the employee in the database. """
-    from src.models.schedule_model.schedule_mod import Employees
     employee_name = Employees.crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
@@ -43,8 +59,6 @@ def _init_employees() -> bool:
     """
     Initializes the employees in the database. Used in cli.
     """
-    from src.models.schedule_model.schedule_mod import Employees
-    
     if not server_db_.session.query(Employees).count():
         try:
             with open(PATH.EMPLOYEES, "r") as json_file:
@@ -66,9 +80,6 @@ def _init_schedule() -> bool:
     """
     Initializes the schedule in the database. Used in cli.
     """
-    from src.models.schedule_model.schedule_mod import Schedule
-    from src.utils.schedule import _date_from_week_day_year, _get_schedule_paths
-    
     if not server_db_.session.query(Schedule).count():
         schedule_paths = _get_schedule_paths()
         

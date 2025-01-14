@@ -1,22 +1,51 @@
 from __future__ import annotations
+
 import os
 import time
-from typing import Any
-from functools import wraps
-from typing import Callable, TYPE_CHECKING
-from flask import url_for, render_template, request, session, abort
+
+from flask import (
+    abort,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import current_user
 from flask_mail import Message
-from itsdangerous import SignatureExpired, BadSignature
-from sqlalchemy import select, or_, delete
+from functools import wraps
+from itsdangerous import (
+    BadSignature,
+    SignatureExpired,
+)
+from jinja2 import (
+    TemplateNotFound,
+    TemplateSyntaxError,
+    UndefinedError,
+)
+from smtplib import (
+    SMTPRecipientsRefused,
+    SMTPSenderRefused,
+)
+from sqlalchemy import (
+    delete,
+    or_,
+    select,
+)
+from typing import Any, Callable, TYPE_CHECKING
 from werkzeug.routing import BuildError
-from jinja2 import TemplateNotFound, TemplateSyntaxError, UndefinedError
-from smtplib import SMTPRecipientsRefused, SMTPSenderRefused
+
+from src.extensions import (
+    logger,
+    mail_,
+    serializer_,
+    server_db_,
+)
 
 from config.settings import (
-    SERVER, REDIRECT
+    REDIRECT,
+    SERVER,
+    TEMPLATE
 )
-from src.extensions import server_db_, serializer_, mail_, logger
 
 
 if TYPE_CHECKING:

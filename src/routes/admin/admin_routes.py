@@ -1,23 +1,45 @@
 from flask import (
-    render_template, Blueprint, url_for, redirect, request, flash, session
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
-from flask_login import login_required, current_user
+from flask_login import (
+    current_user,
+    login_required,
+)
 
 from src.models.auth_model.auth_mod import User
-
 from src.models.auth_model.auth_mod_utils import (
-    get_user_by_email, confirm_authentication_token,
-    start_verification_process, delete_authentication_token
+    confirm_authentication_token,
+    delete_authentication_token,
+    get_user_by_email,
+    start_verification_process,
 )
+
 from src.routes.admin.admin_route_utils import (
-    process_admin_form, process_profile_picture, clean_up_form_fields,
-    process_new_email_address
+    clean_up_form_fields,
+    process_admin_form,
+    process_new_email_address,
+    process_profile_picture,
 )
+
 from src.routes.admin.admin_forms import (
-    VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
+    AuthenticationForm,
+    NotificationsForm,
+    ProfileForm,
+    VerifyEmailForm,
 )
+
 from config.settings import (
-    SERVER, MESSAGE, REDIRECT, TEMPLATE, FORM
+    FORM,
+    MESSAGE,
+    REDIRECT,
+    SERVER,
+    TEMPLATE,
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -49,7 +71,7 @@ def user_admin():
                                            token_type=SERVER.EMAIL_VERIFICATION)
                 flash(MESSAGE.VERIFICATION_SEND)
                 session["flash_type"] = "verify"  # To indicate flash position
-                return redirect(url_for(REDIRECT.USER_ADMIN_REDIRECT,
+                return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="admin-content"))
             
             session["verify_email_errors"] = verify_email_form.errors

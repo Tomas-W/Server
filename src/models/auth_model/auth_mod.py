@@ -1,27 +1,58 @@
 import glob
 import os
 import random
-import re
+
 from datetime import datetime
 from typing import Optional
-from flask import session, abort
+
+from flask import (
+    abort,
+    session,
+)
 from flask_login import UserMixin
 from sqlalchemy import (
-    Integer, String, DateTime, Boolean, Text
+    Boolean,
+    DateTime,
+    Integer,
+    String,
+    Text,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from src.extensions import server_db_, argon2_, logger
-from src.models.mod_utils import (
-    set_updated_at
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
+from wtforms.validators import ValidationError
+
+from src.extensions import (
+    argon2_,
+    logger,
+    server_db_,
 )
 
-from config.settings import SERVER, DIR, FORM
-from wtforms.validators import ValidationError
+from src.models.mod_utils import (
+    set_updated_at,
+)
+
 from src.utils.form_utils import (
-    FastCodeCheck, FastCodeLengthCheck, EmailCheck, EmailTakenCheck,
-    UsernameLengthCheck, UsernameTakenCheck, PasswordCheck, PasswordLengthCheck,
-    FastNameLengthCheck, DisplayNameLengthCheck, DisplayNameTakenCheck,
-    EmployeeNameCheck
+    DisplayNameLengthCheck,
+    DisplayNameTakenCheck,
+    EmailCheck,
+    EmailTakenCheck,
+    EmployeeNameCheck,
+    FastCodeCheck,
+    FastCodeLengthCheck,
+    FastNameLengthCheck,
+    PasswordCheck,
+    PasswordLengthCheck,
+    UsernameLengthCheck,
+    UsernameTakenCheck,
+)
+
+from config.settings import (
+    DIR,
+    FORM,
+    SERVER,
 )
 
 

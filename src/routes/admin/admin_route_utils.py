@@ -1,13 +1,21 @@
 import os
 
-from flask import flash, session, abort
+from flask import (
+    abort,
+    flash,
+    session,
+)
 from flask_login import current_user
 from flask_wtf import FlaskForm
 
 from src.extensions import logger
+
 from src.models.auth_model.auth_mod_utils import start_verification_process
+
 from config.settings import (
-    SERVER, DIR, MESSAGE
+    DIR,
+    MESSAGE,
+    SERVER,
 )
 
 

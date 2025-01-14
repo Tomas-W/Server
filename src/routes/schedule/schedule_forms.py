@@ -1,13 +1,23 @@
 import calendar
+
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, SubmitField, BooleanField, HiddenField, EmailField, SelectField
+    BooleanField,
+    EmailField,
+    HiddenField,
+    SelectField,
+    StringField,
+    SubmitField,
 )
 from wtforms.validators import DataRequired
-from src.utils.form_utils import EmployeeNameCheck, EmailCheck
-from config.settings import (
-    FORM,
+
+from src.utils.form_utils import (
+    EmailCheck,
+    EmployeeNameCheck,
 )
+
+from config.settings import FORM
+
 
 class ScheduleRequestForm(FlaskForm):
     name = StringField(

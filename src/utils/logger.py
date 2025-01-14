@@ -1,11 +1,18 @@
+import colorlog
+import logging
 import os
 import uuid
-import logging
-import colorlog
-from flask import request, has_request_context, g
+
+from flask import (
+    g,
+    has_request_context,
+    request,
+)
 from flask_login import current_user
 from logging.handlers import RotatingFileHandler
+
 from config.settings import SERVER
+
 
 class LoggingFormatter(logging.Formatter):
     """
@@ -127,10 +134,14 @@ class ServerLogger:
         """Create and configure the console handler"""
         handler = logging.StreamHandler()
         handler.setFormatter(colorlog.ColoredFormatter(
-            "%(log_color)s[%(asctime)s] %(levelname)-8s [%(request_id)4s] "
-            "%(user)-15s - %(message)s%(reset)s",
+            "%(log_color)s[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s"
+            "%(reset)s%(location_log)s%(route_log)s",
             datefmt=self.log_date_format,
-            log_colors=self.log_colors
+            log_colors=self.log_colors,
+            secondary_log_colors={
+                'location': self.log_colors,
+                'route': self.log_colors
+            }
         ))
         return handler
 
@@ -142,44 +153,47 @@ class ServerLogger:
 
     def _log(self, level, msg, *args, location=None, route=None, **kwargs):
         """Internal logging method that handles additional context flags"""
-        if self.app:
-            extra = {
+        try:
+            if 'extra' not in kwargs:
+                kwargs['extra'] = {}
+            
+            kwargs['extra'].update({
                 SERVER.LOG_LOCATION: location,
                 SERVER.LOG_ROUTE: route
-            }
-            self.app.logger.log(level, msg, extra=extra)
+            })
+            
+            self.app.logger.log(level, msg, *args, **kwargs)
+        except Exception as e:
+            # Fallback to basic logging if something goes wrong
+            print(f"Logging failed: {e}")
+            print(f"Original message: {msg}")
 
-    def debug(self, msg, location=None, route=None, *args, **kwargs):
+    def debug(self, msg, *args, location=None, route=None, **kwargs):
         """Log debug message"""
-        self._log(logging.DEBUG, msg, location=location, route=route)
+        self._log(logging.DEBUG, msg, *args, location=location, route=route, **kwargs)
 
-    def info(self, msg, location=None, route=None, *args, **kwargs):
+    def info(self, msg, *args, location=None, route=None, **kwargs):
         """Log info message"""
-        self._log(logging.INFO, msg, location=location, route=route)
+        self._log(logging.INFO, msg, *args, location=location, route=route, **kwargs)
 
-    def warning(self, msg, location=None, route=None, *args, **kwargs):
+    def warning(self, msg, *args, location=None, route=None, **kwargs):
         """Log warning message"""
-        self._log(logging.WARNING, msg, location=location, route=route)
+        self._log(logging.WARNING, msg, *args, location=location, route=route, **kwargs)
 
-    def error(self, msg, location=None, route=None, *args, **kwargs):
+    def error(self, msg, *args, location=None, route=None, **kwargs):
         """Log error message"""
-        self._log(logging.ERROR, msg, location=location, route=route)
+        self._log(logging.ERROR, msg, *args, location=location, route=route, **kwargs)
 
-    def critical(self, msg, location=None, route=None, *args, **kwargs):
+    def critical(self, msg, *args, location=None, route=None, **kwargs):
         """Log critical message"""
-        self._log(logging.CRITICAL, msg, location=location, route=route)
+        self._log(logging.CRITICAL, msg, *args, location=location, route=route, **kwargs)
 
-    def exception(self, msg, exc_info=True, location=True, route=True, *args, **kwargs):
-        """
-        Log exception
-        - exc_info: bool [True] - Add stack trace
-        - location: bool [True] - Add location context
-        - route: bool [True] - Add route context
-        """
-        if self.app:
-            kwargs[SERVER.LOG_LOCATION] = {
-                SERVER.LOG_LOCATION: location,
-                SERVER.LOG_ROUTE: route,
-                **(kwargs.get(SERVER.LOG_LOCATION, {}))
-            }
-            self.app.logger.exception(msg, exc_info=exc_info, *args, **kwargs)
+    def exception(self, msg, *args, exc_info=True, location=True, route=True, **kwargs):
+        """Log exception with stack trace"""
+        if 'extra' not in kwargs:
+            kwargs['extra'] = {}
+        kwargs['extra'].update({
+            SERVER.LOG_LOCATION: location,
+            SERVER.LOG_ROUTE: route
+        })
+        self.app.logger.exception(msg, *args, exc_info=exc_info, **kwargs)

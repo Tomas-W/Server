@@ -1,17 +1,41 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
-    FileField, BooleanField
+    BooleanField,
+    EmailField,
+    FileField,
+    HiddenField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+    TextAreaField,
 )
 from wtforms.validators import EqualTo
 
 from src.utils.form_utils import (
-    ForbiddenCheck, UsernameTakenCheck, PasswordCheck, EmailTakenCheck,
-    UsernameLengthCheck, PasswordLengthCheck, EmailCheck, EmailLengthCheck,
-    FastNameLengthCheck, FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
-    CommentLengthCheck, ImageUploadCheck, DisplayNameTakenCheck, AboutMeLengthCheck
+    AboutMeLengthCheck,
+    CommentLengthCheck,
+    DisplayNameTakenCheck,
+    EmailCheck,
+    EmailLengthCheck,
+    EmailTakenCheck,
+    FastCodeCheck,
+    FastCodeLengthCheck,
+    FastNameLengthCheck,
+    ForbiddenCheck,
+    ImageUploadCheck,
+    PasswordCheck,
+    PasswordLengthCheck,
+    UsernameLengthCheck,
+    UsernameTakenCheck,
+    VerifyEmailCheck,
 )
-from config.settings import FORM, MESSAGE
+
+from config.settings import (
+    FORM,
+    MESSAGE,
+)
+
 
 class VerifyEmailForm(FlaskForm):
     """

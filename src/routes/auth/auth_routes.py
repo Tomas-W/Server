@@ -1,38 +1,67 @@
-from functools import wraps
 import os
-
 import requests
+
+from functools import wraps
 from flask import (
-    Blueprint, redirect, url_for, request, render_template, flash, session
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
-from flask_login import login_required, current_user
-from google.oauth2 import id_token  # noqa
+from flask_login import (
+    current_user,
+    login_required,
+)
 from google.auth.exceptions import GoogleAuthError
-from pip._vendor import cachecontrol  # noqa
-import google.auth.transport.requests  # noqa
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from pip._vendor import cachecontrol
 from sqlalchemy import select
 
-from src.extensions import server_db_, flow_, logger
-from src.models.auth_model.auth_mod_utils import delete_authentication_token
-from src.routes.auth.auth_forms import (
-    LoginForm, FastLoginForm, RegisterForm, RequestResetForm, SetPasswordForm,
-    ResetPasswordForm
-)
-from src.routes.auth.auth_route_utils import (
-    fast_login, normal_login, handle_user_login, handle_user_logout
-)
-from src.models.auth_model.auth_mod import User
-from src.models.auth_model.auth_mod_utils import (
-    start_verification_process, confirm_authentication_token, get_user_by_email,
-    get_new_user
-)
-from src.models.state_model.state_mod_utils import (
-    save_oauth_state, get_and_delete_oauth_state
-)
-from config.settings import (
-    SERVER, MESSAGE, REDIRECT, TEMPLATE
+from src.extensions import (
+    flow_,
+    logger,
+    server_db_,
 )
 
+from src.models.auth_model.auth_mod import User
+from src.models.auth_model.auth_mod_utils import (
+    confirm_authentication_token,
+    delete_authentication_token,
+    get_new_user,
+    get_user_by_email,
+    start_verification_process,
+)
+from src.models.state_model.state_mod_utils import (
+    get_and_delete_oauth_state,
+    save_oauth_state,
+)
+
+from src.routes.auth.auth_route_utils import (
+    fast_login,
+    handle_user_login,
+    handle_user_logout,
+    normal_login,
+)
+
+from src.routes.auth.auth_forms import (
+    FastLoginForm,
+    LoginForm,
+    RegisterForm,
+    RequestResetForm,
+    ResetPasswordForm,
+    SetPasswordForm,
+)
+
+from config.settings import (
+    MESSAGE,
+    REDIRECT,
+    SERVER,
+    TEMPLATE,
+)
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -152,7 +181,7 @@ def callback():
     credentials = flow_.credentials
     request_session = requests.session()
     cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session=cached_session)
+    token_request = google_requests.Request(session=cached_session)
 
     try:
         id_info = id_token.verify_oauth2_token(

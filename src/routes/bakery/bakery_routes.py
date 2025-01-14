@@ -1,23 +1,38 @@
-from flask import Blueprint, render_template, abort
+from flask import (
+    Blueprint,
+    abort,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required
-from flask import request, redirect, url_for, session
 
 from src.extensions import logger
+
 from src.models.auth_model.auth_mod_utils import admin_required
 from src.models.bakery_model.bakery_mod_utils import (
-    get_program_items_dicts, get_item_by_id_dict, get_program_ids_and_names,
-    get_bakery_programs_info, delete_item_by_id
-)
-from src.routes.bakery.bakery_forms import (
-    BakerySearchForm
-)
-from src.routes.bakery.bakery_route_utils import (
-    process_bakery_form, update_bakery_search_form
-)
-from config.settings import (
-    FORM, TEMPLATE, REDIRECT, MESSAGE
+    delete_item_by_id,
+    get_bakery_programs_info,
+    get_item_by_id_dict,
+    get_program_ids_and_names,
+    get_program_items_dicts,
 )
 
+from src.routes.bakery.bakery_route_utils import (
+    process_bakery_form,
+    update_bakery_search_form,
+)
+
+from src.routes.bakery.bakery_forms import BakerySearchForm
+
+from config.settings import (
+    FORM,
+    MESSAGE,
+    REDIRECT,
+    TEMPLATE,
+)
 
 bakery_bp = Blueprint("bakery", __name__)
 

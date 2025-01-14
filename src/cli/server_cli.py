@@ -1,12 +1,19 @@
 import click
-from flask import Flask, current_app
 
-from src.extensions import server_db_, logger
+from flask import (
+    Flask,
+    current_app,
+)
 
-from src.cli.schedule_cli import schedule_cli
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from src.cli.bakery_cli import bakery_cli
-from src.cli.user_cli import user_cli
 from src.cli.news_cli import news_cli
+from src.cli.schedule_cli import schedule_cli
+from src.cli.user_cli import user_cli
 
 
 def server_cli(app_: Flask) -> None:

@@ -1,15 +1,32 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, SubmitField, EmailField, PasswordField, BooleanField, HiddenField
+    BooleanField,
+    EmailField,
+    HiddenField,
+    PasswordField,
+    StringField,
+    SubmitField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    EqualTo,
+)
 
 from src.utils.form_utils import (
-    EmailCheck, EmailTakenCheck, PasswordCheck, ForbiddenCheck, UsernameTakenCheck,
-    EmailLengthCheck, UsernameLengthCheck, PasswordLengthCheck
+    EmailCheck,
+    EmailLengthCheck,
+    EmailTakenCheck,
+    ForbiddenCheck,
+    PasswordCheck,
+    PasswordLengthCheck,
+    UsernameLengthCheck,
+    UsernameTakenCheck,
 )
+
 from config.settings import (
-    FORM, MESSAGE
+    FORM,
+    MESSAGE,
 )
 
 

@@ -1,17 +1,39 @@
 from argon2.exceptions import (
-    VerifyMismatchError, VerificationError, InvalidHashError
+    InvalidHashError,
+    VerificationError,
+    VerifyMismatchError,
 )
-from flask import url_for, redirect, session
-from flask_login import login_user, current_user, logout_user
-from flask import Response
-from src.extensions import argon2_, logger
-from src.routes.auth.auth_forms import FastLoginForm, LoginForm
+from flask import (
+    Response,
+    redirect,
+    session,
+    url_for,
+)
+from flask_login import (
+    current_user,
+    login_user,
+    logout_user,
+)
+from src.extensions import (
+    argon2_,
+    logger,
+)
 from src.models.auth_model.auth_mod import User
 from src.models.auth_model.auth_mod_utils import (
-    get_user_by_email_or_username, get_user_by_fast_name
+    get_user_by_email_or_username,
+    get_user_by_fast_name,
 )
+
+from src.routes.auth.auth_forms import (
+    FastLoginForm,
+    LoginForm,
+)
+
 from config.settings import (
-    FORM, MESSAGE, SERVER, REDIRECT
+    FORM,
+    MESSAGE,
+    REDIRECT,
+    SERVER,
 )
 
 

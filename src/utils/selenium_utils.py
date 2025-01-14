@@ -1,7 +1,8 @@
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import random
 import time
+
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 from src.extensions import logger
 

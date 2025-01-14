@@ -1,21 +1,25 @@
 import os
 
+from argon2 import PasswordHasher
 from flask import current_app
 from flask_compress import Compress
-from flask_mail import Mail
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_login import LoginManager
+from flask_mail import Mail
+from flask_migrate import Migrate
 from flask_session import Session
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 from google_auth_oauthlib.flow import Flow
-from argon2 import PasswordHasher
 from itsdangerous import URLSafeTimedSerializer
 
-from config.settings import SERVER, PATH
 from src.utils.logger import ServerLogger
+
+from config.settings import (
+    SERVER,
+    PATH,
+)
 
 
 logger = ServerLogger()

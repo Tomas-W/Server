@@ -1,36 +1,58 @@
-from datetime import timedelta, datetime
+from datetime import (
+    datetime,
+    timedelta,
+)
 from flask import (
-    Blueprint, render_template, request, session, flash, redirect, url_for
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
-from flask_login import login_required, current_user
-from src.models.schedule_model.schedule_mod import Schedule
-from config.settings import (
-    TEMPLATE, FORM
-)
+from flask_login import current_user, login_required
+
 from src.extensions import logger
-from src.routes.schedule.schedule_route_utils import (
-    get_requested_date, get_personal_schedule_dicts, get_calendar_dates,
-    get_prev_month_days, get_next_month_days, get_calendar_week_numbers,
-    get_shortened_week_days
+
+from src.models.schedule_model.schedule_mod import Schedule
+from src.models.schedule_model.schedule_mod_utils import (
+    activate_employee,
+    get_calendar_on_duty_days,
 )
 from src.models.auth_model.auth_mod_utils import (
-    start_verification_process, confirm_authentication_token,
-    delete_authentication_token, employee_required
+    confirm_authentication_token,
+    delete_authentication_token,
+    employee_required,
+    start_verification_process,
 )
+
+from src.routes.schedule.schedule_route_utils import (
+    get_calendar_dates,
+    get_calendar_week_numbers,
+    get_next_month_days,
+    get_personal_schedule_dicts,
+    get_prev_month_days,
+    get_requested_date,
+    get_shortened_week_days,
+)
+
 from src.routes.schedule.schedule_forms import (
-    ScheduleRequestForm, CalendarForm
+    CalendarForm,
+    ScheduleRequestForm,
 )
-from src.models.schedule_model.schedule_mod_utils import (
-    activate_employee, get_calendar_on_duty_days
-)
-from src.utils.schedule import _week_from_date, _now
+
+from src.utils.schedule import _now, _week_from_date
+
 from config.settings import (
-    SERVER, REDIRECT, MESSAGE, TEMPLATE
+    FORM,
+    MESSAGE,
+    REDIRECT,
+    SERVER,
+    TEMPLATE,
 )
 
 schedule_bp = Blueprint("schedule", __name__)
-
-
 
 
 @schedule_bp.route("/schedule/personal", methods=["GET", "POST"])

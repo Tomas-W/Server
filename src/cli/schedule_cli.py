@@ -1,12 +1,20 @@
 import click
 import json
+
 from flask import Flask
 
 from src.extensions import logger
+
 from src.models.schedule_model.schedule_mod_utils import (
-    _init_schedule, _init_employees
+    _init_employees,
+    _init_schedule,
 )
-from src.utils.schedule import _get_schedule_paths, update_schedule
+
+from src.utils.schedule import (
+    _get_schedule_paths,
+    update_schedule,
+)
+
 from config.settings import PATH
 
 

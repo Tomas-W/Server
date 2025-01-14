@@ -1,8 +1,13 @@
-from dataclasses import dataclass, field
 import os
 import pathlib
-import pycountry
 import string
+
+from dataclasses import (
+    dataclass,
+    field,
+)
+
+import pycountry
 import pytz
 
 
@@ -114,7 +119,7 @@ class Template:
     ADD_NEWS: str = "/news/add.html"
     DELETE_NEWS: str = "/news/delete.html"
     DELETE_BAKERY: str = "/bakery/delete.html"
-    EMAIL_TEMPLATE: str = "/admin/email.html"
+    EMAIL: str = "/admin/email.html"
     # Errors
     E_400: str = "/errors/400.html"
     E_401: str = "/errors/401.html"

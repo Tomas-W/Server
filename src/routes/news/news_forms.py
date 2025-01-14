@@ -1,9 +1,18 @@
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, SubmitField, HiddenField
+from wtforms import (
+    HiddenField,
+    SubmitField,
+    TextAreaField,
+)
 from wtforms.validators import DataRequired
+
 from src.utils.form_utils import (
-    CommentLengthCheck, ForbiddenCheck, NewsHeaderLengthCheck,
-    NewsTitleLengthCheck, NewsCodeCheck, NewsImportantLengthCheck
+    CommentLengthCheck,
+    ForbiddenCheck,
+    NewsHeaderLengthCheck,
+    NewsTitleLengthCheck,
+    NewsCodeCheck,
+    NewsImportantLengthCheck,
 )
 
 

@@ -1,12 +1,23 @@
 import click
-from flask import Flask
-from src.extensions import server_db_, logger
 
-from src.models.news_model.news_mod import News, Comment
+from flask import Flask
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
+from src.models.news_model.news_mod import (
+    Comment,
+    News,
+)
 from src.models.news_model.news_mod_utils import (
-    get_news_by_id, delete_news_by_id, clear_news_db,
-    get_comment_by_id, delete_comment_by_id, clear_comments_db,
-    _init_news
+    _init_news,
+    clear_comments_db,
+    clear_news_db,
+    delete_comment_by_id,
+    delete_news_by_id,
+    get_comment_by_id,
+    get_news_by_id,
 )
 from src.routes.news.news_items import get_news_dict
 

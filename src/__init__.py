@@ -1,27 +1,49 @@
 import os
-import secrets
 
 from dotenv import load_dotenv
 load_dotenv('.flaskenv')
-from flask import Flask, send_from_directory
+
+from flask import (
+    Flask,
+    send_from_directory,
+)
+from flask_assets import (
+    Bundle,
+    Environment,
+)
 from flask_login import current_user
-from flask_assets import Environment, Bundle
 from sqlalchemy.exc import SQLAlchemyError
 
-from config.app_config import DebugConfig, DeployConfig
-from config.settings import DIR, REDIRECT
-
 from src.extensions import (
-    server_db_, mail_, csrf_, login_manager_, migrater_, limiter_, session_,
-    logger, compress_
+    compress_,
+    csrf_,
+    limiter_,
+    login_manager_,
+    logger,
+    mail_,
+    migrater_,
+    server_db_,
+    session_,
 )
-from src.models.mod_utils import load_user
+from src.extensions_utils import (
+    clear_webassets_cache,
+    get_all_css_bundles,
+)
+
 from src.cli.user_cli import user_cli
 from src.cli.news_cli import news_cli
 from src.cli.schedule_cli import schedule_cli
 from src.cli.server_cli import server_cli
 from src.cli.bakery_cli import bakery_cli
-from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
+
+from config.settings import (
+    DIR,
+    REDIRECT,
+)
+from config.app_config import (
+    DebugConfig,
+    DeployConfig,
+)
 
 
 def _configure_server(app_: Flask) -> Flask:

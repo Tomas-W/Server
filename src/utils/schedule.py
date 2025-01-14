@@ -2,17 +2,22 @@ import calendar
 import json
 import os
 import time
-from datetime import datetime, timedelta
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
 
+from datetime import (
+    datetime,
+    timedelta,
+)
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from src.extensions import logger, server_db_
 
 from src.utils.selenium_utils import (
     get_undetectable_driver, movement
 )
-from src.extensions import logger, server_db_
+
 from config.settings import DIR, PATH
 
 

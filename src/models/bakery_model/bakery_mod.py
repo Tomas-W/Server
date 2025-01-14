@@ -1,10 +1,24 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, Integer, String, Float, DateTime, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Float,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
-from src.extensions import server_db_, logger
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from config.settings import SERVER
 
 

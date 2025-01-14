@@ -1,5 +1,10 @@
-from datetime import datetime, timedelta, date
 import calendar
+
+from datetime import (
+    datetime,
+    timedelta,
+    date,
+)
 from flask import request
 from flask_login import current_user
 

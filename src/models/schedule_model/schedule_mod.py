@@ -1,10 +1,24 @@
 from datetime import datetime
-from sqlalchemy import Integer, String, Date, Text, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    Boolean,
+    Date,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
-from src.extensions import server_db_, logger
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
 from src.utils.schedule import (
-    update_employee_json, add_employee_json
+    add_employee_json,
+    update_employee_json,
 )
 
 class Employees(server_db_.Model):

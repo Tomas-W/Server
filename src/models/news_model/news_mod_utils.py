@@ -1,12 +1,20 @@
 from sqlalchemy import select
 
-from flask_login import current_user
 from flask import session
+from flask_login import current_user
 
-from src.extensions import server_db_, logger
-from src.models.news_model.news_mod import News, Comment
-from src.routes.news.news_items import get_news_dict
+from src.extensions import (
+    logger,
+    server_db_,
+)
+
+from src.models.news_model.news_mod import (
+    Comment,
+    News,
+)
+
 from src.routes.news.news_forms import AddNewsForm
+from src.routes.news.news_items import get_news_dict
 
 
 def get_all_news_dict() -> list[dict]:

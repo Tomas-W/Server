@@ -1,7 +1,15 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from src.extensions import server_db_
-from config.settings import SERVER
 from datetime import datetime
+
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Integer,
+    String,
+)
+
+from src.extensions import server_db_
+
+from config.settings import SERVER
 
 
 class EmailStrorage(server_db_.Model):

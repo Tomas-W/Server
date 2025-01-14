@@ -1,7 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, HiddenField, SubmitField, BooleanField, SelectField
+    BooleanField,
+    HiddenField,
+    SelectField,
+    StringField,
+    SubmitField,
 )
+
 from config.settings import (
     FORM,
 )

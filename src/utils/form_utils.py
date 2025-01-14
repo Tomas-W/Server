@@ -1,12 +1,19 @@
 import re
+
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
-from src.models.schedule_model.schedule_mod import Employees
-from src.extensions import logger
-from config.settings import (SERVER, FORM, MESSAGE)
 
+from src.extensions import logger
+
+from src.models.schedule_model.schedule_mod import Employees
+
+from config.settings import (
+    FORM,
+    MESSAGE,
+    SERVER,
+)
 
 
 class VerifyEmailCheck:

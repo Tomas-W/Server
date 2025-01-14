@@ -9,9 +9,7 @@ from src.utils.form_utils import (
     EmailLengthCheck, UsernameLengthCheck, PasswordLengthCheck
 )
 from config.settings import (
-    REQUIRED_FIELD_MSG, PWD_MATCH_MSG, INVALID_EMAIL_MSG,
-    REGISTER_FORM_TYPE, LOGIN_FORM_TYPE, FAST_LOGIN_FORM_TYPE,
-    REQUEST_RESET_FORM_TYPE, SET_PASSWORD_FORM_TYPE, RESET_PASSWORD_FORM_TYPE
+    FORM, MESSAGE
 )
 
 
@@ -58,12 +56,12 @@ class RegisterForm(FlaskForm):
         label="Confirm password",
         render_kw={"placeholder": "Confirm password"},
         validators=[
-            EqualTo(fieldname="password", message=PWD_MATCH_MSG),
+            EqualTo(fieldname="password", message=MESSAGE.PWD_MATCH),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
     )
-    form_type = HiddenField(default=REGISTER_FORM_TYPE)
+    form_type = HiddenField(default=FORM.REGISTER)
     submit = SubmitField(label="Register")
 
 
@@ -82,18 +80,18 @@ class LoginForm(FlaskForm):
         label="Email or username",
         render_kw={"placeholder": "Email or username"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
         ]
     )
     password = PasswordField(
         label="Password",
         render_kw={"placeholder": "Password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
         ]
     )
     remember = BooleanField("Remember me")
-    form_type = HiddenField(default=LOGIN_FORM_TYPE)
+    form_type = HiddenField(default=FORM.LOGIN)
     submit = SubmitField(label="Login")
 
 
@@ -111,7 +109,7 @@ class FastLoginForm(FlaskForm):
         label="Name",
         render_kw={"placeholder": "Fast"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
         ]
     )
     fast_code = PasswordField(
@@ -121,10 +119,10 @@ class FastLoginForm(FlaskForm):
             "inputmode": "numeric",
         },
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
         ]
     )
-    form_type = HiddenField(default=FAST_LOGIN_FORM_TYPE)
+    form_type = HiddenField(default=FORM.FAST_LOGIN)
     submit = SubmitField(label="Go")
 
 
@@ -141,12 +139,12 @@ class RequestResetForm(FlaskForm):
         label="Email",
         render_kw={"placeholder": "Example@example.com"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
-            Email(message=INVALID_EMAIL_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
+            Email(message=MESSAGE.INVALID_EMAIL),
             EmailLengthCheck(),
         ]
     )
-    form_type = HiddenField(default=REQUEST_RESET_FORM_TYPE)
+    form_type = HiddenField(default=FORM.REQUEST_RESET)
     submit = SubmitField(label="Request")
 
 
@@ -164,7 +162,7 @@ class SetPasswordForm(FlaskForm):
         label="Password",
         render_kw={"placeholder": "Password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
@@ -173,13 +171,13 @@ class SetPasswordForm(FlaskForm):
         label="Confirm password",
         render_kw={"placeholder": "Confirm password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
             EqualTo(fieldname="password"),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
     )
-    form_type = HiddenField(default=SET_PASSWORD_FORM_TYPE)
+    form_type = HiddenField(default=FORM.SET_PASSWORD)
     submit = SubmitField(label="Set")
 
 
@@ -197,7 +195,7 @@ class ResetPasswordForm(FlaskForm):
         label="Password",
         render_kw={"placeholder": "Password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
@@ -206,11 +204,11 @@ class ResetPasswordForm(FlaskForm):
         label="Confirm password",
         render_kw={"placeholder": "Confirm password"},
         validators=[
-            DataRequired(message=REQUIRED_FIELD_MSG),
-            EqualTo(fieldname="password", message=PWD_MATCH_MSG),
+            DataRequired(message=MESSAGE.REQUIRED_FIELD),
+            EqualTo(fieldname="password", message=MESSAGE.PWD_MATCH),
             PasswordCheck(),
             PasswordLengthCheck(),
         ]
     )
-    form_type = HiddenField(default=RESET_PASSWORD_FORM_TYPE)
+    form_type = HiddenField(default=FORM.RESET_PASSWORD)
     submit = SubmitField(label="Reset")

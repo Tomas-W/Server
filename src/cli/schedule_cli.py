@@ -7,9 +7,7 @@ from src.models.schedule_model.schedule_mod_utils import (
     _init_schedule, _init_employees
 )
 from src.utils.schedule import _get_schedule_paths, update_schedule
-from config.settings import (
-    EMPLOYEES_PATH
-)
+from config.settings import PATH
 
 
 def schedule_cli(app_: Flask) -> None:
@@ -79,7 +77,7 @@ def schedule_cli(app_: Flask) -> None:
 
         Usage: flask schedule init-employees [--v] [--c]
         """
-        with open(EMPLOYEES_PATH, "r") as json_file:
+        with open(PATH.EMPLOYEES, "r") as json_file:
             employees_data = json.load(json_file)
         
         nr_employees = len(employees_data)

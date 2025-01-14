@@ -5,9 +5,7 @@ from datetime import datetime
 
 from src.models.schedule_model.schedule_mod import Schedule
 from src.extensions import server_db_, logger
-from config.settings import (
-    EMPLOYEES_PATH, EMPLOYEE_ROLE
-)
+from config.settings import (PATH, SERVER)
 
 
 def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
@@ -34,7 +32,7 @@ def activate_employee(name: str, email: str | None = None) -> bool:
     if employee:
         employee.activate_employee(email)
         current_user.set_employee_name(employee_name)
-        current_user.add_roles(EMPLOYEE_ROLE)
+        current_user.add_roles(SERVER.EMPLOYEE_ROLE)
         return True
     else:
         logger.error(f"[AUTH] EMPLOYEE {employee_name} NOT FOUND")
@@ -49,10 +47,10 @@ def _init_employees() -> bool:
     
     if not server_db_.session.query(Employees).count():
         try:
-            with open(EMPLOYEES_PATH, "r") as json_file:
+            with open(PATH.EMPLOYEES, "r") as json_file:
                 employees_data = json.load(json_file)
         except FileNotFoundError:
-            logger.critical(f"[SYS] FILE {EMPLOYEES_PATH} NOT FOUND")
+            logger.critical(f"[SYS] FILE {PATH.EMPLOYEES} NOT FOUND")
             return False
     
         for employee, _ in employees_data.items():

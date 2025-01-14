@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from flask_login import current_user
-from flask import session, abort
+from flask import session
 
 from src.extensions import server_db_, logger
 from src.models.news_model.news_mod import News, Comment

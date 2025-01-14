@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.extensions import server_db_, logger
 from src.models.auth_model.auth_mod import User
 from src.models.email_model.email_mod_utils import add_notification_email_to_db
-from config.settings import CET
+from config.settings import SERVER
 
 
 class News(server_db_.Model):
@@ -55,7 +55,7 @@ class News(server_db_.Model):
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(CET))
+        DateTime, default=lambda: datetime.now(SERVER.CET))
     
     user_id: Mapped[int] = mapped_column(ForeignKey("auth.id"), nullable=False)
     user: Mapped["User"] = relationship("User", back_populates="news_articles")
@@ -216,7 +216,7 @@ class Comment(server_db_.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(CET))
+        DateTime, default=lambda: datetime.now(SERVER.CET))
     
     liked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")
     disliked_by: Mapped[str] = mapped_column(Text, nullable=True, default="")

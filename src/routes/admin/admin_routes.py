@@ -17,11 +17,7 @@ from src.routes.admin.admin_forms import (
     VerifyEmailForm, AuthenticationForm, ProfileForm, NotificationsForm
 )
 from config.settings import (
-    EMAIL_VERIFICATION, EMAIL_VERIFIED_MSG, VERIFICATION_SEND_MSG,
-    AUTHENTICATION_LINK_ERROR_MSG, USER_ADMIN_REDIRECT,
-    VERIFY_FORM_TYPE, AUTHENTICATION_FORM_TYPE, PROFILE_FORM_TYPE,
-    NOTIFICATIONS_FORM_TYPE, EMAIL_TEMPLATE, USER_ADMIN_TEMPLATE,
-    NO_CHANGES_MSG, UPDATED_DATA_MSG, CHECK_INBOX_MSG
+    SERVER, MESSAGE, REDIRECT, TEMPLATE, FORM
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -47,72 +43,72 @@ def user_admin():
     notifications_form: NotificationsForm = NotificationsForm()
        
     if request.method == "POST":
-        if form_type == VERIFY_FORM_TYPE:
+        if form_type == FORM.VERIFY:
             if verify_email_form.validate_on_submit():
                 start_verification_process(email=verify_email_form.email.data,
-                                           token_type=EMAIL_VERIFICATION)
-                flash(VERIFICATION_SEND_MSG)
+                                           token_type=SERVER.EMAIL_VERIFICATION)
+                flash(MESSAGE.VERIFICATION_SEND)
                 session["flash_type"] = "verify"  # To indicate flash position
-                return redirect(url_for(USER_ADMIN_REDIRECT,
+                return redirect(url_for(REDIRECT.USER_ADMIN_REDIRECT,
                                         _anchor="admin-content"))
             
             session["verify_email_errors"] = verify_email_form.errors
             
-        elif form_type == AUTHENTICATION_FORM_TYPE:
+        elif form_type == FORM.AUTHENTICATION:
             if authentication_form.validate_on_submit():
                 if clean_up_form_fields(authentication_form):
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
 
                 if process_new_email_address(authentication_form):
-                    flash(CHECK_INBOX_MSG)
+                    flash(MESSAGE.CHECK_INBOX)
                 
                 if process_admin_form(authentication_form):
-                    flash(UPDATED_DATA_MSG)
+                    flash(MESSAGE.UPDATED_DATA)
                                 
                 session["flash_type"] = "authentication"  # To indicate flash position
                 session["_anchor"] = "authentication-wrapper"
-                return redirect(url_for(USER_ADMIN_REDIRECT,
+                return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="authentication-wrapper"))
 
             session["authentication_errors"] = authentication_form.errors
             
         
-        elif form_type == PROFILE_FORM_TYPE:
+        elif form_type == FORM.PROFILE:
             if profile_form.validate_on_submit():
                 if clean_up_form_fields(profile_form):
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
                     
                 if process_profile_picture(profile_form):
-                    flash(UPDATED_DATA_MSG)
+                    flash(MESSAGE.UPDATED_DATA)
                 else:
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
                     
                 if process_admin_form(profile_form):
-                    flash(UPDATED_DATA_MSG)
+                    flash(MESSAGE.UPDATED_DATA)
                 else:
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
                     
                 session["flash_type"] = "profile"  # To indicate flash position
                 session["_anchor"] = "profile-wrapper"
-                return redirect(url_for(USER_ADMIN_REDIRECT,
+                return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="profile-wrapper"))
             
             session["profile_errors"] = profile_form.errors
             session["_anchor"] = "profile-wrapper"
         
-        elif form_type == NOTIFICATIONS_FORM_TYPE:
+        elif form_type == FORM.NOTIFICATIONS:
             if notifications_form.validate_on_submit():
                 if clean_up_form_fields(notifications_form):
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
                     
                 if process_admin_form(notifications_form):
-                    flash(UPDATED_DATA_MSG)
+                    flash(MESSAGE.UPDATED_DATA)
                 else:
-                    flash(NO_CHANGES_MSG)
+                    flash(MESSAGE.NO_CHANGES)
                     
                 session["flash_type"] = "notifications"  # To indicate flash position
                 session["_anchor"] = "notification-settings-wrapper"
-                return redirect(url_for(USER_ADMIN_REDIRECT,
+                return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="notifications-wrapper"))
             
             session["_anchor"] = "notifications-wrapper"
@@ -131,7 +127,7 @@ def user_admin():
     _anchor = session.pop("_anchor", None)
 
     return render_template(
-        USER_ADMIN_TEMPLATE,
+        TEMPLATE.USER_ADMIN,
         verify_email_form=verify_email_form,
         verify_email_errors=verify_email_errors,
         
@@ -153,7 +149,7 @@ def verify_email(token):
     """
     Verifies AuthenticationToken for email verification.
     """
-    email = confirm_authentication_token(token, EMAIL_VERIFICATION)
+    email = confirm_authentication_token(token, SERVER.EMAIL_VERIFICATION)
     if email:
         user: User = get_user_by_email(email, new_email=True)
 
@@ -161,16 +157,16 @@ def verify_email(token):
             user.set_email(email)
             user.reset_new_email()
             user.set_email_verified(True)
-            delete_authentication_token(EMAIL_VERIFICATION, token)
+            delete_authentication_token(SERVER.EMAIL_VERIFICATION, token)
             session["flash_type"] = "authentication"
-            flash(EMAIL_VERIFIED_MSG)
-            return redirect(url_for(USER_ADMIN_REDIRECT))
+            flash(MESSAGE.EMAIL_VERIFIED)
+            return redirect(url_for(REDIRECT.USER_ADMIN))
     
     session["flash_type"] = "verify"
-    flash(AUTHENTICATION_LINK_ERROR_MSG)
+    flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
 
     return redirect(url_for(
-        USER_ADMIN_REDIRECT,
+        REDIRECT.USER_ADMIN,
     ))
 
 
@@ -186,9 +182,9 @@ def profile_icon(filename):
         flash("Updated profile icon")
     
     session["flash_type"] = "profile"
-    flash("Invalid profile icon")    
+    flash(MESSAGE.INVALID_PROFILE_ICON)    
     return redirect(url_for(
-        USER_ADMIN_REDIRECT,
+        REDIRECT.USER_ADMIN,
         _anchor="profile-wrapper"
     ))
 
@@ -201,7 +197,7 @@ def email():
     notification_settings = "You receive these emails because you signed up for notifications."
     
     return render_template(
-        EMAIL_TEMPLATE,
+        TEMPLATE.EMAIL,
         title=title,
         redirect_title=redirect_title,
         notification_settings=notification_settings

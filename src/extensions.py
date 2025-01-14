@@ -14,7 +14,7 @@ from google_auth_oauthlib.flow import Flow
 from argon2 import PasswordHasher
 from itsdangerous import URLSafeTimedSerializer
 
-from config.settings import CLIENTS_SECRETS_PATH, DEFAULT_LIMITS, LIMITER_URI
+from config.settings import SERVER, PATH
 from src.utils.logger import ServerLogger
 
 
@@ -28,12 +28,12 @@ migrater_: Migrate = Migrate()
 limiter_ = Limiter(
         get_remote_address,
         app=current_app,
-        default_limits=DEFAULT_LIMITS,
-        storage_uri=LIMITER_URI,
+        default_limits=SERVER.DEFAULT_LIMITS,
+        storage_uri=SERVER.LIMITER_URI,
     )
 session_ = Session()
 flow_ = Flow.from_client_secrets_file(
-        client_secrets_file=CLIENTS_SECRETS_PATH,
+        client_secrets_file=PATH.CLIENTS_SECRETS,
         scopes=["https://www.googleapis.com/auth/userinfo.profile",
                 "https://www.googleapis.com/auth/userinfo.email", "openid"],
         redirect_uri="http://localhost:5000/callback"

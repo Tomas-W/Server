@@ -1,8 +1,10 @@
 import os
 import glob
 
+from config.settings import DIR
 
-def clear_webassets_cache(cache_dir="C:/Coding/Projects/Server/src/static/.webassets-cache", max_files=10):
+
+def clear_webassets_cache(cache_dir=DIR.WEBASSETS, max_files=10):
     files = glob.glob(os.path.join(cache_dir, "*"))
     
     if len(files) > max_files:

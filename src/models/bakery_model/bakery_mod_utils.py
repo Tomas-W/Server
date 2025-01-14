@@ -6,7 +6,7 @@ from src.models.bakery_model.bakery_mod import BakeryItem
 from src.routes.bakery.bakery_items import get_bakery_dict
 from src.extensions import logger
 
-from sqlalchemy import func, and_
+from sqlalchemy import func
 
 def get_bakery_programs_info() -> list[dict]:
     subquery = (

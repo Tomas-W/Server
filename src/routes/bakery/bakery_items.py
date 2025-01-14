@@ -1,8 +1,7 @@
 import os.path
 
 from config.settings import (
-    BREAD_IMAGES_FOLDER, SMALL_BREAD_IMAGES_FOLDER, STOKBROOD_IMAGES_FOLDER,
-    SAVORY_IMAGES_FOLDER, PASTRY_IMAGES_FOLDER, SWEETS_IMAGES_FOLDER
+    DIR
 )
 
 
@@ -27,7 +26,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Rogge", "Tarwe"],
             "may_contain": ["Sesamzaad", "Soja"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "petit_beurre.png"),
         },
         "Petit Cereales": {
@@ -50,7 +49,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "petit_cereales.png"),
         },
         "Petit Volkoren": {
@@ -73,7 +72,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "petit_volkoren.png"),
         },
         "Petit Tarwe Rogge": {
@@ -96,7 +95,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "petit_tarwe_rogge.png"),
         },
         "Petit Kampioentje": {
@@ -121,7 +120,7 @@ def get_lp_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst", "Haver",
                          "Spelt", "Rogge", "Tarwe"],
             "may_contain": ["Melk, Soja, Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "petit_kampioentje.png"),
         },
         "L&P Spelt": {
@@ -144,7 +143,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Spelt"],
             "may_contain": ["Melk, Sesamzaad, Soja, Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_spelt.png"),
         },
         "L&P Spelt Volkoren": {
@@ -167,7 +166,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Spelt"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_spelt_volkoren.png"),
         },
         "L&P Meergranen": {
@@ -191,7 +190,7 @@ def get_lp_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst", "Spelt",
                          "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_meergranen.png"),
         },
         "L&P Meerzaden": {
@@ -214,7 +213,7 @@ def get_lp_bread_dict() -> dict:
             "nutri_score": "b",
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_meerzaden.png"),
         },
         "L&P Emmer": {
@@ -241,7 +240,7 @@ def get_lp_bread_dict() -> dict:
                             "Pistachenoot", "Walnoot", "Sesamzaad", "Soja", "Gerst",
                             "Haver", "Lactose", "Lupine", "Rogge", "Amandel",
                             "Hazelnoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_emmer.png"),
         },
         "L&P Spelt Boekweit": {
@@ -266,7 +265,7 @@ def get_lp_bread_dict() -> dict:
             "may_contain": ["Melk", "Noten", "Soja", "Gerst", "Haver", "Lactose",
                             "Lupine", "Rogge", "Hazelnoot", "Pistachenoot",
                             "Walnoot", "Tarwe"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_spelt_boekweit.png"),
         },
         "L&P Pompoen": {
@@ -291,7 +290,7 @@ def get_lp_bread_dict() -> dict:
                             "Lactose", "Lupine", "Amandel", "Hazelnoot",
                             "Macadamianoot", "Paranoot", "Pistachenoot",
                             "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_pompoen.png"),
         },
         "L&P San Francisco": {
@@ -316,7 +315,7 @@ def get_lp_bread_dict() -> dict:
                             "Lactose", "Lupine", "Rogge", "Amandel",
                             "Hazelnoot", "Macadamianoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_san_francisco.png"),
         },
         "L&P Nederlands Blond": {
@@ -340,7 +339,7 @@ def get_lp_bread_dict() -> dict:
             "may_contain": ["Melk", "Noten", "Sesamzaad", "Soja", "Gerst",
                             "Haver", "Lactose", "Lupine", "Rogge", "Amandel",
                             "Hazelnoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_nederlands_blond.png"),
         },
         "L&P Winterblond": {
@@ -366,7 +365,7 @@ def get_lp_bread_dict() -> dict:
                             "Lactose", "Lupine", "Rogge", "Amandel",
                             "Hazelnoot", "Macadamianoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_winterblond.png"),
         },
         "L&P Zonne Rogge": {
@@ -392,7 +391,7 @@ def get_lp_bread_dict() -> dict:
                             "Haver", "Lactose", "Lupine", "Amandel",
                             "Hazelnoot", "Macadamianoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "lp_zonne_rogge.png"),
         },
     }
@@ -420,7 +419,7 @@ def get_stevig_bread_dict() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Spelt"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "stevig_spelt.png"),
         },
         "Stevig Donker Meergranen": {
@@ -444,7 +443,7 @@ def get_stevig_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "stevig_donker_meergranen.png"),
         },
         "Stevig Grof Volkoren": {
@@ -466,7 +465,7 @@ def get_stevig_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "stevig_volkoren.png"),
         },
         "Stevig Eiwitrijk": {
@@ -490,7 +489,7 @@ def get_stevig_bread_dict() -> dict:
             "contains": ["Melk", "Sesamzaad", "Glutenbevattende Granen", "Soja",
                          "Gerst", "Haver", "Lactose", "Tarwe"],
             "may_contain": ["Amandel", "Hazelnoot", "Macadamianoot", "Paranoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "stevig_eiwitrijk.png"),
         },
 
@@ -519,7 +518,7 @@ def get_vloer_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Lupine", "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_wit.png"),
         },
         "Vloerbrood wit half": {
@@ -541,7 +540,7 @@ def get_vloer_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Lupine", "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_wit_half.png"),
         },
         "Vloerbrood Meergranen": {
@@ -565,7 +564,7 @@ def get_vloer_bread_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Gerst", "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Noten", "Sesamzaad", "Soja", "Lactose",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_meergranen.png"),
         },
         "Vloerbrood Meergranen half": {
@@ -589,7 +588,7 @@ def get_vloer_bread_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Gerst", "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Noten", "Sesamzaad", "Soja", "Lactose",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_meergranen_half.png"),
         },  
         "Vloerbrood Volkoren": {
@@ -614,7 +613,7 @@ def get_vloer_bread_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Melk", "Noten", "Soja", "Lactose", "Lupine",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_volkoren.png"),
         },
         "Vloerbrood Volkoren half": {
@@ -639,7 +638,7 @@ def get_vloer_bread_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Melk", "Noten", "Soja", "Lactose", "Lupine",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_volkoren_half.png"),
         },
         "Vloerbrood Waldkorn": {
@@ -663,7 +662,7 @@ def get_vloer_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_waldkorn.png"),
         },
         "Vloerbrood Waldkorn half": {
@@ -687,7 +686,7 @@ def get_vloer_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "vloerbrood_waldkorn_half.png"),
         },  
     }
@@ -715,7 +714,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Rogge", "Tarwe"],
             "may_contain": ["Sesamzaad", "Gerst", "Haver", "Spelt"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "kaiserbroodje_wit.png"),
         },
         "Kaiserbroodje Volkoren": {
@@ -737,7 +736,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Spelt", "Rogge", "Tarwe"],
             "may_contain": ["Sesamzaad", "Haver"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "kaiserbroodje_volkoren.png"),
         },
         "Pistolet Wit": {
@@ -759,7 +758,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Gerst", "Haver", "Spelt", "Rogge"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER, "pistolet_wit.png"),
+            "image": os.path.join(DIR.SMALL_BREAD, "pistolet_wit.png"),
         },
         "Pistolet Bruin": {
             "category": "Kleinbrood",
@@ -780,7 +779,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Gerst", "Haver", "Spelt", "Rogge"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "pistolet_bruin.png"),
         },
         "Tijgerbol": {
@@ -803,7 +802,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Gerst", "Haver", "Spelt",
                             "Lactose", "Rogge"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "tijgerbol.png"),
         },
         "Italiaanse Bol": {
@@ -828,7 +827,7 @@ def get_small_bread_dict() -> dict:
                             "Lupine", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Macadamianoot", "Pecannoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "italiaanse_bol.png"),
         },
         "Triangel Meergranen": {
@@ -853,7 +852,7 @@ def get_small_bread_dict() -> dict:
                             "Lupine", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Macadamianoot", "Pecannoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "triangel_meergranen.png"),
         },
         "Ciabatta Rozijn": {
@@ -877,7 +876,7 @@ def get_small_bread_dict() -> dict:
             "may_contain": ["Eieren", "Melk", "Noten", "Sesamzaad", "Soja", "Mosterd",
                             "Gerst", "Haver", "Spelt", "Lactose", "Amandel",
                             "Cashewnoot", "Hazelnoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "ciabatta_rozijn.png"),
         },
         "Kaas Ruitbroodje": {
@@ -899,7 +898,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "d",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "kaas_ruitbroodje.png"),
         },
         "Bakkersbroodje Bastille": {
@@ -923,7 +922,7 @@ def get_small_bread_dict() -> dict:
                          "Rogge", "Tarwe"],
             "may_contain": ["Eieren", "Melk", "Noten", "Haver", "Lactose", "Amandel",
                             "Hazelnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_bastille.png"),
         },
         "Bakkersbroodje Boulogne": {
@@ -946,7 +945,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Haver", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_boulogne.png"),
         },
         "Bakkersbroodje Everything": {
@@ -968,7 +967,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Rogge", "Tarwe"],
             "may_contain": ["Soja", "Lupine"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_everything.png"),
         },
         "Bakkersbroodje Cornflakes": {
@@ -990,7 +989,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Haver", "Spelt", "Rogge", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_cornflakes.png"),
         },
         "Bakkersbroodje Matisse": {
@@ -1012,7 +1011,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "a",
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Soja", "Lactose"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_matisse.png"),
         },
         "Bakkersbroodje Salt Pepper": {
@@ -1036,7 +1035,7 @@ def get_small_bread_dict() -> dict:
             "may_contain": ["Eieren", "Noten", "Sesamzaad", "Soja", "Selderij",
                             "Mosterd", "Haver", "Spelt", "Rogge", "Amandel",
                             "Hazelnoot", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_salt_pepper.png"),
         },
         "Bakkersbroodje Spelt": {
@@ -1060,7 +1059,7 @@ def get_small_bread_dict() -> dict:
                          "Spelt", "Sesamzaad"],
             "may_contain": ["Tarwe", "Eieren", "Mosterd", "Selderij", "Soja", "Walnoot",
                             "Hazelnoot", "Amandel", "Noten", "Rogge", "Gerst"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_spelt.png"),
         },
         "Bakkersbroodje Triomph": {
@@ -1083,7 +1082,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Soja", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Eieren", "Melk", "Noten", "Sesamzaad", "Haver", "Lactose",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "bakkersbroodje_triomph.png"),
         },
         "Carre Blanc": {
@@ -1105,7 +1104,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Rogge", "Tarwe"],
             "may_contain": ["Sesamzaad", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "carre_blanc.png"),
         },
         "Carre Kampioentje": {
@@ -1127,7 +1126,7 @@ def get_small_bread_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Tarwe", "Rogge", "Glutenbevattende Granen"],
             "may_contain": [],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "carre_kampioentje.png"),
         },
         "Carre Meerzaden": {
@@ -1150,7 +1149,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst",
                          "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Soja", "Mosterd", "Walnoot"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "carre_meerzaden.png"),
         },
         "Carre Pompoen": {
@@ -1173,7 +1172,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst",
                          "Rogge", "Tarwe"],
             "may_contain": ["Noten", "Haver", "Spelt", "Lactose"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "carre_pompoen.png"),
         },
         "Carre Walnoot": {
@@ -1196,7 +1195,7 @@ def get_small_bread_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Soja", "Gerst", "Rogge",
                          "Walnoot", "Tarwe"],
             "may_contain": ["Sesamzaad", "Mosterd", "Haver", "Spelt", "Lactose"],
-            "image": os.path.join(SMALL_BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SMALL_BREAD,
                                   "carre_walnoot.png"),
         },
     }
@@ -1226,7 +1225,7 @@ def get_savory_dict() -> dict:
             "contains": ["Melk", "Glutenbevattende Granen", "Mosterd",
                          "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad", "Soja", "Selderij", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "foccacia_pepperoni.png"),
         },
         "Foccacia Mozzarella": {
@@ -1249,7 +1248,7 @@ def get_savory_dict() -> dict:
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad", "Soja", "Selderij",
                             "Mosterd", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "foccacia_mozzarella.png"),
         },
         "Kip Paprikabroodje": {
@@ -1271,7 +1270,7 @@ def get_savory_dict() -> dict:
             "nutri_score": "d",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Rogge", "Tarwe"],
             "may_contain": [],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kip_paprikabroodje.png"),
         },
         "Petit Croissant": {
@@ -1294,7 +1293,7 @@ def get_savory_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Lactose",
                          "Tarwe"],
             "may_contain": ["Sesamzaad", "Soja", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "petit_croissant.png"),
         },
         "Chocoladebroodje": {
@@ -1318,7 +1317,7 @@ def get_savory_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Haver", "Amandel", "Hazelnoot",
                             "Pecannoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "chocoladebroodje.png"),
         },
         "Maple Pecan Vlechtbroodje": {
@@ -1342,7 +1341,7 @@ def get_savory_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Haver", "Amandel", "Hazelnoot",
                             "Pecannoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "maple_pecan_vlechtbroodje.png"),
         },
         "Koffiebroodje": {
@@ -1366,7 +1365,7 @@ def get_savory_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Soja", "Amandel", "Hazelnoot",
                             "Pecannoot", "Walnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "koffiebroodje.png"),
         },
         "Kaasstengel": {
@@ -1389,7 +1388,7 @@ def get_savory_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen",
                          "Lactose", "Tarwe"],
             "may_contain": ["Gerst", "Khorasan", "Haver", "Spelt", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaasstengel.png"),
         },
         "Kaassnack": {
@@ -1416,7 +1415,7 @@ def get_savory_dict() -> dict:
                             "Rogge", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Macadamianoot", "Pecannoot", "Paranoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaassnack.png"),
         },
         "Kaneelbroodje": {
@@ -1439,7 +1438,7 @@ def get_savory_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Eieren", "Melk", "Sesamzaad", "Soja", "Selderij",
                             "Mosterd", "Lactose", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaneelbroodje.png"),
         },
         "Luxe Croissant": {
@@ -1462,7 +1461,7 @@ def get_savory_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Lactose",
                          "Tarwe"],
             "may_contain": ["Noten", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "luxe_croissant.png"),
         },
         "Praline Croissant": {
@@ -1486,7 +1485,7 @@ def get_savory_dict() -> dict:
                          "Lactose", "Amandel", "Hazelnoot", "Tarwe"],
             "may_contain": ["Eieren", "Gerst", "Spelt", "Rogge", "Pecannoot",
                             "Pistachenoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "praline_croissant.png"),
         },
         "Kaas Croissant": {
@@ -1510,7 +1509,7 @@ def get_savory_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Soja", "Gerst", "Spelt", "Rogge",
                             "Amandel", "Hazelnoot", "Pecannoot", "Pistachenoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaas_croissant.png"),
         },
         "Ham Kaas Croissant": {
@@ -1535,7 +1534,7 @@ def get_savory_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Soja", "Gerst", "Spelt",
                             "Rogge", "Amandel", "Hazelnoot", "Pecannoot",
                             "Pistachenoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "ham_kaas_croissant.png"),
         },
         "Frikandelbroodje": {
@@ -1560,7 +1559,7 @@ def get_savory_dict() -> dict:
             "may_contain": ["Noten", "Pinda's", "Soja", "Selderij", "Mosterd",
                             "Gerst", "Haver", "Lupine", "Rogge", "Amandel",
                             "Macadamianoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "frikandelbroodje.png"),
         },
         "Saucijzenbroodje": {
@@ -1583,7 +1582,7 @@ def get_savory_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Soja",
                          "Lactose", "Tarwe"],
             "may_contain": [],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "saucijzenbroodje.png"),
         },
         "Kaasbroodje": {
@@ -1607,7 +1606,7 @@ def get_savory_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Noten", "Pinda's", "Soja", "Selderij", "Mosterd",
                             "Amandel", "Hazelnoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaasbroodje.png"),
         },
         "Spinazie Feta Borek": {
@@ -1629,7 +1628,7 @@ def get_savory_dict() -> dict:
             "nutri_score": "d",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad", "Soja", "Mosterd", "Lupine"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "spinazie_feta_borek.png"),
         },
         "Kip Loempia Borek": {
@@ -1652,7 +1651,7 @@ def get_savory_dict() -> dict:
             "contains": ["Melk", "Sesamzaad", "Glutenbevattende Granen", "Lactose",
                          "Tarwe"],
             "may_contain": ["Eieren", "Soja", "Mosterd", "Lupine"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kip_loempia_borek.png"),
         },
         "Vegan Frikandelbroodje": {
@@ -1676,7 +1675,7 @@ def get_savory_dict() -> dict:
             "may_contain": ["Eieren", "Melk", "Noten", "Pinda's", "Selderij",
                             "Gerst", "Haver", "Lactose", "Lupine", "Rogge",
                             "Amandel", "Macadamianoot"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "vegan_frikandelbroodje.png"),
         },
         "Pizzastuk": {
@@ -1698,7 +1697,7 @@ def get_savory_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad", "Gerst", "Haver", "Lupine", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "pizzastuk.png"),
         },
         "Kaas Uienbroodje": {
@@ -1720,7 +1719,7 @@ def get_savory_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Sesamzaad", "Gerst", "Haver", "Lupine", "Rogge"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "kaas_uienbroodje.png"),
         },
         "Worstenbroodje": {
@@ -1743,7 +1742,7 @@ def get_savory_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Lactose",
                          "Tarwe"],
             "may_contain": ["Sesamzaad", "Soja"],
-            "image": os.path.join(SAVORY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SAVORY,
                                   "worstenbroodje.png"),
         },
     }
@@ -1771,7 +1770,7 @@ def get_stokbrood_dict() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Gerst", "Haver", "Spelt", "Rogge"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "stokbrood_wit.png"),
         },
         "Stokbrood Bruin": {
@@ -1793,7 +1792,7 @@ def get_stokbrood_dict() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen, Tarwe"],
             "may_contain": ["Gerst", "Haver", "Spelt", "Rogge"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "stokbrood_bruin.png"),
         },
         "L&P Stokbrood Wit": {
@@ -1816,7 +1815,7 @@ def get_stokbrood_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Haver", "Spelt", "Amandel",
                             "Cashewnoot", "Hazelnoot", "Walnoot"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "lp_stokbrood_wit.png"),
         },
         "L&P Stokbrood Spelt": {
@@ -1839,7 +1838,7 @@ def get_stokbrood_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Spelt"],
             "may_contain": ["Noten", "Sesamzaad", "Gerst", "Haver", "Rogge",
                             "Amandel", "Cashewnoot", "Hazelnoot", "Walnoot", "Tarwe"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "lp_stokbrood_spelt.png"),
         },
         "L&P Stokbrood Volkoren": {
@@ -1862,7 +1861,7 @@ def get_stokbrood_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Gerst", "Haver", "Spelt",
                          "Rogge", "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Walnoot"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "lp_stokbrood_volkoren.png"),
         },
         "L&P Stokbrood Meergranen": {
@@ -1887,7 +1886,7 @@ def get_stokbrood_dict() -> dict:
                          "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Noten", "Spelt", "Amandel", "Cashewnoot",
                             "Hazelnoot", "Walnoot"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "lp_stokbrood_meergranen.png"),
         },
         "Petit Stokbrood Meerzaden": {
@@ -1911,7 +1910,7 @@ def get_stokbrood_dict() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst",
                          "Haver", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Soja", "Spelt", "Lactose"],
-            "image": os.path.join(STOKBROOD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.STOKBROOD,
                                   "petit_stokbrood_meerzaden.png"),
         },
     }
@@ -1942,7 +1941,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Noten", "Pinda's", "Soja", "Selderij", "Mosterd",
                             "Gerst", "Haver", "Lupine", "Rogge", "Amandel",
                             "Macadamianoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "appelflap.png"),
         },
         "Appeltaart": {
@@ -1967,7 +1966,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Soja", "Gerst", "Haver",
                             "Rogge", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Macadamianoot", "Pecannoot", "Paranoot", "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "appeltaart.png"),
         },
         "Stoofpeer Notentaart": {
@@ -1990,7 +1989,7 @@ def get_pastry_dict() -> dict:
             "contains": ["Tarwe", "Glutenbevattende Granen", "Melk", "Cashewnoot",
                          "Pecannoot", "Hazelnoot", "Eieren", "Noten"],
             "may_contain": ["Lupine", "Soja"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "stoofpeer_notentaart.png"),
         },
         "Mini Appeltaart": {
@@ -2015,7 +2014,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Soja", "Haver", "Spelt", "Amandel",
                             "Cashewnoot", "Hazelnoot", "Macadamianoot", "Pecannoot",
                             "Paranoot", "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "mini_appeltaart.png"),
         },
         "Mini Boterkoek": {
@@ -2040,7 +2039,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Gerst", "Haver", "Spelt",
                             "Amandel", "Cashewnoot", "Hazelnoot", "Macadamianoot",
                             "Pecannoot", "Paranoot", "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "mini_boterkoek.png"),
         },
         "Gevulde Koek": {
@@ -2065,7 +2064,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Soja", "Gerst", "Haver", "Spelt", "Cashewnoot",
                             "Hazelnoot", "Macadamianoot", "Pecannoot", "Paranoot",
                             "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER, "gevulde_koek.png"),
+            "image": os.path.join(DIR.PASTRY, "gevulde_koek.png"),
         },
         "Picolientje": {
             "category": "Pastry",
@@ -2089,7 +2088,7 @@ def get_pastry_dict() -> dict:
             "may_contain": ["Sesamzaad", "Soja", "Gerst", "Haver", "Spelt",
                             "Cashewnoot", "Hazelnoot", "Macadamianoot",
                             "Pecannoot", "Paranoot", "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "picolientje.png"),
         },
         "Triple Choco Cookie": {
@@ -2113,7 +2112,7 @@ def get_pastry_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Pinda's", "Selderij", "Mosterd", "Lupine",
                             "Amandel", "Macadamianoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "triple_choco_cookie.png"),
         },
         "Oatmeal Cookie": {
@@ -2137,7 +2136,7 @@ def get_pastry_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Pinda's", "Selderij", "Mosterd", "Lupine",
                             "Amandel", "Macadamianoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "oatmeal_cookie.png"),
         },
         "Choc Mac Nut Cookie": {
@@ -2163,7 +2162,7 @@ def get_pastry_dict() -> dict:
                             "Spelt", "Lupine", "Rogge", "Amandel", "Cashewnoot",
                             "Hazelnoot", "Macadamianoot", "Pecannoot", "Paranoot",
                             "Walnoot"],
-            "image": os.path.join(PASTRY_IMAGES_FOLDER,
+            "image": os.path.join(DIR.PASTRY,
                                   "choc_mac_nut_cookie.png"),
         },
     }
@@ -2193,7 +2192,7 @@ def get_sweets_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Noten", "Sesamzaad", "Soja", "Mosterd", "Gerst",
                             "Haver", "Spelt", "Lupine", "Rogge", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "berlinerbol.png"),
         },
         "Crodot": {
@@ -2216,7 +2215,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Tarwe"],
             "may_contain": ["Eieren", "Melk", "Noten", "Soja", "Mosterd",
                             "Lactose", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "crodot.png"),
         },
         "Gesuikerde Donut": {
@@ -2239,7 +2238,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Glutenbevattende Granen", "Soja"],
             "may_contain": ["Melk", "Lactose", "Eieren", "Noten", "Hazelnoot",
                             "Amandel"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "gesuikerde_donut.png"),
         },
         "Gedecoreerde Donut": {
@@ -2261,7 +2260,7 @@ def get_sweets_dict() -> dict:
             "nutri_score": "e",
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "gedecoreerde_donut.png"),
         },
         "Mini Choclade Donut": {
@@ -2283,7 +2282,7 @@ def get_sweets_dict() -> dict:
             "nutri_score": "e",
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "mini_choclade_donut.png"),
         },
         "Rainbow Donut": {
@@ -2306,7 +2305,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Lactose",
                          "Tarwe"],
             "may_contain": ["Noten", "Hazelnoot", "Pecannoot", "Pistachenoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "rainbow_donut.png"),
         },
         "Marshmellow Donut": {
@@ -2329,7 +2328,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Mosterd", "Amandel", "Hazelnoot",
                             "Pecannoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "marshmellow_donut.png"),
         },
         "Gevulde Vanille Donut": {
@@ -2351,7 +2350,7 @@ def get_sweets_dict() -> dict:
             "nutri_score": "e",
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Amandel", "Hazelnoot", "Pecannoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "gevulde_vanille_donut.png"),
         },
         "Fruit Sensation Donut": {
@@ -2374,7 +2373,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Melk", "Glutenbevattende Granen", "Lactose", "Rogge", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Soja", "Gerst", "Amandel",
                             "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "fruit_sensation_donut.png"),
         },
         "Popdots": {
@@ -2397,7 +2396,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Melk", "Glutenbevattende Granen", "Soja", "Lactose",
                          "Hazelnoot", "Tarwe"],
             "may_contain": ["Eieren", "Noten", "Amandel"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "popdots.png"),
         },
         "Dubbel Chocolade Muffin": {
@@ -2420,7 +2419,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Soja",
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "dubbel_chocolade_muffin.png"),
         },
         "Vanille Chocolade Muffin": {
@@ -2443,7 +2442,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Eieren", "Melk", "Glutenbevattende Granen", "Soja",
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Amandel", "Hazelnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "vanille_chocolade_muffin.png"),
         },
         "Luxe Blueberry Muffin": {
@@ -2468,7 +2467,7 @@ def get_sweets_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Sulfieten", "Soja", "Lupine",
                             "Amandel", "Hazelnoot", "Pecannoot", "Pistachenoot",
                             "Walnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "luxe_blueberry_muffin.png"),
         },
         "Red Velvet Muffin": {
@@ -2493,7 +2492,7 @@ def get_sweets_dict() -> dict:
             "may_contain": ["Noten", "Sesamzaad", "Gerst", "Haver", "Spelt", "Rogge",
                             "Amandel", "Cashewnoot", "Hazelnoot", "Pecannoot",
                             "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "red_velvet_muffin.png"),
         },
         "Choco Kokos Cake": {
@@ -2517,7 +2516,7 @@ def get_sweets_dict() -> dict:
                          "Tarwe"],
             "may_contain": ["Noten", "Pinda's", "Soja", "Amandel", "Cashewnoot",
                             "Hazelnoot", "Pecannoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "choco_kokos_cake.png"),
         },
         "Rocky Road Cake": {
@@ -2541,7 +2540,7 @@ def get_sweets_dict() -> dict:
                          "Lactose", "Tarwe"],
             "may_contain": ["Noten", "Pinda's", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Pecannoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "rocky_road_cake.png"),
         },
         "Kersen Cake": {
@@ -2564,7 +2563,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Eieren", "Melk", "Noten", "Glutenbevattende Granen", "Lactose",
                          "Amandel", "Tarwe"],
             "may_contain": ["Soja", "Hazelnoot", "Pecannoot", "Pistachenoot", "Walnoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "kersen_cake.png"),
         },
         "Carrot Cake": {
@@ -2588,7 +2587,7 @@ def get_sweets_dict() -> dict:
                          "Lactose", "Walnoot", "Tarwe"],
             "may_contain": ["Pinda's", "Soja", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Pecannoot", "Pistachenoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "carrot_cake.png"),
         },
         "Carrot Cake Plak": {
@@ -2611,7 +2610,7 @@ def get_sweets_dict() -> dict:
             "contains": ["Eieren", "Melk", "Noten", "Glutenbevattende Granen"],
             "may_contain": ["Haver", "Spelt", "Amandel", "Cashewnoot", "Hazelnoot",
                             "Macadamianoot", "Pecannoot", "Paranoot"],
-            "image": os.path.join(SWEETS_IMAGES_FOLDER,
+            "image": os.path.join(DIR.SWEETS,
                                   "carrot_cake_plak.png"),
         },
     }
@@ -2640,7 +2639,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Soja", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_triomphe.png"),
         },
         "Les pains Triomphe half": {
@@ -2661,7 +2660,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Soja", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_triomphe_half.png"),
         },
         "Les pains Bastille": {
@@ -2685,7 +2684,7 @@ def get_regular_bread() -> dict:
             "contains": ["Glutenbevattende Granen", "Sesamzaad", "Soja", "Gerst",
                          "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_bastille.png"),
         },
         "Les pains Bastille half": {
@@ -2707,7 +2706,7 @@ def get_regular_bread() -> dict:
             "contains": ["Glutenbevattende Granen", "Sesamzaad", "Soja", "Gerst",
                          "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_bastille_half.png"),
         },
         "Les pains Boulogne": {
@@ -2731,7 +2730,7 @@ def get_regular_bread() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Haver", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_boulogne.png"),
         },
         "Les pains Boulogne half": {
@@ -2753,7 +2752,7 @@ def get_regular_bread() -> dict:
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Soja", "Gerst",
                          "Haver", "Tarwe"],
             "may_contain": ["Melk", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_boulogne_half.png"),
         },
         "Les pains Matisse": {
@@ -2776,7 +2775,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_matisse.png"),
         },
         "Les pains Matisse half": {
@@ -2797,7 +2796,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Sesamzaad", "Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "les_pains_matisse_half.png"),
         },
         "Tijger bruin": {
@@ -2819,7 +2818,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_bruin.png"),
         },
         "Tijger bruin half": {
@@ -2841,7 +2840,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_bruin_half.png"),
         },
         "Tijger wit": {
@@ -2863,7 +2862,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_wit.png"),
         },
         "Tijger wit half": {
@@ -2885,7 +2884,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "c",
             "contains": ["Glutenbevattende Granen", "Gerst", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_wit_half.png"),
         },
         "Tijger volkoren": {
@@ -2907,7 +2906,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_volkoren.png"),
         },
         "Tijger volkoren half": {
@@ -2929,7 +2928,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Gerst", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_volkoren_half.png"),
         },
         "Tijger tarwe mais": {
@@ -2951,7 +2950,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Tarwe", "Maisgries"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_tarwe_mais.png"),
         },
         "Tijger tarwe mais half": {
@@ -2973,7 +2972,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "b",
             "contains": ["Glutenbevattende Granen", "Tarwe", "Maisgries"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "tijger_tarwe_mais_half.png"),
         },
         "Rond volkoren": {
@@ -2995,7 +2994,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "rond_volkoren.png"),
         },
         "Rond volkoren half": {
@@ -3016,7 +3015,7 @@ def get_regular_bread() -> dict:
             "nutri_score": "a",
             "contains": ["Glutenbevattende Granen", "Rogge", "Tarwe"],
             "may_contain": ["Melk", "Sesamzaad", "Soja", "Lactose"],
-            "image": os.path.join(BREAD_IMAGES_FOLDER,
+            "image": os.path.join(DIR.BREAD,
                                   "rond_volkoren_half.png"),
         },
     }

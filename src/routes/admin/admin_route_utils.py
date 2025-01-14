@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from src.extensions import logger
 from src.models.auth_model.auth_mod_utils import start_verification_process
 from config.settings import (
-    PROFILE_PICTURES_FOLDER, EMAIL_VERIFICATION, PROFILE_PICTURE_ERROR_MSG
+    SERVER, DIR, MESSAGE
 )
 
 
@@ -78,7 +78,7 @@ def process_new_email_address(form: FlaskForm) -> bool:
         current_user.set_new_email(new_email_address)
         del form._fields["email"]
         start_verification_process(email=new_email_address,
-                                   token_type=EMAIL_VERIFICATION,
+                                   token_type=SERVER.EMAIL_VERIFICATION,
                                    allow_unknown=True)
         return True
     return False
@@ -104,7 +104,7 @@ def process_profile_picture(form: FlaskForm) -> bool:
     try:
         # Generate filename with user ID to ensure uniqueness
         filename = f"{current_user.id}_{profile_picture_data.filename}"
-        file_path = os.path.join(PROFILE_PICTURES_FOLDER, filename)
+        file_path = os.path.join(DIR.PROFILE_PICS, filename)
         
         # Save file to disk first
         profile_picture_data.save(file_path)
@@ -116,7 +116,7 @@ def process_profile_picture(form: FlaskForm) -> bool:
         return True
         
     except FileNotFoundError:
-        flash(PROFILE_PICTURE_ERROR_MSG)
+        flash(MESSAGE.PROFILE_PICTURE_ERROR)
         logger.error("[USER] Profile picture folder not found")
         
     except PermissionError as e:

@@ -13,7 +13,7 @@ from src.utils.selenium_utils import (
     get_undetectable_driver, movement
 )
 from src.extensions import logger, server_db_
-from config.settings import SCHEDULE_FOLDER, EMPLOYEES_PATH
+from config.settings import DIR, PATH
 
 
 S_USERNAME = os.getenv("S_USERNAME")
@@ -233,7 +233,7 @@ def check_for_new_employees(names: list[str]) -> None:
 
 def add_employee_json(name: str, email: str = None, is_verified: bool = None) -> None:
     """ Adds a new Employee to the employees json file. """
-    with open(EMPLOYEES_PATH, "r") as json_file:
+    with open(PATH.EMPLOYEES, "r") as json_file:
         employees_data = json.load(json_file)
     
     email = email if email is not None else ""
@@ -242,10 +242,10 @@ def add_employee_json(name: str, email: str = None, is_verified: bool = None) ->
     
     sorted_employees_data = dict(sorted(employees_data.items()))
     try:
-        with open(EMPLOYEES_PATH, "w") as json_file:
+        with open(PATH.EMPLOYEES, "w") as json_file:
             json.dump(sorted_employees_data, json_file, indent=4)
     except PermissionError:
-        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {EMPLOYEES_PATH}")
+        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return
     except Exception as e:
         logger.warning(f"[ERROR] UNEXPECTED ERROR adding Employees to json: {str(e)}")
@@ -281,18 +281,18 @@ def _schedule_path_from_date(date: str) -> str:
     if _week_from_date(date) == 1:
         year = date[-4:]
         path = f"schedule{year}.json"
-        return os.path.join(SCHEDULE_FOLDER, path)
+        return os.path.join(DIR.SCHEDULE, path)
     
-    files = os.listdir(SCHEDULE_FOLDER)
+    files = os.listdir(DIR.SCHEDULE)
     schedule_files = [int(file.split(".")[0][-4:]) for file in files if file.startswith("schedule") and file.endswith(".json")]
     latest_year = max(schedule_files)
-    return os.path.join(SCHEDULE_FOLDER, f"schedule{latest_year}.json")
+    return os.path.join(DIR.SCHEDULE, f"schedule{latest_year}.json")
 
 
 def update_employee_json(name: str, email: str | None = None,
                          is_verified: bool | None = None) -> None:
     """ Updates the Employee in the Employees json file. """
-    with open(EMPLOYEES_PATH, "r") as json_file:
+    with open(PATH.EMPLOYEES, "r") as json_file:
         employees_data = json.load(json_file)
     
     if name in employees_data:
@@ -302,10 +302,10 @@ def update_employee_json(name: str, email: str | None = None,
             employees_data[name]["is_verified"] = is_verified
     
     try:
-        with open(EMPLOYEES_PATH, "w") as json_file:
+        with open(PATH.EMPLOYEES, "w") as json_file:
             json.dump(employees_data, json_file, indent=4)
     except PermissionError:
-        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {EMPLOYEES_PATH}")
+        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return
     except Exception as e:
         logger.warning(f"[ERROR] UNEXPECTED ERROR updating Employees in json: {str(e)}")
@@ -314,9 +314,9 @@ def update_employee_json(name: str, email: str | None = None,
 
 def _get_schedule_paths() -> list[str]:
     """ Returns the paths of the schedule files in the schedule folder. """
-    files = os.listdir(SCHEDULE_FOLDER)
+    files = os.listdir(DIR.SCHEDULE)
     schedule_files = [file for file in files if file.startswith("schedule") and file.endswith(".json")]
-    schedule_paths = [os.path.join(SCHEDULE_FOLDER, path) for path in schedule_files]
+    schedule_paths = [os.path.join(DIR.SCHEDULE, path) for path in schedule_files]
     return schedule_paths
 
 

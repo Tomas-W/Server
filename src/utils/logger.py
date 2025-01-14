@@ -5,7 +5,7 @@ import colorlog
 from flask import request, has_request_context, g
 from flask_login import current_user
 from logging.handlers import RotatingFileHandler
-from config.settings import LOG_ROUTE, LOG_LOCATION
+from config.settings import SERVER
 
 class LoggingFormatter(logging.Formatter):
     """
@@ -28,11 +28,11 @@ class LoggingFormatter(logging.Formatter):
         self._add_base_context(record)
         fmt = self.base_format
 
-        if getattr(record, LOG_LOCATION, False):
+        if getattr(record, SERVER.LOG_LOCATION, False):
             self._add_location_context(record)
             fmt += self.location_format
         
-        if getattr(record, LOG_ROUTE, False):
+        if getattr(record, SERVER.LOG_ROUTE, False):
             self._add_route_context(record)
             fmt += self.route_format
 
@@ -140,55 +140,34 @@ class ServerLogger:
         def before_request():
             g.request_id = str(uuid.uuid4())[0:4]
 
-    def _log(self, level, msg, location=False, route=False, *args, **kwargs):
+    def _log(self, level, msg, *args, location=None, route=None, **kwargs):
         """Internal logging method that handles additional context flags"""
         if self.app:
-            kwargs[LOG_LOCATION] = {
-                LOG_LOCATION: location,
-                LOG_ROUTE: route,
-                **(kwargs.get(LOG_LOCATION, {}))
+            extra = {
+                SERVER.LOG_LOCATION: location,
+                SERVER.LOG_ROUTE: route
             }
-            self.app.logger.log(level, msg, *args, **kwargs)
+            self.app.logger.log(level, msg, extra=extra)
 
-    def debug(self, msg, location=False, route=False, *args, **kwargs):
-        """
-        Log debug message
-        - location: bool [False] - Add location context
-        - route: bool [False] - Add route context
-        """
-        self._log(logging.DEBUG, msg, location, route, *args, **kwargs)
+    def debug(self, msg, location=None, route=None, *args, **kwargs):
+        """Log debug message"""
+        self._log(logging.DEBUG, msg, location=location, route=route)
 
-    def info(self, msg, location=False, route=False, *args, **kwargs):
-        """
-        Log info message
-        - location: bool [False] - Add location context
-        - route: bool [False] - Add route context
-        """
-        self._log(logging.INFO, msg, location, route, *args, **kwargs)
+    def info(self, msg, location=None, route=None, *args, **kwargs):
+        """Log info message"""
+        self._log(logging.INFO, msg, location=location, route=route)
 
-    def warning(self, msg, location=False, route=False, *args, **kwargs):
-        """
-        Log warning message
-        - location: bool [False] - Add location context
-        - route: bool [False] - Add route context
-        """
-        self._log(logging.WARNING, msg, location, route, *args, **kwargs)
+    def warning(self, msg, location=None, route=None, *args, **kwargs):
+        """Log warning message"""
+        self._log(logging.WARNING, msg, location=location, route=route)
 
-    def error(self, msg, location=True, route=True, *args, **kwargs):
-        """
-        Log error message
-        - location: bool [True] - Add location context
-        - route: bool [True] - Add route context
-        """
-        self._log(logging.ERROR, msg, location, route, *args, **kwargs)
+    def error(self, msg, location=None, route=None, *args, **kwargs):
+        """Log error message"""
+        self._log(logging.ERROR, msg, location=location, route=route)
 
-    def critical(self, msg, location=True, route=True, *args, **kwargs):
-        """
-        Log critical message
-        - location: bool [True] - Add location context
-        - route: bool [True] - Add route context
-        """
-        self._log(logging.CRITICAL, msg, location, route, *args, **kwargs)
+    def critical(self, msg, location=None, route=None, *args, **kwargs):
+        """Log critical message"""
+        self._log(logging.CRITICAL, msg, location=location, route=route)
 
     def exception(self, msg, exc_info=True, location=True, route=True, *args, **kwargs):
         """
@@ -198,9 +177,9 @@ class ServerLogger:
         - route: bool [True] - Add route context
         """
         if self.app:
-            kwargs[LOG_LOCATION] = {
-                LOG_LOCATION: location,
-                LOG_ROUTE: route,
-                **(kwargs.get(LOG_LOCATION, {}))
+            kwargs[SERVER.LOG_LOCATION] = {
+                SERVER.LOG_LOCATION: location,
+                SERVER.LOG_ROUTE: route,
+                **(kwargs.get(SERVER.LOG_LOCATION, {}))
             }
             self.app.logger.exception(msg, exc_info=exc_info, *args, **kwargs)

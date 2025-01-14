@@ -30,13 +30,7 @@ from src.models.state_model.state_mod_utils import (
     save_oauth_state, get_and_delete_oauth_state
 )
 from config.settings import (
-    PASSWORD_VERIFICATION, LOGIN_REDIRECT, ALL_NEWS_REDIRECT,
-    SET_PASSWORD_REDIRECT, REQUEST_RESET_REDIRECT, REGISTER_REDIRECT,
-    USER_ADMIN_REDIRECT, TOKEN_ERROR_MSG, STATE_ERROR_MSG, SESSION_ERROR_MSG,
-    AUTHENTICATION_LINK_ERROR_MSG, UNEXPECTED_ERROR_MSG, LOGOUT_SUCCESS_MSG,
-    PASSWORD_RESET_SEND_MSG, PASSWORD_UPDATE_MSG, HOME_PAGE_REDIRECT,
-    FAST_LOGIN_FAILED_MSG, LOGIN_TEMPLATE, REGISTER_TEMPLATE, SET_PASSWORD_TEMPLATE,
-    REQUEST_RESET_TEMPLATE, RESET_PASSWORD_TEMPLATE
+    SERVER, MESSAGE, REDIRECT, TEMPLATE
 )
 
 
@@ -67,7 +61,7 @@ def handle_fast_login(view_func):
                         return redirect(url_for(f"auth.{view_func.__name__}"))
                 
                 session["form_errors"] = fast_login_form.errors
-                flash(FAST_LOGIN_FAILED_MSG)
+                flash(MESSAGE.FAST_LOGIN_FAILED)
                 return redirect(url_for(f"auth.{view_func.__name__}"))
 
         return view_func(*args, **kwargs)
@@ -79,8 +73,8 @@ def handle_fast_login(view_func):
 def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
-        return redirect(url_for(HOME_PAGE_REDIRECT))
-    return redirect(url_for(LOGIN_REDIRECT))
+        return redirect(url_for(REDIRECT.HOME_PAGE))
+    return redirect(url_for(REDIRECT.LOGIN))
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -111,7 +105,7 @@ def login():
     form_errors = session.pop("form_errors", None)
     
     return render_template(
-        LOGIN_TEMPLATE,
+        TEMPLATE.LOGIN,
         login_form=login_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -140,20 +134,20 @@ def callback():
     try:
         flow_.fetch_token(authorization_response=request.url)
     except GoogleAuthError as e:
-        flash(TOKEN_ERROR_MSG)
-        return redirect(url_for(LOGIN_REDIRECT))
+        flash(MESSAGE.TOKEN_ERROR)
+        return redirect(url_for(REDIRECT.LOGIN))
     except Exception as e:
         logger.warning(f"[AUTH] OAUTH ERROR {e}")
-        flash(TOKEN_ERROR_MSG)
-        return redirect(url_for(LOGIN_REDIRECT))
+        flash(MESSAGE.TOKEN_ERROR)
+        return redirect(url_for(REDIRECT.LOGIN))
 
     state_in_request = request.args.get("state")
     oauth_state = get_and_delete_oauth_state(state_in_request)
 
     if not oauth_state:
         logger.error(f"[AUTH] WRONG OAUTH STATE")
-        flash(STATE_ERROR_MSG)
-        return redirect(url_for(LOGIN_REDIRECT))
+        flash(MESSAGE.STATE_ERROR)
+        return redirect(url_for(REDIRECT.LOGIN))
 
     credentials = flow_.credentials
     request_session = requests.session()
@@ -167,22 +161,22 @@ def callback():
             audience=os.environ.get("GOOGLE_CLIENT_ID"),
         )
     except GoogleAuthError as e:
-        flash(TOKEN_ERROR_MSG)
-        return redirect(url_for(LOGIN_REDIRECT))
+        flash(MESSAGE.TOKEN_ERROR)
+        return redirect(url_for(REDIRECT.LOGIN))
     except ValueError as e:
         logger.error(f"[AUTH] OAUTH TOKEN VALIDATION ERROR: {credentials.id_token[:20]}.. {e}")
-        flash(TOKEN_ERROR_MSG)
-        return redirect(url_for(LOGIN_REDIRECT))
+        flash(MESSAGE.TOKEN_ERROR)
+        return redirect(url_for(REDIRECT.LOGIN))
     
     email = id_info.get("email")
     user = get_user_by_email(email)
 
     if not user:
         session["email"] = email
-        return redirect(url_for(SET_PASSWORD_REDIRECT))
+        return redirect(url_for(REDIRECT.SET_PASSWORD))
 
     handle_user_login(user, remember=False)
-    return redirect(url_for(ALL_NEWS_REDIRECT))
+    return redirect(url_for(REDIRECT.ALL_NEWS))
 
 
 @auth_bp.route("/set_password", methods=["GET", "POST"])
@@ -204,8 +198,8 @@ def set_password():
         if set_password_form.validate_on_submit():
             email = session.pop("email", None)
             if not email:
-                flash(SESSION_ERROR_MSG)
-                return redirect(url_for(REQUEST_RESET_REDIRECT))
+                flash(MESSAGE.SESSION_ERROR)
+                return redirect(url_for(REDIRECT.REQUEST_RESET))
             
             user: User | None = get_new_user(
                 email=email,
@@ -214,17 +208,17 @@ def set_password():
             )
             if user:
                 handle_user_login(user, remember=False)
-                return redirect(url_for(ALL_NEWS_REDIRECT))
+                return redirect(url_for(REDIRECT.ALL_NEWS))
             else:
-                flash(UNEXPECTED_ERROR_MSG)
-                return redirect(url_for(LOGIN_REDIRECT))
+                flash(MESSAGE.UNEXPECTED_ERROR)
+                return redirect(url_for(REDIRECT.LOGIN))
 
         session["form_errors"] = set_password_form.errors
 
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        SET_PASSWORD_TEMPLATE,
+        TEMPLATE.SET_PASSWORD,
         set_password_form=set_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -252,10 +246,10 @@ def register():
             )
             if new_user:
                 handle_user_login(new_user, remember=False)
-                return redirect(url_for(ALL_NEWS_REDIRECT))
+                return redirect(url_for(REDIRECT.ALL_NEWS))
             else:
-                flash(UNEXPECTED_ERROR_MSG)
-                return redirect(url_for(REGISTER_REDIRECT))
+                flash(MESSAGE.UNEXPECTED_ERROR)
+                return redirect(url_for(REDIRECT.REGISTER))
 
         session["form_errors"] = register_form.errors
 
@@ -265,7 +259,7 @@ def register():
         register_form.email.data = fill_email
 
     return render_template(
-        REGISTER_TEMPLATE,
+        TEMPLATE.REGISTER,
         register_form=register_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -287,17 +281,17 @@ def request_reset():
     if request.method == "POST":
         if request_reset_form.validate_on_submit():
             start_verification_process(request_reset_form.email.data,
-                                       token_type=PASSWORD_VERIFICATION)
-            flash(PASSWORD_RESET_SEND_MSG)
+                                       token_type=SERVER.PASSWORD_VERIFICATION)
+            flash(MESSAGE.PASSWORD_RESET_SEND)
             session["email"] = request_reset_form.email.data
-            return redirect(url_for(REQUEST_RESET_REDIRECT))
+            return redirect(url_for(REDIRECT.REQUEST_RESET))
         
         session["form_errors"] = request_reset_form.errors
 
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        REQUEST_RESET_TEMPLATE,
+        TEMPLATE.REQUEST_RESET,
         request_reset_form=request_reset_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -316,10 +310,10 @@ def reset_password(token):
     fast_login_form = FastLoginForm()
     fast = session.pop("fast_login", False)
 
-    email = confirm_authentication_token(token, PASSWORD_VERIFICATION)
+    email = confirm_authentication_token(token, SERVER.PASSWORD_VERIFICATION)
     if not email:
-        flash(AUTHENTICATION_LINK_ERROR_MSG)
-        return redirect(url_for(REQUEST_RESET_REDIRECT))
+        flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
+        return redirect(url_for(REDIRECT.REQUEST_RESET))
     
     user: User | None = server_db_.session.execute(
         select(User).filter_by(email=email)).scalar_one_or_none()
@@ -328,12 +322,12 @@ def reset_password(token):
         if reset_password_form.validate_on_submit():
             user.set_password(reset_password_form.password.data)
             user.set_email_verified(True)
-            delete_authentication_token(PASSWORD_VERIFICATION, token)
+            delete_authentication_token(SERVER.PASSWORD_VERIFICATION, token)
             handle_user_login(user, remember=False)
             
-            flash(PASSWORD_UPDATE_MSG)
+            flash(MESSAGE.PASSWORD_UPDATE)
             session["flash_type"] = "authentication"
-            return redirect(url_for(USER_ADMIN_REDIRECT))
+            return redirect(url_for(REDIRECT.USER_ADMIN))
 
         session["form_errors"] = reset_password_form.errors
         session["last_form_type"] = "password"
@@ -341,7 +335,7 @@ def reset_password(token):
     form_errors = session.pop("form_errors", None)
 
     return render_template(
-        RESET_PASSWORD_TEMPLATE,
+        TEMPLATE.RESET_PASSWORD,
         reset_password_form=reset_password_form,
         fast_login_form=fast_login_form,
         form_errors=form_errors,
@@ -354,5 +348,5 @@ def reset_password(token):
 def logout():
     """Logs out user, clean up session and redirect to login page."""
     handle_user_logout()
-    flash(LOGOUT_SUCCESS_MSG)
-    return redirect(url_for(LOGIN_REDIRECT))
+    flash(MESSAGE.LOGOUT_SUCCESS)
+    return redirect(url_for(REDIRECT.LOGIN))

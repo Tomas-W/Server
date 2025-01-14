@@ -6,7 +6,7 @@ from wtforms import (
 from wtforms.validators import DataRequired
 from src.utils.form_utils import EmployeeNameCheck, EmailCheck
 from config.settings import (
-    SCHEDULE_REQUEST_FORM_TYPE, ADD_EMPLOYEE_FORM_TYPE, SCHEDULE_CALENDAR_FORM_TYPE
+    FORM,
 )
 
 class ScheduleRequestForm(FlaskForm):
@@ -25,7 +25,7 @@ class ScheduleRequestForm(FlaskForm):
             EmailCheck(),
         ]
     )
-    form_type = HiddenField(default=SCHEDULE_REQUEST_FORM_TYPE)
+    form_type = HiddenField(default=FORM.SCHEDULE_REQUEST)
     submit = SubmitField(label="Request")
 
 
@@ -48,7 +48,7 @@ class AddEmployeeForm(FlaskForm):
     is_verified = BooleanField(
         label="Is verified",
     )
-    form_type = HiddenField(default=ADD_EMPLOYEE_FORM_TYPE)
+    form_type = HiddenField(default=FORM.ADD_EMPLOYEE)
     submit = SubmitField(label="Add")
 
 
@@ -61,5 +61,5 @@ class CalendarForm(FlaskForm):
         label="Year",
         choices=[(i, i) for i in range(2024, 2026)],
     )
-    form_type = HiddenField(default=SCHEDULE_CALENDAR_FORM_TYPE)
+    form_type = HiddenField(default=FORM.SCALENDAR_FORM_TYPE)
     submit = SubmitField(label="Show")

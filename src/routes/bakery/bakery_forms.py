@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import (
     StringField, HiddenField, SubmitField, BooleanField, SelectField
 )
-from config.settings import (BAKERY_SEARCH_FORM_TYPE, NUTRI_CHOICES
+from config.settings import (
+    FORM,
 )
 
 
@@ -29,7 +30,7 @@ class BakerySearchForm(FlaskForm):
     )
     nutri_score = SelectField(
         label="Nutri score",
-        choices=NUTRI_CHOICES,
+        choices=FORM.NUTRI_CHOICES,
         render_kw={},
     )
     min_price = StringField(
@@ -46,5 +47,5 @@ class BakerySearchForm(FlaskForm):
                    "inputmode": "numeric",
                    "pattern": "[0-9]*"},
     )
-    form_type = HiddenField(default=BAKERY_SEARCH_FORM_TYPE)
+    form_type = HiddenField(default=FORM.BAKERY_SEARCH)
     submit = SubmitField("Search")

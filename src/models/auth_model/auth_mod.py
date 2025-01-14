@@ -15,10 +15,7 @@ from src.models.mod_utils import (
     set_updated_at
 )
 
-from config.settings import (
-    CET, PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER, USER_ROLES,
-    COUNTRY_CHOICES, MAX_ABOUT_ME_LENGTH
-)
+from config.settings import SERVER, DIR, FORM
 from wtforms.validators import ValidationError
 from src.utils.form_utils import (
     FastCodeCheck, FastCodeLengthCheck, EmailCheck, EmailTakenCheck,
@@ -45,7 +42,7 @@ class AuthenticationToken(server_db_.Model):
     token_type: Mapped[str] = mapped_column(String(32))
     token: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET))
+                                                 default=lambda: datetime.now(SERVER.CET))
     
     def set_token(self, token: str) -> None:
         self.token = token
@@ -115,13 +112,13 @@ class User(server_db_.Model, UserMixin):
     remember_me: Mapped[bool] = mapped_column(Boolean, default=False)
     last_setting_update: Mapped[Optional[str]] = mapped_column(String(32))
     updated_setting_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET))
+                                                 default=lambda: datetime.now(SERVER.CET))
 
     last_seen_at: Mapped[datetime] = mapped_column(DateTime,
-                                                   default=lambda: datetime.now(CET))
+                                                   default=lambda: datetime.now(SERVER.CET))
     tot_logins: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET))
+                                                 default=lambda: datetime.now(SERVER.CET))
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     news_articles: Mapped[list["News"]] = relationship(  # type: ignore
@@ -220,20 +217,20 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_country(self, country: str) -> None:
-        if country not in COUNTRY_CHOICES:
+        if country not in FORM.COUNTRY_CHOICES:
             raise ValueError(f"Invalid country: {country}")
         else:
             self.country = country
 
     @set_updated_at
     def set_profile_icon(self, profile_icon: str) -> None:
-        if profile_icon in os.listdir(PROFILE_ICONS_FOLDER):
+        if profile_icon in os.listdir(DIR.PROFILE_ICONS):
             self.profile_icon = profile_icon
 
     @set_updated_at
     def set_profile_picture(self, profile_picture: str) -> None:
         try:
-            pattern = os.path.join(PROFILE_PICTURES_FOLDER, f"{self.id}_")
+            pattern = os.path.join(DIR.PROFILE_PICS, f"{self.id}_")
             for file_path in glob.glob(pattern):
                 os.remove(file_path)
         except FileNotFoundError:
@@ -248,7 +245,7 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_about_me(self, about_me: str) -> None:
-        if len(about_me) <= MAX_ABOUT_ME_LENGTH:
+        if len(about_me) <= FORM.MAX_ABOUT_ME:
             self.about_me = about_me
 
     @set_updated_at
@@ -284,7 +281,7 @@ class User(server_db_.Model, UserMixin):
         user_roles = []
         if isinstance(roles, list):
             for role in roles:
-                if role in USER_ROLES:
+                if role in SERVER.USER_ROLES:
                     user_roles.append(role)
         elif isinstance(roles, str):
             user_roles.append(roles)
@@ -301,7 +298,7 @@ class User(server_db_.Model, UserMixin):
         user_roles = self.get_roles()
         if isinstance(roles, list):
             for role in roles:
-                if role not in USER_ROLES:
+                if role not in SERVER.USER_ROLES:
                     logger.warning(f"[AUTH] INVALID ROLE: {role} for user: {self.username}")
                     continue
                 if role in user_roles:
@@ -309,7 +306,7 @@ class User(server_db_.Model, UserMixin):
                 user_roles.append(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
-            if roles not in USER_ROLES:
+            if roles not in SERVER.USER_ROLES:
                 logger.warning(f"[AUTH] INVALID ROLE: {roles} for user: {self.username}")
                 return
             if roles in user_roles:
@@ -322,7 +319,7 @@ class User(server_db_.Model, UserMixin):
         user_roles = self.get_roles()
         if isinstance(roles, list):
             for role in roles:
-                if role not in USER_ROLES:
+                if role not in SERVER.USER_ROLES:
                     logger.warning(f"[AUTH] INVALID ROLE: {role} for user: {self.username}")
                     continue
                 if role not in user_roles:
@@ -331,7 +328,7 @@ class User(server_db_.Model, UserMixin):
                 user_roles.remove(role)
             self.update_roles(user_roles)
         elif isinstance(roles, str):
-            if roles not in USER_ROLES:
+            if roles not in SERVER.USER_ROLES:
                 logger.warning(f"[AUTH] INVALID ROLE: {roles} for user: {self.username}")
                 return
             if roles not in user_roles:
@@ -387,14 +384,14 @@ class User(server_db_.Model, UserMixin):
         self.remember_me = remember
 
     def update_last_seen(self) -> None:
-        self.last_seen_at = datetime.now(CET)
+        self.last_seen_at = datetime.now(SERVER.CET)
 
     def increment_tot_logins(self) -> None:
         self.tot_logins += 1
 
     @staticmethod
     def _init_profile_icon() -> str:
-        return random.choice([file for file in os.listdir(PROFILE_ICONS_FOLDER)])
+        return random.choice([file for file in os.listdir(DIR.PROFILE_ICONS)])
 
     @staticmethod
     def _get_hash(plain_password: str) -> str:

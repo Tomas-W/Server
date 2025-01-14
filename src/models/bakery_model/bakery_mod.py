@@ -5,7 +5,7 @@ from sqlalchemy import Boolean, Integer, String, Float, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.extensions import server_db_, logger
-from config.settings import CET
+from config.settings import SERVER
 
 
 class BakeryItem(server_db_.Model):
@@ -70,10 +70,10 @@ class BakeryItem(server_db_.Model):
     image: Mapped[str] = mapped_column(String(255), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET))
+                                                 default=lambda: datetime.now(SERVER.CET))
     updated_at: Mapped[datetime] = mapped_column(DateTime,
-                                                 default=lambda: datetime.now(CET),
-                                                 onupdate=lambda: datetime.now(CET))
+                                                 default=lambda: datetime.now(SERVER.CET),
+                                                 onupdate=lambda: datetime.now(SERVER.CET))
 
     search_field: Mapped[str] = mapped_column(Text, nullable=True)
 

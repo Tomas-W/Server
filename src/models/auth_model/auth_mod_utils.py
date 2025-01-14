@@ -14,10 +14,7 @@ from jinja2 import TemplateNotFound, TemplateSyntaxError, UndefinedError
 from smtplib import SMTPRecipientsRefused, SMTPSenderRefused
 
 from config.settings import (
-    PASSWORD_VERIFICATION, EMAIL_VERIFICATION, EMPLOYEE_VERIFICATION, ADMIN_ROLE,
-    RESET_PASSWORD_REDIRECT, VERIFY_EMAIL_REDIRECT, USER_ADMIN_REDIRECT,
-    GMAIL_EMAIL, EMAIL_TEMPLATE, TOKEN_EXPIRATION, VERIFY_EMPLOYEE_REDIRECT,
-    EMPLOYEE_ROLE
+    SERVER, REDIRECT
 )
 from src.extensions import server_db_, serializer_, mail_, logger
 
@@ -33,8 +30,8 @@ def admin_required(f: Callable) -> Callable:
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.has_role(ADMIN_ROLE):
-            logger.warning(f"[AUTH] ADMIN ACCESS DENIED: {current_user.username}.")
+        if not current_user.has_role(SERVER.ADMIN_ROLE):
+            logger.warning(f"[AUTH] ADMIN ACCESS DENIED: {current_user.username}")
             description = f"This page requires Admin access."
             abort(401, description=description)
         return f(*args, **kwargs)
@@ -48,7 +45,7 @@ def employee_required(f: Callable) -> Callable:
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.has_role(EMPLOYEE_ROLE):
+        if not current_user.has_role(SERVER.EMPLOYEE_ROLE):
             logger.warning(f"[AUTH] EMPLOYEE ACCESS DENIED: {current_user.username}.")
             description = f"This page requires Employee access."
             abort(401, description=description)
@@ -112,18 +109,18 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
     - EMAIL_VERIFICATION [set email verified]
     - PASSWORD_VERIFICATION [reset password]
     """
-    if token_type == EMAIL_VERIFICATION:
-        url_ = VERIFY_EMAIL_REDIRECT
+    if token_type == SERVER.EMAIL_VERIFICATION:
+        url_ = REDIRECT.VERIFY_EMAIL
         subject = "Email Verification"
         redirect_title = "To verify your email, "
         _anchor = "notifications-wrapper"
-    elif token_type == PASSWORD_VERIFICATION:
-        url_ = RESET_PASSWORD_REDIRECT
+    elif token_type == SERVER.PASSWORD_VERIFICATION:
+        url_ = REDIRECT.RESET_PASSWORD
         subject = "Password Reset"
         redirect_title = "To reset your password, "
         _anchor = "notifications-wrapper"
-    elif token_type == EMPLOYEE_VERIFICATION:
-        url_ = VERIFY_EMPLOYEE_REDIRECT
+    elif token_type == SERVER.EMPLOYEE_VERIFICATION:
+        url_ = REDIRECT.VERIFY_EMPLOYEE
         subject = "Employee Verification"
         redirect_title = "To verify your employee account, "
         _anchor = "schedule-wrapper"
@@ -132,12 +129,12 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         abort(500)
 
     redirect_url = get_authentication_url(url_, token=token, _external=True)
-    settings_url = get_authentication_url(USER_ADMIN_REDIRECT,
+    settings_url = get_authentication_url(REDIRECT.USER_ADMIN,
                                           _external=True,
                                           _anchor=_anchor)
 
     html_body = get_authentication_email_template(
-        template_name=EMAIL_TEMPLATE,
+        template_name=TEMPLATE.EMAIL,
         title=subject,
         redirect_title=redirect_title,
         redirect_url=redirect_url,
@@ -147,7 +144,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
 
     message = Message(
         subject=subject,
-        sender=GMAIL_EMAIL,
+        sender=SERVER.EMAIL,
         recipients=[email],
         html=html_body
     )
@@ -184,7 +181,7 @@ def send_email(message: Message) -> None:
         abort(500)
 
 def confirm_authentication_token(token: str, token_type: str,
-                                 expiration: int = TOKEN_EXPIRATION) -> str | None:
+                                 expiration: int = SERVER.TOKEN_EXPIRATION) -> str | None:
     """
     Confirm the specified authentication token.
     Verifications:
@@ -321,21 +318,21 @@ def _init_user() -> str | bool:
     from src.models.auth_model.auth_mod import User
     if not server_db_.session.query(User).count():
         new_user = User(
-            email=GMAIL_EMAIL,
-            username="Admin",
-            password="TomasTomas1!",
-            fast_name="admin",
-            fast_code=("00000"),
-            display_name="Server Admin",
+            email=SERVER.EMAIL,
+            username=os.environ.get("ADMIN_UNAME"),
+            password=os.environ.get("ADMIN_PWD"),
+            fast_name=os.environ.get("ADMIN_F_NAME"),
+            fast_code=os.environ.get("ADMIN_F_CODE"),
+            display_name=os.environ.get("ADMIN_DISPLAY_NAME"),
             email_verified=True,
-            employee_name="Tomas W",
-            roles=["admin", "employee"]
+            employee_name=os.environ.get("ADMIN_EMPLOYEE_NAME"),
+            roles=os.environ.get("ADMIN_ROLES").split(",")
         )
         deleted_user = User(
-            email="deleted@user.com",
-            username="Deleted user",
-            password="TomasTomas1!",
-            display_name="Deleted user",
+            email=os.environ.get("DELETED_USER_EMAIL"),
+            username=os.environ.get("DELETED_USER_UNAME"),
+            password=os.environ.get("DELETED_USER_PWD"),
+            display_name=os.environ.get("DELETED_USER_DISPLAY_NAME"),
         )
         server_db_.session.add(new_user)
         server_db_.session.add(deleted_user)

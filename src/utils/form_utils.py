@@ -5,21 +5,8 @@ from wtforms.fields import Field
 from wtforms.validators import ValidationError
 from src.models.schedule_model.schedule_mod import Employees
 from src.extensions import logger
-from config.settings import (
-    banned_words_list, banned_characters_list, REQUIRED_SYMBOLS,
-    MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH,
-    MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH, MIN_FAST_NAME_LENGTH, MAX_FAST_NAME_LENGTH,
-    FAST_CODE_LENGTH, MIN_NEWS_TITLE_LENGTH, MAX_NEWS_TITLE_LENGTH,
-    MIN_COMMENT_LENGTH,
-    MAX_COMMENT_LENGTH, MAX_IMAGE_FILE_SIZE, ALLOWED_FILE_EXTENSIONS,
-    EMAIL_TAKEN_MSG, USERNAME_TAKEN_MSG, INVALID_EMAIL_MSG, SPECIAL_CHAR_MSG,
-    CAPITAL_LETTER_MSG, LOWER_LETTER_MSG, FAST_CODE_ERROR_MSG, FORBIDDEN_WORD_MSG,
-    FORBIDDEN_CHAR_MSG, FILE_SIZE_ERROR_MSG, MIN_ABOUT_ME_LENGTH, MAX_ABOUT_ME_LENGTH,
-    DISPLAY_NAME_TAKEN_MSG, MIN_NEWS_HEADER_LENGTH, MAX_NEWS_HEADER_LENGTH,
-    NEWS_CODE_LENGTH, NEWS_CODE_LENGTH_ERROR_MSG, NEWS_CODE_NUMERIC_ERROR_MSG,
-    MIN_NEWS_IMPORTANT_LENGTH, MAX_NEWS_IMPORTANT_LENGTH, MIN_NEWS_LENGTH,
-    MAX_NEWS_LENGTH, EMAIL_REGEX, EMPLOYEE_NAME_ERROR_MSG
-)
+from config.settings import (SERVER, FORM, MESSAGE)
+
 
 
 class VerifyEmailCheck:
@@ -31,19 +18,19 @@ class VerifyEmailCheck:
     - length -> length check if not empty
     """
     def __init__(self) -> None:
-        self.invalid_message: str = INVALID_EMAIL_MSG
-        self.min_length_message: str = f"Min. {MIN_EMAIL_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_EMAIL_LENGTH} characters"
+        self.invalid_message: str = MESSAGE.INVALID_EMAIL
+        self.min_length_message: str = f"Min. {FORM.MIN_EMAIL} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_EMAIL} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if not field.data and current_user and current_user.is_authenticated:
             field.data = current_user.email
             return
-        if not re.match(EMAIL_REGEX, field.data):
+        if not re.match(SERVER.EMAIL_REGEX, field.data):
             raise ValidationError(self.invalid_message)
-        if len(field.data) < MIN_EMAIL_LENGTH:
+        if len(field.data) < FORM.MIN_EMAIL:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_EMAIL_LENGTH:
+        if len(field.data) > FORM.MAX_EMAIL:
             raise ValidationError(self.max_length_message)
 
 
@@ -54,12 +41,12 @@ class EmailCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.invalid_message: str = INVALID_EMAIL_MSG
+        self.invalid_message: str = MESSAGE.INVALID_EMAIL
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if not re.match(EMAIL_REGEX, field.data):
+        if not re.match(SERVER.EMAIL_REGEX, field.data):
             raise ValidationError(self.invalid_message)
 
 
@@ -68,7 +55,7 @@ class EmailTakenCheck:
     Validates email by checking if it's registered or not.
     """
     def __init__(self) -> None:
-        self.email_taken_message: str = EMAIL_TAKEN_MSG
+        self.email_taken_message: str = MESSAGE.EMAIL_TAKEN
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if current_user and current_user.is_authenticated and current_user.email == field.data:
@@ -87,15 +74,15 @@ class EmailLengthCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.min_length_message: str = f"Min. {MIN_EMAIL_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_EMAIL_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_EMAIL} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_EMAIL} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if len(field.data) < MIN_EMAIL_LENGTH:
+        if len(field.data) < FORM.MIN_EMAIL:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_EMAIL_LENGTH:
+        if len(field.data) > FORM.MAX_EMAIL:
             raise ValidationError(self.max_length_message)
 
 
@@ -104,7 +91,7 @@ class UsernameTakenCheck:
     Validates username by checking if it's registered or not.
     """
     def __init__(self) -> None:
-        self.username_taken_message: str = USERNAME_TAKEN_MSG
+        self.username_taken_message: str = MESSAGE.USERNAME_TAKEN
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if current_user and current_user.is_authenticated and current_user.username == field.data:
@@ -123,15 +110,15 @@ class UsernameLengthCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.min_length_message: str = f"Min. {MIN_USERNAME_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_USERNAME_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_USERNAME} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_USERNAME} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if len(field.data) < MIN_USERNAME_LENGTH:
+        if len(field.data) < FORM.MIN_USERNAME:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_USERNAME_LENGTH:
+        if len(field.data) > FORM.MAX_USERNAME:
             raise ValidationError(self.max_length_message)
 
 
@@ -142,10 +129,10 @@ class PasswordCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.symbols: list[str] = REQUIRED_SYMBOLS
-        self.special_char_message: str = SPECIAL_CHAR_MSG
-        self.capital_letter_message: str = CAPITAL_LETTER_MSG
-        self.lower_letter_message: str = LOWER_LETTER_MSG
+        self.symbols: list[str] = FORM.REQUIRED_SYMBOLS
+        self.special_char_message: str = MESSAGE.SPECIAL_CHAR
+        self.capital_letter_message: str = MESSAGE.CAPITAL_LETTER
+        self.lower_letter_message: str = MESSAGE.LOWER_LETTER
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
@@ -165,15 +152,15 @@ class PasswordLengthCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.min_length_message = f"Min. {MIN_PASSWORD_LENGTH} characters"
-        self.max_length_message = f"Max. {MAX_PASSWORD_LENGTH} characters"
+        self.min_length_message = f"Min. {FORM.MIN_PASSWORD} characters"
+        self.max_length_message = f"Max. {FORM.MAX_PASSWORD} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if len(field.data) < MIN_PASSWORD_LENGTH:
+        if len(field.data) < FORM.MIN_PASSWORD:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_PASSWORD_LENGTH:
+        if len(field.data) > FORM.MAX_PASSWORD:
             raise ValidationError(self.max_length_message)
 
 
@@ -184,15 +171,15 @@ class FastNameLengthCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.min_length_message: str = f"Min. {MIN_FAST_NAME_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_FAST_NAME_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_FAST_NAME} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_FAST_NAME} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if len(field.data) < MIN_FAST_NAME_LENGTH:
+        if len(field.data) < FORM.MIN_FAST_NAME:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_FAST_NAME_LENGTH:
+        if len(field.data) > FORM.MAX_FAST_NAME:
             raise ValidationError(self.max_length_message)
 
 
@@ -203,7 +190,7 @@ class FastCodeCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.message: str = FAST_CODE_ERROR_MSG
+        self.message: str = MESSAGE.FAST_CODE_ERROR
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
@@ -219,12 +206,12 @@ class FastCodeLengthCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.message: str = f"Must be {FAST_CODE_LENGTH} characters"
+        self.message: str = f"Must be {FORM.FAST_CODE_LENGTH} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if self.admin and not field.data:
             return
-        if len(field.data) != FAST_CODE_LENGTH:
+        if len(field.data) != FORM.FAST_CODE_LENGTH:
             raise ValidationError(self.message)
 
 
@@ -233,7 +220,7 @@ class EmployeeNameCheck:
     Validates employee_name by checking if it's in the database.
     """
     def __init__(self) -> None:
-        self.message: str = EMPLOYEE_NAME_ERROR_MSG
+        self.message: str = MESSAGE.EMPLOYEE_NAME_ERROR
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         employee: Employees | None = Employees.query.filter_by(name=field.data).first()
@@ -246,7 +233,7 @@ class DisplayNameTakenCheck:
     Validates display name by checking if it's registered or not.
     """
     def __init__(self) -> None:
-        self.display_name_taken_message: str = DISPLAY_NAME_TAKEN_MSG
+        self.display_name_taken_message: str = MESSAGE.DISPLAY_NAME_TAKEN
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if current_user and current_user.is_authenticated and current_user.display_name == field.data:
@@ -263,13 +250,13 @@ class DisplayNameLengthCheck:
     Validates display name by checking length.
     """
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_USERNAME_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_USERNAME_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_USERNAME} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_USERNAME} characters"
     
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_USERNAME_LENGTH:
+        if len(field.data) < FORM.MIN_USERNAME:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_USERNAME_LENGTH:
+        if len(field.data) > FORM.MAX_USERNAME:
             raise ValidationError(self.max_length_message)
 
 class AboutMeLengthCheck:
@@ -277,15 +264,15 @@ class AboutMeLengthCheck:
     Validates about me by checking length.
     """
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_ABOUT_ME_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_ABOUT_ME_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_ABOUT_ME} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_ABOUT_ME} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if field.data == "":
             return
-        if len(field.data) < MIN_ABOUT_ME_LENGTH:
+        if len(field.data) < FORM.MIN_ABOUT_ME:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_ABOUT_ME_LENGTH:
+        if len(field.data) > FORM.MAX_ABOUT_ME:
             raise ValidationError(self.max_length_message)
 
 
@@ -295,10 +282,10 @@ class ForbiddenCheck:
     """
     def __init__(self, admin: bool = False) -> None:
         self.admin: bool = admin
-        self.banned_words: list[str] = banned_words_list
-        self.banned_chars: list[str] = banned_characters_list
-        self.word_message: str = FORBIDDEN_WORD_MSG
-        self.char_message: str = FORBIDDEN_CHAR_MSG
+        self.banned_words: list[str] = SERVER.BANNED_WORDS
+        self.banned_chars: list[str] = SERVER.BANNED_CHARS
+        self.word_message: str = MESSAGE.FORBIDDEN_WORD
+        self.char_message: str = MESSAGE.FORBIDDEN_CHAR
 
         self.word = ""
         self.char = ""
@@ -332,13 +319,13 @@ class NewsHeaderLengthCheck:
     Validates news header by checking length.
     """
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_NEWS_HEADER_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_NEWS_HEADER_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_NEWS_HEADER} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_NEWS_HEADER} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_NEWS_HEADER_LENGTH:
+        if len(field.data) < FORM.MIN_NEWS_HEADER:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_NEWS_HEADER_LENGTH:
+        if len(field.data) > FORM.MAX_NEWS_HEADER:
             raise ValidationError(self.max_length_message)
 
 
@@ -347,13 +334,13 @@ class NewsTitleLengthCheck:
     Validates news title by checking length.
     """
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_NEWS_TITLE_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_NEWS_TITLE_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_NEWS_TITLE} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_NEWS_TITLE} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_NEWS_TITLE_LENGTH:
+        if len(field.data) < FORM.MIN_NEWS_TITLE:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_NEWS_TITLE_LENGTH:
+        if len(field.data) > FORM.MAX_NEWS_TITLE:
             raise ValidationError(self.max_length_message)
 
 
@@ -362,13 +349,13 @@ class NewsCodeCheck:
     Validates news code by checking length and if it's numeric.
     """
     def __init__(self) -> None:
-        self.length_message: str = NEWS_CODE_LENGTH_ERROR_MSG
-        self.numeric_message: str = NEWS_CODE_NUMERIC_ERROR_MSG
+        self.length_message: str = MESSAGE.NEWS_CODE_LENGTH_ERROR
+        self.numeric_message: str = MESSAGE.NEWS_CODE_NUMERIC_ERROR
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
         if not field.data.isdigit():
             raise ValidationError(self.numeric_message)
-        if len(field.data) != NEWS_CODE_LENGTH:
+        if len(field.data) != FORM.NEWS_CODE_LENGTH:
             raise ValidationError(self.length_message)
 
 
@@ -376,26 +363,26 @@ class NewsImportantLengthCheck:
     """Validates news important by checking length."""
 
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_NEWS_IMPORTANT_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_NEWS_IMPORTANT_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_NEWS_IMPORTANT} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_NEWS_IMPORTANT} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_NEWS_IMPORTANT_LENGTH:
+        if len(field.data) < FORM.MIN_NEWS_IMPORTANT:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_NEWS_IMPORTANT_LENGTH:
+        if len(field.data) > FORM.MAX_NEWS_IMPORTANT:
             raise ValidationError(self.max_length_message)
 
 
 class NewsLengthCheck:
     """Validates news grid columns by checking length."""
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_NEWS_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_NEWS_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_NEWS} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_NEWS} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_NEWS_LENGTH:
+        if len(field.data) < FORM.MIN_NEWS:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_NEWS_LENGTH:
+        if len(field.data) > FORM.MAX_NEWS:
             raise ValidationError(self.max_length_message)
 
 
@@ -404,13 +391,13 @@ class CommentLengthCheck:
     Validates comment by checking length.
     """
     def __init__(self) -> None:
-        self.min_length_message: str = f"Min. {MIN_COMMENT_LENGTH} characters"
-        self.max_length_message: str = f"Max. {MAX_COMMENT_LENGTH} characters"
+        self.min_length_message: str = f"Min. {FORM.MIN_COMMENT} characters"
+        self.max_length_message: str = f"Max. {FORM.MAX_COMMENT} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if len(field.data) < MIN_COMMENT_LENGTH:
+        if len(field.data) < FORM.MIN_COMMENT:
             raise ValidationError(self.min_length_message)
-        if len(field.data) > MAX_COMMENT_LENGTH:
+        if len(field.data) > FORM.MAX_COMMENT:
             raise ValidationError(self.max_length_message)
 
 
@@ -419,10 +406,10 @@ class ImageUploadCheck:
     Validates file by checking extension and size.
     """
     def __init__(self):
-        self.allowed_extensions: list[str] = ALLOWED_FILE_EXTENSIONS
-        self.max_size: int = MAX_IMAGE_FILE_SIZE
-        self.size_message: str = FILE_SIZE_ERROR_MSG
-        self.extension_message: str = "Invalid file extension"
+        self.allowed_extensions: list[str] = SERVER.ALLOWED_FILE_EXTENSIONS
+        self.max_size: int = SERVER.MAX_IMAGE_FILE_SIZE
+        self.size_message: str = MESSAGE.FILE_SIZE_ERROR
+        self.extension_message: str = MESSAGE.FILE_EXTENSION_ERROR
 
     def __call__(self, form, field):
         if field.data:

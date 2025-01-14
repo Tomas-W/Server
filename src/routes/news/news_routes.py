@@ -19,8 +19,7 @@ from src.routes.news.news_route_utils import (
     allow_only_styling, clean_news_session
 )
 from config.settings import (
-    COMMENT_SUCCESS_MSG, ALL_NEWS_TEMPLATE, NEWS_TEMPLATE, NEWS_REDIRECT, 
-    ALL_NEWS_REDIRECT, ADD_NEWS_TEMPLATE, DELETE_NEWS_TEMPLATE, DELETE_NEWS_REDIRECT
+    REDIRECT, TEMPLATE, MESSAGE
 )
 
 news_bp = Blueprint("news", __name__)
@@ -35,7 +34,7 @@ def all():
     flash_type = "all_news"
 
     return render_template(
-        ALL_NEWS_TEMPLATE,
+        TEMPLATE.ALL_NEWS,
         all_news_dict=all_news_dict,
         flash_type=flash_type,
     )
@@ -47,7 +46,7 @@ def unread():
     all_news_dict = get_all_unread_dict(current_user.id)
     
     return render_template(
-        ALL_NEWS_TEMPLATE,
+        TEMPLATE.ALL_NEWS,
         all_news_dict=all_news_dict,
     )
 
@@ -76,14 +75,14 @@ def news(id_: int):
             sanitized_comment = allow_only_styling(comment_form.content.data)
             add_new_comment(news_id=id_, user_id=current_user.id, content=sanitized_comment)
             clean_news_session()
-            flash(COMMENT_SUCCESS_MSG)
+            flash(MESSAGE.COMMENT_SUCCESS)
             session["post_comment"] = True
             session["flash_type"] = "comment"
-            return redirect(url_for(NEWS_REDIRECT, id_=id_, _anchor="comment-flash"))
+            return redirect(url_for(REDIRECT.NEWS, id_=id_, _anchor="comment-flash"))
         
         session["comment_form_errors"] = comment_form.errors
         session["form_data"] = request.form.to_dict()
-        return redirect(url_for(NEWS_REDIRECT, id_=id_, _anchor="post-comment-wrapper"))
+        return redirect(url_for(REDIRECT.NEWS, id_=id_, _anchor="post-comment-wrapper"))
 
     if form_data:
         comment_form.process(MultiDict(form_data))
@@ -96,7 +95,7 @@ def news(id_: int):
     flash_type = session.pop("flash_type", None)      # for flash messages location
     
     return render_template(
-        NEWS_TEMPLATE,
+        TEMPLATE.NEWS,
         comment_form=comment_form,
         comment_form_errors=comment_form_errors,
         news_dict=news_dict,
@@ -125,14 +124,14 @@ def add():
                              info_cols,
                              info_rows,
                              current_user.id)
-            return redirect(url_for(ALL_NEWS_REDIRECT))
+            return redirect(url_for(REDIRECT.ALL_NEWS))
         
         session["news_errors"] = add_news_form.errors
 
     add_news_errors = session.pop("add_news_errors", None)
     
     return render_template(
-        ADD_NEWS_TEMPLATE,
+        TEMPLATE.ADD_NEWS,
         add_news_form=add_news_form,
         add_news_errors=add_news_errors
     )
@@ -150,11 +149,11 @@ def delete(id_: int):
             abort(404, description=description)
         delete_news_by_id(id_)
         flash(f"News ID {id_} deleted")
-        return redirect(url_for(DELETE_NEWS_REDIRECT))
+        return redirect(url_for(REDIRECT.DELETE_NEWS))
     
     all_news_dict = get_all_news_dict()
     return render_template(
-        DELETE_NEWS_TEMPLATE,
+        TEMPLATE.DELETE_NEWS,
         all_news_dict=all_news_dict,
     )
 
@@ -170,7 +169,7 @@ def like_news(id_: int):
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
-        NEWS_REDIRECT,
+        REDIRECT.NEWS,
         id_=id_,
         _anchor="like-dislike"
     ))
@@ -187,7 +186,7 @@ def dislike_news(id_: int):
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
     return redirect(url_for(
-        NEWS_REDIRECT,
+        REDIRECT.NEWS,
         id_=id_,
         _anchor="like-dislike"
     ))
@@ -203,7 +202,7 @@ def delete_comment(id_: int):
     
     news_id = get_news_id_by_comment_id(id_)
     return redirect(url_for(
-        NEWS_REDIRECT,
+        REDIRECT.NEWS,
         id_=news_id,
         _anchor="comment-flash"
     ))
@@ -220,7 +219,7 @@ def like_comment(id_: int):
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(
-        NEWS_REDIRECT,
+        REDIRECT.NEWS,
         id_=comment_item.news_id,
         _anchor=f"comment-{id_}"
     ))
@@ -237,7 +236,7 @@ def dislike_comment(id_: int):
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)
     return redirect(url_for(
-        NEWS_REDIRECT,
+        REDIRECT.NEWS,
         id_=comment_item.news_id,
         _anchor=f"comment-{id_}"
     ))
@@ -250,4 +249,4 @@ def profile_icons(filename):
     if referrer:
         return redirect(referrer)
     else:
-        return redirect(url_for(ALL_NEWS_REDIRECT))  # Fallback if no referrer is available
+        return redirect(url_for(REDIRECT.ALL_NEWS))  # Fallback if no referrer is available

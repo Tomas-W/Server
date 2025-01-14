@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 from typing import Final
 
-from config.settings import DATABASE_URI, DEFAULT_LIMITS
+from config.settings import SERVER
 
 class BaseConfig(object):
     CONFIG_NAME = "base"
@@ -16,11 +16,11 @@ class BaseConfig(object):
     COMPRESS_LEVEL = 6
     COMPRESS_MIN_SIZE = 500
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
-    DEFAULT_LIMITS = DEFAULT_LIMITS
+    DEFAULT_LIMITS = SERVER.DEFAULT_LIMITS
 
     SESSION_TYPE = 'sqlalchemy'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = SERVER.DATABASE_URI
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
     SESSION_PERMANENT = False

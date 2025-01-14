@@ -3,17 +3,13 @@ import secrets
 
 from dotenv import load_dotenv
 load_dotenv('.flaskenv')
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory
 from flask_login import current_user
 from flask_assets import Environment, Bundle
 from sqlalchemy.exc import SQLAlchemyError
 
 from config.app_config import DebugConfig, DeployConfig
-from config.settings import (
-    DATABASE_URI, LOGIN_REDIRECT, DB_FOLDER,
-    PROFILE_ICONS_FOLDER, PROFILE_PICTURES_FOLDER,
-    BAKERY_HEALTH_IMAGES_FOLDER, UPLOAD_FOLDER
-)
+from config.settings import DIR, REDIRECT
 
 from src.extensions import (
     server_db_, mail_, csrf_, login_manager_, migrater_, limiter_, session_,
@@ -30,7 +26,7 @@ from src.extensions_utils import clear_webassets_cache, get_all_css_bundles
 
 def _configure_server(app_: Flask) -> Flask:
     """Configure the Flask application."""
-    _configure_paths(app_)
+    _configure_dirs(app_)
     
     # Get environment setting
     environment = os.environ.get("FLASK_ENV", "debug").lower()
@@ -62,19 +58,19 @@ def _configure_server(app_: Flask) -> Flask:
     return app_
 
 
-def _configure_paths(app_: Flask) -> None:
-    for folder in [DB_FOLDER, UPLOAD_FOLDER, PROFILE_PICTURES_FOLDER, PROFILE_ICONS_FOLDER, DB_FOLDER]:
+def _configure_dirs(app_: Flask) -> None:
+    for folder in [DIR.DB, DIR.UPLOAD, DIR.PROFILE_PICS, DIR.PROFILE_ICONS]:
         if not os.path.exists(folder):
             os.makedirs(folder)
 
 
 def _configure_extensions(app_: Flask) -> None:
-    logger.init_app(app_)
+    logger._init_app(app_)
     server_db_.init_app(app_)
     mail_.init_app(app_)
     csrf_.init_app(app_)
     login_manager_.init_app(app_)
-    login_manager_.login_view = LOGIN_REDIRECT
+    login_manager_.login_view = REDIRECT.LOGIN
     migrater_.init_app(app_, server_db_)
     limiter_.init_app(app_)
     app_.config['SESSION_SQLALCHEMY'] = server_db_
@@ -152,7 +148,7 @@ def _configure_cli(app_: Flask) -> None:
 
 def _configure_database(app_: Flask) -> None:
     with app_.app_context():
-        if not os.path.exists(DATABASE_URI):
+        if not os.path.exists(DIR.DB):
 
             server_db_.create_all()
 
@@ -161,17 +157,17 @@ def _configure_url_rules(app_: Flask) -> None:
     app_.add_url_rule("/uploads/profile_icons/<filename>",
                       endpoint="profile_icons_folder",
                       view_func=lambda filename: send_from_directory(
-                          PROFILE_ICONS_FOLDER,
+                          DIR.PROFILE_ICONS,
                           filename))
     app_.add_url_rule("/uploads/profile_pictures/<filename>",
                       endpoint="profile_picture_folder",
                       view_func=lambda filename: send_from_directory(
-                          PROFILE_PICTURES_FOLDER,
+                          DIR.PROFILE_PICS,
                           filename))
     app_.add_url_rule("/static/images/bakery/health/<path:filename>",
                       endpoint="bakery_health_folder",
                       view_func=lambda filename: send_from_directory(
-                          BAKERY_HEALTH_IMAGES_FOLDER,
+                          DIR.BAKERY_HEALTH,
                           filename))
 
 

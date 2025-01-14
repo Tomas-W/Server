@@ -3,19 +3,15 @@ from wtforms import (
     SubmitField, TextAreaField, HiddenField, EmailField, StringField, PasswordField, SelectField,
     FileField, BooleanField
 )
-from wtforms.validators import EqualTo, DataRequired
+from wtforms.validators import EqualTo
 
 from src.utils.form_utils import (
     ForbiddenCheck, UsernameTakenCheck, PasswordCheck, EmailTakenCheck,
     UsernameLengthCheck, PasswordLengthCheck, EmailCheck, EmailLengthCheck,
     FastNameLengthCheck, FastCodeCheck, FastCodeLengthCheck, VerifyEmailCheck,
-    NewsTitleLengthCheck, CommentLengthCheck, ImageUploadCheck,
-    DisplayNameTakenCheck, NewsHeaderLengthCheck, NewsCodeCheck,
-    NewsImportantLengthCheck, AboutMeLengthCheck
+    CommentLengthCheck, ImageUploadCheck, DisplayNameTakenCheck, AboutMeLengthCheck
 )
-from config.settings import (
-    PWD_MATCH_MSG, COUNTRY_CHOICES
-)
+from config.settings import FORM, MESSAGE
 
 class VerifyEmailForm(FlaskForm):
     """
@@ -83,7 +79,7 @@ class AuthenticationForm(FlaskForm):
         validators=[
             PasswordCheck(admin=True),
             PasswordLengthCheck(admin=True),
-            EqualTo(fieldname="confirm_password", message=PWD_MATCH_MSG),
+            EqualTo(fieldname="confirm_password", message=MESSAGE.PWD_MATCH),
         ]
     )
     confirm_password = PasswordField(
@@ -92,7 +88,7 @@ class AuthenticationForm(FlaskForm):
         validators=[
             PasswordCheck(admin=True),
             PasswordLengthCheck(admin=True),
-            EqualTo(fieldname="password", message=PWD_MATCH_MSG),
+            EqualTo(fieldname="password", message=MESSAGE.PWD_MATCH),
         ]
     )
     fast_name = StringField(
@@ -140,7 +136,7 @@ class ProfileForm(FlaskForm):
     )
     country = SelectField(
         label="country",
-        choices=COUNTRY_CHOICES,
+        choices=FORM.COUNTRY_CHOICES,
         render_kw={"style": "cursor: pointer;"},
     )
     profile_icon = StringField(

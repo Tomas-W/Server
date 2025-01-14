@@ -4,7 +4,7 @@ from typing import Callable
 
 from src.extensions import server_db_, login_manager_
 
-from config.settings import CET
+from config.settings import SERVER
 
 
 @login_manager_.user_loader
@@ -22,7 +22,7 @@ def set_updated_at(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         result = func(self, *args, **kwargs)
-        self.updated_setting_at = datetime.now(CET)
+        self.updated_setting_at = datetime.now(SERVER.CET)
         self.last_setting_update = f"{func.__name__}"
         return result
     return wrapper

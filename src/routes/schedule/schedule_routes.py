@@ -5,8 +5,7 @@ from flask import (
 from flask_login import login_required, current_user
 from src.models.schedule_model.schedule_mod import Schedule
 from config.settings import (
-    SCHEDULE_PERSONAL_TEMPLATE, SCHEDULE_CALENDAR_TEMPLATE,
-    SCHEDULE_REQUEST_FORM_TYPE
+    TEMPLATE, FORM
 )
 from src.extensions import logger
 from src.routes.schedule.schedule_route_utils import (
@@ -26,9 +25,7 @@ from src.models.schedule_model.schedule_mod_utils import (
 )
 from src.utils.schedule import _week_from_date, _now
 from config.settings import (
-    EMPLOYEE_VERIFICATION, EMPLOYEE_VERIFICATION_SEND_MSG, SCHEDULE_REDIRECT,
-    EMPLOYEE_VERIFIED_MSG, EMPLOYEE_NOT_FOUND_MSG, SESSION_ERROR_MSG,
-    AUTHENTICATION_LINK_ERROR_MSG
+    SERVER, REDIRECT, MESSAGE, TEMPLATE
 )
 
 schedule_bp = Blueprint("schedule", __name__)
@@ -46,14 +43,14 @@ def personal(date: str = None):
     form_type = request.form.get("form_type")
     
     if request.method == "POST":
-        if form_type == SCHEDULE_REQUEST_FORM_TYPE:
+        if form_type == FORM.SCHEDULE_REQUEST:
             if schedule_reqest_form.validate_on_submit():
                 session["employee_name"] = schedule_reqest_form.name.data
                 start_verification_process(email=schedule_reqest_form.email.data,
-                                           token_type=EMPLOYEE_VERIFICATION)
-                flash(EMPLOYEE_VERIFICATION_SEND_MSG)
+                                           token_type=SERVER.EMPLOYEE_VERIFICATION)
+                flash(MESSAGE.EMPLOYEE_VERIFICATION_SEND)
                 session["flash_type"] = "employee_verification"
-                return redirect(url_for(SCHEDULE_REDIRECT,
+                return redirect(url_for(REDIRECT.SCHEDULE,
                                         _anchor="schedule-wrapper"))
                 
             session["schedule_request_errors"] = schedule_reqest_form.errors
@@ -74,7 +71,7 @@ def personal(date: str = None):
     current_week_num = _week_from_date(_now())
 
     return render_template(
-        SCHEDULE_PERSONAL_TEMPLATE,
+        TEMPLATE.PERSONAL,
         schedule=requested_schedule_dict,
         schedule_request_form=schedule_reqest_form,
         schedule_request_errors=schedule_request_errors,
@@ -109,7 +106,7 @@ def calendar():
     week_days = get_shortened_week_days()
 
     return render_template(
-        SCHEDULE_CALENDAR_TEMPLATE,
+        TEMPLATE.CALENDAR,
         calendar_form=calendar_form,
         dates=dates,
         first_day_offset=first_day_offset,
@@ -124,21 +121,21 @@ def calendar():
 @login_required
 @schedule_bp.route("/schedule/verify-employee/<token>", methods=["GET"])
 def verify_employee(token):    
-    email = confirm_authentication_token(token, EMPLOYEE_VERIFICATION)
+    email = confirm_authentication_token(token, SERVER.EMPLOYEE_VERIFICATION)
     employee_name = session.pop("employee_name", None)
     
     if not employee_name:
-        flash(SESSION_ERROR_MSG)
-        return redirect(url_for(SCHEDULE_REDIRECT))
+        flash(MESSAGE.SESSION_ERROR)
+        return redirect(url_for(REDIRECT.SCHEDULE))
     
     if not email:
-        flash(AUTHENTICATION_LINK_ERROR_MSG)
-        return redirect(url_for(SCHEDULE_REDIRECT))
+        flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
+        return redirect(url_for(REDIRECT.SCHEDULE))
     
     if not activate_employee(employee_name, email):
-        flash(EMPLOYEE_NOT_FOUND_MSG + employee_name)
-        return redirect(url_for(SCHEDULE_REDIRECT))
+        flash(MESSAGE.EMPLOYEE_NOT_FOUND + employee_name)
+        return redirect(url_for(REDIRECT.SCHEDULE))
     
-    delete_authentication_token(EMPLOYEE_VERIFICATION, token)
-    flash(EMPLOYEE_VERIFIED_MSG)
-    return redirect(url_for(SCHEDULE_REDIRECT))
+    delete_authentication_token(SERVER.EMPLOYEE_VERIFICATION, token)
+    flash(MESSAGE.EMPLOYEE_VERIFIED)
+    return redirect(url_for(REDIRECT.SCHEDULE))

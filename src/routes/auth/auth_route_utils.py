@@ -1,7 +1,7 @@
 from argon2.exceptions import (
     VerifyMismatchError, VerificationError, InvalidHashError
 )
-from flask import url_for, redirect, session, flash
+from flask import url_for, redirect, session
 from flask_login import login_user, current_user, logout_user
 from flask import Response
 from src.extensions import argon2_, logger
@@ -11,12 +11,11 @@ from src.models.auth_model.auth_mod_utils import (
     get_user_by_email_or_username, get_user_by_fast_name
 )
 from config.settings import (
-    CREDENTIALS_ERROR_MSG, VERIFICATION_ERROR_MSG,
-    UNEXPECTED_ERROR_MSG, ALL_NEWS_REDIRECT, NORMAL_LOGIN, FAST_LOGIN, GOOGLE_LOGIN
+    FORM, MESSAGE, SERVER, REDIRECT
 )
 
 
-def handle_user_login(user: User, remember: bool = False, fresh: bool = True, login_type: str = NORMAL_LOGIN) -> None:
+def handle_user_login(user: User, remember: bool = False, fresh: bool = True, login_type: str = SERVER.NORMAL_LOGIN) -> None:
     """
     Logs in user and sets up the session.
     Session is NOT fresh or permanent unless specified (fast_login).
@@ -28,12 +27,12 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True, lo
     current_user.set_remember_me(remember)
     session.permanent = remember
     session["user_id"] = user.id
-    if login_type == FAST_LOGIN:
+    if login_type == SERVER.FAST_LOGIN:
         logger.info(f"[AUTH] FAST LOG IN")
-    elif login_type == GOOGLE_LOGIN:
+    elif login_type == SERVER.GOOGLE_LOGIN:
         logger.info(f"[AUTH] GOOGLE LOG IN")
     else:
-        logger.info(f"[AUTH] NORMAL LOG IN")
+        logger.info(f"[AUTH] NORMAL LOG IN", )
     
 
 def handle_user_logout() -> None:
@@ -54,19 +53,19 @@ def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:
     user: User | None = get_user_by_fast_name(login_form.fast_name.data.lower())
 
     if not user:
-        return None, CREDENTIALS_ERROR_MSG
+        return None, MESSAGE.CREDENTIALS_ERROR
 
     try:
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
-            handle_user_login(user, login_type=FAST_LOGIN)
+            handle_user_login(user, login_type=FORM.FAST_LOGIN)
             next_url = session.pop("next", None)
             if next_url:
                 return redirect(next_url), None
-            return redirect(url_for(ALL_NEWS_REDIRECT)), None
+            return redirect(url_for(REDIRECT.ALL_NEWS)), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
 
-    return None, CREDENTIALS_ERROR_MSG
+    return None, MESSAGE.CREDENTIALS_ERROR
 
 
 def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
@@ -81,7 +80,7 @@ def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
     user: User | None = get_user_by_email_or_username(login_form.email_or_uname.data)
 
     if not user:
-        return None, CREDENTIALS_ERROR_MSG
+        return None, MESSAGE.CREDENTIALS_ERROR
 
     try:
         if argon2_.verify(user.password, login_form.password.data):
@@ -90,11 +89,11 @@ def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
             next_url = session.pop("next", None)
             if next_url:
                 return redirect(next_url), None
-            return redirect(url_for(ALL_NEWS_REDIRECT)), None
+            return redirect(url_for(REDIRECT.ALL_NEWS)), None
     except (VerifyMismatchError, VerificationError, InvalidHashError) as e:
         return None, handle_argon2_exception(e)
 
-    return None, CREDENTIALS_ERROR_MSG
+    return None, MESSAGE.CREDENTIALS_ERROR
 
 
 def handle_argon2_exception(e: Exception) -> str:
@@ -103,8 +102,8 @@ def handle_argon2_exception(e: Exception) -> str:
     """
     if isinstance(e, VerifyMismatchError):
         logger.warning(f"[AUTH] CREDENTIALS ERROR: {e}")
-        return CREDENTIALS_ERROR_MSG
+        return MESSAGE.CREDENTIALS_ERROR
     if isinstance(e, (VerificationError, InvalidHashError)):
         logger.warning(f"[AUTH] VERIFICATION ERROR: {e}")
-        return VERIFICATION_ERROR_MSG
-    return UNEXPECTED_ERROR_MSG
+        return MESSAGE.VERIFICATION_ERROR
+    return MESSAGE.UNEXPECTED_ERROR

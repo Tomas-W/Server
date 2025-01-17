@@ -1,199 +1,143 @@
-import colorlog
 import logging
 import os
-import uuid
-
-from flask import (
-    g,
-    has_request_context,
-    request,
-)
+from flask import has_request_context, request, current_app
 from flask_login import current_user
 from logging.handlers import RotatingFileHandler
-
-from config.settings import SERVER
-
-
-class LoggingFormatter(logging.Formatter):
-    """
-    Adds and formats logging messages with optionals.
-    - Base format: [timestamp] [level] [user] - [message]
-    - 'location': [module] [function] [line]
-    - 'route': [method] [url] [remote_addr]
-    - 'exc_info': [stack trace]
-    Usage:
-    logger.level("Message", location=bool, route=bool, exc_info=bool)
-    """
-    
-    def __init__(self, **kwargs):
-        self.base_format = '[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s'
-        self.location_format = '\nLocation: %(module)s.%(function)s:%(line)d'
-        self.route_format = '\nRoute: %(method)-7s %(url)s (%(remote_addr)s)'
-        super().__init__(self.base_format, datefmt=kwargs.get('datefmt'))
-
-    def format(self, record):
-        self._add_base_context(record)
-        fmt = self.base_format
-
-        if getattr(record, SERVER.LOG_LOCATION, False):
-            self._add_location_context(record)
-            fmt += self.location_format
-        
-        if getattr(record, SERVER.LOG_ROUTE, False):
-            self._add_route_context(record)
-            fmt += self.route_format
-
-        formatter = logging.Formatter(fmt, datefmt=self.datefmt)
-        return formatter.format(record)
-
-    def _add_base_context(self, record):
-        """Base context: [timestamp] [level] [user] - [message]"""
-        if has_request_context():
-            record.user = current_user.username if hasattr(current_user, 'username') else 'Anonymous'
-            record.request_id = getattr(g, 'request_id', '-')
-        else:
-            record.user = '-'
-            record.request_id = '-'
-
-    def _add_location_context(self, record):
-        """Location context: [module] [function] [line]"""
-        record.function = record.funcName
-        record.line = record.lineno
-        record.module = record.module
-
-    def _add_route_context(self, record):
-        """Route context: [method] [url] [remote_addr]"""
-        if has_request_context():
-            record.url = request.url
-            record.method = request.method
-            record.remote_addr = request.remote_addr
-        else:
-            record.url = '-'
-            record.method = '-'
-            record.remote_addr = '-'
-
+import inspect
+import colorlog
 
 class ServerLogger:
     def __init__(self):
-        """Initialize logger without Flask app"""
+        """
+        Initialize the logger without app to set it up in __init__.py.
+        """
         self.app = None
     
     def _init_app(self, app):
-        """Set up logger with Flask app"""
-        self.app = app
-        self._load_config()
-        self._configure_dirs()
-        self._configure_handlers()
-        self._setup_request_tracking()
-
-    def _load_config(self):
-        """Load logging configuration from Flask app config"""
-        self.log_dir = self.app.config.get('LOG_DIR', 'logs')
-        self.log_date_format = self.app.config.get('LOG_DATE_FORMAT', '%d-%m %H:%M:%S')
-        self.log_max_bytes = self.app.config.get('LOG_MAX_BYTES', 10485760)
-        self.log_backup_count = self.app.config.get('LOG_BACKUP_COUNT', 5)
-        self.log_level = self.app.config.get('LOG_LEVEL', 'INFO')
-        self.log_colors = self.app.config.get('LOG_COLORS', {
-            "DEBUG": "blue",
-            "INFO": "green", 
-            "WARNING": "yellow",
-            "ERROR": "red",
-            "CRITICAL": "bold_red",
-        })
-
-    def _configure_dirs(self):
-        """Create log directory if it doesn't exist"""
-        if not os.path.exists(self.log_dir):
-            os.makedirs(self.log_dir)
-
-    def _configure_handlers(self):
-        """Set up and configure logging handlers"""
-        file_handler = self._create_file_handler()
-        console_handler = self._create_console_handler()
+        """
+        Set up logger with Flask app
         
-        level = getattr(logging, self.log_level.upper())
-        for handler in (file_handler, console_handler):
-            handler.setLevel(level)
-        self.app.logger.setLevel(level)
+        Debug and info show only:
+        [YYYY-MM-DD HH:MM:SS] LEVELNAME USER - MESSAGE
 
-        self.app.logger.handlers = []
-        self.app.logger.addHandler(file_handler)
-        self.app.logger.addHandler(console_handler)
+        Warning, error and critical also show:
+        Location: FILE: FUNCTION: LINENO
+        Route: METHOD URL (REMOTE_ADDR) from REFERER
 
-    def _create_file_handler(self):
-        """Create and configure the file handler"""
-        handler = RotatingFileHandler(
-            os.path.join(self.log_dir, self.app.config['LOG_FILE']),
-            maxBytes=self.log_max_bytes,
-            backupCount=self.log_backup_count
+        Location and route can be added to any log level by passing location=True or route=True
+        """
+        self.app = app
+        
+        log_dir = app.config.get("LOG_DIR", "logs")
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+
+        formatter = logging.Formatter(
+            "[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
         )
-        handler.setFormatter(LoggingFormatter(datefmt=self.log_date_format))
-        return handler
 
-    def _create_console_handler(self):
-        """Create and configure the console handler"""
-        handler = logging.StreamHandler()
-        handler.setFormatter(colorlog.ColoredFormatter(
-            "%(log_color)s[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s"
-            "%(reset)s%(location_log)s%(route_log)s",
-            datefmt=self.log_date_format,
-            log_colors=self.log_colors,
-            secondary_log_colors={
-                'location': self.log_colors,
-                'route': self.log_colors
+        color_formatter = colorlog.ColoredFormatter(
+            "%(log_color)s" + formatter._fmt,
+            datefmt="%Y-%m-%d %H:%M:%S",
+            log_colors={
+                "DEBUG":    "cyan",
+                "INFO":     "green",
+                "WARNING": "yellow",
+                "ERROR":   "purple",
+                "CRITICAL": "red",
             }
-        ))
-        return handler
+        )
 
-    def _setup_request_tracking(self):
-        """Configure request ID tracking"""
-        @self.app.before_request
-        def before_request():
-            g.request_id = str(uuid.uuid4())[0:4]
+        # File handler (no colors)
+        file_handler = RotatingFileHandler(
+            os.path.join(log_dir, app.config["LOG_FILE"]),
+            maxBytes=10 * 1024 * 1024,  # 10MB
+            backupCount=5
+        )
+        file_handler.setFormatter(formatter)
 
-    def _log(self, level, msg, *args, location=None, route=None, **kwargs):
-        """Internal logging method that handles additional context flags"""
-        try:
-            if 'extra' not in kwargs:
-                kwargs['extra'] = {}
-            
-            kwargs['extra'].update({
-                SERVER.LOG_LOCATION: location,
-                SERVER.LOG_ROUTE: route
+        # Console handler (with colors)
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(color_formatter)
+
+        level = app.config.get('LOG_LEVEL', 'INFO')
+        app.logger.setLevel(level)
+        
+        app.logger.handlers = []
+        app.logger.addHandler(file_handler)
+        app.logger.addHandler(console_handler)
+
+    def _get_context(self):
+        """Get current request context for logging"""
+        context = {
+            "user": "-",
+            "method": "-",
+            "url": "-",
+            "remote_addr": "-",
+            "custom_pathname": "-",
+            "custom_lineno": 0,
+            "custom_function": "-",
+            "referrer": "-"
+        }
+        
+        if has_request_context():
+            context.update({
+                "user": current_user.username if hasattr(current_user, "username") else "Anonymous",
+                "method": request.method,
+                "url": request.url,
+                "remote_addr": request.remote_addr,
+                "referrer": request.referrer or "-"
             })
-            
-            self.app.logger.log(level, msg, *args, **kwargs)
-        except Exception as e:
-            # Fallback to basic logging if something goes wrong
-            print(f"Logging failed: {e}")
-            print(f"Original message: {msg}")
 
-    def debug(self, msg, *args, location=None, route=None, **kwargs):
-        """Log debug message"""
-        self._log(logging.DEBUG, msg, *args, location=location, route=route, **kwargs)
+        # Shorten pathname to Server/..
+        caller_frame = inspect.currentframe().f_back.f_back.f_back
+        full_path = caller_frame.f_code.co_filename
+        context["custom_lineno"] = caller_frame.f_lineno
+        context["custom_function"] = caller_frame.f_code.co_name
+        server_index = full_path.find("Server\\")
+        if server_index != -1:
+            context["custom_pathname"] = full_path[server_index:]
+        else:
+            context["custom_pathname"] = full_path
+        
+        return context
 
-    def info(self, msg, *args, location=None, route=None, **kwargs):
-        """Log info message"""
-        self._log(logging.INFO, msg, *args, location=location, route=route, **kwargs)
+    def _log(self, level, msg, *args, **kwargs):
+        """Internal logging method""" 
+        # Always show location and route for warning and above
+        show_location = kwargs.pop("location", False) or level >= logging.WARNING
+        show_route = kwargs.pop("route", False) or level >= logging.WARNING
 
-    def warning(self, msg, *args, location=None, route=None, **kwargs):
-        """Log warning message"""
-        self._log(logging.WARNING, msg, *args, location=location, route=route, **kwargs)
+        # Add context and log the message
+        extra = kwargs.get("extra", {})
+        extra.update(self._get_context())
+        kwargs["extra"] = extra
+        
+        # Build the complete message
+        complete_msg = msg % args if args else msg
+        if show_location:
+            complete_msg += f"\n                     Location: {extra['custom_pathname']}: {extra['custom_function']}: {extra['custom_lineno']}"
+        if show_route:
+            complete_msg += f"\n                     Route: {extra['method']} {extra['url']} ({extra['remote_addr']}) from {extra['referrer']}"
 
-    def error(self, msg, *args, location=None, route=None, **kwargs):
-        """Log error message"""
-        self._log(logging.ERROR, msg, *args, location=location, route=route, **kwargs)
+        self.app.logger.log(level, complete_msg, **kwargs)
 
-    def critical(self, msg, *args, location=None, route=None, **kwargs):
-        """Log critical message"""
-        self._log(logging.CRITICAL, msg, *args, location=location, route=route, **kwargs)
+    def debug(self, msg, *args, **kwargs):
+        self._log(logging.DEBUG, msg, *args, **kwargs)
 
-    def exception(self, msg, *args, exc_info=True, location=True, route=True, **kwargs):
-        """Log exception with stack trace"""
-        if 'extra' not in kwargs:
-            kwargs['extra'] = {}
-        kwargs['extra'].update({
-            SERVER.LOG_LOCATION: location,
-            SERVER.LOG_ROUTE: route
-        })
-        self.app.logger.exception(msg, *args, exc_info=exc_info, **kwargs)
+    def info(self, msg, *args, **kwargs):
+        self._log(logging.INFO, msg, *args, **kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        self._log(logging.WARNING, msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self._log(logging.ERROR, msg, *args, **kwargs)
+
+    def critical(self, msg, *args, **kwargs):
+        self._log(logging.CRITICAL, msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        kwargs['exc_info'] = True
+        self._log(logging.ERROR, msg, *args, **kwargs)

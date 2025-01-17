@@ -12,6 +12,8 @@ from flask_login import (
     login_required,
 )
 
+from src.extensions import logger
+
 from src.models.auth_model.auth_mod import User
 from src.models.auth_model.auth_mod_utils import (
     confirm_authentication_token,
@@ -117,6 +119,7 @@ def user_admin():
             
             session["profile_errors"] = profile_form.errors
             session["_anchor"] = "profile-wrapper"
+            logger.debug(f"Profile errors: {profile_form.errors}")
         
         elif form_type == FORM.NOTIFICATIONS:
             if notifications_form.validate_on_submit():

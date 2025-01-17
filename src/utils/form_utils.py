@@ -275,7 +275,8 @@ class AboutMeLengthCheck:
         self.max_length_message: str = f"Max. {FORM.MAX_ABOUT_ME} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        if field.data == "":
+        logger.debug(f"About me field data: {field.data}")
+        if field.data == "" or field.data is None:
             return
         if len(field.data) < FORM.MIN_ABOUT_ME:
             raise ValidationError(self.min_length_message)

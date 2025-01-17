@@ -54,12 +54,20 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True, lo
     elif login_type == SERVER.GOOGLE_LOGIN:
         logger.info(f"[AUTH] GOOGLE LOG IN")
     else:
-        logger.info(f"[AUTH] NORMAL LOG IN", )
+        logger.debug("[AUTH] NORMAL LOG IN")
+        logger.info("[AUTH] NORMAL LOG IN")
+        logger.warning("[AUTH] NORMAL LOG IN", route=True)
+        logger.error("[AUTH] NORMAL LOG IN", location=True)
+        logger.critical("[AUTH] NORMAL LOG IN", location=True, route=True)
     
 
 def handle_user_logout() -> None:
     """Logs out user and removes session data."""
-    logger.info(f"[AUTH] LOG OUT")
+    logger.debug("[AUTH] NORMAL LOG IN", location=True)
+    logger.info("[AUTH] NORMAL LOG IN")
+    logger.warning("[AUTH] NORMAL LOG IN")
+    logger.error("[AUTH] NORMAL LOG IN")
+    logger.critical("[AUTH] NORMAL LOG IN")
     logout_user()
     session.clear()
 

@@ -3,21 +3,35 @@
 {% block error_content %}
 
 <div class="error-header">
-    <p class="error-title">498 Invalid Token</p>
-    
-    <div class="error-message">
-        <p class="message">{{ error_msg }}</p>
-    </div>
+    <p class="error-title">498 Token Invalid or Expired</p>
+
+    <p class="error-message">{{ error_msg }}</p>
+
+    {% if extra_info %}
+        <p class="error-extra-info">{{ extra_info }}</p>
+    {% endif %}
+</div>
+
+<div class="error-links">
+    {% if go_to %}
+        <p class="go-to">
+            <a href="{{ go_to }}">
+                <span class="link">Click here</span> to apply for access</a>
+        </p>
+    {% endif %}  
 
     <p class="referrer">
         <a href="javascript:history.back()">
-            <span style="text-decoration: underline;">Go back</span> to the previous page</a>
+            <span class="link">Go back</span> to the previous page</a>
     </p>
 
     <p class="contact">
-        <a href="#">Contact us</a> to report any issues.
+        <a href="#">
+            <span class="link">Contact us</span> to report any issues.
+        </a>
     </p>
     
 </div>
+
 
 {% endblock %} 

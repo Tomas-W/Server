@@ -102,8 +102,8 @@
     --error-content-padding: 75px 15%;
     --error-title-size: 4.4rem;
     --error-title-size-s: 2.1rem;
-    --error-sub-title-size: 1.2rem;
-    --error-info-size: 1rem;
+    --error-info-size: 1.3rem;
+    --error-message-size: 1.1rem;
 }
 
 @custom-media --mobile (max-width: 474.98px);

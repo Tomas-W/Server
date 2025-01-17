@@ -32,18 +32,8 @@
             
             {% block error_content %}
             {% endblock %}
-
-            
-        
-        {% if not current_user.is_authenticated %}
-            <!-- Auth options -->
-            <div class="error-options-wrapper">
-                <div><p class="error-options-content"><a href="{{ url_for("auth.login") }}">Go to login page</a></p></div>
-                <div><p class="error-options-content"><a href="{{ url_for("auth.register") }}">Register a new account</a></p></div>
-                <div><p class="error-options-content"><a href="{{ url_for("auth.g_login") }}">Login with Google</a></p></div>
-            </div>
-        {% endif %}
         </div>
+        
     </div>
 
 {% endblock %}

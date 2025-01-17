@@ -31,3 +31,11 @@ class Abort498(AbortBase, BadRequest):
 class Abort500(AbortBase, InternalServerError): 
     """500 Internal Server Error with additional context"""
     pass
+
+
+def get_error_params(error):
+    error_msg = error.description
+    go_to = getattr(error, "go_to", None)
+    extra_info = getattr(error, "extra_info", None)
+    return error_msg, go_to, extra_info
+

@@ -35,6 +35,8 @@ from src.routes.news.news_route_utils import (
 
 from src.routes.news.news_forms import AddNewsForm, CommentForm
 
+from src.routes.errors.error_route_utils import Abort404
+
 from config.settings import (
     MESSAGE,
     REDIRECT,
@@ -81,7 +83,7 @@ def news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
         description = f"News item with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
     news_item.set_seen_by(current_user.id)
 
     news_dict = get_news_dict_by_id(id_)
@@ -165,7 +167,7 @@ def delete(id_: int):
         news_item = get_news_by_id(id_)
         if not news_item:
             description = f"News item with ID {id_} not found"
-            abort(404, description=description)
+            raise Abort404(description=description)
         delete_news_by_id(id_)
         flash(f"News ID {id_} deleted")
         return redirect(url_for(REDIRECT.DELETE_NEWS))
@@ -183,7 +185,7 @@ def like_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
         description = f"News item with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
         
     news_item.set_liked_by(current_user.id)
     session["news_id"] = int(id_)
@@ -200,7 +202,7 @@ def dislike_news(id_: int):
     news_item = get_news_by_id(id_)
     if not news_item:
         description = f"News item with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
         
     news_item.set_disliked_by(current_user.id)
     session["news_id"] = int(id_)
@@ -233,7 +235,7 @@ def like_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
         description = f"Comment with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
         
     comment_item.set_liked_by(current_user.id)
     session["comment_id"] = int(id_)
@@ -250,7 +252,7 @@ def dislike_comment(id_: int):
     comment_item = get_comment_by_id(id_)
     if not comment_item:
         description = f"Comment with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
         
     comment_item.set_disliked_by(current_user.id)
     session["comment_id"] = int(id_)

@@ -12,6 +12,8 @@ from src.extensions import logger
 
 from src.models.auth_model.auth_mod_utils import start_verification_process
 
+from src.routes.errors.error_route_utils import Abort500
+
 from config.settings import (
     DIR,
     MESSAGE,
@@ -129,10 +131,10 @@ def process_profile_picture(form: FlaskForm) -> bool:
         
     except PermissionError as e:
         logger.critical(f"[SYS] PROFILE PICTURE PERMISSION ERROR: {e}")
-        abort(500)
+        raise Abort500()
     except Exception as e:
         logger.error(f"[SYS] PROFILE PICTURE ERROR: {e}")
-        abort(500)
+        raise Abort500()
     
     if "profile_picture" in form._fields:
         del form._fields["profile_picture"]

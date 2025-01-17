@@ -49,6 +49,8 @@ from src.utils.form_utils import (
     UsernameTakenCheck,
 )
 
+from src.routes.errors.error_route_utils import Abort500
+
 from config.settings import (
     DIR,
     FORM,
@@ -430,7 +432,7 @@ class User(server_db_.Model, UserMixin):
             return argon2_.hash(plain_password)
         except Exception as e:
             logger.critical(f"[SYS] ERROR HASHING PASSWORD: {e}")
-            abort(500)
+            raise Abort500()
 
     def __repr__(self) -> str:
         return (f"User:"

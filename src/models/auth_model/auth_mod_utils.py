@@ -4,7 +4,7 @@ import os
 import time
 
 from flask import (
-    abort,
+    current_app,
     render_template,
     request,
     session,
@@ -41,12 +41,16 @@ from src.extensions import (
     server_db_,
 )
 
+from src.routes.errors.error_route_utils import (
+    Abort401,
+    Abort500
+)
+
 from config.settings import (
     REDIRECT,
     SERVER,
     TEMPLATE
 )
-
 
 if TYPE_CHECKING:
     from src.models.auth_model.auth_mod import User
@@ -62,7 +66,7 @@ def admin_required(f: Callable) -> Callable:
         if not current_user.has_role(SERVER.ADMIN_ROLE):
             logger.warning(f"[AUTH] ADMIN ACCESS DENIED: {current_user.username}")
             description = f"This page requires Admin access."
-            abort(401, description=description)
+            raise Abort401(description=description)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -74,10 +78,15 @@ def employee_required(f: Callable) -> Callable:
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            logger.debug("got here")
+            return current_app.login_manager.unauthorized()
+        
         if not current_user.has_role(SERVER.EMPLOYEE_ROLE):
             logger.warning(f"[AUTH] EMPLOYEE ACCESS DENIED: {current_user.username}.")
+            go_route = url_for(REDIRECT.USER_ADMIN)
             description = f"This page requires Employee access."
-            abort(401, description=description)
+            raise Abort401(description=description, go_to=go_route)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -105,7 +114,7 @@ def get_authentication_token(email: str, token_type: str) -> str:
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
         logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
-        abort(500)
+        Abort500()
     token = serializer_.dumps(email, salt=salt)
     return token
 
@@ -155,7 +164,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         _anchor = "schedule-wrapper"
     else:
         logger.error(f"[VALIDATION] WRONG TOKEN TYPE: {token_type}")
-        abort(500)
+        Abort500()
 
     redirect_url = get_authentication_url(url_, token=token, _external=True)
     settings_url = get_authentication_url(REDIRECT.USER_ADMIN,
@@ -185,7 +194,7 @@ def get_authentication_url(endpoint: str, **values: Any) -> str:
         return url_for(endpoint, **values)
     except (BuildError, KeyError, ValueError) as e:
         logger.error(f"[VALIDATION] ERROR GENERATING URL: {e}")
-        abort(500)
+        Abort500()
 
 
 def get_authentication_email_template(template_name: str, **context: Any) -> str:
@@ -193,7 +202,7 @@ def get_authentication_email_template(template_name: str, **context: Any) -> str
         return render_template(template_name, **context)
     except (TemplateNotFound, TemplateSyntaxError, UndefinedError) as e:
         logger.error(f"[VALIDATION] ERROR RENDERING EMAIL TEMPLATE: {e}")
-        abort(500)
+        Abort500()
 
 
 def send_email(message: Message) -> None:
@@ -201,13 +210,13 @@ def send_email(message: Message) -> None:
         mail_.send(message)
     except SMTPRecipientsRefused as e:
         logger.info(f"[VALIDATION] RECIPIENTS REFUSED: {e}")
-        abort(500)
+        Abort500()
     except SMTPSenderRefused as e:
         logger.critical(f"[VALIDATION] SENDER REFUSED: {e}")
-        abort(500)
+        Abort500()
     except Exception as e:
         logger.error(f"[VALIDATION] ERROR SENDING VERIFICATION: {e}")
-        abort(500)
+        Abort500()
 
 def confirm_authentication_token(token: str, token_type: str,
                                  expiration: int = SERVER.TOKEN_EXPIRATION) -> str | None:
@@ -221,7 +230,7 @@ def confirm_authentication_token(token: str, token_type: str,
     salt = os.environ.get(f"{token_type.upper()}_SALT")
     if not salt:
         logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
-        abort(500)
+        Abort500()
 
     try:
         email = serializer_.loads(

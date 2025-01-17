@@ -27,6 +27,8 @@ from src.routes.bakery.bakery_route_utils import (
 
 from src.routes.bakery.bakery_forms import BakerySearchForm
 
+from src.routes.errors.error_route_utils import Abort404
+
 from config.settings import (
     FORM,
     MESSAGE,
@@ -61,7 +63,7 @@ def program(program: int):
     bakery_items_dicts = get_program_items_dicts(program)
     if not bakery_items_dicts:
         description = f"No bakery items found for program {program}"
-        abort(404, description=description)
+        raise Abort404(description=description)
 
     return render_template(
         TEMPLATE.PROGRAMS,
@@ -75,7 +77,7 @@ def info(id_: int):
     bakery_item_dict = get_item_by_id_dict(id_)
     if not bakery_item_dict:
         description = f"Bakery item with ID {id_} not found"
-        abort(404, description=description)
+        raise Abort404(description=description)
         
     # For side panel
     ids_and_names = get_program_ids_and_names(bakery_item_dict["program"])

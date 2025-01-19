@@ -40,7 +40,6 @@ def clean_up_form_fields(form: FlaskForm) -> bool:
 
 
     all_fields_to_delete = delete_fields.union(empty_fields_to_delete)
-    logger.info(f"[DEBUG] All fields to delete: {all_fields_to_delete}")
     for field_name in all_fields_to_delete:
         if field_name in form._fields:
             del form._fields[field_name]

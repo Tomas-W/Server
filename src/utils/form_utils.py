@@ -222,7 +222,7 @@ class FastCodeLengthCheck:
             raise ValidationError(self.message)
 
 
-class EmployeeNameCheck:
+class IsEmployeeCheck:
     """
     Validates employee_name by checking if it's in the database.
     """
@@ -230,8 +230,9 @@ class EmployeeNameCheck:
         self.message: str = MESSAGE.EMPLOYEE_NAME_ERROR
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        employee: Employees | None = Employees.query.filter_by(name=field.data).first()
-        if employee:
+        name = Employees.crop_name(field.data)
+        employee: Employees | None = Employees.query.filter_by(name=name).first()
+        if not employee:
             raise ValidationError(self.message)
 
 
@@ -275,7 +276,6 @@ class AboutMeLengthCheck:
         self.max_length_message: str = f"Max. {FORM.MAX_ABOUT_ME} characters"
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        logger.debug(f"About me field data: {field.data}")
         if field.data == "" or field.data is None:
             return
         if len(field.data) < FORM.MIN_ABOUT_ME:
@@ -425,3 +425,15 @@ class ImageUploadCheck:
                 raise ValidationError(self.extension_message)
             if field.data.content_length > self.max_size:
                 raise ValidationError(self.size_message)
+
+
+class FieldRequired:
+    """
+    Validates field by checking if it's required.
+    """
+    def __init__(self) -> None:
+        self.message: str = MESSAGE.REQUIRED_FIELD
+
+    def __call__(self, form: FlaskForm, field: Field) -> None:
+        if not field.data:
+            raise ValidationError(self.message)

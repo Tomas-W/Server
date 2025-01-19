@@ -1,7 +1,7 @@
 <!-- Profile flash messages -->
 <div id="profile-wrapper" class="profile-wrapper">
     {% if flash_type == "profile" and get_flashed_messages() %}
-        <div class="admin-flash">
+        <div id="profile-flash" class="admin-flash">
             <p>{{ get_flashed_messages()[0] }}</p>
         </div>
     {% endif %} 
@@ -9,7 +9,11 @@
     <!-- Profile form -->
     <div class="admin-form-wrapper">
         <p class="admin-form-header">Profile</p>
-        <form method="POST" action="" novalidate class="admin-form" enctype="multipart/form-data">
+        <form method="POST" 
+              action="{{ url_for('admin.user_admin', _anchor='profile-wrapper') }}" 
+              novalidate 
+              class="admin-form" 
+              enctype="multipart/form-data">
             
             <div class="form-item">
                 <div class="input-error-wrapper">

@@ -39,7 +39,7 @@ from src.utils.form_utils import (
     DisplayNameTakenCheck,
     EmailCheck,
     EmailTakenCheck,
-    EmployeeNameCheck,
+    IsEmployeeCheck,
     FastCodeCheck,
     FastCodeLengthCheck,
     FastNameLengthCheck,
@@ -301,12 +301,7 @@ class User(server_db_.Model, UserMixin):
 
     @set_updated_at
     def set_employee_name(self, employee_name: str) -> None:
-        name_check = EmployeeNameCheck()
-        try:
-            name_check(None, type("Field", (object,), {"data": employee_name})())
-            self.employee_name = employee_name
-        except ValidationError as e:
-            raise ValueError(f"[AUTH] EMPLOYEE NAME VALIDATION ERROR: {e}")
+        self.employee_name = employee_name
     
     def _init_roles(self, roles: str | list[str] | None) -> str:
         if roles is None:
@@ -377,11 +372,19 @@ class User(server_db_.Model, UserMixin):
         if not roles:
             self.roles = ""
             return
+        
         if isinstance(roles, list):
-            self.roles = "|".join(roles)
-            self.roles += "|"
+            # Filter out empty strings and join with single |
+            filtered_roles = [r for r in roles if r]
+            self.roles = "|".join(filtered_roles)
+            # Add trailing | only if there are roles
+            if filtered_roles:
+                self.roles += "|"
         elif isinstance(roles, str):
-            self.roles = roles if not roles.endswith("|") else roles + "|"
+            self.roles = roles.strip("|")
+            # Add trailing | only if there are roles
+            if self.roles:
+                self.roles += "|"
 
     def has_role(self, role: str) -> bool:
         return role in self.roles.split("|")

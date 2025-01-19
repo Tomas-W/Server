@@ -71,7 +71,7 @@ class ServerLogger:
     def _get_context(self):
         """Get current request context for logging"""
         context = {
-            "user": "-",
+            "user": "system",  # Default to "system" instead of "-"
             "method": "-",
             "url": "-",
             "remote_addr": "-",
@@ -82,13 +82,21 @@ class ServerLogger:
         }
         
         if has_request_context():
-            context.update({
-                "user": current_user.username if hasattr(current_user, "username") else "Anonymous",
-                "method": request.method,
-                "url": request.url,
-                "remote_addr": request.remote_addr,
-                "referrer": request.referrer or "-"
-            })
+            try:
+                # Handle cases where current_user might not be fully initialized
+                username = (current_user.username 
+                           if hasattr(current_user, "username") 
+                           else "Anonymous")
+                context["user"] = username
+                context.update({
+                    "method": request.method,
+                    "url": request.url,
+                    "remote_addr": request.remote_addr,
+                    "referrer": request.referrer or "-"
+                })
+            except Exception:
+                # If anything goes wrong getting user info, keep default values
+                pass
 
         # Shorten pathname to Server/..
         caller_frame = inspect.currentframe().f_back.f_back.f_back

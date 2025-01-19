@@ -125,7 +125,7 @@ def get_schedule_info_per_date(driver: webdriver.Firefox,
     """
     url = f"{S_SCHEDULE_URL}{date}"
     driver.get(url)
-    logger.log.info(f"Navigated to: '{url}'")
+    logger.info(f"Navigated to: '{url}'")
     movement(driver)
     
     rows = driver.find_elements(By.CLASS_NAME, "employee-row")
@@ -151,7 +151,7 @@ def get_schedule_info_per_date(driver: webdriver.Firefox,
             names.append(name_element.text)
             hours.append(hour_elements[1].text.split("|")[0].strip())
     
-    logger.log.info(f"Collected schedule data for: '{date}'")
+    logger.info(f"Collected schedule data for: '{date}'")
     return names, hours, break_times, work_times
 
 
@@ -230,6 +230,7 @@ def check_for_new_employees(names: list[str]) -> None:
         return
     
     from src.models.schedule_model.schedule_mod import Employees
+    names = [Employees.crop_name(name) for name in names]
     for name in names:
         if not Employees.query.filter_by(name=name).first():
             Employees.add_employee(name)

@@ -1,6 +1,8 @@
 import json
 import os
+import random
 
+from flask import flash
 from datetime import datetime
 from flask_login import current_user
 
@@ -14,6 +16,8 @@ from src.extensions import (
     server_db_,
 )
 
+from src.models.auth_model.auth_mod_utils import get_user_by_employee_name
+from src.models.schedule_model.schedule_mod import update_employee_json
 from src.utils.schedule import (
     _date_from_week_day_year,
     _get_schedule_paths,
@@ -41,18 +45,52 @@ def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
     return on_duty_dates
 
 
-def activate_employee(name: str, email: str | None = None) -> bool:
-    """ Activates the employee in the database. """
+def activate_employee(name: str, code: str) -> bool:
+    """ Activates the Employee in the database and JSON. """
     employee_name = Employees.crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
-        employee.activate_employee(email)
-        current_user.set_employee_name(employee_name)
-        current_user.add_roles(SERVER.EMPLOYEE_ROLE)
+        if code == str(employee.code):
+            employee.activate(current_user.email)
+            current_user.set_employee_name(employee_name)
+            current_user.add_roles(SERVER.EMPLOYEE_ROLE)
+            return True
+        else:
+            flash("Invalid code")
+            return False
+    else:
+        flash(f"Employee '{name}' not found")
+        return False
+
+
+def deactivate_employee(name: str) -> bool:
+    """ Deactivates the Employee in the database and JSON. """
+    employee_name = Employees.crop_name(name)
+    employee = Employees.query.filter_by(name=employee_name).first()
+    if employee:
+        employee.deactivate()
+        current_user.set_employee_name("")
+        current_user.remove_roles(SERVER.EMPLOYEE_ROLE)
         return True
     else:
-        logger.error(f"[AUTH] EMPLOYEE {employee_name} NOT FOUND")
         return False
+
+
+def deactivate_employee_cli(name: str):
+    """ Deactivates the Employee in the database and JSON. """
+    employee_name = Employees.crop_name(name)
+    employee = Employees.query.filter_by(name=employee_name).first()
+    if employee:
+        employee.set_is_activated(False)
+        employee.email = None
+        update_employee_json(employee_name, is_verified=False, email="")
+        user = get_user_by_employee_name(employee_name)
+        if user:
+            user.set_employee_name(None)
+            user.remove_roles(SERVER.EMPLOYEE_ROLE)
+            server_db_.session.commit()
+            return True
+    return False
 
 
 def _init_employees() -> bool:
@@ -68,7 +106,8 @@ def _init_employees() -> bool:
             return False
     
         for employee, _ in employees_data.items():
-            employee_obj = Employees(name=employee)
+            code = random.randint(10000, 99999)
+            employee_obj = Employees(name=employee, code=code)
             server_db_.session.add(employee_obj)
         server_db_.session.commit()
         return True

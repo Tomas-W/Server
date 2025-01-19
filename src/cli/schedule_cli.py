@@ -3,11 +3,14 @@ import json
 
 from flask import Flask
 
-from src.extensions import logger
+from src.extensions import logger, server_db_
 
+from src.models.auth_model.auth_mod import User
+from src.models.schedule_model.schedule_mod import Employees
 from src.models.schedule_model.schedule_mod_utils import (
     _init_employees,
     _init_schedule,
+    update_employee_json,
 )
 
 from src.utils.schedule import (
@@ -15,7 +18,7 @@ from src.utils.schedule import (
     update_schedule,
 )
 
-from config.settings import PATH
+from config.settings import PATH, SERVER
 
 
 def schedule_cli(app_: Flask) -> None:
@@ -103,5 +106,90 @@ def schedule_cli(app_: Flask) -> None:
         logger.info(f"[CLI] INIT EMPLOYEES: {nr_employees} employees added.")
         if v:
             click.echo(f"Successfully added {nr_employees} Employees to the Employees Table.")
+    
+    @schedule.command("activate")
+    @click.argument("user_id", type=int)
+    @click.argument("name", type=str)
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def activate(user_id: int, name: str, v: bool, c: bool) -> None:
+        """
+        Activates the Employee in the database and JSON.
+
+        Usage: flask schedule activate <name> [--v] [--c]
+        """
+        if not c and not click.confirm(
+                f"Are you sure you want to activate Employee {name}?"):
+            click.echo("Activating Employee cancelled.")
+            return
+        
+        employee_name = Employees.crop_name(name)
+        employee = Employees.query.filter_by(name=employee_name).first()
+        if not employee:
+            click.echo(f"Employee {employee_name} not found.")
+            return
+        
+        user = User.query.get(user_id)
+        if not user:
+            click.echo(f"User {user_id} not found.")
+            return
+        
+        try:
+            employee.set_is_activated(True)
+            employee.email = user.email
+            update_employee_json(employee_name, email=user.email)
+            user.set_employee_name(employee_name)
+            user.add_roles(SERVER.EMPLOYEE_ROLE)
+            server_db_.session.commit()
+        except Exception as e:
+            click.echo(f"Failed to activate Employee {name}: {e}")
+            return
+        
+        click.echo(f"Successfully activated Employee {name}.")
+    
+    @schedule.command("deactivate")
+    @click.argument("user_id", type=int)
+    @click.option("--v", is_flag=True, help="Enables verbose mode.")
+    @click.option("--c", is_flag=True, help="Confirm without prompting.")
+    def deactivate(user_id: int, v: bool, c: bool) -> None:
+        """
+        Deactivates the Employee in the database and JSON.
+
+        Usage: flask schedule deactivate <user_id> [--v] [--c]
+        """
+        user = User.query.get(user_id)
+        if not user:
+            click.echo(f"User {user_id} not found.")
+            return
+        
+        if not user.employee_name:
+            click.echo(f"User {user_id} is not an Employee.")
+            return
+
+        if not c and not click.confirm(
+                f"Are you sure you want to deactivate Employee {user.employee_name}?"):
+            click.echo("Deactivating Employee cancelled.")
+            return
+        
+        employee_name = Employees.crop_name(user.employee_name)
+        employee = Employees.query.filter_by(name=employee_name).first()
+        if not employee:
+            click.echo(f"Employee {employee_name} not found.")
+            return
+        
+        try:
+            employee.set_is_activated(False)
+            employee.email = None
+            update_employee_json(employee_name, is_verified=False, email="")
+            user.set_employee_name(None)
+            user.remove_roles(SERVER.EMPLOYEE_ROLE)
+            server_db_.session.commit()
+        except Exception as e:
+            click.echo(f"Failed to deactivate Employee {user.employee_name}: {e}")
+            return
+        
+        click.echo(f"Successfully deactivated Employee {user.employee_name}.")
+
 
     app_.cli.add_command(schedule)
+

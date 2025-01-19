@@ -1,3 +1,7 @@
+import random
+from typing import Any
+
+from flask_login import current_user
 from datetime import datetime
 from sqlalchemy import (
     Boolean,
@@ -21,6 +25,9 @@ from src.utils.schedule import (
     update_employee_json,
 )
 
+from config.settings import SERVER
+
+
 class Employees(server_db_.Model):
     """
     Stores the employee data.
@@ -28,42 +35,51 @@ class Employees(server_db_.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=True)
+    code: Mapped[int] = mapped_column(Integer, nullable=True)
     is_activated: Mapped[bool] = mapped_column(Boolean, default=False)
 
     def set_email(self, email: str) -> bool:
         if self.email == email:
             return False
         
-        from src.models.auth_model.auth_mod import User
-        user: User | None = User.query.filter_by(email=email).first()
-        if user:
-            self.email = email
-            update_employee_json(self.name, email)
-            return True
-        else:
-            logger.error(f"[AUTH] USER WITH EMAIL {email} NOT FOUND")
-            return False
+        self.email = email
+        update_employee_json(self.name, email=email)
+        server_db_.session.commit()
+        return True
     
     def set_is_activated(self, is_activated: bool) -> None:
         if not self.is_activated == is_activated:
             self.is_activated = is_activated
             update_employee_json(self.name, is_verified=is_activated)
-            logger.log.info(f"[AUTH] EMPLOYEE {self.name} ACTIVATED")
+            server_db_.session.commit()
+            if is_activated:
+                logger.info(f"[AUTH] EMPLOYEE {self.name} ACTIVATED")
+            else:
+                logger.info(f"[AUTH] EMPLOYEE {self.name} DEACTIVATED")
     
-    def activate_employee(self, email: str) -> bool:
+    def activate(self, email: str) -> bool:
         if self.set_email(email):
             self.set_is_activated(True)
             return True
-        else:
-            logger.error(f"[AUTH] FAILED TO ACTIVATE EMPLOYEE {self.name}")
-            return False
+        return False
+    
+    def deactivate(self):
+        if self.is_activated:
+            self.email = ""
+            self.set_is_activated(False)
+            update_employee_json(self.name, is_verified=False, email="")
+            server_db_.session.commit()
+            return True
+        return False
 
     @staticmethod
     def add_employee(name: str):
         cropped_name = Employees.crop_name(name)
         employee = Employees.query.filter_by(name=cropped_name).first()
         if not employee:
-            employee = Employees(name=cropped_name)
+            # Generate random 5 digit code
+            code = random.randint(10000, 99999)
+            employee = Employees(name=cropped_name, code=code)
             server_db_.session.add(employee)
             server_db_.session.commit()
             add_employee_json(cropped_name)
@@ -74,8 +90,10 @@ class Employees(server_db_.Model):
     @staticmethod
     def crop_name(name: str) -> str:
         parts = name.split()
-        last_name_initial = next((part[0].upper() for part in parts[1:] if part[0].isupper()), parts[-1][0].upper())
-        return f"{parts[0]} {last_name_initial}"
+        logger.debug(f"Parts: {parts}")
+        # Shorten last name to first letters
+        formatted_parts = [parts[0]] + [part if part[0].islower() else part[0].upper() for part in parts[1:]]
+        return " ".join(formatted_parts)
 
     def cli_repr(self) -> str:
         return (f"{'ID':<18}{self.id}\n"

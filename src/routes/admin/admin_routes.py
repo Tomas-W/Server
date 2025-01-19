@@ -21,6 +21,7 @@ from src.models.auth_model.auth_mod_utils import (
     get_user_by_email,
     start_verification_process,
 )
+from src.models.schedule_model.schedule_mod_utils import activate_employee
 
 from src.routes.admin.admin_route_utils import (
     clean_up_form_fields,
@@ -33,6 +34,7 @@ from src.routes.admin.admin_forms import (
     AuthenticationForm,
     NotificationsForm,
     ProfileForm,
+    RequestEmployeeForm,
     VerifyEmailForm,
 )
 
@@ -58,13 +60,14 @@ def user_admin():
     - AuthenticationForm
     - ProfileForm
     - NotificationsForm
-    - SettingsForm
+    - AccessForm
     """
     form_type = request.form.get("form_type")
     verify_email_form: VerifyEmailForm = VerifyEmailForm()
     authentication_form: AuthenticationForm = AuthenticationForm()
     profile_form: ProfileForm = ProfileForm()
     notifications_form: NotificationsForm = NotificationsForm()
+    request_employee_form: RequestEmployeeForm = RequestEmployeeForm()
        
     if request.method == "POST":
         if form_type == FORM.VERIFY:
@@ -76,72 +79,88 @@ def user_admin():
                 return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="admin-content"))
             
+            session["_anchor"] = "verify-wrapper"
             session["verify_email_errors"] = verify_email_form.errors
             
         elif form_type == FORM.AUTHENTICATION:
             if authentication_form.validate_on_submit():
+                flash_ = None
                 if clean_up_form_fields(authentication_form):
-                    flash(MESSAGE.NO_CHANGES)
+                    flash_ = MESSAGE.NO_CHANGES
 
                 if process_new_email_address(authentication_form):
-                    flash(MESSAGE.CHECK_INBOX)
+                    flash_ = MESSAGE.CHECK_INBOX
                 
                 if process_admin_form(authentication_form):
-                    flash(MESSAGE.UPDATED_DATA)
-                                
-                session["flash_type"] = "authentication"  # To indicate flash position
-                session["_anchor"] = "authentication-wrapper"
+                    flash_ = MESSAGE.UPDATED_DATA
+                
+                if flash_:
+                    flash(flash_)
+                session["flash_type"] = "authentication"
                 return redirect(url_for(REDIRECT.USER_ADMIN,
-                                        _anchor="authentication-wrapper"))
+                                      _anchor="authentication-wrapper"))
 
+            session["_anchor"] = "authentication-wrapper"
             session["authentication_errors"] = authentication_form.errors
             
         
         elif form_type == FORM.PROFILE:
             if profile_form.validate_on_submit():
-                if clean_up_form_fields(profile_form):
-                    flash(MESSAGE.NO_CHANGES)
-                    
+                flash_ = None
                 if process_profile_picture(profile_form):
-                    flash(MESSAGE.UPDATED_DATA)
-                else:
-                    flash(MESSAGE.NO_CHANGES)
+                    flash_ = MESSAGE.UPDATED_DATA
+
+                if clean_up_form_fields(profile_form):
+                    flash_ = MESSAGE.NO_CHANGES
                     
                 if process_admin_form(profile_form):
-                    flash(MESSAGE.UPDATED_DATA)
-                else:
-                    flash(MESSAGE.NO_CHANGES)
-                    
+                    flash_ = MESSAGE.UPDATED_DATA
+                
+                if flash_:
+                    flash(flash_)
+
                 session["flash_type"] = "profile"  # To indicate flash position
-                session["_anchor"] = "profile-wrapper"
                 return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="profile-wrapper"))
             
-            session["profile_errors"] = profile_form.errors
             session["_anchor"] = "profile-wrapper"
-            logger.debug(f"Profile errors: {profile_form.errors}")
+            session["profile_errors"] = profile_form.errors
         
         elif form_type == FORM.NOTIFICATIONS:
             if notifications_form.validate_on_submit():
+                flash_ = None
                 if clean_up_form_fields(notifications_form):
-                    flash(MESSAGE.NO_CHANGES)
+                    flash_ = MESSAGE.NO_CHANGES
                     
                 if process_admin_form(notifications_form):
-                    flash(MESSAGE.UPDATED_DATA)
-                else:
-                    flash(MESSAGE.NO_CHANGES)
-                    
+                    flash_ = MESSAGE.UPDATED_DATA
+                
+                if flash_:
+                    flash(flash_)
                 session["flash_type"] = "notifications"  # To indicate flash position
-                session["_anchor"] = "notification-settings-wrapper"
                 return redirect(url_for(REDIRECT.USER_ADMIN,
                                         _anchor="notifications-wrapper"))
             
             session["_anchor"] = "notifications-wrapper"
-    
+        
+
+        elif form_type == FORM.REQUEST_EMPLOYEE:
+            if request_employee_form.validate_on_submit():
+                if activate_employee(request_employee_form.employee_name.data,
+                                      request_employee_form.code.data):
+                    flash("Employee status granted")
+                    return redirect(url_for(REDIRECT.SCHEDULE,
+                                            _anchor="schedule-wrapper"))
+                
+            session["flash_type"] = "access"
+            session["_anchor"] = "access-wrapper"
+            session["request_employee_errors"] = request_employee_form.errors
+
     verify_email_errors = session.pop("verify_email_errors", None)
     authentication_errors = session.pop("authentication_errors", None)
     profile_errors = session.pop("profile_errors", None)
-    
+    request_employee_errors = session.pop("request_employee_errors", None)
+
     profile_form.country.data = current_user.country
     profile_form.profile_picture.data = current_user.profile_picture
     notifications_form.news_notifications.data = current_user.news_notifications
@@ -150,6 +169,8 @@ def user_admin():
 
     flash_type = session.pop("flash_type", None)
     _anchor = session.pop("_anchor", None)
+
+    logger.debug(f"[DEBUG] request_employee_errors: {request_employee_errors}")
 
     return render_template(
         TEMPLATE.USER_ADMIN,
@@ -163,6 +184,9 @@ def user_admin():
         profile_errors=profile_errors,
         
         notification_settings_form=notifications_form,
+
+        request_employee_form=request_employee_form,
+        request_employee_errors=request_employee_errors,
         
         flash_type=flash_type,
         _anchor=_anchor,

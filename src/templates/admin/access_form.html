@@ -1,0 +1,47 @@
+<!-- Profile flash messages -->
+<div id="access-wrapper" class="access-wrapper">
+    {% if flash_type == "access" and get_flashed_messages() %}
+        <div class="admin-flash">
+            <p>{{ get_flashed_messages()[0] }}</p>
+        </div>
+    {% endif %} 
+
+    <!-- Profile form -->
+    <div class="admin-form-wrapper">
+        <p class="admin-form-header">Request Employee access</p>
+        <form method="POST" 
+              action="{{ url_for('admin.user_admin', _anchor='access-wrapper') }}" 
+              novalidate 
+              class="admin-form" 
+              enctype="multipart/form-data">
+            
+            <div class="form-item">
+                <div class="input-error-wrapper">
+                    {{ request_employee_form.employee_name(
+                        class="main-input-field" + (" ph_red_color" if request_employee_errors["employee_name"] else "")) }}
+                    {% if request_employee_errors["employee_name"] %}
+                        <div class="admin-form-error"><strong>{{ request_employee_errors["employee_name"][0] }}</strong></div>
+                    {% endif %}
+                    <div class="admin-form-label">{{ request_employee_form.employee_name.label }}</div>
+                </div>
+            </div>
+
+            <div class="form-item last-form-item">
+                <div class="input-error-wrapper">
+                    {{ request_employee_form.code(
+                        class="main-input-field" + (" ph_red_color" if request_employee_errors["code"] else "")) }}
+                    {% if request_employee_errors["code"] %}
+                        <div class="admin-form-error"><strong>{{ request_employee_errors["code"][0] }}</strong></div>
+                    {% endif %}
+                    <div class="admin-form-label">{{ request_employee_form.code.label }}</div>
+                </div>
+            </div>
+
+            {{ request_employee_form.form_type }}
+            {{ request_employee_form.hidden_tag() }}
+            <div class="admin-devider"> 
+                {{ request_employee_form.submit(class="admin-btn") }}
+            </div>
+        </form>
+    </div>
+</div>

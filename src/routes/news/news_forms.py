@@ -15,6 +15,8 @@ from src.utils.form_utils import (
     NewsImportantLengthCheck,
 )
 
+from config.settings import FORM
+
 
 class AddNewsForm(FlaskForm):
     """
@@ -65,7 +67,7 @@ class AddNewsForm(FlaskForm):
             ForbiddenCheck(admin=True),
         ]
     )
-    form_type = HiddenField(default="news_form")
+    form_type = HiddenField(default=FORM.NEWS)
     submit = SubmitField("Submit")
 
 
@@ -86,5 +88,5 @@ class CommentForm(FlaskForm):
             ForbiddenCheck(),            
         ]
     )
-    form_type = HiddenField(default="comment")
+    form_type = HiddenField(default=FORM.COMMENT)
     submit = SubmitField(label="Submit")

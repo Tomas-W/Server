@@ -13,30 +13,10 @@ from wtforms.validators import DataRequired
 
 from src.utils.form_utils import (
     EmailCheck,
-    EmployeeNameCheck,
+    IsEmployeeCheck,
 )
 
 from config.settings import FORM
-
-
-class ScheduleRequestForm(FlaskForm):
-    name = StringField(
-        label="Name",
-        render_kw={"placeholder": "name as on schedule"},
-        validators=[
-            EmployeeNameCheck(),
-            DataRequired(),
-        ]
-    )
-    email = EmailField(
-        label="Email",
-        render_kw={"placeholder": "account email"},
-        validators=[
-            EmailCheck(),
-        ]
-    )
-    form_type = HiddenField(default=FORM.SCHEDULE_REQUEST)
-    submit = SubmitField(label="Request")
 
 
 class AddEmployeeForm(FlaskForm):
@@ -44,7 +24,7 @@ class AddEmployeeForm(FlaskForm):
         label="Name",
         render_kw={"placeholder": "name"},
         validators=[
-            EmployeeNameCheck(),
+            IsEmployeeCheck(),
             DataRequired(),
         ]
     )

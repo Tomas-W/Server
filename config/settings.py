@@ -227,6 +227,7 @@ class Form:
     SET_PASSWORD: str = "set_password_form"
     RESET_PASSWORD: str = "reset_password_form"
     # News
+    NEWS: str = "news_form"
     COMMENT: str = "comment_form"
     # Bakery
     BAKERY_SEARCH: str = "bakery_search_form"
@@ -243,6 +244,7 @@ class Form:
     AUTHENTICATION: str = "authentication_form"
     PROFILE: str = "profile_form"
     NOTIFICATIONS: str = "notifications_form"
+    REQUEST_EMPLOYEE: str = "request_employee_form"
     COUNTRY_CHOICES: list[str] = field(
         default_factory=lambda: [country.name for country in pycountry.countries]
     )

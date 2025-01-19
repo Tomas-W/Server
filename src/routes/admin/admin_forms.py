@@ -14,14 +14,15 @@ from wtforms.validators import EqualTo
 
 from src.utils.form_utils import (
     AboutMeLengthCheck,
-    CommentLengthCheck,
     DisplayNameTakenCheck,
     EmailCheck,
     EmailLengthCheck,
     EmailTakenCheck,
+    IsEmployeeCheck,
     FastCodeCheck,
     FastCodeLengthCheck,
     FastNameLengthCheck,
+    FieldRequired,
     ForbiddenCheck,
     ImageUploadCheck,
     PasswordCheck,
@@ -56,7 +57,7 @@ class VerifyEmailForm(FlaskForm):
             VerifyEmailCheck(),
         ]
     )
-    form_type = HiddenField(default="verify_form")
+    form_type = HiddenField(default=FORM.VERIFY)
     submit = SubmitField(label="Verify")
 
 
@@ -131,7 +132,7 @@ class AuthenticationForm(FlaskForm):
             FastCodeLengthCheck(admin=True),
         ]
     )
-    form_type = HiddenField(default="authentication_form")
+    form_type = HiddenField(default=FORM.AUTHENTICATION)
     submit = SubmitField(label="Update")
 
 
@@ -186,7 +187,7 @@ class ProfileForm(FlaskForm):
             AboutMeLengthCheck(),
         ]
     )
-    form_type = HiddenField(default="profile_form")
+    form_type = HiddenField(default=FORM.PROFILE)
     submit = SubmitField(label="Update")
 
 
@@ -197,27 +198,30 @@ class NotificationsForm(FlaskForm):
     news_notifications = BooleanField(label="news notifications")
     comment_notifications = BooleanField(label="comment notifications")
     bakery_notifications = BooleanField(label="bakery notifications")
-    form_type = HiddenField(default="notifications_form")
+    form_type = HiddenField(default=FORM.NOTIFICATIONS)
     submit = SubmitField(label="Update")
 
 
-class CommentForm(FlaskForm):
+class RequestEmployeeForm(FlaskForm):
     """
-    Used on admin.news.news_id page to add comment.
-    All fields are required and validated.
-    
-    Fields:
-    - CONTENT [TextAreaField] [Required]
-    - FORM_TYPE [HiddenField]
+    Used on admin.user_admin page to request Employee access.
     """
-    content = TextAreaField(
-        label="Content",
-        render_kw={"placeholder": "Content"},
+    employee_name = StringField(
+        label="Name",
+        render_kw={"placeholder": "[ please enter full name ]"},
         validators=[
-            CommentLengthCheck(),
-            ForbiddenCheck(),
+            IsEmployeeCheck(),
+            FieldRequired(),
         ]
     )
-    form_type = HiddenField(default="comment_form")
-    submit = SubmitField("Submit")
+    code = StringField(
+        label="Code",
+        render_kw={"placeholder": "[ 5-digit access code ]"},
+        validators=[
+            FastCodeCheck(),
+            FastCodeLengthCheck(),
+        ]
+    )
+    form_type = HiddenField(default=FORM.REQUEST_EMPLOYEE)
+    submit = SubmitField(label="Request")
     

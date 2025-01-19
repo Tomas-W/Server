@@ -181,7 +181,7 @@ class BakeryItem(server_db_.Model):
             return all_data
         except KeyError as e:
             errors = f"KeyError: {e} - {logger.get_log_info()}"
-            logger.log.error(errors)
+            logger.error(errors)
             return {}
 
     def __repr__(self) -> str:

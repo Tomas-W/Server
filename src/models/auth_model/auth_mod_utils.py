@@ -84,7 +84,7 @@ def employee_required(f: Callable) -> Callable:
         
         if not current_user.has_role(SERVER.EMPLOYEE_ROLE):
             logger.warning(f"[AUTH] EMPLOYEE ACCESS DENIED: {current_user.username}.")
-            go_route = url_for(REDIRECT.USER_ADMIN)
+            go_route = url_for(REDIRECT.USER_ADMIN, _anchor="access-wrapper")
             description = f"This page requires Employee access."
             raise Abort401(description=description, go_to=go_route)
         return f(*args, **kwargs)

@@ -185,10 +185,11 @@ def callback():
     token_request = google_requests.Request(session=cached_session)
 
     try:
+        client_id = current_app.ENV.GOOGLE_CLIENT_ID.get_secret_value()
         id_info = id_token.verify_oauth2_token(
             id_token=credentials.id_token,
             request=token_request,
-            audience=current_app.ENV.GOOGLE_CLIENT_ID,
+            audience=client_id,
         )
     except GoogleAuthError as e:
         flash(MESSAGE.TOKEN_ERROR)

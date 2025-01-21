@@ -91,9 +91,9 @@ def _configure_variables(app_: Flask) -> None:
         logger.critical(f"[SERVER] Error getting environment setting: {e}")
         raise SystemExit(1)
     
-    app_.config['SECRET_KEY'] = app_.ENV.FLASK_KEY
-    app_.config['MAIL_USERNAME'] = app_.ENV.GMAIL_EMAIL
-    app_.config['MAIL_PASSWORD'] = app_.ENV.GMAIL_PASS
+    app_.config["SECRET_KEY"] = app_.ENV.FLASK_KEY.get_secret_value()
+    app_.config["MAIL_USERNAME"] = app_.ENV.GMAIL_EMAIL.get_secret_value()
+    app_.config["MAIL_PASSWORD"] = app_.ENV.GMAIL_PASS.get_secret_value()
 
 def _configure_extensions(app_: Flask) -> None:
     logger._init_app(app_)
@@ -110,7 +110,7 @@ def _configure_extensions(app_: Flask) -> None:
     _configure_css(assets_)
     app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
     app_.context_processor(lambda: {"assets": assets_})
-    init_serializer(app_.ENV.FLASK_KEY)
+    init_serializer(app_.ENV.FLASK_KEY.get_secret_value())
     compress_.init_app(app_)
 
 

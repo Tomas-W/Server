@@ -1,47 +1,47 @@
 import os
 import pathlib
+import pycountry
+import pytz
 import string
 
 from dataclasses import (
     dataclass,
     field,
 )
-
-import pycountry
-import pytz
+from pydantic import SecretStr
 
 
 @dataclass(frozen=True)
 class Environ:
-    FLASK_KEY: str
-    CLIENT_SECRET: str
-    GOOGLE_CLIENT_ID: str
+    FLASK_KEY: SecretStr
+    CLIENT_SECRET: SecretStr
+    GOOGLE_CLIENT_ID: SecretStr
 
-    GMAIL_EMAIL: str
-    GMAIL_PASS: str
-    HOTMAIL_EMAIL: str
-    PWD_RESET_SALT: str
+    GMAIL_EMAIL: SecretStr
+    GMAIL_PASS: SecretStr
+    HOTMAIL_EMAIL: SecretStr
+    PWD_RESET_SALT: SecretStr
 
-    EMAIL_VERIFICATION_SALT: str
-    PASSWORD_VERIFICATION_SALT: str
-    EMPLOYEE_VERIFICATION_SALT: str
+    EMAIL_VERIFICATION_SALT: SecretStr
+    PASSWORD_VERIFICATION_SALT: SecretStr
+    EMPLOYEE_VERIFICATION_SALT: SecretStr
 
-    S_USERNAME: str
-    S_PASSWORD: str
-    S_LOGIN_URL: str
-    S_SCHEDULE_URL: str
+    S_USERNAME: SecretStr
+    S_PASSWORD: SecretStr
+    S_LOGIN_URL: SecretStr
+    S_SCHEDULE_URL: SecretStr
 
     ADMIN_UNAME: str
-    ADMIN_PWD: str
+    ADMIN_PWD: SecretStr
     ADMIN_F_NAME: str
-    ADMIN_F_CODE: str
+    ADMIN_F_CODE: SecretStr
     ADMIN_DISPLAY_NAME: str
-    ADMIN_EMPLOYEE_NAME: str
+    ADMIN_EMPLOYEE_NAME: SecretStr
     ADMIN_ROLES: str
 
     DELETED_USER_EMAIL: str
     DELETED_USER_UNAME: str
-    DELETED_USER_PWD: str
+    DELETED_USER_PWD: SecretStr
     DELETED_USER_DISPLAY_NAME: str
 
     @classmethod
@@ -61,34 +61,34 @@ class Environ:
                 raise ValueError(f"Environment variable {key} must be an integer")
         
         return cls(
-            FLASK_KEY=get_required_str("FLASK_KEY"),
-            CLIENT_SECRET=get_required_str("CLIENT_SECRET"),
-            GOOGLE_CLIENT_ID=get_required_str("GOOGLE_CLIENT_ID"),
+            FLASK_KEY=SecretStr(get_required_str("FLASK_KEY")),
+            CLIENT_SECRET=SecretStr(get_required_str("CLIENT_SECRET")),
+            GOOGLE_CLIENT_ID=SecretStr(get_required_str("GOOGLE_CLIENT_ID")),
 
-            GMAIL_EMAIL=get_required_str("GMAIL_EMAIL"),
-            GMAIL_PASS=get_required_str("GMAIL_PASS"),
-            HOTMAIL_EMAIL=get_required_str("HOTMAIL_EMAIL"),
-            PWD_RESET_SALT=get_required_str("PWD_RESET_SALT"),
-            EMAIL_VERIFICATION_SALT=get_required_str("EMAIL_VERIFICATION_SALT"),
-            PASSWORD_VERIFICATION_SALT=get_required_str("PASSWORD_VERIFICATION_SALT"),
-            EMPLOYEE_VERIFICATION_SALT=get_required_str("EMPLOYEE_VERIFICATION_SALT"),
+            GMAIL_EMAIL=SecretStr(get_required_str("GMAIL_EMAIL")),
+            GMAIL_PASS=SecretStr(get_required_str("GMAIL_PASS")),
+            HOTMAIL_EMAIL=SecretStr(get_required_str("HOTMAIL_EMAIL")),
+            PWD_RESET_SALT=SecretStr(get_required_str("PWD_RESET_SALT")),
+            EMAIL_VERIFICATION_SALT=SecretStr(get_required_str("EMAIL_VERIFICATION_SALT")),
+            PASSWORD_VERIFICATION_SALT=SecretStr(get_required_str("PASSWORD_VERIFICATION_SALT")),
+            EMPLOYEE_VERIFICATION_SALT=SecretStr(get_required_str("EMPLOYEE_VERIFICATION_SALT")),
 
-            S_USERNAME=get_required_str("S_USERNAME"),
-            S_PASSWORD=get_required_str("S_PASSWORD"),
-            S_LOGIN_URL=get_required_str("S_LOGIN_URL"),
-            S_SCHEDULE_URL=get_required_str("S_SCHEDULE_URL"),
+            S_USERNAME=SecretStr(get_required_str("S_USERNAME")),
+            S_PASSWORD=SecretStr(get_required_str("S_PASSWORD")),
+            S_LOGIN_URL=SecretStr(get_required_str("S_LOGIN_URL")),
+            S_SCHEDULE_URL=SecretStr(get_required_str("S_SCHEDULE_URL")),
 
             ADMIN_UNAME=get_required_str("ADMIN_UNAME"),
-            ADMIN_PWD=get_required_str("ADMIN_PWD"),
-            ADMIN_F_NAME=get_required_str("ADMIN_F_NAME"),
-            ADMIN_F_CODE=get_required_str("ADMIN_F_CODE"),
+            ADMIN_PWD=SecretStr(get_required_str("ADMIN_PWD")),
+            ADMIN_F_NAME=SecretStr(get_required_str("ADMIN_F_NAME")),
+            ADMIN_F_CODE=SecretStr(get_required_str("ADMIN_F_CODE")),
             ADMIN_DISPLAY_NAME=get_required_str("ADMIN_DISPLAY_NAME"),
-            ADMIN_EMPLOYEE_NAME=get_required_str("ADMIN_EMPLOYEE_NAME"),
+            ADMIN_EMPLOYEE_NAME=SecretStr(get_required_str("ADMIN_EMPLOYEE_NAME")),
             ADMIN_ROLES=get_required_str("ADMIN_ROLES"),
 
             DELETED_USER_EMAIL=get_required_str("DELETED_USER_EMAIL"),
             DELETED_USER_UNAME=get_required_str("DELETED_USER_UNAME"),
-            DELETED_USER_PWD=get_required_str("DELETED_USER_PWD"),
+            DELETED_USER_PWD=SecretStr(get_required_str("DELETED_USER_PWD")),
             DELETED_USER_DISPLAY_NAME=get_required_str("DELETED_USER_DISPLAY_NAME"),
         )
 

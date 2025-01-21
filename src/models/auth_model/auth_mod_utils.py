@@ -113,9 +113,9 @@ def start_verification_process(email: str, token_type: str,
 
 def get_authentication_token(email: str, token_type: str) -> str:
     salt_map = {
-        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT,
-        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT,
-        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT,
+        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT.get_secret_value(),
+        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT.get_secret_value(),
+        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT.get_secret_value(),
     }
     salt = salt_map.get(token_type)
     if not salt:
@@ -188,7 +188,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
 
     message = Message(
         subject=subject,
-        sender=current_app.ENV.GMAIL_EMAIL,
+        sender=current_app.ENV.GMAIL_EMAIL.get_secret_value(),
         recipients=[email],
         html=html_body
     )
@@ -234,9 +234,9 @@ def confirm_authentication_token(token: str, token_type: str,
     """
     from src.models.auth_model.auth_mod import AuthenticationToken
     salt_map = {
-        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT,
-        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT,
-        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT,
+        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT.get_secret_value(),
+        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT.get_secret_value(),
+        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT.get_secret_value(),
     }
     salt = salt_map.get(token_type)
     if not salt:
@@ -366,20 +366,20 @@ def _init_user() -> str | bool:
     from src.models.auth_model.auth_mod import User
     if not server_db_.session.query(User).count():
         new_user = User(
-            email=current_app.ENV.GMAIL_EMAIL,
+            email=current_app.ENV.GMAIL_EMAIL.get_secret_value(),
             username=current_app.ENV.ADMIN_UNAME,
-            password=current_app.ENV.ADMIN_PWD,
-            fast_name=current_app.ENV.ADMIN_F_NAME,
-            fast_code=current_app.ENV.ADMIN_F_CODE,
+            password=current_app.ENV.ADMIN_PWD.get_secret_value(),
+            fast_name=current_app.ENV.ADMIN_F_NAME.get_secret_value(),
+            fast_code=current_app.ENV.ADMIN_F_CODE.get_secret_value(),
             display_name=current_app.ENV.ADMIN_DISPLAY_NAME,
             email_verified=True,
-            employee_name=current_app.ENV.ADMIN_EMPLOYEE_NAME,
+            employee_name=current_app.ENV.ADMIN_EMPLOYEE_NAME.get_secret_value(),
             roles=current_app.ENV.ADMIN_ROLES.split(",")
         )
         deleted_user = User(
-            email=current_app.ENV.DELETED_USER_EMAIL,
+            email=current_app.ENV.DELETED_USER_EMAIL.get_secret_value(),
             username=current_app.ENV.DELETED_USER_UNAME,
-            password=current_app.ENV.DELETED_USER_PWD,
+            password=current_app.ENV.DELETED_USER_PWD.get_secret_value(),
             display_name=current_app.ENV.DELETED_USER_DISPLAY_NAME,
         )
         server_db_.session.add(new_user)

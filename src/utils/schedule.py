@@ -7,6 +7,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from flask import current_app
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -20,12 +21,6 @@ from src.utils.selenium_utils import (
 )
 
 from config.settings import DIR, PATH
-
-
-S_USERNAME = os.getenv("S_USERNAME")
-S_PASSWORD = os.getenv("S_PASSWORD")
-S_LOGIN_URL = os.getenv("S_LOGIN_URL")
-S_SCHEDULE_URL = os.getenv("S_SCHEDULE_URL")
 
 
 def update_schedule(week_number: int | None = None) -> None:
@@ -73,13 +68,13 @@ def update_schedule(week_number: int | None = None) -> None:
 
 def log_in(driver: webdriver.Firefox) -> None:
     """ Logs in to PMT. """
-    driver.get(S_LOGIN_URL)
+    driver.get(current_app.ENV.S_LOGIN_URL.get_secret_value())
     movement(driver)
     
     username_input = driver.find_element(By.ID, "loginUsername")
-    username_input.send_keys(S_USERNAME)
+    username_input.send_keys(current_app.ENV.S_USERNAME.get_secret_value())
     password_input = driver.find_element(By.ID, "loginPassword")
-    password_input.send_keys(S_PASSWORD)
+    password_input.send_keys(current_app.ENV.S_PASSWORD.get_secret_value())
     
     movement(driver)
     login_btn = WebDriverWait(driver, 10).until(
@@ -125,7 +120,7 @@ def get_schedule_info_per_date(driver: webdriver.Firefox,
     Returns a tuple of lists of names, hours, break times and work times for a given date.
     Date format: 'dd-mm-yyyy'
     """
-    url = f"{S_SCHEDULE_URL}{date}"
+    url = f"{current_app.ENV.S_SCHEDULE_URL.get_secret_value()}{date}"
     driver.get(url)
     logger.info(f"Navigated to: '{url}'")
     movement(driver)

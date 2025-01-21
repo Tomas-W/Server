@@ -3,7 +3,7 @@
 {% if schedule %}
 <div class="day-schedule-header">
     {% if may_prev %}
-        <a href="{{ url_for('schedule.personal', date=schedule['date'], sub=True) }}" class="day-schedule-button">
+        <a href="{{ url_for(REDIRECT.PERSONAL, date=schedule['date'], sub=True) }}" class="day-schedule-button">
             <<
         </a>
     {% endif %}
@@ -12,7 +12,7 @@
             {{ schedule["day"] }} {{ schedule["date"] }}
     </p>
     {% if may_next %}
-        <a href="{{ url_for('schedule.personal', date=schedule['date'], add=True) }}" class="day-schedule-button">
+        <a href="{{ url_for(REDIRECT.PERSONAL, date=schedule['date'], add=True) }}" class="day-schedule-button">
             >>
         </a>
     {% endif %}

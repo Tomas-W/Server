@@ -85,9 +85,9 @@ def personal(date: str = None):
         )
 
 
-@login_required
-@employee_required
 @schedule_bp.route("/schedule/calendar", methods=["GET", "POST"])
+@employee_required
+@login_required
 def calendar():
     calendar_form = CalendarForm()
 

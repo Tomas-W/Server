@@ -1,5 +1,4 @@
 from flask import (
-    abort,
     Blueprint,
     flash,
     redirect,
@@ -13,6 +12,8 @@ from flask_login import (
     login_required,
 )
 from werkzeug.datastructures import MultiDict
+
+from src.extensions import logger
 
 from src.models.news_model.news_mod_utils import (
     add_new_comment,
@@ -128,8 +129,8 @@ def news(id_: int):
 
 
 @news_bp.route("/news/add", methods=["GET", "POST"])
-@login_required
 @admin_required
+@login_required
 def add():
     add_news_form: AddNewsForm = AddNewsForm()
     
@@ -160,8 +161,8 @@ def add():
 
 @news_bp.route("/news/delete", defaults={"id_": None}, methods=["GET", "POST"])
 @news_bp.route("/news/delete/<id_>", methods=["GET", "POST"])
-@login_required
 @admin_required
+@login_required
 def delete(id_: int):
     if id_:
         news_item = get_news_by_id(id_)
@@ -214,14 +215,16 @@ def dislike_news(id_: int):
 
 
 @news_bp.route("/news/delete-comment/<id_>")
-@login_required
 @admin_required
+@login_required
 def delete_comment(id_: int):
+    news_id = get_news_id_by_comment_id(id_)
     if delete_comment_by_id(id_):
         session["flash_type"] = "delete_comment"
         flash("Comment deleted")
+    else:
+        flash("Failed to delete comment")
     
-    news_id = get_news_id_by_comment_id(id_)
     return redirect(url_for(
         REDIRECT.NEWS,
         id_=news_id,

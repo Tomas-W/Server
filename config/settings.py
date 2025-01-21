@@ -190,6 +190,8 @@ class Template:
     PROGRAMS: str = "/bakery/programs.html"
     INFO: str = "/bakery/info.html"
     SEARCH: str = "/bakery/search.html"
+    ADD_BAKERY: str = "/bakery/add.html"
+    DELETE_BAKERY: str = "/bakery/delete.html"
     # Schedule
     PERSONAL: str = "/schedule/personal.html"
     CALENDAR: str = "/schedule/calendar.html"
@@ -213,25 +215,40 @@ class Template:
 class Redirect:
     # Auth
     LOGIN: str = "auth.login"
+    LOGOUT: str = "auth.logout"
     REGISTER: str = "auth.register"
     SET_PASSWORD: str = "auth.set_password"
     REQUEST_RESET: str = "auth.request_reset"
     RESET_PASSWORD: str = "auth.reset_password"
+    G_LOGIN: str = "auth.g_login"
     # News
-    ALL_NEWS: str = "news.all"
     NEWS: str = "news.news"
+    ALL_NEWS: str = "news.all"
+    UNREAD_NEWS: str = "news.unread"
     HOME: str = "news.all"
+    ADD_NEWS: str = "news.add"
+    DELETE_NEWS: str = "news.delete"
+    DELETE_COMMENT: str = "news.delete_comment"
+    LIKE_NEWS: str = "news.like_news"
+    DISLIKE_NEWS: str = "news.dislike_news"
+    LIKE_COMMENT: str = "news.like_comment"
+    DISLIKE_COMMENT: str = "news.dislike_comment"
     # Bakery
     BAKERY: str = "bakery.bakery"
     PROGRAMS: str = "bakery.programs"
+    PROGRAM: str = "bakery.program"
+    INFO: str = "bakery.info"
+    ADD_BAKERY: str = "bakery.add"
     DELETE_BAKERY: str = "bakery.delete"
     SEARCH: str = "bakery.search"
     # Schedule
-    SCHEDULE: str = "schedule.personal"
+    PERSONAL: str = "schedule.personal"
+    CALENDAR: str = "schedule.calendar"
     VERIFY_EMPLOYEE: str = "schedule.verify_employee"
     # User admin
     USER_ADMIN: str = "admin.user_admin"
     VERIFY_EMAIL: str = "admin.verify_email"
+    PROFILE_ICON: str = "admin.profile_icon"
     # Admin
     DELETE_NEWS: str = "news.delete"
     # Errors

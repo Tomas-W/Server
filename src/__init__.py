@@ -75,6 +75,7 @@ def _configure_server(app_: Flask) -> Flask:
     _configure_cli(app_)
     _configure_database(app_)
     _configure_url_rules(app_)
+    _configure_jinja(app_)
 
     return app_
 
@@ -212,6 +213,10 @@ def _configure_css(assets_: Environment) -> None:
                    filters=bundle["filters"],
                    output=bundle["output"])
         )
+
+def _configure_jinja(app_: Flask) -> None:
+    app_.jinja_env.add_extension('jinja2.ext.loopcontrols')
+    app_.jinja_env.globals["REDIRECT"] = REDIRECT
 
 
 def get_app() -> Flask:

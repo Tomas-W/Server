@@ -27,7 +27,7 @@ Delete news
                     <div class="news-header">
                         <div class="code-wrapper">
                             <p class="news-code outline-bot-right {{ news.color }}">{{ news.code }}</p>
-                            <a class="news-delete-link outline-bot-left" href="{{ url_for("news.delete", id_=news.id) }}">
+                            <a class="news-delete-link outline-bot-left" href="{{ url_for(REDIRECT.DELETE_NEWS, id_=news.id) }}">
                                 <img class="news-delete-icon" src="{{ url_for("static",
                                                                             filename="images/delete_icon.png") }}" 
                                                                             alt="Delete" 

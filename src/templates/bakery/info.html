@@ -18,7 +18,7 @@ Info
         <ul class="side-panel-list">
             <p class="side-panel-title">Items</p>
             {% for item in ids_and_names %}
-                <li><p class="side-panel-item"><a class="break-words" href="{{ url_for("bakery.info", 
+                <li><p class="side-panel-item"><a class="break-words" href="{{ url_for(REDIRECT.INFO, 
                                                                         id_=item.id) }}">{{ item.name }}</a></p></li>
             {% endfor %}
         </ul>
@@ -34,7 +34,7 @@ Info
         <div class="top-panel" id="top-panel" style="display: none;">
             <div class="top-panel-list">
                 {% for item in ids_and_names %}
-                    <div class="top-panel-item"><a href="{{ url_for("bakery.info",
+                    <div class="top-panel-item"><a href="{{ url_for(REDIRECT.INFO,
                                                     id_=item.id) }}">{{ item.name }}</a></div>
                 {% endfor %}
             </div>

@@ -64,11 +64,14 @@ def get_comment_by_id(id_: int):
 def delete_comment_by_id(id_: int, cli: bool = False) -> bool:
     comment = server_db_.session.get(Comment, id_)
     if comment is not None:
+        deleted_message = f"Comment {comment.content[:10]}.. by {comment.user.username} removed."
         server_db_.session.delete(server_db_.session.get(Comment, id_))
         server_db_.session.commit()
         if not cli:
-            logger.warning(f"[DEL] DELETE COMMENT: {comment.content[:10]}.. by {comment.user.username} removed.")
+            logger.warning(deleted_message)
+        logger.debug("TRUE")
         return True
+    logger.debug("FALSE")
     return False
 
 

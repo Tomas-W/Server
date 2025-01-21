@@ -10,7 +10,7 @@
     <div class="admin-form-wrapper">
         <p class="admin-form-header">Authentication</p>
         <form method="POST" 
-              action="{{ url_for('admin.user_admin', _anchor='authentication-wrapper') }}" 
+              action="{{ url_for(REDIRECT.USER_ADMIN, _anchor='authentication-wrapper') }}" 
               novalidate 
               class="admin-form" 
               enctype="multipart/form-data">

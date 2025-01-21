@@ -31,7 +31,6 @@ from src.routes.errors.error_route_utils import Abort404
 
 from config.settings import (
     FORM,
-    MESSAGE,
     REDIRECT,
     TEMPLATE,
 )
@@ -154,16 +153,16 @@ def bakery_health(filename):
 
 
 @bakery_bp.route("/bakery/add")
-@login_required
 @admin_required
+@login_required
 def add():
     return render_template(
         TEMPLATE.BAKERY,
     )
 
 @bakery_bp.route("/bakery/delete/<id_>")
-@login_required
 @admin_required
+@login_required
 def delete(id_: int):
     delete_item_by_id(id_)
     referrer = request.headers.get("Referer")

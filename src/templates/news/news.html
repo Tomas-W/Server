@@ -15,7 +15,7 @@ News
     <div class="news-item">
 
         {% if is_admin %}
-            <a class="news-delete-link" href="{{ url_for("news.delete", id_=news_dict.id) }}">
+            <a class="news-delete-link" href="{{ url_for(REDIRECT.DELETE_NEWS, id_=news_dict.id) }}">
                 <img class="news-delete-icon" src="{{ url_for("static",
                                                            filename="images/delete_icon.png") }}" 
                                                            alt="Delete" 
@@ -73,14 +73,14 @@ News
                 <div class="like-wrapper">
                     {% if current_user.id|string in news_dict.liked_by %}
                         <p>{{ news_dict.liked_by|length }}</p>
-                        <a class="disable-a" href="{{ url_for("news.like_news", id_=news_dict.id) }}">
+                        <a class="disable-a" href="{{ url_for(REDIRECT.LIKE_NEWS, id_=news_dict.id) }}">
                             <img class="like-icon" src="{{ url_for("static",
                                                    filename="images/like_col_xl.png") }}" 
                                                    alt="Like"
                                                    type="image/png"></a>
                     {% else %}
                         <p>{{ news_dict.liked_by|length }}</p>
-                        <a href="{{ url_for("news.like_news", id_=news_dict.id) }}">
+                        <a href="{{ url_for(REDIRECT.LIKE_NEWS, id_=news_dict.id) }}">
                             <img class="like-icon" src="{{ url_for("static",
                                                    filename="images/like_xl.png") }}" 
                                                    alt="Like"
@@ -91,14 +91,14 @@ News
                 <!-- Dislike -->
                 <div class="dislike-wrapper">
                     {% if current_user.id|string in news_dict.disliked_by %}
-                        <a class="disable-a" href="{{ url_for("news.dislike_news", id_=news_dict.id) }}">
+                        <a class="disable-a" href="{{ url_for(REDIRECT.DISLIKE_NEWS, id_=news_dict.id) }}">
                             <img class="dislike-icon" src="{{ url_for("static",
                                                       filename="images/dislike_col_xl.png") }}" 
                                                       alt="Dislike"
                                                       type="image/png"></a>
                         <p>{{ news_dict.disliked_by|length }}</p>
                     {% else %}
-                        <a href="{{ url_for("news.dislike_news", id_=news_dict.id) }}">
+                        <a href="{{ url_for(REDIRECT.DISLIKE_NEWS, id_=news_dict.id) }}">
                             <img class="dislike-icon" src="{{ url_for("static",
                                                       filename="images/dislike_xl.png") }}" 
                                                       alt="Dislike"
@@ -136,7 +136,7 @@ News
 
         <div class="post-comment-wrapper" id="post-comment-wrapper">
             <!-- Comment form -->
-            <form method="POST" novalidate action="{{ url_for("news.news", id_=news_dict.id) }}" class="comment-form" id="comment-form">
+            <form method="POST" novalidate action="{{ url_for(REDIRECT.NEWS, id_=news_dict.id) }}" class="comment-form" id="comment-form">
 
                 <div class="form-item last-form-item">
                     {{ comment_form.content(class="comment-input-field") }}
@@ -168,7 +168,7 @@ News
 
             {% for comment in news_dict.comments %}
                 {% if is_admin %}
-                    <a class="comment-delete-link" href="{{ url_for("news.delete_comment", id_=comment.id) }}">
+                    <a class="comment-delete-link" href="{{ url_for(REDIRECT.DELETE_COMMENT, id_=comment.id) }}">
                         <img class="comment-delete-icon" src="{{ url_for("static",
                                                                           filename="images/delete_icon.png") }}" 
                                                                           alt="Delete" 
@@ -202,7 +202,7 @@ News
 
                         <div class="comment-actions">
                             <!-- Like actions -->
-                            <a class="{% if current_user.id|string in comment.liked_by %}disable-a{% endif %}" href="{{ url_for("news.like_comment", id_=comment.id) }}">
+                            <a class="{% if current_user.id|string in comment.liked_by %}disable-a{% endif %}" href="{{ url_for(REDIRECT.LIKE_COMMENT, id_=comment.id) }}">
                                 <div class="comment-like {% if comment.id == comment_id and current_user.id|string in comment.liked_by %}like-dislike-comment{% endif %}">
                                     {% if current_user.id|string in comment.liked_by %}
                                         <img class="like-comment-icon" src="{{ url_for("static",
@@ -220,7 +220,7 @@ News
                             </a>
 
                             <!-- Dislike actions -->
-                            <a class="{% if current_user.id|string in comment.disliked_by %}disable-a{% endif %}" href="{{ url_for("news.dislike_comment", id_=comment.id) }}">
+                            <a class="{% if current_user.id|string in comment.disliked_by %}disable-a{% endif %}" href="{{ url_for(REDIRECT.DISLIKE_COMMENT, id_=comment.id) }}">
                                 <div class="comment-dislike {% if comment.id == comment_id and current_user.id|string in comment.disliked_by %}like-dislike-comment{% endif %}">
                                     {% if current_user.id|string in comment.disliked_by %}
                                         <img class="dislike-comment-icon" src="{{ url_for("static",

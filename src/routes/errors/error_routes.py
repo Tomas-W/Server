@@ -25,7 +25,7 @@ errors_bp = Blueprint("errors", __name__)
 def handle_sqlalchemy_error(error):
     logger.error(f"[SQL] ERROR HANDLER: {error}")
     return render_template(
-        TEMPLATE.ERROR_500
+        TEMPLATE.E_500
         ), 500
 
 

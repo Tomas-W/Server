@@ -32,7 +32,7 @@ Search
     <div class="side-panel">
         {% if bakery_search_results_dicts %}
             <div class="reset-search-wrapper reset-search-side">
-                <a href="{{ url_for("bakery.search",
+                <a href="{{ url_for(REDIRECT.SEARCH,
                     reset=True) }}" 
                     class="reset-search-btn">Reset</a>
             </div>
@@ -132,7 +132,7 @@ Search
                     onclick="toggleTopPanel()">Search</label>
             {% if bakery_search_results_dicts %}
                 <div class="reset-search-wrapper reset-search-top">
-                    <a href="{{ url_for("bakery.search",
+                    <a href="{{ url_for(REDIRECT.SEARCH,
                         reset=True) }}" 
                         class="reset-search-btn">Reset</a>
                 </div>
@@ -235,7 +235,7 @@ Search
                 {% if bakery_search_results_dicts %}
                     {% for item in bakery_search_results_dicts %}
                         <div class="grid-item">
-                            <a href="{{ url_for("bakery.search",
+                            <a href="{{ url_for(REDIRECT.SEARCH,
                                 id_=item.id) }}">
                                 <p class="item-name">{{ item.name }}</p>
                                 <img class="grid-item-image" 

@@ -42,5 +42,13 @@ flow_ = Flow.from_client_secrets_file(
                 "https://www.googleapis.com/auth/userinfo.email", "openid"],
         redirect_uri="http://localhost:5000/callback"
     )
-serializer_ = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))
+serializer_ = None
 compress_ = Compress()
+
+
+def init_serializer(secret_key: str) -> None:
+    global serializer_
+    serializer_ = URLSafeTimedSerializer(secret_key)
+
+def get_serializer() -> URLSafeTimedSerializer:
+    return serializer_

@@ -1,8 +1,6 @@
 import os
 
-from dotenv import load_dotenv
-load_dotenv('.flaskenv')
-
+from itsdangerous import URLSafeTimedSerializer
 from flask import (
     Flask,
     send_from_directory,
@@ -22,6 +20,8 @@ from src.extensions import (
     logger,
     mail_,
     migrater_,
+    serializer_,
+    init_serializer,
     server_db_,
     session_,
 )
@@ -37,6 +37,7 @@ from src.cli.server_cli import server_cli
 from src.cli.bakery_cli import bakery_cli
 
 from config.settings import (
+    Environ,
     DIR,
     REDIRECT,
 )
@@ -49,19 +50,17 @@ from config.app_config import (
 def _configure_server(app_: Flask) -> Flask:
     """Configure the Flask application."""
     _configure_dirs(app_)
-    
-    # Get environment setting
+    _configure_variables(app_)
+
     environment = os.environ.get("FLASK_ENV", "debug").lower()
-    
-    # Select configuration based on environment
     if environment == "debug":
         config_obj = DebugConfig()
-        os.environ["FLASK_DEBUG"] = "1"
+        app_.config.update({"FLASK_DEBUG": "1"})
         app_.logger.warning("Detected debug environment")
 
     elif environment == "deploy":
         config_obj = DeployConfig()
-        os.environ["FLASK_DEBUG"] = "0"
+        app_.config.update({"FLASK_DEBUG": "0"})
         app_.logger.warning("Detected deployment environment")
     else:
         raise ValueError(f"Invalid FLASK_ENV value: '{environment}'. Expected 'debug' or 'deploy'")
@@ -85,6 +84,16 @@ def _configure_dirs(app_: Flask) -> None:
         if not os.path.exists(folder):
             os.makedirs(folder)
 
+def _configure_variables(app_: Flask) -> None:
+    try:
+        app_.ENV = Environ.from_env()
+    except ValueError as e:
+        logger.critical(f"[SERVER] Error getting environment setting: {e}")
+        raise SystemExit(1)
+    
+    app_.config['SECRET_KEY'] = app_.ENV.FLASK_KEY
+    app_.config['MAIL_USERNAME'] = app_.ENV.GMAIL_EMAIL
+    app_.config['MAIL_PASSWORD'] = app_.ENV.GMAIL_PASS
 
 def _configure_extensions(app_: Flask) -> None:
     logger._init_app(app_)
@@ -101,6 +110,7 @@ def _configure_extensions(app_: Flask) -> None:
     _configure_css(assets_)
     app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
     app_.context_processor(lambda: {"assets": assets_})
+    init_serializer(app_.ENV.FLASK_KEY)
     compress_.init_app(app_)
 
 

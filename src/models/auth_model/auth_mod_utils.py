@@ -33,11 +33,12 @@ from sqlalchemy import (
 )
 from typing import Any, Callable, TYPE_CHECKING
 from werkzeug.routing import BuildError
+from hmac import compare_digest
 
 from src.extensions import (
     logger,
     mail_,
-    serializer_,
+    get_serializer,
     server_db_,
 )
 
@@ -58,8 +59,7 @@ if TYPE_CHECKING:
 
 def admin_required(f: Callable) -> Callable:
     """
-    Decorator for Admin-only routes.
-    Redirects to ALL_NEWS_REDIRECT if User has no admin role.
+    Calls custom 401 error if User has no Admin role.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -67,14 +67,15 @@ def admin_required(f: Callable) -> Callable:
             logger.warning(f"[AUTH] ADMIN ACCESS DENIED: {current_user.username}")
             description = f"This page requires Admin access."
             raise Abort401(description=description)
+        
         return f(*args, **kwargs)
     return decorated_function
 
 
 def employee_required(f: Callable) -> Callable:
     """
-    Decorator for Employee-only routes.
-    Redirects to USER_ADMIN_REDIRECT if User has no employee role.
+    Calls custom 401 error if User has no Employee role.
+    Has redirect to User admin page to request access.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -86,6 +87,7 @@ def employee_required(f: Callable) -> Callable:
             go_route = url_for(REDIRECT.USER_ADMIN, _anchor="access-wrapper")
             description = f"This page requires Employee access."
             raise Abort401(description=description, go_to=go_route)
+        
         return f(*args, **kwargs)
     return decorated_function
 
@@ -100,7 +102,7 @@ def start_verification_process(email: str, token_type: str,
     if not allow_unknown:
         user = get_user_by_email(email)
         if not user:
-            time.sleep(0.3)  # TODO: remove delay
+            time.sleep(0.3)  # TODO: remove delay mimicking a slow response
             return False
 
     token = get_authentication_token(email, token_type)
@@ -110,11 +112,16 @@ def start_verification_process(email: str, token_type: str,
 
 
 def get_authentication_token(email: str, token_type: str) -> str:
-    salt = os.environ.get(f"{token_type.upper()}_SALT")
+    salt_map = {
+        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT,
+        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT,
+        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT,
+    }
+    salt = salt_map.get(token_type)
     if not salt:
         logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
-        Abort500()
-    token = serializer_.dumps(email, salt=salt)
+        raise Abort500()
+    token = get_serializer().dumps(email, salt=salt)
     return token
 
 
@@ -163,7 +170,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
         _anchor = "schedule-wrapper"
     else:
         logger.error(f"[VALIDATION] WRONG TOKEN TYPE: {token_type}")
-        Abort500()
+        raise Abort500()
 
     redirect_url = get_authentication_url(url_, token=token, _external=True)
     settings_url = get_authentication_url(REDIRECT.USER_ADMIN,
@@ -181,7 +188,7 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
 
     message = Message(
         subject=subject,
-        sender=SERVER.EMAIL,
+        sender=current_app.ENV.GMAIL_EMAIL,
         recipients=[email],
         html=html_body
     )
@@ -193,7 +200,7 @@ def get_authentication_url(endpoint: str, **values: Any) -> str:
         return url_for(endpoint, **values)
     except (BuildError, KeyError, ValueError) as e:
         logger.error(f"[VALIDATION] ERROR GENERATING URL: {e}")
-        Abort500()
+        raise Abort500()
 
 
 def get_authentication_email_template(template_name: str, **context: Any) -> str:
@@ -201,7 +208,7 @@ def get_authentication_email_template(template_name: str, **context: Any) -> str
         return render_template(template_name, **context)
     except (TemplateNotFound, TemplateSyntaxError, UndefinedError) as e:
         logger.error(f"[VALIDATION] ERROR RENDERING EMAIL TEMPLATE: {e}")
-        Abort500()
+        raise Abort500()
 
 
 def send_email(message: Message) -> None:
@@ -209,13 +216,13 @@ def send_email(message: Message) -> None:
         mail_.send(message)
     except SMTPRecipientsRefused as e:
         logger.info(f"[VALIDATION] RECIPIENTS REFUSED: {e}")
-        Abort500()
+        raise Abort500()
     except SMTPSenderRefused as e:
         logger.critical(f"[VALIDATION] SENDER REFUSED: {e}")
-        Abort500()
+        raise Abort500()
     except Exception as e:
         logger.error(f"[VALIDATION] ERROR SENDING VERIFICATION: {e}")
-        Abort500()
+        raise Abort500()
 
 def confirm_authentication_token(token: str, token_type: str,
                                  expiration: int = SERVER.TOKEN_EXPIRATION) -> str | None:
@@ -226,13 +233,18 @@ def confirm_authentication_token(token: str, token_type: str,
     - PASSWORD_VERIFICATION [reset password]
     """
     from src.models.auth_model.auth_mod import AuthenticationToken
-    salt = os.environ.get(f"{token_type.upper()}_SALT")
+    salt_map = {
+        SERVER.EMAIL_VERIFICATION: current_app.ENV.EMAIL_VERIFICATION_SALT,
+        SERVER.PASSWORD_VERIFICATION: current_app.ENV.PASSWORD_VERIFICATION_SALT,
+        SERVER.EMPLOYEE_VERIFICATION: current_app.ENV.EMPLOYEE_VERIFICATION_SALT,
+    }
+    salt = salt_map.get(token_type)
     if not salt:
-        logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
-        Abort500()
+        logger.critical("[VALIDATION] SALT NOT FOUND for token: {token_type}")
+        raise Abort500()
 
     try:
-        email = serializer_.loads(
+        email = get_serializer().loads(
             token,
             salt=salt,
             max_age=expiration
@@ -243,14 +255,13 @@ def confirm_authentication_token(token: str, token_type: str,
         )
         stored_token = server_db_.session.execute(stmt).scalar_one_or_none()
 
-        if stored_token and stored_token.token == token:
+        if stored_token and compare_digest(stored_token.token, token):
             return email
 
         else:
-            logger.info(f"[VALIDATION] EMAIL TOKEN NOT CONFIRMED: {email}")
             return None
 
-    except (SignatureExpired, BadSignature) as e:
+    except (SignatureExpired, BadSignature):
         return None
 
 
@@ -355,21 +366,21 @@ def _init_user() -> str | bool:
     from src.models.auth_model.auth_mod import User
     if not server_db_.session.query(User).count():
         new_user = User(
-            email=SERVER.EMAIL,
-            username=os.environ.get("ADMIN_UNAME"),
-            password=os.environ.get("ADMIN_PWD"),
-            fast_name=os.environ.get("ADMIN_F_NAME"),
-            fast_code=os.environ.get("ADMIN_F_CODE"),
-            display_name=os.environ.get("ADMIN_DISPLAY_NAME"),
+            email=current_app.ENV.GMAIL_EMAIL,
+            username=current_app.ENV.ADMIN_UNAME,
+            password=current_app.ENV.ADMIN_PWD,
+            fast_name=current_app.ENV.ADMIN_F_NAME,
+            fast_code=current_app.ENV.ADMIN_F_CODE,
+            display_name=current_app.ENV.ADMIN_DISPLAY_NAME,
             email_verified=True,
-            employee_name=os.environ.get("ADMIN_EMPLOYEE_NAME"),
-            roles=os.environ.get("ADMIN_ROLES").split(",")
+            employee_name=current_app.ENV.ADMIN_EMPLOYEE_NAME,
+            roles=current_app.ENV.ADMIN_ROLES.split(",")
         )
         deleted_user = User(
-            email=os.environ.get("DELETED_USER_EMAIL"),
-            username=os.environ.get("DELETED_USER_UNAME"),
-            password=os.environ.get("DELETED_USER_PWD"),
-            display_name=os.environ.get("DELETED_USER_DISPLAY_NAME"),
+            email=current_app.ENV.DELETED_USER_EMAIL,
+            username=current_app.ENV.DELETED_USER_UNAME,
+            password=current_app.ENV.DELETED_USER_PWD,
+            display_name=current_app.ENV.DELETED_USER_DISPLAY_NAME,
         )
         server_db_.session.add(new_user)
         server_db_.session.add(deleted_user)

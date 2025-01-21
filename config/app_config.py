@@ -7,9 +7,7 @@ from config.settings import SERVER
 
 class BaseConfig(object):
     CONFIG_NAME = "base"
-    SECRET_KEY = os.environ.get("FLASK_KEY")
-    
-    # Basic Flask Configuration
+
     SEND_FILE_MAX_AGE_DEFAULT = timedelta(days=7)
     ASSETS_DEBUG = True
     
@@ -27,12 +25,9 @@ class BaseConfig(object):
     SESSION_PERMANENT = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
-    # Mail settings remain in base as they're the same for all environments
-    MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
-    MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get("GMAIL_EMAIL")
-    MAIL_PASSWORD = os.environ.get("GMAIL_PASS")
     
     # Simpler CSP that only allows resources from your domain
     SECURITY_HEADERS: Final = {

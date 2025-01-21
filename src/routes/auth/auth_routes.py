@@ -4,6 +4,7 @@ import requests
 from functools import wraps
 from flask import (
     Blueprint,
+    current_app,
     flash,
     redirect,
     render_template,
@@ -187,7 +188,7 @@ def callback():
         id_info = id_token.verify_oauth2_token(
             id_token=credentials.id_token,
             request=token_request,
-            audience=os.environ.get("GOOGLE_CLIENT_ID"),
+            audience=current_app.ENV.GOOGLE_CLIENT_ID,
         )
     except GoogleAuthError as e:
         flash(MESSAGE.TOKEN_ERROR)

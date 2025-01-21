@@ -11,6 +11,88 @@ import pycountry
 import pytz
 
 
+@dataclass(frozen=True)
+class Environ:
+    FLASK_KEY: str
+    CLIENT_SECRET: str
+    GOOGLE_CLIENT_ID: str
+
+    GMAIL_EMAIL: str
+    GMAIL_PASS: str
+    HOTMAIL_EMAIL: str
+    PWD_RESET_SALT: str
+
+    EMAIL_VERIFICATION_SALT: str
+    PASSWORD_VERIFICATION_SALT: str
+    EMPLOYEE_VERIFICATION_SALT: str
+
+    S_USERNAME: str
+    S_PASSWORD: str
+    S_LOGIN_URL: str
+    S_SCHEDULE_URL: str
+
+    ADMIN_UNAME: str
+    ADMIN_PWD: str
+    ADMIN_F_NAME: str
+    ADMIN_F_CODE: str
+    ADMIN_DISPLAY_NAME: str
+    ADMIN_EMPLOYEE_NAME: str
+    ADMIN_ROLES: str
+
+    DELETED_USER_EMAIL: str
+    DELETED_USER_UNAME: str
+    DELETED_USER_PWD: str
+    DELETED_USER_DISPLAY_NAME: str
+
+    @classmethod
+    def from_env(cls) -> "Environ":
+        """Create config from environment variables with validation"""
+        def get_required_str(key: str) -> str:
+            value = os.environ.get(key)
+            if not value:
+                raise ValueError(f"Missing required environment variable: {key}")
+            return value
+        
+        def get_required_int(key: str) -> int:
+            value = get_required_str(key)
+            try:
+                return int(value)
+            except ValueError:
+                raise ValueError(f"Environment variable {key} must be an integer")
+        
+        return cls(
+            FLASK_KEY=get_required_str("FLASK_KEY"),
+            CLIENT_SECRET=get_required_str("CLIENT_SECRET"),
+            GOOGLE_CLIENT_ID=get_required_str("GOOGLE_CLIENT_ID"),
+
+            GMAIL_EMAIL=get_required_str("GMAIL_EMAIL"),
+            GMAIL_PASS=get_required_str("GMAIL_PASS"),
+            HOTMAIL_EMAIL=get_required_str("HOTMAIL_EMAIL"),
+            PWD_RESET_SALT=get_required_str("PWD_RESET_SALT"),
+            EMAIL_VERIFICATION_SALT=get_required_str("EMAIL_VERIFICATION_SALT"),
+            PASSWORD_VERIFICATION_SALT=get_required_str("PASSWORD_VERIFICATION_SALT"),
+            EMPLOYEE_VERIFICATION_SALT=get_required_str("EMPLOYEE_VERIFICATION_SALT"),
+
+            S_USERNAME=get_required_str("S_USERNAME"),
+            S_PASSWORD=get_required_str("S_PASSWORD"),
+            S_LOGIN_URL=get_required_str("S_LOGIN_URL"),
+            S_SCHEDULE_URL=get_required_str("S_SCHEDULE_URL"),
+
+            ADMIN_UNAME=get_required_str("ADMIN_UNAME"),
+            ADMIN_PWD=get_required_str("ADMIN_PWD"),
+            ADMIN_F_NAME=get_required_str("ADMIN_F_NAME"),
+            ADMIN_F_CODE=get_required_str("ADMIN_F_CODE"),
+            ADMIN_DISPLAY_NAME=get_required_str("ADMIN_DISPLAY_NAME"),
+            ADMIN_EMPLOYEE_NAME=get_required_str("ADMIN_EMPLOYEE_NAME"),
+            ADMIN_ROLES=get_required_str("ADMIN_ROLES"),
+
+            DELETED_USER_EMAIL=get_required_str("DELETED_USER_EMAIL"),
+            DELETED_USER_UNAME=get_required_str("DELETED_USER_UNAME"),
+            DELETED_USER_PWD=get_required_str("DELETED_USER_PWD"),
+            DELETED_USER_DISPLAY_NAME=get_required_str("DELETED_USER_DISPLAY_NAME"),
+        )
+
+
 @dataclass
 class Directory:
     # Server
@@ -55,7 +137,6 @@ class Server:
     LIMITER_URI = "memory://"
     DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
     CET: pytz.timezone = pytz.timezone('CET')
-    EMAIL: str = os.environ.get("GMAIL_EMAIL")
 
     MAX_IMAGE_FILE_SIZE: int = 2 * 1024 * 1024
     ALLOWED_FILE_EXTENSIONS: list[str] = field(

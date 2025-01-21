@@ -1,6 +1,7 @@
 import os
 
 from flask import (
+    current_app,
     render_template,
     url_for,
 )
@@ -47,7 +48,7 @@ def get_comment_notification_recipient_emails() -> list[str]:
 
 def send_news_notification_emails(recipient_emails: list[str]) -> None:
     notification_settings = "You receive these emails because you signed up for notifications."
-    sender_email = os.environ.get("GMAIL_EMAIL")
+    sender_email = current_app.ENV.GMAIL_EMAIL
     
     subject = "We have news!"
     redirect_title = "To read the latest news, "
@@ -73,7 +74,7 @@ def send_news_notification_emails(recipient_emails: list[str]) -> None:
 
 def send_comment_notification_emails(recipient_emails: list[str], comment_id: int, news_id: int) -> None:
     notification_settings = "You receive these emails because you signed up for notifications."
-    sender_email = os.environ.get("GMAIL_EMAIL")
+    sender_email = current_app.ENV.GMAIL_EMAIL
 
     subject = "Someone liked your comment!"
     redirect_title = "To read the comment, "
@@ -99,7 +100,7 @@ def send_comment_notification_emails(recipient_emails: list[str], comment_id: in
 
 def send_bakery_notification_emails(recipient_emails: list[str], bakery_id: int, add_update: str) -> None:
     notification_settings = "You receive these emails because you signed up for notifications."
-    sender_email = os.environ.get("GMAIL_EMAIL")
+    sender_email = current_app.ENV.GMAIL_EMAIL
 
     subject = f"Bakery item {add_update}!"
     redirect_title = "To read the bakery update, "

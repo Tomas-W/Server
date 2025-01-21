@@ -84,8 +84,10 @@ User Admin
             {% include "admin/profile_form.html" %}
 
             {% include "admin/notifications_form.html" %}
-
-            {% include "admin/access_form.html" %}
+            
+            {% if not is_employee %}
+                {% include "admin/access_form.html" %}
+            {% endif %}
 
         </div>
     </div>

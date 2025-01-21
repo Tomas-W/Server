@@ -14,6 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.extensions import logger, server_db_
 
+from src.utils.misc_utils import crop_name
 from src.utils.selenium_utils import (
     get_undetectable_driver, movement
 )
@@ -52,6 +53,7 @@ def update_schedule(week_number: int | None = None) -> None:
 
     for date in dates:
         names, hours, break_times, work_times = get_schedule_info_per_date(driver, date)
+        names = [crop_name(name) for name in names]
         
         names_list.append([name for name in names])
         hours_list.append([hour for hour in hours])
@@ -202,8 +204,11 @@ def save_schedule_to_json(date: str, names: list[str], hours: list[str],
     
     try:
         if os.path.exists(schedule_path):
-            with open(schedule_path, "r", encoding="utf-8") as json_file:
-                existing_data = json.load(json_file)
+            try:
+                with open(schedule_path, "r", encoding="utf-8") as json_file:
+                    existing_data = json.load(json_file)
+            except json.JSONDecodeError:
+                existing_data = {}
 
             existing_data.update(data_to_save)
             with open(schedule_path, "w", encoding="utf-8") as json_file:
@@ -230,7 +235,7 @@ def check_for_new_employees(names: list[str]) -> None:
         return
     
     from src.models.schedule_model.schedule_mod import Employees
-    names = [Employees.crop_name(name) for name in names]
+    names = [crop_name(name) for name in names]
     for name in names:
         if not Employees.query.filter_by(name=name).first():
             Employees.add_employee(name)

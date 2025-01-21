@@ -1,7 +1,16 @@
+def crop_name(name: str) -> str:
+        parts = name.split()
+        # Shorten last name to first letters
+        formatted_parts = [parts[0]] + [part if part[0].islower() else part[0].upper() for part in parts[1:]]
+        return " ".join(formatted_parts)
+
+
+
+
 
 # from datetime import datetime, timedelta
 # import random
-from PIL import Image
+# from PIL import Image
 # from rembg import remove
 
 
@@ -11,11 +20,11 @@ from PIL import Image
 #     return sorted(datetime.fromtimestamp(random.randint(int(start_date.timestamp()), int(end_date.timestamp()))).strftime("%d %b %H:%M") for _ in range(count))
 
 
-def resize_image(input_path, output_path, size):
-    with Image.open(input_path) as img:
-        img = img.convert("RGBA")
-        img = img.resize(size, Image.LANCZOS)
-        img.save(output_path)
+# def resize_image(input_path, output_path, size):
+#     with Image.open(input_path) as img:
+#         img = img.convert("RGBA")
+#         img = img.resize(size, Image.LANCZOS)
+#         img.save(output_path)
         
 # if __name__ == "__main__":
 #     for root, dirs, files in os.walk("C:/Coding/Projects/Server/backups/images/bakery smaller/New folder"):

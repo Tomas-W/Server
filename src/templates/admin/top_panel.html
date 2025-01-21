@@ -3,7 +3,9 @@
         <li><p class="top-panel-item"><a href="#authentication-wrapper">Authentication</a></p></li>
         <li><p class="top-panel-item"><a href="#profile-wrapper">Profile</a></p></li>
         <li><p class="top-panel-item"><a href="#notifications-wrapper">Notifications</a></p></li>
-        <li><p class="top-panel-item"><a href="#access-wrapper">Access</a></p></li>
+        {% if not is_employee %}
+            <li><p class="top-panel-item"><a href="#access-wrapper">Access</a></p></li>
+        {% endif %}
         {% if is_admin %}
             <p class="admin-panel-label admin-panel-label-top">Admin Panel</p>
             <li><p class="top-panel-item admin-panel-item">

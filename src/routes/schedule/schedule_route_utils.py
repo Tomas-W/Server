@@ -8,6 +8,8 @@ from datetime import (
 from flask import request
 from flask_login import current_user
 
+from src.extensions import logger
+
 
 def get_personal_schedule_dicts() -> list[list[dict]]:
     """
@@ -27,6 +29,22 @@ def get_personal_schedule_dicts() -> list[list[dict]]:
         schedules.append(week_dicts)
     
     return schedules
+
+
+def get_personal_hours_per_week(schedule: dict) -> int:
+    total_hours = []
+    for week in schedule:
+        week_hours = 0
+        for day in week:
+            total_quarters = 0
+            if day["end"]:
+                work_quarters = (int(day["end"]) - int(day["start"]))
+                break_quarters = int(day["break_time"].split(":")[0]) * 4
+                break_quarters += int(day["break_time"].split(":")[1]) / 15
+                total_quarters += work_quarters - break_quarters
+                week_hours += total_quarters / 4
+        total_hours.append(week_hours)
+    return total_hours
 
 
 def personal_dicts_to_calendar_dicts(personal_dicts: list[dict]) -> list[dict]:

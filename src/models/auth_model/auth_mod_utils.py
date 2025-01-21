@@ -79,7 +79,6 @@ def employee_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            logger.debug("got here")
             return current_app.login_manager.unauthorized()
         
         if not current_user.has_role(SERVER.EMPLOYEE_ROLE):

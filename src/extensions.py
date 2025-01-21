@@ -1,5 +1,4 @@
 import os
-import logging
 
 from argon2 import PasswordHasher
 from flask import current_app
@@ -45,18 +44,3 @@ flow_ = Flow.from_client_secrets_file(
     )
 serializer_ = URLSafeTimedSerializer(os.environ.get("FLASK_KEY"))
 compress_ = Compress()
-
-# Current problematic format might look like:
-formatter = logging.Formatter('%(asctime)s - %(user)s - %(levelname)s - %(message)s')
-
-# Should be changed to either:
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-# Or if you want to keep user logging, add a default:
-class CustomFormatter(logging.Formatter):
-    def format(self, record):
-        if not hasattr(record, 'user'):
-            record.user = 'system'  # or whatever default you want
-        return super().format(record)
-
-formatter = CustomFormatter('%(asctime)s - %(user)s - %(levelname)s - %(message)s')

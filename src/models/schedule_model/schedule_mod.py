@@ -24,6 +24,7 @@ from src.utils.schedule import (
     add_employee_json,
     update_employee_json,
 )
+from src.utils.misc_utils import crop_name
 
 from config.settings import SERVER
 
@@ -74,7 +75,7 @@ class Employees(server_db_.Model):
 
     @staticmethod
     def add_employee(name: str):
-        cropped_name = Employees.crop_name(name)
+        cropped_name = crop_name(name)
         employee = Employees.query.filter_by(name=cropped_name).first()
         if not employee:
             # Generate random 5 digit code
@@ -86,14 +87,6 @@ class Employees(server_db_.Model):
             logger.info(f"[ADD] EMPLOYEE {cropped_name} ADDED")
         else:
             logger.warning(f"[AUTH] EMPLOYEE NAME {cropped_name} ALREADY IN DATABASE")
-
-    @staticmethod
-    def crop_name(name: str) -> str:
-        parts = name.split()
-        logger.debug(f"Parts: {parts}")
-        # Shorten last name to first letters
-        formatted_parts = [parts[0]] + [part if part[0].islower() else part[0].upper() for part in parts[1:]]
-        return " ".join(formatted_parts)
 
     def cli_repr(self) -> str:
         return (f"{'ID':<18}{self.id}\n"
@@ -142,7 +135,7 @@ class Schedule(server_db_.Model):
         self.date = date
         self.week_number = week_number
         self.day = day
-        self.names = self._join(self._crop_names(names))
+        self.names = self._join(names)
         
         self.start_hours = self._get_start_hours(hours)
         self.end_hours = self._get_end_hours(hours)
@@ -151,9 +144,6 @@ class Schedule(server_db_.Model):
         
         self.break_times = self._join(break_times)
         self.work_times = self._join(work_times)
-    
-    def _crop_names(self, names: list[str]) -> list[str]:
-        return [f"{name.split()[0]} {name.split()[1][0]}" for name in names]
     
     def _get_start_hours(self, hours: list[str]) -> str:
         start_hours = [hour.split(" - ")[0] for hour in hours]

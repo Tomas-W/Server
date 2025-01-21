@@ -54,11 +54,7 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True, lo
     elif login_type == SERVER.GOOGLE_LOGIN:
         logger.info(f"[AUTH] GOOGLE LOG IN")
     else:
-        logger.debug("[AUTH] NORMAL LOG IN")
         logger.info("[AUTH] NORMAL LOG IN")
-        logger.warning("[AUTH] NORMAL LOG IN", route=True)
-        logger.error("[AUTH] NORMAL LOG IN", location=True)
-        logger.critical("[AUTH] NORMAL LOG IN", location=True, route=True)
     
 
 def handle_user_logout() -> None:
@@ -131,7 +127,6 @@ def handle_argon2_exception(e: Exception) -> str:
     Checks argon2 exceptions to return appropriate error message.
     """
     if isinstance(e, VerifyMismatchError):
-        logger.warning(f"[AUTH] CREDENTIALS ERROR: {e}")
         return MESSAGE.CREDENTIALS_ERROR
     if isinstance(e, (VerificationError, InvalidHashError)):
         logger.warning(f"[AUTH] VERIFICATION ERROR: {e}")

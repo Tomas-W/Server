@@ -16,7 +16,6 @@
 
 {% block schedule_content %}
 <div class="schedule-wrapper">
-    {% if is_employee %}
     
     {% if get_flashed_messages() %}
         <div class="schedule-flash">
@@ -28,6 +27,9 @@
         {% for week_dicts in personal_schedule_dicts %}
             <p class="week-number">
                 Week {{ week_dicts[0]["week_number"] }} {% if week_dicts[0]["week_number"] == current_week_num %} [ current ] {% endif %}
+            </p>
+            <p class="week-hours">
+                {{ personal_hours_per_week[loop.index - 1] }} hrs
             </p>
             <div class="week-content">
                 <table class="week-table">
@@ -67,53 +69,5 @@
             </div>
         {% endfor %}
     </div>
-
-    {% else %}
-    <div class="request-schedule-content">
-        <div class="request-schedule-header">
-            <p class="request-schedule-text">This page is available only for employees</p>
-            <p class="request-schedule-text">Request access by submitting the form below</p>
-        </div>
-
-        <!-- Request schedule flash messages -->
-        {% if get_flashed_messages() %}
-            <div class="request-schedule-flash">
-                <p>{{ get_flashed_messages()[0] }}</p>
-            </div>
-        {% endif %}
-
-        <!-- Request schedule form -->
-        <div class="schedule-form-wrapper">
-            <p class="schedule-form-header smaller-padding">Request access</p>
-            <form method="POST" action="" novalidate class="schedule-form" enctype="multipart/form-data">
-                <div class="form-item">
-                    <div class="input-error-wrapper">
-                        {{ schedule_request_form.name(class="main-input-field") }}
-                        {% if schedule_request_errors["name"] %}
-                            <div class="admin-form-error"><strong>{{ schedule_request_errors["name"][0] }}</strong></div>
-                        {% endif %}
-                        <div class="admin-form-label">{{ schedule_request_form.name.label }}</div>
-                    </div>
-                </div>
-
-                <div class="form-item last-form-item">
-                    <div class="input-error-wrapper">
-                        {{ schedule_request_form.email(class="main-input-field", readonly=True) }}
-                        {% if schedule_request_errors["email"] %}
-                            <div class="admin-form-error"><strong>{{ schedule_request_errors["email"][0] }}</strong></div>
-                        {% endif %}
-                        <div class="admin-form-label">{{ schedule_request_form.email.label }}</div>
-                    </div>
-                </div>
-
-                {{ schedule_request_form.form_type }}
-                {{ schedule_request_form.hidden_tag() }}
-                <div class="admin-devider">
-                    {{ schedule_request_form.submit(class="admin-btn") }}
-                </div>
-            </form>
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

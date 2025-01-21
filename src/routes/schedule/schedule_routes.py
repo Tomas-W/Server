@@ -30,6 +30,7 @@ from src.routes.schedule.schedule_route_utils import (
     get_calendar_dates,
     get_calendar_week_numbers,
     get_next_month_days,
+    get_personal_hours_per_week,
     get_personal_schedule_dicts,
     get_prev_month_days,
     get_requested_date,
@@ -68,6 +69,8 @@ def personal(date: str = None):
 
     requested_schedule_dict = requested_schedule.date_to_dict() if requested_schedule else {}
     personal_schedule_dicts = get_personal_schedule_dicts()
+    personal_hours_per_week = get_personal_hours_per_week(personal_schedule_dicts)
+    logger.debug(f"Personal hours per week: {personal_hours_per_week}")
 
     current_week_num = _week_from_date(_now())
 
@@ -75,6 +78,7 @@ def personal(date: str = None):
         TEMPLATE.PERSONAL,
         schedule=requested_schedule_dict,
         personal_schedule_dicts=personal_schedule_dicts,
+        personal_hours_per_week=personal_hours_per_week,
         current_week_num=current_week_num,
         may_prev=may_prev,
         may_next=may_next

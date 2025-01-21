@@ -9,6 +9,8 @@ from src.extensions import logger
 
 from src.models.schedule_model.schedule_mod import Employees
 
+from src.utils.misc_utils import crop_name
+
 from config.settings import (
     FORM,
     MESSAGE,
@@ -230,7 +232,7 @@ class IsEmployeeCheck:
         self.message: str = MESSAGE.EMPLOYEE_NAME_ERROR
 
     def __call__(self, form: FlaskForm, field: Field) -> None:
-        name = Employees.crop_name(field.data)
+        name = crop_name(field.data)
         employee: Employees | None = Employees.query.filter_by(name=name).first()
         if not employee:
             raise ValidationError(self.message)

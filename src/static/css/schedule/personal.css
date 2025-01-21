@@ -1,12 +1,19 @@
 .week-number {
+    font-size: var(--schedule-week-size);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.week-hours {
     padding: 0 0 5px 0;
+    text-align: right;
     font-size: var(--schedule-week-size);
     font-weight: 600;
     color: var(--text-color);
 }
 
 .personal-content {
-    padding: 75px 50px 50px 50px;
+    padding: 75px 40px 50px 50px;
 }
 
 .week-content {
@@ -37,38 +44,9 @@
 }
 
 
-
-
-.request-schedule-content {
-    padding: 100px 15%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--schedule-request-header-size);
-    color: var(--text-color);
-}
-
-.request-schedule-header {
-    padding: 0 0 60px 0;
-}
-
-.request-schedule-flash {
-    padding: 0 0 40px 0;
-    font-style: italic;
-}
-
-.request-schedule-flash p {
-    margin: 0;
-    text-align: center;
-    color: var(--text-color);
-    font-size: var(--admin-flash-size);
-}
-
-
 @media (max-width: 474.98px) {
-    .request-schedule-content {
-        padding: 75px 9%;
+    .personal-content {
+        padding: 75px 20px 50px 30px;
     }
 }
 

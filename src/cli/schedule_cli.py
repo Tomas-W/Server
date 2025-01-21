@@ -17,6 +17,7 @@ from src.utils.schedule import (
     _get_schedule_paths,
     update_schedule,
 )
+from src.utils.misc_utils import crop_name
 
 from config.settings import PATH, SERVER
 
@@ -123,7 +124,7 @@ def schedule_cli(app_: Flask) -> None:
             click.echo("Activating Employee cancelled.")
             return
         
-        employee_name = Employees.crop_name(name)
+        employee_name = crop_name(name)
         employee = Employees.query.filter_by(name=employee_name).first()
         if not employee:
             click.echo(f"Employee {employee_name} not found.")
@@ -171,7 +172,7 @@ def schedule_cli(app_: Flask) -> None:
             click.echo("Deactivating Employee cancelled.")
             return
         
-        employee_name = Employees.crop_name(user.employee_name)
+        employee_name = crop_name(user.employee_name)
         employee = Employees.query.filter_by(name=employee_name).first()
         if not employee:
             click.echo(f"Employee {employee_name} not found.")

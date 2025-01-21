@@ -18,10 +18,12 @@ from src.extensions import (
 
 from src.models.auth_model.auth_mod_utils import get_user_by_employee_name
 from src.models.schedule_model.schedule_mod import update_employee_json
+
 from src.utils.schedule import (
     _date_from_week_day_year,
     _get_schedule_paths,
 )
+from src.utils.misc_utils import crop_name
 
 from config.settings import (
     PATH,
@@ -47,7 +49,7 @@ def get_calendar_on_duty_days(dates: list[str]) -> list[str]:
 
 def activate_employee(name: str, code: str) -> bool:
     """ Activates the Employee in the database and JSON. """
-    employee_name = Employees.crop_name(name)
+    employee_name = crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
         if code == str(employee.code):
@@ -65,7 +67,7 @@ def activate_employee(name: str, code: str) -> bool:
 
 def deactivate_employee(name: str) -> bool:
     """ Deactivates the Employee in the database and JSON. """
-    employee_name = Employees.crop_name(name)
+    employee_name = crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
         employee.deactivate()
@@ -78,7 +80,7 @@ def deactivate_employee(name: str) -> bool:
 
 def deactivate_employee_cli(name: str):
     """ Deactivates the Employee in the database and JSON. """
-    employee_name = Employees.crop_name(name)
+    employee_name = crop_name(name)
     employee = Employees.query.filter_by(name=employee_name).first()
     if employee:
         employee.set_is_activated(False)

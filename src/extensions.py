@@ -2,6 +2,7 @@ import os
 
 from argon2 import PasswordHasher
 from flask import current_app
+from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -13,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from google_auth_oauthlib.flow import Flow
 from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import MetaData
 
 from src.utils.logger import ServerLogger
 
@@ -23,7 +25,9 @@ from config.settings import (
 
 
 logger = ServerLogger()
-server_db_: SQLAlchemy = SQLAlchemy()
+
+server_db_ = SQLAlchemy()
+
 mail_: Mail = Mail()
 argon2_: PasswordHasher = PasswordHasher()
 csrf_: CSRFProtect = CSRFProtect()
@@ -35,7 +39,6 @@ limiter_ = Limiter(
         default_limits=SERVER.DEFAULT_LIMITS,
         storage_uri=SERVER.LIMITER_URI,
     )
-session_ = Session()
 flow_ = Flow.from_client_secrets_file(
         client_secrets_file=PATH.CLIENTS_SECRETS,
         scopes=["https://www.googleapis.com/auth/userinfo.profile",
@@ -44,11 +47,13 @@ flow_ = Flow.from_client_secrets_file(
     )
 serializer_ = None
 compress_ = Compress()
+cache_ = Cache()
 
 
 def init_serializer(secret_key: str) -> None:
     global serializer_
     serializer_ = URLSafeTimedSerializer(secret_key)
+
 
 def get_serializer() -> URLSafeTimedSerializer:
     return serializer_

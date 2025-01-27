@@ -10,6 +10,8 @@ from flask_login import current_user
 
 from src.extensions import logger
 
+from src.routes.errors.error_routes import Abort400
+
 
 def get_personal_schedule_dicts() -> list[list[dict]]:
     """
@@ -62,7 +64,10 @@ def get_requested_date(date: str | None = None) -> datetime.date:
     if not date:
         today_date = datetime.now().date()
     else:
-        today_date = datetime.strptime(date, "%d-%m-%Y").date()
+        try:
+            today_date = datetime.strptime(date, "%d-%m-%Y").date()
+        except ValueError:
+            raise Abort400(f"Invalid date : {date}. Please use 'dd-mm-yyyy'.")
         
     if sub:
         today_date -= timedelta(days=1)

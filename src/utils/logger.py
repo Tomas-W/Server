@@ -6,6 +6,22 @@ from logging.handlers import RotatingFileHandler
 import inspect
 import colorlog
 
+class UserContextFilter(logging.Filter):
+    """Filter that adds user context to log records"""
+    def filter(self, record):
+        if not hasattr(record, "user"):
+            if has_request_context():
+                try:
+                    if current_user and hasattr(current_user, "username"):
+                        record.user = current_user.username
+                    else:
+                        record.user = "Anonymous"
+                except Exception:
+                    record.user = "Anonymous"
+            else:
+                record.user = "CLI"
+        return True
+
 class ServerLogger:
     def __init__(self):
         """
@@ -21,8 +37,8 @@ class ServerLogger:
         [YYYY-MM-DD HH:MM:SS] LEVELNAME USER - MESSAGE
 
         Warning, error and critical also show:
-        Location: FILE: FUNCTION: LINENO
-        Route: METHOD URL (REMOTE_ADDR) from REFERER
+        Location: FILE - FUNCTION - LINENO
+        Route: METHOD - URL - (REMOTE_ADDR) from REFERER
 
         Location and route can be added to any log level by passing location=True or route=True
         """
@@ -61,6 +77,11 @@ class ServerLogger:
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(color_formatter)
 
+        # Add user context filter
+        user_filter = UserContextFilter()
+        file_handler.addFilter(user_filter)
+        console_handler.addFilter(user_filter)
+
         level = app.config.get('LOG_LEVEL', 'INFO')
         app.logger.setLevel(level)
         
@@ -71,7 +92,6 @@ class ServerLogger:
     def _get_context(self):
         """Get current request context for logging"""
         context = {
-            "user": "system",  # Default to "system" instead of "-"
             "method": "-",
             "url": "-",
             "remote_addr": "-",
@@ -83,11 +103,6 @@ class ServerLogger:
         
         if has_request_context():
             try:
-                # Handle cases where current_user might not be fully initialized
-                username = (current_user.username 
-                           if hasattr(current_user, "username") 
-                           else "Anonymous")
-                context["user"] = username
                 context.update({
                     "method": request.method,
                     "url": request.url,
@@ -95,7 +110,6 @@ class ServerLogger:
                     "referrer": request.referrer or "-"
                 })
             except Exception:
-                # If anything goes wrong getting user info, keep default values
                 pass
 
         # Shorten pathname to Server/..
@@ -119,7 +133,7 @@ class ServerLogger:
 
         # Add context and log the message
         extra = kwargs.get("extra", {})
-        extra.update(self._get_context())
+        extra.update(self._get_context())  # Removed is_cli parameter
         kwargs["extra"] = extra
         
         # Build the complete message

@@ -10,10 +10,10 @@ from src.extensions import (
     server_db_,
 )
 
-from src.cli.bakery_cli import bakery_cli
-from src.cli.news_cli import news_cli
-from src.cli.schedule_cli import schedule_cli
-from src.cli.user_cli import user_cli
+from src.cli.bakery_cli import bakery
+from src.cli.news_cli import news
+from src.cli.schedule_cli import schedule
+from src.cli.user_cli import user
 
 
 def server_cli(app_: Flask) -> None:
@@ -77,10 +77,10 @@ def server_cli(app_: Flask) -> None:
         """
         ctx = click.get_current_context()
 
-        ctx.invoke(user_cli.commands['init-user'], v=v, c=c)
-        ctx.invoke(news_cli.commands['init-news'], v=v, c=c)
-        ctx.invoke(bakery_cli.commands['init-bakery'], v=v, c=c)
-        ctx.invoke(schedule_cli.commands['init-schedule'], v=v, c=c)
-        ctx.invoke(schedule_cli.commands['init-employees'], v=v, c=c)
+        ctx.invoke(user.commands['init-user'], v=v, c=c)
+        ctx.invoke(news.commands['init-news'], v=v, c=c)
+        ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
+        ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
+        ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
 
     app_.cli.add_command(server)

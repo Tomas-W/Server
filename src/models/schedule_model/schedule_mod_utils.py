@@ -2,9 +2,10 @@ import json
 import os
 import random
 
-from flask import flash
 from datetime import datetime
+from flask import flash
 from flask_login import current_user
+from functools import lru_cache
 
 from src.models.schedule_model.schedule_mod import (
     Employees,
@@ -14,6 +15,7 @@ from src.models.schedule_model.schedule_mod import (
 from src.extensions import (
     logger,
     server_db_,
+    cache_,
 )
 
 from src.models.auth_model.auth_mod_utils import get_user_by_employee_name
@@ -29,6 +31,14 @@ from config.settings import (
     PATH,
     SERVER,
 )
+
+
+@cache_.cached(timeout=0)
+def get_schedule_bounds():
+    """Returns earliest and latest schedule from database"""
+    earliest = Schedule.query.order_by(Schedule.date.asc()).first()
+    latest = Schedule.query.order_by(Schedule.date.desc()).first()
+    return earliest, latest
 
 
 def get_calendar_on_duty_days(dates: list[str]) -> list[str]:

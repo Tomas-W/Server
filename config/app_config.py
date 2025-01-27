@@ -17,13 +17,10 @@ class BaseConfig(object):
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
     DEFAULT_LIMITS = SERVER.DEFAULT_LIMITS
 
-    SESSION_TYPE = 'sqlalchemy'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = SERVER.DATABASE_URI
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
-    SESSION_PERMANENT = False
-    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
@@ -49,12 +46,12 @@ class BaseConfig(object):
     # Rate Limiting
     RATELIMIT_ENABLED = True
     RATELIMIT_HEADERS_ENABLED = True
-    RATELIMIT_STORAGE_URL = "memory://"  # Change to redis:// in production
+    RATELIMIT_STORAGE_URL = "memory://"
     
     # Cookie Settings
     SESSION_COOKIE_NAME = "secure_session"
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"  # Move to base config
+    SESSION_COOKIE_SAMESITE = "Lax"
     
     # Logging Configuration
     LOG_DIR = "logs"
@@ -84,6 +81,8 @@ class DebugConfig(BaseConfig):
     DEVELOPMENT = True
     TEMPLATES_AUTO_RELOAD = True
     EXPLAIN_TEMPLATE_LOADING = False
+
+    ASSETS_DEBUG = True
     
     # Logging configuration
     LOG_LEVEL = 'DEBUG'
@@ -109,6 +108,8 @@ class DeployConfig(BaseConfig):
     DEVELOPMENT = False
     TEMPLATES_AUTO_RELOAD = False
     EXPLAIN_TEMPLATE_LOADING = False
+    
+    ASSETS_DEBUG = False
     
     # Logging configuration
     LOG_LEVEL = 'INFO'  # Only log warnings and above in production

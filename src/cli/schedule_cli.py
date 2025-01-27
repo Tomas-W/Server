@@ -22,18 +22,18 @@ from src.utils.misc_utils import crop_name
 from config.settings import PATH, SERVER
 
 
-def schedule_cli(app_: Flask) -> None:
-    @click.group()
-    def schedule() -> None:
-        """CLI functionality for the Schedule Table"""
-        pass
+@click.group()
+def schedule():
+    """Schedule CLI commands."""
+    pass
 
+def schedule_cli(app_: Flask) -> None:
     @schedule.command("init-schedule")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
     @click.option("--c", is_flag=True, help="Confirm without prompting.")
-    def init_schedule(c: bool, v: bool) -> None:
+    def init_schedule(v: bool, c: bool) -> None:
         """
-        Adds Schedules from schedule*.json to the Schedule Table.
+        Initializes the Schedule Table.
 
         Usage: flask schedule init-schedule [--v] [--c]
         """

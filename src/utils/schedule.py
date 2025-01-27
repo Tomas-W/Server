@@ -65,6 +65,10 @@ def update_schedule(week_number: int | None = None) -> None:
     unique_names = set(name for sublist in names_list for name in sublist)
     check_for_new_employees(unique_names)
 
+    from src.models.schedule_model.schedule_mod_utils import get_schedule_bounds
+    from src.extensions import cache_
+    cache_.delete(get_schedule_bounds.cache_key())
+
 
 def log_in(driver: webdriver.Firefox) -> None:
     """ Logs in to PMT. """
@@ -327,11 +331,16 @@ def _get_schedule_paths() -> list[str]:
 
 
 def _date_from_week_day_year(week_number: int, day: str, year: int) -> datetime:
-    """ Returns the date of the first day of the given week. """
+    """ Returns the date of the specified day in the given week and year. """
+    # Calculate the first day of the year
     first_day_of_year = datetime(year, 1, 1)
-    week_days = _week_days()
-    days_to_add = (week_number - 1) * 7 + week_days.index(day)
-    return first_day_of_year + timedelta(days=days_to_add)
+    # Calculate the first Monday of the year
+    first_monday = first_day_of_year + timedelta(days=(7 - first_day_of_year.weekday()) % 7)
+    # Calculate the date based on the week number and day
+    days_to_add = (week_number - 1) * 7 + _week_days().index(day)
+    if year == 2025:
+        days_to_add -= 7
+    return first_monday + timedelta(days=days_to_add)
 
 
 def _day_from_date(date_str: str) -> str:

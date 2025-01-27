@@ -11,6 +11,8 @@ from flask_assets import (
 )
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import timedelta
+from flask_session import Session
 
 from src.extensions import (
     compress_,
@@ -23,7 +25,7 @@ from src.extensions import (
     serializer_,
     init_serializer,
     server_db_,
-    session_,
+    cache_,
 )
 from src.extensions_utils import (
     clear_webassets_cache,
@@ -56,12 +58,10 @@ def _configure_server(app_: Flask) -> Flask:
     if environment == "debug":
         config_obj = DebugConfig()
         app_.config.update({"FLASK_DEBUG": "1"})
-        app_.logger.warning("Detected debug environment")
 
     elif environment == "deploy":
         config_obj = DeployConfig()
         app_.config.update({"FLASK_DEBUG": "0"})
-        app_.logger.warning("Detected deployment environment")
     else:
         raise ValueError(f"Invalid FLASK_ENV value: '{environment}'. Expected 'debug' or 'deploy'")
 
@@ -89,7 +89,6 @@ def _configure_variables(app_: Flask) -> None:
     try:
         app_.ENV = Environ.from_env()
     except ValueError as e:
-        logger.critical(f"[SERVER] Error getting environment setting: {e}")
         raise SystemExit(1)
     
     app_.config["SECRET_KEY"] = app_.ENV.FLASK_KEY.get_secret_value()
@@ -99,17 +98,36 @@ def _configure_variables(app_: Flask) -> None:
 def _configure_extensions(app_: Flask) -> None:
     logger._init_app(app_)
     server_db_.init_app(app_)
+    
+    # Configure cache
+    cache_.init_app(app_, config={
+        "CACHE_TYPE": "SimpleCache",  # Simple in-memory cache
+        "CACHE_DEFAULT_TIMEOUT": 300  # 5 minutes default timeout
+    })
+    
+    # Configure filesystem sessions
+    app_.config.update({
+        "SESSION_TYPE": "filesystem",
+        "SESSION_FILE_DIR": os.path.join(DIR.DB, "flask_sessions"),
+        "SESSION_FILE_THRESHOLD": 500,  # Maximum number of sessions
+        "PERMANENT_SESSION_LIFETIME": timedelta(days=7),
+        "SESSION_PERMANENT": True,
+        "SESSION_USE_SIGNER": True,
+    })
+    
+    session = Session()
+    session.init_app(app_)
+    
     mail_.init_app(app_)
     csrf_.init_app(app_)
     login_manager_.init_app(app_)
     login_manager_.login_view = REDIRECT.LOGIN
     migrater_.init_app(app_, server_db_)
     limiter_.init_app(app_)
-    app_.config['SESSION_SQLALCHEMY'] = server_db_
-    session_.init_app(app_)
+    
     assets_ = Environment(app_)
     _configure_css(assets_)
-    app_.config['ASSETS_ROOT'] = os.path.join(app_.root_path, 'static')
+    app_.config["ASSETS_ROOT"] = os.path.join(app_.root_path, "static")
     app_.context_processor(lambda: {"assets": assets_})
     init_serializer(app_.ENV.FLASK_KEY.get_secret_value())
     compress_.init_app(app_)

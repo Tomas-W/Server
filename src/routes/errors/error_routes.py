@@ -81,6 +81,8 @@ def not_found(error):
 @errors_bp.app_errorhandler(500)
 def internal_server_error(error):
     error_msg, go_to, extra_info = get_error_params(error)
+    logger.error(f"[500] ERROR HANDLER: {error}")
+    print(f"[500] ERROR HANDLER: {error}")
     return render_template(
         TEMPLATE.E_500,
         error_msg=error_msg,

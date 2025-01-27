@@ -22,18 +22,18 @@ from src.models.news_model.news_mod_utils import (
 from src.routes.news.news_items import get_news_dict
 
 
-def news_cli(app_: Flask) -> None:
-    @click.group()
-    def news() -> None:
-        """CLI functionality for the News Table"""
-        pass
+@click.group()
+def news():
+    """News CLI commands."""
+    pass
 
+def news_cli(app_: Flask) -> None:
     @news.command("init-news")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
     @click.option("--c", is_flag=True, help="Confirm without prompting.")
-    def init_news(c: bool, v: bool) -> None:
+    def init_news(v: bool, c: bool) -> None:
         """
-        Adds NewsItems from news_items.py to the News Table.
+        Initializes the News Table.
 
         Usage: flask news init-news [--v] [--c]
         """

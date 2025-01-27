@@ -30,6 +30,7 @@ if /I "%userInput%"=="Y" (
     call activate.bat
     cd C:\Coding\Projects\Server
     set FLASK_APP=run:get_app
+    set FLASK_ENV=debug
     echo APP has been set
 
 ) else (

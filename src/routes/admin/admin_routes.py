@@ -149,7 +149,7 @@ def user_admin():
                 if activate_employee(request_employee_form.employee_name.data,
                                       request_employee_form.code.data):
                     flash("Employee status granted")
-                    return redirect(url_for(REDIRECT.SCHEDULE,
+                    return redirect(url_for(REDIRECT.PERSONAL,
                                             _anchor="schedule-wrapper"))
                 
             session["flash_type"] = "access"

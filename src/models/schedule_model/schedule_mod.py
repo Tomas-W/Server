@@ -129,7 +129,7 @@ class Schedule(server_db_.Model):
     break_times: Mapped[str] = mapped_column(Text, nullable=False)
     work_times: Mapped[str] = mapped_column(Text, nullable=False)
 
-    def __init__(self, date: datetime, week_number: str, day: str,
+    def __init__(self, date: datetime, week_number: int, day: str,
                  names: list[str], hours: list[str],
                  break_times: list[str], work_times: list[str]):
         self.date = date

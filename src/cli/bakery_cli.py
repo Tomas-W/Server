@@ -15,18 +15,18 @@ from src.models.bakery_model.bakery_mod_utils import (
 )
 
 
-def bakery_cli(app_: Flask) -> None:
-    @click.group()
-    def bakery() -> None:
-        """CLI functionality for the Bakery Table"""
-        pass
+@click.group()
+def bakery():
+    """Bakery CLI commands."""
+    pass
 
+def bakery_cli(app_: Flask) -> None:
     @bakery.command("init-bakery")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
     @click.option("--c", is_flag=True, help="Confirm without prompting.")
-    def init_bakery(c: bool, v: bool) -> None:
+    def init_bakery(v: bool, c: bool) -> None:
         """
-        Adds BakeryItems from bakery_items.py to the Bakery Table.
+        Initializes the Bakery Table.
 
         Usage: flask bakery init-bakery [--v] [--c]
         """

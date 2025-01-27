@@ -83,7 +83,6 @@ def employee_required(f: Callable) -> Callable:
             return current_app.login_manager.unauthorized()
         
         if not current_user.has_role(SERVER.EMPLOYEE_ROLE):
-            logger.warning(f"[AUTH] EMPLOYEE ACCESS DENIED: {current_user.username}.")
             go_route = url_for(REDIRECT.USER_ADMIN, _anchor="access-wrapper")
             description = f"This page requires Employee access."
             raise Abort401(description=description, go_to=go_route)
@@ -377,10 +376,10 @@ def _init_user() -> str | bool:
             roles=current_app.ENV.ADMIN_ROLES.split(",")
         )
         deleted_user = User(
-            email=current_app.ENV.DELETED_USER_EMAIL.get_secret_value(),
+            email=current_app.ENV.DELETED_USER_EMAIL,
             username=current_app.ENV.DELETED_USER_UNAME,
             password=current_app.ENV.DELETED_USER_PWD.get_secret_value(),
-            display_name=current_app.ENV.DELETED_USER_DISPLAY_NAME,
+            display_name="Deleted user",
         )
         server_db_.session.add(new_user)
         server_db_.session.add(deleted_user)

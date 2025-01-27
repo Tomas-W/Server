@@ -25,6 +25,7 @@ from src.models.auth_model.auth_mod_utils import (
     delete_authentication_token,
     employee_required,
 )
+from src.models.schedule_model.schedule_mod_utils import get_schedule_bounds
 
 from src.routes.schedule.schedule_route_utils import (
     get_calendar_dates,
@@ -59,20 +60,21 @@ schedule_bp = Blueprint("schedule", __name__)
 @login_required
 def personal(date: str = None):
     requested_date = get_requested_date(date)
-    requested_schedule = Schedule.query.filter_by(date=requested_date).one_or_none()
-    prev_date = requested_date - timedelta(days=1)
-    prev_date_schedule = Schedule.query.filter_by(date=prev_date).one_or_none()
-    next_date = requested_date + timedelta(days=1)
-    next_date_schedule = Schedule.query.filter_by(date=next_date).one_or_none()
-    may_prev = prev_date_schedule is not None
-    may_next = next_date_schedule is not None
 
+    earliest_schedule, latest_schedule = get_schedule_bounds()
+    may_prev = earliest_schedule and requested_date > earliest_schedule.date
+    may_next = latest_schedule and requested_date < latest_schedule.date
+
+    requested_schedule = Schedule.query.filter_by(date=requested_date).one_or_none()
     requested_schedule_dict = requested_schedule.date_to_dict() if requested_schedule else {}
     personal_schedule_dicts = get_personal_schedule_dicts()
     personal_hours_per_week = get_personal_hours_per_week(personal_schedule_dicts)
-    logger.debug(f"Personal hours per week: {personal_hours_per_week}")
 
     current_week_num = _week_from_date(_now())
+
+    logger.info(f"{requested_date=}")
+    logger.info(f"{earliest_schedule.date=}")
+    logger.info(f"{latest_schedule.date=}")
 
     return render_template(
         TEMPLATE.PERSONAL,

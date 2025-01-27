@@ -19,7 +19,7 @@ __pycache__/
 .webassets-cache/
 
 # Ignore compiled assets
-dist/
+# dist/
 
 # Ignore secret files
 client_secret.json
@@ -30,8 +30,8 @@ src/routes/schedule/*.json
 backups/
 
 # Ignore databases
-db/*.db
-migrations/*
+db/
+*.db
 
 # Ignore uploaded files
 profile_pictures/
@@ -45,3 +45,6 @@ playground.py
 # Ignore logs
 logs/
 *.log
+
+# Ignore instance files
+instance/

@@ -15,20 +15,20 @@ from src.models.auth_model.auth_mod_utils import (
 )
 
 
+@click.group()
+def user():
+    """User CLI commands."""
+    pass
+
 def user_cli(app_: Flask) -> None:
     """Configures User CLI commands."""
-
-    @click.group()
-    def user() -> None:
-        """CLI functionality for the User table"""
-        pass
 
     @user.command("init-user")
     @click.option("--v", is_flag=True, help="Enables verbose mode.")
     @click.option("--c", is_flag=True, help="Confirm without prompting.")
     def init_user(v: bool, c: bool) -> None:
         """
-        Initializes the first user.
+        Initializes the User Table.
 
         Usage: flask user init-user [--v] [--c]
         """

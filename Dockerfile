@@ -24,7 +24,6 @@ RUN mkdir -p db src/uploads/profile_pictures src/uploads/profile_icons
 # Set environment variables
 ENV FLASK_APP=run:get_app
 ENV FLASK_ENV=deploy
-ENV PORT=8080
 
 # Run the application
-CMD gunicorn run:app --bind 0.0.0.0:8080 
+CMD gunicorn run:app --bind 0.0.0.0:${PORT:-8080} --timeout 180 --workers 1 

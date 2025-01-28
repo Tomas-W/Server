@@ -10,7 +10,7 @@ if /I "%userInput%"=="Y" (
     cd C:\Coding\Projects\Server
     set FLASK_APP=run:get_app
     set FLASK_ENV=debug
-    set PORT=5000
+    set PORT=8080
     echo Running Flask server in debug mode on port %PORT%...
     python run.py
 
@@ -20,7 +20,7 @@ if /I "%userInput%"=="Y" (
     cd C:\Coding\Projects\Server
     set FLASK_APP=run:get_app
     set FLASK_ENV=deploy
-    set PORT=443
+    set PORT=8080
     echo Running Flask server in deployment mode with SSL on port %PORT%...
     :: Note: Running on port 443 might require administrator privileges
     python run.py

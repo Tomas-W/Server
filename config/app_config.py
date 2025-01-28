@@ -116,21 +116,21 @@ class DeployConfig(BaseConfig):
     ASSETS_DEBUG = False
     
     # Logging configuration
-    LOG_LEVEL = 'INFO'  # Only log warnings and above in production
-    LOG_DIR = 'logs/production'
+    LOG_LEVEL = 'INFO'
+    LOG_DIR = '/tmp/logs/production'  # Use /tmp for Railway
     LOG_FILE = 'production.log'
     
     # Production security settings
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SECURE = True     # Ensure cookies only sent over HTTPS
+    SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = "Strict"
-    PREFERRED_URL_SCHEME = 'https'   # Force HTTPS for url_for
+    PREFERRED_URL_SCHEME = 'https'
     
-    # Security headers for HTTPS
+    # Update CSP for Railway
     SECURITY_HEADERS = {
         **BaseConfig.SECURITY_HEADERS,
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-        'Content-Security-Policy': "upgrade-insecure-requests"  # Force HTTPS upgrades
+        'Content-Security-Policy': "default-src 'self' https: data:; img-src 'self' https: data:; style-src 'self' https: 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; script-src 'self' https: 'unsafe-inline' 'unsafe-eval';"
     }
 
     def config_name(self):

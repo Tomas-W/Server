@@ -27,4 +27,4 @@ ENV FLASK_ENV=deploy
 ENV PORT=8080
 
 # Run the application
-CMD gunicorn run:app --bind 0.0.0.0:$PORT 
+CMD gunicorn run:app --bind 0.0.0.0:8080 

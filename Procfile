@@ -1,1 +1,1 @@
-web: sleep 5 && flask db upgrade && gunicorn run:app --bind 0.0.0.0:$PORT --timeout 60
+web: flask db stamp head && flask db upgrade && flask server init-server --c && gunicorn run:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2

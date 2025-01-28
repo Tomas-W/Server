@@ -36,10 +36,5 @@ RUN mkdir -p db src/uploads/profile_pictures src/uploads/profile_icons
 ENV FLASK_APP=run:get_app
 ENV FLASK_ENV=deploy
 
-# Make start script executable
-USER root
-RUN chmod +x start.sh
-USER appuser
-
 # Run the application
-CMD ["./start.sh"] 
+CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:8080", "--timeout", "180", "--workers", "1"] 

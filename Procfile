@@ -1,1 +1,1 @@
-web: flask db stamp head && flask db upgrade && flask server init-server --c && gunicorn run:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2
+web: echo "Starting database operations..." && flask db current && flask db stamp head && flask db upgrade && echo "Running server init..." && flask server init-server --c --v && echo "Starting gunicorn..." && gunicorn run:app --bind 0.0.0.0:$PORT --log-level debug

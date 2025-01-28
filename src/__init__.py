@@ -202,29 +202,43 @@ def _configure_cli(app_: Flask) -> None:
 
 
 def _configure_database(app_: Flask) -> None:
-    """Configure database connection with retries"""
-    max_retries = 3
-    retry_delay = 5  # seconds
-
+    """Configure database connection with diagnostics"""
+    logger.info("Starting database configuration...")
+    
+    # Log database URL (with password masked)
+    db_url = app_.config["SQLALCHEMY_DATABASE_URI"]
+    if db_url:
+        masked_url = db_url.replace(db_url.split("@")[0], "postgresql://****:****")
+        logger.info(f"Database URL: {masked_url}")
+    else:
+        logger.critical("No database URL configured!")
+        raise ValueError("DATABASE_URL environment variable is not set")
+    
+    max_retries = 5
+    retry_delay = 3
+    
     for attempt in range(max_retries):
         try:
             with app_.app_context():
-                # Test database connection
+                # Test connection
+                logger.info(f"Attempting database connection (attempt {attempt + 1}/{max_retries})...")
                 server_db_.engine.connect()
-                logger.info("Database connection successful")
+                logger.info("Database connection successful!")
                 
-                # Create tables if needed
-                if not os.path.exists(DIR.DB):
-                    server_db_.create_all()
-                    logger.info("Database tables created successfully")
+                # Check if tables exist
+                inspector = inspect(server_db_.engine)
+                existing_tables = inspector.get_table_names()
+                logger.info(f"Existing tables: {existing_tables}")
+                
                 return
                 
         except Exception as e:
+            logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
             if attempt < max_retries - 1:
-                logger.warning(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+                logger.info(f"Waiting {retry_delay} seconds before retry...")
                 time.sleep(retry_delay)
             else:
-                logger.critical(f"Failed to connect to database after {max_retries} attempts: {str(e)}")
+                logger.critical("All database connection attempts failed!")
                 raise
 
 

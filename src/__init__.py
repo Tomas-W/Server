@@ -13,6 +13,8 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta
 from flask_session import Session
+from flask_migrate import upgrade
+from sqlalchemy import inspect
 
 from src.extensions import (
     compress_,
@@ -246,5 +248,12 @@ def get_app() -> Flask:
     )
 
     app_ = _configure_server(app_)
-    clear_webassets_cache()    
+    clear_webassets_cache()
+
+    with app_.app_context():
+        # Check if the database is empty using inspect
+        if not inspect(server_db_.engine).has_table('flask'):
+            # Run migrations
+            upgrade()  # This applies all migrations
+
     return app_

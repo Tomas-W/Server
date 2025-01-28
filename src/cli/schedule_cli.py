@@ -18,6 +18,7 @@ from src.utils.schedule import (
     update_schedule,
 )
 from src.utils.misc_utils import crop_name
+from src.utils.encryption_utils import decrypt_data
 
 from config.settings import PATH, SERVER
 
@@ -39,22 +40,39 @@ def schedule_cli(app_: Flask) -> None:
         """
         paths = _get_schedule_paths()
         nr_weeks = 0
+
         for path in paths:
-            with open(path, "r") as json_file:
-                schedule_data = json.load(json_file)
-            nr_weeks += len(schedule_data)
-        
+            try:
+                # Open the encrypted schedule file in binary mode
+                with open(path, "rb") as json_file:
+                    encrypted_data = json_file.read()
+
+                # Decrypt the data
+                decrypted_data = decrypt_data(encrypted_data.decode())
+
+                # Load the decrypted JSON data
+                schedule_data = json.loads(decrypted_data)
+
+                nr_weeks += len(schedule_data)
+
+            except FileNotFoundError:
+                click.echo(f"File not found: {path}")
+                return
+            except json.JSONDecodeError:
+                click.echo(f"Error decoding JSON from file: {path}")
+                return
+
         if not c and not click.confirm(
                 f"Are you sure you want to add {nr_weeks} weeks to the Schedule Table?"):
             click.echo("Adding ScheduleItems cancelled.")
             return
-        
+
         may_init_schedule: bool = _init_schedule()
         if not may_init_schedule:
             click.echo("Adding ScheduleItems failed.\n"
                        "Schedule Table not empty.")
             return
-        
+
         logger.info(f"[CLI] INIT SCHEDULE: {nr_weeks} weeks added.")
         if v:
             click.echo(f"Successfully added {nr_weeks} weeks to the Schedule Table.")
@@ -89,8 +107,14 @@ def schedule_cli(app_: Flask) -> None:
 
         Usage: flask schedule init-employees [--v] [--c]
         """
-        with open(PATH.EMPLOYEES, "r") as json_file:
-            employees_data = json.load(json_file)
+        with open(PATH.EMPLOYEES, "rb") as json_file:
+            encrypted_data = json_file.read()
+
+        decrypted_data = decrypt_data(encrypted_data.decode())
+        employees_data = json.loads(decrypted_data)
+        for employee, _ in employees_data.items():
+            logger.debug(employee)
+        
         
         nr_employees = len(employees_data)
         if not c and not click.confirm(

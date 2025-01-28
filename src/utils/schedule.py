@@ -3,10 +3,13 @@ import json
 import os
 import time
 
+
 from datetime import (
     datetime,
     timedelta,
 )
+from unidecode import unidecode
+
 from flask import current_app
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -20,7 +23,8 @@ from src.utils.selenium_utils import (
     get_undetectable_driver, movement
 )
 
-from config.settings import DIR, PATH
+from config.settings import DIR, PATH, Environ
+from src.utils.encryption_utils import encrypt_data, decrypt_data
 
 
 def update_schedule(week_number: int | None = None) -> None:
@@ -48,7 +52,8 @@ def update_schedule(week_number: int | None = None) -> None:
 
     for date in dates:
         names, hours, break_times, work_times = get_schedule_info_per_date(driver, date)
-        names = [crop_name(name) for name in names]
+        clean_names = [unidecode(name) for name in names]
+        names = [crop_name(name) for name in clean_names]
         
         names_list.append([name for name in names])
         hours_list.append([hour for hour in hours])
@@ -67,7 +72,7 @@ def update_schedule(week_number: int | None = None) -> None:
 
     from src.models.schedule_model.schedule_mod_utils import get_schedule_bounds
     from src.extensions import cache_
-    cache_.delete(get_schedule_bounds.cache_key())
+    cache_.delete("get_schedule_bounds")
 
 
 def log_in(driver: webdriver.Firefox) -> None:
@@ -180,12 +185,14 @@ def save_schedule_to_db(date: str, names: list[str], hours: list[str],
 def save_schedule_to_json(date: str, names: list[str], hours: list[str],
                           break_times: list[str], work_times: list[str]) -> None:
     """
-    Saves schedule data to a json file.
-    Grouped by week number.
+    Saves schedule data to an encrypted JSON file, grouped by week number.
+    
+    If the file already exists, it merges the new data with the existing data.
     """
     week_number = _week_from_date(date)
     schedule_path = _schedule_path_from_date(date)
 
+    # Prepare the new schedule data
     week_data = {}
     days = _week_days()
     for day, name_list, hour_list, break_time_list, work_time_list in \
@@ -200,24 +207,31 @@ def save_schedule_to_json(date: str, names: list[str], hours: list[str],
     data_to_save = {
         str(week_number): week_data
     }
-    
+
     try:
+        # Check if the schedule file already exists
         if os.path.exists(schedule_path):
             try:
-                with open(schedule_path, "r", encoding="utf-8") as json_file:
-                    existing_data = json.load(json_file)
-            except json.JSONDecodeError:
+                # Read and decrypt existing data
+                with open(schedule_path, "rb") as json_file:  # Open in binary mode
+                    existing_encrypted_data = json_file.read()
+                    existing_data = decrypt_data(existing_encrypted_data.decode())
+                    existing_data = json.loads(existing_data)
+            except (json.JSONDecodeError, ValueError):
                 existing_data = {}
 
+            # Merge existing data with new data
             existing_data.update(data_to_save)
-            with open(schedule_path, "w", encoding="utf-8") as json_file:
-                json.dump(existing_data, json_file, indent=4)
-        else:
-            with open(schedule_path, "w", encoding="utf-8") as json_file:
-                json.dump(data_to_save, json_file, indent=4)
-                
-        logger.info(f"[ADD] Saved schedule to json for week: {week_number}")
-    
+            data_to_save = existing_data
+
+        # Encrypt the data before saving
+        encrypted_data = encrypt_data(json.dumps(data_to_save).encode())
+
+        # Save the encrypted data to the JSON file
+        with open(schedule_path, "wb") as json_file:  # Open in binary mode
+            json_file.write(encrypted_data)
+        logger.info(f"[ADD] Saved encrypted schedule to json for week: {week_number}")
+
     except PermissionError:
         logger.critical(f"[SYS] PERMISSION DENIED when accessing: {schedule_path}")
         return
@@ -232,9 +246,8 @@ def check_for_new_employees(names: list[str]) -> None:
     """
     if not names:
         return
-    
+
     from src.models.schedule_model.schedule_mod import Employees
-    names = [crop_name(name) for name in names]
     for name in names:
         if not Employees.query.filter_by(name=name).first():
             Employees.add_employee(name)
@@ -242,18 +255,21 @@ def check_for_new_employees(names: list[str]) -> None:
 
 
 def add_employee_json(name: str, email: str = None, is_verified: bool = None) -> None:
-    """ Adds a new Employee to the employees json file. """
-    with open(PATH.EMPLOYEES, "r") as json_file:
-        employees_data = json.load(json_file)
-    
+    """Adds a new Employee to the employees JSON file."""
+    with open(PATH.EMPLOYEES, "rb") as json_file:
+        encrypted_data = json_file.read()
+        employees_data = json.loads(decrypt_data(encrypted_data).decode())
+
     email = email if email is not None else ""
     is_verified = is_verified if is_verified is not None else False
     employees_data[name] = {"email": email, "is_verified": is_verified}
-    
+
     sorted_employees_data = dict(sorted(employees_data.items()))
     try:
-        with open(PATH.EMPLOYEES, "w") as json_file:
-            json.dump(sorted_employees_data, json_file, indent=4)
+        # Encrypt the data before saving
+        encrypted_data = encrypt_data(json.dumps(sorted_employees_data).encode())
+        with open(PATH.EMPLOYEES, "wb") as json_file:
+            json_file.write(encrypted_data)
     except PermissionError:
         logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return
@@ -301,19 +317,22 @@ def _schedule_path_from_date(date: str) -> str:
 
 def update_employee_json(name: str, email: str | None = None,
                          is_verified: bool | None = None) -> None:
-    """ Updates the Employee in the Employees json file. """
-    with open(PATH.EMPLOYEES, "r") as json_file:
-        employees_data = json.load(json_file)
-    
+    """Updates the Employee in the Employees JSON file."""
+    with open(PATH.EMPLOYEES, "rb") as json_file:
+        encrypted_data = json_file.read()
+        employees_data = json.loads(decrypt_data(encrypted_data).decode())
+
     if name in employees_data:
         if email is not None:
             employees_data[name]["email"] = email
         if is_verified is not None:
             employees_data[name]["is_verified"] = is_verified
-    
+
     try:
-        with open(PATH.EMPLOYEES, "w") as json_file:
-            json.dump(employees_data, json_file, indent=4)
+        # Encrypt the data before saving
+        encrypted_data = encrypt_data(json.dumps(employees_data).encode())
+        with open(PATH.EMPLOYEES, "wb") as json_file:
+            json_file.write(encrypted_data)
     except PermissionError:
         logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return

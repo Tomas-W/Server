@@ -32,6 +32,10 @@ def get_undetectable_driver(proxy: str | None = None) -> webdriver.Firefox:
     options.set_preference("dom.webdriver.enabled", False)
     options.set_preference("useAutomationExtension", False)
     
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
     if proxy:
         options.set_preference("network.proxy.type", 1)
         options.set_preference("network.proxy.http", proxy)

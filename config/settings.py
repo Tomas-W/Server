@@ -16,6 +16,7 @@ class Environ:
     FLASK_KEY: SecretStr
     CLIENT_SECRET: SecretStr
     GOOGLE_CLIENT_ID: SecretStr
+    ENCRYPTION_KEY: SecretStr
 
     GMAIL_EMAIL: SecretStr
     GMAIL_PASS: SecretStr
@@ -64,6 +65,7 @@ class Environ:
             FLASK_KEY=SecretStr(get_required_str("FLASK_KEY")),
             CLIENT_SECRET=SecretStr(get_required_str("CLIENT_SECRET")),
             GOOGLE_CLIENT_ID=SecretStr(get_required_str("GOOGLE_CLIENT_ID")),
+            ENCRYPTION_KEY=SecretStr(get_required_str("ENCRYPTION_KEY")),
 
             GMAIL_EMAIL=SecretStr(get_required_str("GMAIL_EMAIL")),
             GMAIL_PASS=SecretStr(get_required_str("GMAIL_PASS")),

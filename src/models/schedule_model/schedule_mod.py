@@ -75,18 +75,18 @@ class Employees(server_db_.Model):
 
     @staticmethod
     def add_employee(name: str):
-        cropped_name = crop_name(name)
-        employee = Employees.query.filter_by(name=cropped_name).first()
+        # cropped_name = crop_name(name)
+        employee = Employees.query.filter_by(name=name).first()
         if not employee:
             # Generate random 5 digit code
             code = random.randint(10000, 99999)
-            employee = Employees(name=cropped_name, code=code)
+            employee = Employees(name=name, code=code)
             server_db_.session.add(employee)
             server_db_.session.commit()
-            add_employee_json(cropped_name)
-            logger.info(f"[ADD] EMPLOYEE {cropped_name} ADDED")
+            add_employee_json(name)
+            logger.info(f"[ADD] EMPLOYEE {name} ADDED")
         else:
-            logger.warning(f"[AUTH] EMPLOYEE NAME {cropped_name} ALREADY IN DATABASE")
+            logger.warning(f"[AUTH] EMPLOYEE NAME {name} ALREADY IN DATABASE")
 
     def cli_repr(self) -> str:
         return (f"{'ID':<18}{self.id}\n"

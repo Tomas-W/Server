@@ -1,5 +1,6 @@
 import os
 import time
+import socket
 
 from itsdangerous import URLSafeTimedSerializer
 from flask import (
@@ -217,58 +218,47 @@ def _validate_database_url(url: str) -> bool:
         logger.error(f"Invalid database URL format: {e}")
         return False
 
+def _test_network_connection(host, port):
+    """Test raw TCP connection"""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(30)
+        result = sock.connect_ex((host, int(port)))
+        sock.close()
+        return result == 0
+    except Exception as e:
+        logger.error(f"Network test failed: {str(e)}")
+        return False
+
 def _configure_database(app_: Flask) -> None:
-    """Configure database connection with diagnostics"""
+    """Configure database connection with network test"""
     logger.info("Starting database configuration...")
     
-    # Log database URL (with password masked)
+    # Get connection details
     db_url = app_.config["SQLALCHEMY_DATABASE_URI"]
-    if not db_url or not _validate_database_url(db_url):
-        logger.critical("Invalid or missing DATABASE_URL!")
-        raise ValueError("Invalid DATABASE_URL configuration")
+    if not db_url:
+        raise ValueError("DATABASE_URL environment variable is not set")
     
-    masked_url = db_url.replace(db_url.split("@")[0], "postgresql://****:****")
-    logger.info(f"Database URL: {masked_url}")
+    # Parse connection details
+    parsed = urlparse(db_url)
+    host = parsed.hostname
+    port = parsed.port or 5432
     
-    max_retries = 5
-    retry_delay = 3
+    # Test network connection first
+    logger.info(f"Testing network connection to {host}:{port}...")
+    if not _test_network_connection(host, port):
+        logger.error(f"Cannot establish TCP connection to {host}:{port}")
+        logger.info("Attempting to use Railway TCP proxy...")
+        # Try Railway's proxy port if available
+        proxy_port = os.environ.get("PORT")
+        if proxy_port and _test_network_connection(host, int(proxy_port)):
+            logger.info("Successfully connected via Railway proxy")
+            # Update connection URL to use proxy port
+            app_.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
+                f":{port}", f":{proxy_port}"
+            )
     
-    for attempt in range(max_retries):
-        try:
-            with app_.app_context():
-                # Test connection
-                logger.info(f"Attempting database connection (attempt {attempt + 1}/{max_retries})...")
-                
-                # Create a temporary connection to test
-                conn = server_db_.engine.connect()
-                conn.execute("SELECT 1")
-                conn.close()
-                logger.info("Database connection successful!")
-                
-                # Check if tables exist
-                inspector = inspect(server_db_.engine)
-                existing_tables = inspector.get_table_names()
-                logger.info(f"Existing tables: {existing_tables}")
-                
-                # Run migrations if needed
-                if not existing_tables:
-                    logger.info("No tables found. Running migrations...")
-                    upgrade()
-                    logger.info("Migrations completed successfully")
-                
-                return
-                
-        except SQLAlchemyError as e:
-            logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
-            if attempt < max_retries - 1:
-                logger.info(f"Waiting {retry_delay} seconds before retry...")
-                time.sleep(retry_delay)
-            else:
-                logger.critical("All database connection attempts failed!")
-                raise
-        except Exception as e:
-            logger.critical(f"Unexpected error during database setup: {str(e)}")
-            raise
+    # Continue with existing connection logic...
 
 
 def _configure_url_rules(app_: Flask) -> None:

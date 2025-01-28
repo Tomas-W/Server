@@ -81,10 +81,8 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=get_metadata(),
-            literal_binds=True,
-            dialect_opts={"paramstyle": "named"},
-            compare_type=True,
-            compare_server_default=True,
+            render_as_batch=True,
+            compare_type=True
         )
         
         try:

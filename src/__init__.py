@@ -80,12 +80,11 @@ def _configure_server(app_: Flask) -> Flask:
     _configure_requests(app_)
     _configure_cli(app_)
     
-    # Configure migrations with render_as_batch=True
-    with app_.app_context():
-        migrater_.configure_args({
-            'render_as_batch': True,
-            'compare_type': True
-        })
+    # Configure migrations
+    app_.config['ALEMBIC'] = {
+        'script_location': 'migrations',
+        'compare_type': True
+    }
     
     _configure_database(app_)
     _configure_url_rules(app_)

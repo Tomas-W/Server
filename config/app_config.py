@@ -25,12 +25,13 @@ class BaseConfig(object):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,  # Enable connection health checks
-        "pool_recycle": 300,    # Recycle connections every 5 minutes
-        "pool_timeout": 60,     # Connection timeout in seconds
-        "pool_size": 5,         # Maximum number of connections
-        "max_overflow": 2,      # Maximum number of connections above pool_size
-        "connect_args": SERVER.DATABASE_CONNECT_OPTIONS  # Add connection options
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "pool_timeout": 180,     # Increase to 3 minutes
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": SERVER.DATABASE_CONNECT_OPTIONS,
+        "echo": True
     }
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)

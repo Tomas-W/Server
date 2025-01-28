@@ -142,13 +142,14 @@ class Server:
 
     # Add connection retry settings
     DATABASE_CONNECT_OPTIONS = {
-        "connect_timeout": 60,
+        "connect_timeout": 180,
         "keepalives": 1,
-        "keepalives_idle": 30,
-        "keepalives_interval": 10,
+        "keepalives_idle": 60,
+        "keepalives_interval": 20,
         "keepalives_count": 5,
         "application_name": "flask_app",
-        "sslmode": "require"
+        "sslmode": "require",
+        "options": "-c statement_timeout=180000"
     }
     
     LIMITER_URI = "memory://"

@@ -1,1 +1,1 @@
-web: echo "Starting database operations..." && PGPORT=$PORT PGHOST=$PGHOST PGUSER=$PGUSER PGPASSWORD=$PGPASSWORD PGDATABASE=$PGDATABASE gunicorn run:app --bind 0.0.0.0:$PORT --timeout 180 --workers 1 --log-level debug
+web: echo "Starting database operations..." && PGPORT=$PGPORT PORT=8080 gunicorn run:app --bind 0.0.0.0:8080 --timeout 180 --workers 1 --log-level debug

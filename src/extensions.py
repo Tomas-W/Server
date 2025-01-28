@@ -18,6 +18,7 @@ from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import MetaData
 
 from src.utils.logger import ServerLogger
+from src.utils.encryption_utils import decrypt_data
 
 from config.settings import (
     SERVER,
@@ -41,17 +42,21 @@ limiter_ = Limiter(
         storage_uri=SERVER.LIMITER_URI,
     )
 
-client_config = json.loads(os.environ.get("GOOGLE_CLIENT_CONFIG"))
-with open(PATH.CLIENTS_SECRETS, "w") as f:
-    json.dump(client_config, f, indent=4)
+# Load and decrypt the client secrets
+with open(PATH.CLIENTS_SECRETS, "rb") as f:
+    encrypted_data = f.read()
+client_config = json.loads(decrypt_data(encrypted_data).decode())
 
-
-flow_ = Flow.from_client_secrets_file(
-        client_secrets_file=PATH.CLIENTS_SECRETS,
-        scopes=["https://www.googleapis.com/auth/userinfo.profile",
-                "https://www.googleapis.com/auth/userinfo.email", "openid"],
-        redirect_uri="http://localhost:5000/callback"
-    )
+# Use the decrypted client_config directly if supported
+flow_ = Flow.from_client_config(
+    client_config=client_config,
+    scopes=[
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "openid"
+    ],
+    redirect_uri="http://localhost:5000/callback"
+)
 
 serializer_ = None
 compress_ = Compress()

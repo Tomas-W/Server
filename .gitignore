@@ -18,15 +18,10 @@ __pycache__/
 # Ignore Flask-Assets cache
 .webassets-cache/
 
-# Ignore compiled assets
-# dist/
-
 # Ignore secret files
-client_secret.json
 .env
 *.env
 .flaskenv
-# src/routes/schedule/*.json
 
 # Ignore backups
 backups/
@@ -50,4 +45,3 @@ logs/
 
 # Ignore instance files
 instance/
-SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'flask' AND pid <> pg_backend_pid();

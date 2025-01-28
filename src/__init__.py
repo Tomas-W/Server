@@ -247,9 +247,9 @@ def _configure_database(app_: Flask) -> None:
     db_config = {
         "user": os.environ.get("PGUSER"),
         "password": os.environ.get("PGPASSWORD"),
-        "host": os.environ.get("PGHOST"),
+        "host": os.environ.get("PGHOST", "localhost"),  # Changed from web.railway.internal
         "port": os.environ.get("PGPORT", "5432"),
-        "database": os.environ.get("PGDATABASE", "railway")
+        "database": os.environ.get("PGDATABASE")
     }
     
     # Log configuration (masked)

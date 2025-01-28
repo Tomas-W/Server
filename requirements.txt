@@ -97,7 +97,7 @@ pluggy==1.5.0
 pooch==1.8.2
 prompt_toolkit==3.0.48
 protobuf==5.28.2
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.9
 pure_eval==0.2.3
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
@@ -116,7 +116,7 @@ PyScreeze==1.0.1
 PySocks==1.7.1
 pytest==8.3.3
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
+python-dotenv==1.0.0
 pytweening==1.2.0
 pytz==2024.2
 # pywin32==308

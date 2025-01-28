@@ -1,12 +1,15 @@
 import os
-from src import get_app
 
-# Only load .flaskenv in development
+
 if os.environ.get("FLASK_ENV") != "deploy":
     from dotenv import load_dotenv
+    load_dotenv('.env')
     load_dotenv('.flaskenv')
 
+
+from src import get_app
 app = get_app()
+
 
 if __name__ == "__main__":
     env = os.environ.get("FLASK_ENV", "debug").lower()

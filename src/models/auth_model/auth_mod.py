@@ -123,9 +123,9 @@ class User(server_db_.Model, UserMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
     username: Mapped[str] = mapped_column(String(75), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(128), nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
     fast_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
-    fast_code: Mapped[Optional[str]] = mapped_column(String(5))
+    fast_code: Mapped[Optional[str]] = mapped_column(String(255))
 
     display_name: Mapped[Optional[str]] = mapped_column(String(16), unique=True)
     country: Mapped[Optional[str]] = mapped_column(String(32))

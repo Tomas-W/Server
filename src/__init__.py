@@ -51,9 +51,10 @@ from config.app_config import (
 
 def _configure_server(app_: Flask) -> Flask:
     """Configure the Flask application."""
+    
     _configure_dirs(app_)
     _configure_variables(app_)
-
+    
     environment = os.environ.get("FLASK_ENV", "debug").lower()
     if environment == "debug":
         config_obj = DebugConfig()
@@ -64,7 +65,7 @@ def _configure_server(app_: Flask) -> Flask:
         app_.config.update({"FLASK_DEBUG": "0"})
     else:
         raise ValueError(f"Invalid FLASK_ENV value: '{environment}'. Expected 'debug' or 'deploy'")
-
+    
     # Apply configuration
     app_.config.from_object(config_obj)
     app_.config["INSTANCE"] = config_obj
@@ -90,7 +91,7 @@ def _configure_variables(app_: Flask) -> None:
         app_.ENV = Environ.from_env()
     except ValueError as e:
         raise SystemExit(1)
-    
+
     app_.config["SECRET_KEY"] = app_.ENV.FLASK_KEY.get_secret_value()
     app_.config["MAIL_USERNAME"] = app_.ENV.GMAIL_EMAIL.get_secret_value()
     app_.config["MAIL_PASSWORD"] = app_.ENV.GMAIL_PASS.get_secret_value()
@@ -108,7 +109,7 @@ def _configure_extensions(app_: Flask) -> None:
     # Configure filesystem sessions
     app_.config.update({
         "SESSION_TYPE": "filesystem",
-        "SESSION_FILE_DIR": os.path.join(DIR.DB, "flask_sessions"),
+        "SESSION_FILE_DIR": DIR.DB,
         "SESSION_FILE_THRESHOLD": 500,  # Maximum number of sessions
         "PERMANENT_SESSION_LIFETIME": timedelta(days=7),
         "SESSION_PERMANENT": True,
@@ -243,6 +244,7 @@ def get_app() -> Flask:
         template_folder="templates",
         static_folder="static"
     )
+
     app_ = _configure_server(app_)
     clear_webassets_cache()    
     return app_

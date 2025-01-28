@@ -18,7 +18,11 @@ class BaseConfig(object):
     DEFAULT_LIMITS = SERVER.DEFAULT_LIMITS
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = SERVER.DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    
+    # Convert postgres:// to postgresql:// for SQLAlchemy if needed
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
 

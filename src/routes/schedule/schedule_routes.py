@@ -49,6 +49,7 @@ from config.settings import (
     REDIRECT,
     SERVER,
     TEMPLATE,
+    DIR,
 )
 
 schedule_bp = Blueprint("schedule", __name__)
@@ -72,9 +73,7 @@ def personal(date: str = None):
 
     current_week_num = _week_from_date(_now())
 
-    logger.info(f"{requested_date=}")
-    logger.info(f"{earliest_schedule.date=}")
-    logger.info(f"{latest_schedule.date=}")
+    logger.info(f"{DIR.SERVER=}")
 
     return render_template(
         TEMPLATE.PERSONAL,

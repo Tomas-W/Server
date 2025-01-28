@@ -1,8 +1,8 @@
-"""Init
+"""Initial
 
-Revision ID: c920e47a5fb4
+Revision ID: f9709fd35c38
 Revises: 
-Create Date: 2025-01-27 17:02:42.681477
+Create Date: 2025-01-28 14:07:21.306647
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c920e47a5fb4'
+revision = 'f9709fd35c38'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,9 +22,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=75), nullable=False),
     sa.Column('username', sa.String(length=75), nullable=False),
-    sa.Column('password', sa.String(length=128), nullable=False),
+    sa.Column('password', sa.String(length=255), nullable=False),
     sa.Column('fast_name', sa.String(length=16), nullable=True),
-    sa.Column('fast_code', sa.String(length=5), nullable=True),
+    sa.Column('fast_code', sa.String(length=255), nullable=True),
     sa.Column('display_name', sa.String(length=16), nullable=True),
     sa.Column('country', sa.String(length=32), nullable=True),
     sa.Column('profile_icon', sa.String(length=32), nullable=True),
@@ -44,12 +44,12 @@ def upgrade():
     sa.Column('tot_logins', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('verified_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_auth')),
-    sa.UniqueConstraint('display_name', name=op.f('uq_auth_display_name')),
-    sa.UniqueConstraint('email', name=op.f('uq_auth_email')),
-    sa.UniqueConstraint('employee_name', name=op.f('uq_auth_employee_name')),
-    sa.UniqueConstraint('fast_name', name=op.f('uq_auth_fast_name')),
-    sa.UniqueConstraint('username', name=op.f('uq_auth_username'))
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('display_name'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('employee_name'),
+    sa.UniqueConstraint('fast_name'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('authentication_tokens',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -57,7 +57,7 @@ def upgrade():
     sa.Column('token_type', sa.String(length=32), nullable=False),
     sa.Column('token', sa.String(length=255), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_authentication_tokens'))
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('bakery_items',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -84,7 +84,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('search_field', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_bakery_items'))
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('emails',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -95,7 +95,7 @@ def upgrade():
     sa.Column('bakery_id', sa.Integer(), nullable=True),
     sa.Column('add_update', sa.String(length=20), nullable=True),
     sa.Column('added_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_emails'))
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('employees',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -103,14 +103,14 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=True),
     sa.Column('code', sa.Integer(), nullable=True),
     sa.Column('is_activated', sa.Boolean(), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_employees')),
-    sa.UniqueConstraint('name', name=op.f('uq_employees_name'))
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('oauth_states',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('state', sa.String(length=64), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_oauth_states')),
-    sa.UniqueConstraint('state', name=op.f('uq_oauth_states_state'))
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('state')
     )
     op.create_table('schedule',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -124,8 +124,8 @@ def upgrade():
     sa.Column('ends', sa.Text(), nullable=False),
     sa.Column('break_times', sa.Text(), nullable=False),
     sa.Column('work_times', sa.Text(), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_schedule')),
-    sa.UniqueConstraint('date', name=op.f('uq_schedule_date'))
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('date')
     )
     op.create_table('news',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -145,8 +145,8 @@ def upgrade():
     sa.Column('disliked_by', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['auth.id'], name=op.f('fk_news_user_id_auth')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_news'))
+    sa.ForeignKeyConstraint(['user_id'], ['auth.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -156,24 +156,15 @@ def upgrade():
     sa.Column('disliked_by', sa.Text(), nullable=True),
     sa.Column('news_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['news_id'], ['news.id'], name=op.f('fk_comments_news_id_news')),
-    sa.ForeignKeyConstraint(['user_id'], ['auth.id'], name=op.f('fk_comments_user_id_auth')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_comments'))
+    sa.ForeignKeyConstraint(['news_id'], ['news.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['auth.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
-    op.drop_table('flask_sessions')
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
-    op.create_table('flask_sessions',
-    sa.Column('id', sa.INTEGER(), nullable=False),
-    sa.Column('session_id', sa.VARCHAR(length=255), nullable=True),
-    sa.Column('data', sa.BLOB(), nullable=True),
-    sa.Column('expiry', sa.DATETIME(), nullable=True),
-    sa.PrimaryKeyConstraint('id', name='pk_flask_sessions'),
-    sa.UniqueConstraint('session_id', name='uq_flask_sessions_session_id')
-    )
     op.drop_table('comments')
     op.drop_table('news')
     op.drop_table('schedule')

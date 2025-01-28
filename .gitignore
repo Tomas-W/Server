@@ -23,6 +23,8 @@ __pycache__/
 
 # Ignore secret files
 client_secret.json
+.env
+*.env
 .flaskenv
 src/routes/schedule/*.json
 

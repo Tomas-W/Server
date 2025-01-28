@@ -41,7 +41,8 @@ def bakery_cli(app_: Flask) -> None:
         may_init_bakery: bool = _init_bakery()
         if not may_init_bakery:
             click.echo("Adding BakeryItems failed.\n"
-                       "BakeryItems table not empty.")
+                       "BakeryItems table not empty.\n"
+                       f"Items in table: {item_count}")
             return
         
         logger.info(f"[CLI] INIT BAKERY: {item_count} items added.")

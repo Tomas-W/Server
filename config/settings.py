@@ -111,12 +111,12 @@ class Directory:
     # News
     # Bakery
     BAKERY: os.path = os.path.join(IMAGES, "bakery")
-    BREAD: os.path = os.path.join(BAKERY, "bread")
-    SMALL_BREAD: os.path = os.path.join(BAKERY, "small_bread")
-    STOKBROOD: os.path = os.path.join(BAKERY, "stokbrood")
-    SAVORY: os.path = os.path.join(BAKERY, "savory")
-    PASTRY: os.path = os.path.join(BAKERY, "pastry")
-    SWEETS: os.path = os.path.join(BAKERY, "sweets")
+    BREAD = "images/bakery/bread"
+    SMALL_BREAD = "images/bakery/small_bread"
+    STOKBROOD = "images/bakery/stokbrood"
+    SAVORY = "images/bakery/savory"
+    PASTRY = "images/bakery/pastry"
+    SWEETS = "images/bakery/sweets"
     BAKERY_HEALTH: os.path = os.path.join(BAKERY, "health")
     # Schedule
     SCHEDULE: os.path = os.path.join(ROUTES, "schedule")
@@ -133,7 +133,11 @@ class Path:
 
 @dataclass
 class Server:
-    DATABASE_URI = f"sqlite:///{Path.DB}"
+    DATABASE_URI = os.environ.get("DATABASE_URL")
+    
+    if DATABASE_URI and DATABASE_URI.startswith("postgres://"):
+        DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    
     LIMITER_URI = "memory://"
     DEFAULT_LIMITS = ["9999 per day", "999 per hour"]
     CET: pytz.timezone = pytz.timezone('CET')

@@ -79,6 +79,14 @@ def _configure_server(app_: Flask) -> Flask:
     _configure_blueprints(app_)
     _configure_requests(app_)
     _configure_cli(app_)
+    
+    # Configure migrations with render_as_batch=True
+    with app_.app_context():
+        migrater_.configure_args({
+            'render_as_batch': True,
+            'compare_type': True
+        })
+    
     _configure_database(app_)
     _configure_url_rules(app_)
     _configure_jinja(app_)
@@ -252,6 +260,13 @@ def _configure_database(app_: Flask) -> None:
         "database": os.environ.get("PGDATABASE")
     }
     
+    # Validate required environment variables
+    required_vars = ["PGUSER", "PGPASSWORD", "PGHOST", "PGDATABASE"]
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    if missing_vars:
+        logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
+        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
     # Log configuration (masked)
     logger.info(f"Database Configuration:")
     logger.info(f"Host: {db_config['host']}")

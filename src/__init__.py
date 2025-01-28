@@ -202,9 +202,13 @@ def _configure_cli(app_: Flask) -> None:
 
 def _configure_database(app_: Flask) -> None:
     with app_.app_context():
-        if not os.path.exists(DIR.DB):
-
-            server_db_.create_all()
+        try:
+            if not os.path.exists(DIR.DB):
+                server_db_.create_all()
+                app_.logger.info("Database created")
+        except Exception as e:
+            app_.logger.error(f"Database error: {e}")
+            raise SystemExit(1)
 
 
 def _configure_url_rules(app_: Flask) -> None:

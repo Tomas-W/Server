@@ -1,4 +1,6 @@
 import os
+import time
+import socket
 
 from itsdangerous import URLSafeTimedSerializer
 from flask import (
@@ -15,6 +17,7 @@ from datetime import timedelta
 from flask_session import Session
 from flask_migrate import upgrade
 from sqlalchemy import inspect
+from urllib.parse import urlparse
 
 from src.extensions import (
     compress_,
@@ -200,11 +203,108 @@ def _configure_cli(app_: Flask) -> None:
     server_cli(app_)
 
 
-def _configure_database(app_: Flask) -> None:
-    with app_.app_context():
-        if not os.path.exists(DIR.DB):
+def _validate_database_url(url: str) -> bool:
+    """Validate database URL format and connectivity"""
+    try:
+        result = urlparse(url)
+        return all([
+            result.scheme in ("postgresql", "postgres"),
+            result.hostname,
+            result.username,
+            result.password,
+            result.path
+        ])
+    except Exception as e:
+        logger.error(f"Invalid database URL format: {e}")
+        return False
 
-            server_db_.create_all()
+def _test_network_connection(host, port):
+    """Test raw TCP connection with DNS resolution"""
+    try:
+        # Try to resolve the hostname first
+        if host == "web.railway.internal":
+            # Use PGHOST environment variable as fallback
+            actual_host = os.environ.get("PGHOST", host)
+        else:
+            actual_host = host
+
+        logger.info(f"Attempting connection to {actual_host}:{port}")
+        
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(30)
+        result = sock.connect_ex((actual_host, int(port)))
+        sock.close()
+        return result == 0
+    except Exception as e:
+        logger.error(f"Network test failed for {actual_host}:{port} - {str(e)}")
+        return False
+
+def _configure_database(app_: Flask) -> None:
+    """Configure database connection with network test"""
+    logger.info("Starting database configuration...")
+    
+    # Get connection details from Railway's environment variables
+    db_config = {
+        "user": os.environ.get("PGUSER"),
+        "password": os.environ.get("PGPASSWORD"),
+        "host": os.environ.get("PGHOST"),
+        "port": os.environ.get("PGPORT", "5432"),
+        "database": os.environ.get("PGDATABASE")
+    }
+    
+    # Log configuration (masked)
+    logger.info(f"Database Configuration:")
+    logger.info(f"Host: {db_config['host']}")
+    logger.info(f"Port: {db_config['port']}")
+    logger.info(f"Database: {db_config['database']}")
+    logger.info(f"User: {'set' if db_config['user'] else 'not set'}")
+    
+    # Construct database URL with SSL mode
+    db_url = (
+        f"postgresql://{db_config['user']}:{db_config['password']}"
+        f"@{db_config['host']}:{db_config['port']}"
+        f"/{db_config['database']}?sslmode=require"
+    )
+    
+    # Update app configuration
+    app_.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    app_.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "pool_timeout": 180,
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": {
+            "connect_timeout": 180,
+            "keepalives": 1,
+            "keepalives_idle": 60,
+            "keepalives_interval": 20,
+            "keepalives_count": 5,
+            "application_name": "flask_app",
+            "sslmode": "require"
+        }
+    }
+    
+    max_retries = 5
+    retry_delay = 3
+    
+    for attempt in range(max_retries):
+        try:
+            with app_.app_context():
+                # Test connection
+                logger.info(f"Attempting database connection (attempt {attempt + 1}/{max_retries})...")
+                server_db_.engine.connect()
+                logger.info("Database connection successful!")
+                return
+                
+        except Exception as e:
+            logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                logger.info(f"Waiting {retry_delay} seconds before retry...")
+                time.sleep(retry_delay)
+            else:
+                logger.critical("All database connection attempts failed!")
+                raise
 
 
 def _configure_url_rules(app_: Flask) -> None:

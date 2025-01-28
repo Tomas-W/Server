@@ -135,10 +135,20 @@ class Path:
 
 @dataclass
 class Server:
-    DATABASE_URI = os.environ.get("DATABASE_URL")
+    # Simplified database configuration
+    DATABASE_URI = os.environ.get("DATABASE_URL", "").replace(
+        "postgres://", "postgresql://", 1
+    )
     
-    if DATABASE_URI and DATABASE_URI.startswith("postgres://"):
-        DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    DATABASE_CONNECT_OPTIONS = {
+        "connect_timeout": 180,
+        "keepalives": 1,
+        "keepalives_idle": 60,
+        "keepalives_interval": 20,
+        "keepalives_count": 5,
+        "application_name": "flask_app",
+        "sslmode": "require"
+    }
     
     LIMITER_URI = "memory://"
     DEFAULT_LIMITS = ["9999 per day", "999 per hour"]

@@ -243,38 +243,52 @@ def _configure_database(app_: Flask) -> None:
     """Configure database connection with network test"""
     logger.info("Starting database configuration...")
     
-    # Get connection details
-    db_url = app_.config["SQLALCHEMY_DATABASE_URI"]
-    if not db_url:
-        raise ValueError("DATABASE_URL environment variable is not set")
+    # Get connection details from Railway's environment variables
+    db_config = {
+        "user": os.environ.get("PGUSER"),
+        "password": os.environ.get("PGPASSWORD"),
+        "host": os.environ.get("PGHOST"),
+        "port": os.environ.get("PGPORT", "5432"),
+        "database": os.environ.get("PGDATABASE", "railway")
+    }
     
-    # Log environment variables (masked)
-    logger.info(f"PGHOST: {os.environ.get('PGHOST', 'not set')}")
-    logger.info(f"PGPORT: {os.environ.get('PGPORT', 'not set')}")
-    logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE', 'not set')}")
-    logger.info(f"PGUSER: {'set' if os.environ.get('PGUSER') else 'not set'}")
+    # Log configuration (masked)
+    logger.info(f"Database Configuration:")
+    logger.info(f"Host: {db_config['host']}")
+    logger.info(f"Port: {db_config['port']}")
+    logger.info(f"Database: {db_config['database']}")
+    logger.info(f"User: {'set' if db_config['user'] else 'not set'}")
     
-    # Parse connection details
-    parsed = urlparse(db_url)
-    host = parsed.hostname
-    port = parsed.port or int(os.environ.get("PGPORT", 5432))
+    # Construct database URL
+    db_url = (
+        f"postgresql://{db_config['user']}:{db_config['password']}"
+        f"@{db_config['host']}:{db_config['port']}"
+        f"/{db_config['database']}"
+    )
     
-    # Test network connection first
-    logger.info(f"Testing network connection to {host}:{port}...")
-    if not _test_network_connection(host, port):
-        logger.error(f"Cannot establish TCP connection to {host}:{port}")
-        # Try with PGHOST directly
-        pg_host = os.environ.get("PGHOST")
-        pg_port = int(os.environ.get("PGPORT", port))
-        if pg_host and _test_network_connection(pg_host, pg_port):
-            logger.info(f"Successfully connected via PGHOST: {pg_host}:{pg_port}")
-            # Update connection URL with working host/port
-            app_.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
-                f"{host}:{port}", f"{pg_host}:{pg_port}"
-            )
-            return
-        
-        raise ConnectionError(f"Could not establish database connection to {host}:{port}")
+    # Update app configuration
+    app_.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    
+    max_retries = 5
+    retry_delay = 3
+    
+    for attempt in range(max_retries):
+        try:
+            with app_.app_context():
+                # Test connection
+                logger.info(f"Attempting database connection (attempt {attempt + 1}/{max_retries})...")
+                server_db_.engine.connect()
+                logger.info("Database connection successful!")
+                return
+                
+        except Exception as e:
+            logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                logger.info(f"Waiting {retry_delay} seconds before retry...")
+                time.sleep(retry_delay)
+            else:
+                logger.critical("All database connection attempts failed!")
+                raise
 
 
 def _configure_url_rules(app_: Flask) -> None:

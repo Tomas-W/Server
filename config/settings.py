@@ -135,19 +135,11 @@ class Path:
 
 @dataclass
 class Server:
-    # Use Railway's specific PostgreSQL environment variables
-    DATABASE_URI = (
-        f"postgresql://{os.environ['PGUSER']}:{os.environ['PGPASSWORD']}"
-        f"@{os.environ['PGHOST']}:{os.environ['PGPORT']}"
-        f"/{os.environ['PGDATABASE']}"
-    ) if all([
-        os.environ.get(var) for var in 
-        ['PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT', 'PGDATABASE']
-    ]) else os.environ.get("DATABASE_URL", "").replace(
+    # Simplified database configuration
+    DATABASE_URI = os.environ.get("DATABASE_URL", "").replace(
         "postgres://", "postgresql://", 1
     )
-
-    # Add connection retry settings
+    
     DATABASE_CONNECT_OPTIONS = {
         "connect_timeout": 180,
         "keepalives": 1,
@@ -155,8 +147,7 @@ class Server:
         "keepalives_interval": 20,
         "keepalives_count": 5,
         "application_name": "flask_app",
-        "sslmode": "require",
-        "options": "-c statement_timeout=180000"
+        "sslmode": "require"
     }
     
     LIMITER_URI = "memory://"

@@ -1,1 +1,1 @@
-web: echo "Starting database operations..." && flask db current && flask db stamp head && flask db upgrade && echo "Running server init..." && flask server init-server --c --v && echo "Starting gunicorn..." && gunicorn run:app --bind 0.0.0.0:$PORT --log-level debug
+web: echo "Starting database operations..." && SQLALCHEMY_POOL_TIMEOUT=60 SQLALCHEMY_POOL_RECYCLE=300 gunicorn run:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --log-level debug

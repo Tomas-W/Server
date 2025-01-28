@@ -27,7 +27,7 @@ class BaseConfig(object):
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,  # Enable connection health checks
         "pool_recycle": 300,    # Recycle connections every 5 minutes
-        "pool_timeout": 30,     # Connection timeout in seconds
+        "pool_timeout": 60,     # Connection timeout in seconds
         "pool_size": 5,         # Maximum number of connections
         "max_overflow": 2,      # Maximum number of connections above pool_size
         "connect_args": SERVER.DATABASE_CONNECT_OPTIONS  # Add connection options

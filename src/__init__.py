@@ -16,6 +16,7 @@ from datetime import timedelta
 from flask_session import Session
 from flask_migrate import upgrade
 from sqlalchemy import inspect
+from urllib.parse import urlparse
 
 from src.extensions import (
     compress_,
@@ -201,18 +202,33 @@ def _configure_cli(app_: Flask) -> None:
     server_cli(app_)
 
 
+def _validate_database_url(url: str) -> bool:
+    """Validate database URL format and connectivity"""
+    try:
+        result = urlparse(url)
+        return all([
+            result.scheme in ("postgresql", "postgres"),
+            result.hostname,
+            result.username,
+            result.password,
+            result.path
+        ])
+    except Exception as e:
+        logger.error(f"Invalid database URL format: {e}")
+        return False
+
 def _configure_database(app_: Flask) -> None:
     """Configure database connection with diagnostics"""
     logger.info("Starting database configuration...")
     
     # Log database URL (with password masked)
     db_url = app_.config["SQLALCHEMY_DATABASE_URI"]
-    if db_url:
-        masked_url = db_url.replace(db_url.split("@")[0], "postgresql://****:****")
-        logger.info(f"Database URL: {masked_url}")
-    else:
-        logger.critical("No database URL configured!")
-        raise ValueError("DATABASE_URL environment variable is not set")
+    if not db_url or not _validate_database_url(db_url):
+        logger.critical("Invalid or missing DATABASE_URL!")
+        raise ValueError("Invalid DATABASE_URL configuration")
+    
+    masked_url = db_url.replace(db_url.split("@")[0], "postgresql://****:****")
+    logger.info(f"Database URL: {masked_url}")
     
     max_retries = 5
     retry_delay = 3
@@ -222,7 +238,11 @@ def _configure_database(app_: Flask) -> None:
             with app_.app_context():
                 # Test connection
                 logger.info(f"Attempting database connection (attempt {attempt + 1}/{max_retries})...")
-                server_db_.engine.connect()
+                
+                # Create a temporary connection to test
+                conn = server_db_.engine.connect()
+                conn.execute("SELECT 1")
+                conn.close()
                 logger.info("Database connection successful!")
                 
                 # Check if tables exist
@@ -230,9 +250,15 @@ def _configure_database(app_: Flask) -> None:
                 existing_tables = inspector.get_table_names()
                 logger.info(f"Existing tables: {existing_tables}")
                 
+                # Run migrations if needed
+                if not existing_tables:
+                    logger.info("No tables found. Running migrations...")
+                    upgrade()
+                    logger.info("Migrations completed successfully")
+                
                 return
                 
-        except Exception as e:
+        except SQLAlchemyError as e:
             logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
             if attempt < max_retries - 1:
                 logger.info(f"Waiting {retry_delay} seconds before retry...")
@@ -240,6 +266,9 @@ def _configure_database(app_: Flask) -> None:
             else:
                 logger.critical("All database connection attempts failed!")
                 raise
+        except Exception as e:
+            logger.critical(f"Unexpected error during database setup: {str(e)}")
+            raise
 
 
 def _configure_url_rules(app_: Flask) -> None:

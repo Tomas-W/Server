@@ -219,15 +219,24 @@ def _validate_database_url(url: str) -> bool:
         return False
 
 def _test_network_connection(host, port):
-    """Test raw TCP connection"""
+    """Test raw TCP connection with DNS resolution"""
     try:
+        # Try to resolve the hostname first
+        if host == "web.railway.internal":
+            # Use PGHOST environment variable as fallback
+            actual_host = os.environ.get("PGHOST", host)
+        else:
+            actual_host = host
+
+        logger.info(f"Attempting connection to {actual_host}:{port}")
+        
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(30)
-        result = sock.connect_ex((host, int(port)))
+        result = sock.connect_ex((actual_host, int(port)))
         sock.close()
         return result == 0
     except Exception as e:
-        logger.error(f"Network test failed: {str(e)}")
+        logger.error(f"Network test failed for {actual_host}:{port} - {str(e)}")
         return False
 
 def _configure_database(app_: Flask) -> None:
@@ -239,26 +248,33 @@ def _configure_database(app_: Flask) -> None:
     if not db_url:
         raise ValueError("DATABASE_URL environment variable is not set")
     
+    # Log environment variables (masked)
+    logger.info(f"PGHOST: {os.environ.get('PGHOST', 'not set')}")
+    logger.info(f"PGPORT: {os.environ.get('PGPORT', 'not set')}")
+    logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE', 'not set')}")
+    logger.info(f"PGUSER: {'set' if os.environ.get('PGUSER') else 'not set'}")
+    
     # Parse connection details
     parsed = urlparse(db_url)
     host = parsed.hostname
-    port = parsed.port or 5432
+    port = parsed.port or int(os.environ.get("PGPORT", 5432))
     
     # Test network connection first
     logger.info(f"Testing network connection to {host}:{port}...")
     if not _test_network_connection(host, port):
         logger.error(f"Cannot establish TCP connection to {host}:{port}")
-        logger.info("Attempting to use Railway TCP proxy...")
-        # Try Railway's proxy port if available
-        proxy_port = os.environ.get("PORT")
-        if proxy_port and _test_network_connection(host, int(proxy_port)):
-            logger.info("Successfully connected via Railway proxy")
-            # Update connection URL to use proxy port
+        # Try with PGHOST directly
+        pg_host = os.environ.get("PGHOST")
+        pg_port = int(os.environ.get("PGPORT", port))
+        if pg_host and _test_network_connection(pg_host, pg_port):
+            logger.info(f"Successfully connected via PGHOST: {pg_host}:{pg_port}")
+            # Update connection URL with working host/port
             app_.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
-                f":{port}", f":{proxy_port}"
+                f"{host}:{port}", f"{pg_host}:{pg_port}"
             )
-    
-    # Continue with existing connection logic...
+            return
+        
+        raise ConnectionError(f"Could not establish database connection to {host}:{port}")
 
 
 def _configure_url_rules(app_: Flask) -> None:

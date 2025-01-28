@@ -137,14 +137,12 @@ class Path:
 class Server:
     # Use Railway's specific PostgreSQL environment variables
     DATABASE_URI = (
-        f"postgresql://{os.environ.get('PGUSER')}:{os.environ.get('PGPASSWORD')}"
-        f"@{os.environ.get('PGHOST')}:{os.environ.get('PORT', os.environ.get('PGPORT'))}"
-        f"/{os.environ.get('PGDATABASE')}"
+        f"postgresql://{os.environ['PGUSER']}:{os.environ['PGPASSWORD']}"
+        f"@{os.environ['PGHOST']}:{os.environ['PGPORT']}"
+        f"/{os.environ['PGDATABASE']}"
     ) if all([
-        os.environ.get('PGUSER'),
-        os.environ.get('PGPASSWORD'),
-        os.environ.get('PGHOST'),
-        os.environ.get('PGDATABASE')
+        os.environ.get(var) for var in 
+        ['PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT', 'PGDATABASE']
     ]) else os.environ.get("DATABASE_URL", "").replace(
         "postgres://", "postgresql://", 1
     )

@@ -135,10 +135,19 @@ class Path:
 
 @dataclass
 class Server:
-    DATABASE_URI = os.environ.get("DATABASE_URL")
-    
-    if DATABASE_URI and DATABASE_URI.startswith("postgres://"):
-        DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    # Get database URL and ensure proper format
+    DATABASE_URI = os.environ.get("DATABASE_URL", "").replace(
+        "postgres://", "postgresql://", 1
+    ) if os.environ.get("DATABASE_URL") else None
+
+    # Add connection retry settings
+    DATABASE_CONNECT_OPTIONS = {
+        "connect_timeout": 10,
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 10,
+        "keepalives_count": 5
+    }
     
     LIMITER_URI = "memory://"
     DEFAULT_LIMITS = ["9999 per day", "999 per hour"]

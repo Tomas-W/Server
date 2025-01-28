@@ -1,4 +1,5 @@
 import os
+import time
 
 from itsdangerous import URLSafeTimedSerializer
 from flask import (
@@ -201,14 +202,30 @@ def _configure_cli(app_: Flask) -> None:
 
 
 def _configure_database(app_: Flask) -> None:
-    with app_.app_context():
+    """Configure database connection with retries"""
+    max_retries = 3
+    retry_delay = 5  # seconds
+
+    for attempt in range(max_retries):
         try:
-            if not os.path.exists(DIR.DB):
-                server_db_.create_all()
-                app_.logger.info("Database created")
+            with app_.app_context():
+                # Test database connection
+                server_db_.engine.connect()
+                logger.info("Database connection successful")
+                
+                # Create tables if needed
+                if not os.path.exists(DIR.DB):
+                    server_db_.create_all()
+                    logger.info("Database tables created successfully")
+                return
+                
         except Exception as e:
-            app_.logger.error(f"Database error: {e}")
-            raise SystemExit(1)
+            if attempt < max_retries - 1:
+                logger.warning(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+                time.sleep(retry_delay)
+            else:
+                logger.critical(f"Failed to connect to database after {max_retries} attempts: {str(e)}")
+                raise
 
 
 def _configure_url_rules(app_: Flask) -> None:

@@ -1,1 +1,1 @@
-web: echo "Starting database operations..." && PGPORT=$PORT SQLALCHEMY_POOL_TIMEOUT=180 SQLALCHEMY_POOL_RECYCLE=300 gunicorn run:app --bind 0.0.0.0:$PORT --timeout 180 --workers 1 --log-level debug
+web: echo "Starting database operations..." && PGPORT=$PORT PGHOST=$PGHOST PGUSER=$PGUSER PGPASSWORD=$PGPASSWORD PGDATABASE=$PGDATABASE gunicorn run:app --bind 0.0.0.0:$PORT --timeout 180 --workers 1 --log-level debug

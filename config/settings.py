@@ -136,9 +136,17 @@ class Path:
 @dataclass
 class Server:
     # Use Railway's specific PostgreSQL environment variables
-    DATABASE_URI = os.environ.get("DATABASE_URL") or (
+    DATABASE_URI = (
         f"postgresql://{os.environ.get('PGUSER')}:{os.environ.get('PGPASSWORD')}"
-        f"@{os.environ.get('PGHOST')}:{os.environ.get('PGPORT')}/{os.environ.get('PGDATABASE')}"
+        f"@{os.environ.get('PGHOST')}:{os.environ.get('PORT', os.environ.get('PGPORT'))}"
+        f"/{os.environ.get('PGDATABASE')}"
+    ) if all([
+        os.environ.get('PGUSER'),
+        os.environ.get('PGPASSWORD'),
+        os.environ.get('PGHOST'),
+        os.environ.get('PGDATABASE')
+    ]) else os.environ.get("DATABASE_URL", "").replace(
+        "postgres://", "postgresql://", 1
     )
 
     # Add connection retry settings

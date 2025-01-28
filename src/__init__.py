@@ -247,7 +247,7 @@ def _configure_database(app_: Flask) -> None:
     db_config = {
         "user": os.environ.get("PGUSER"),
         "password": os.environ.get("PGPASSWORD"),
-        "host": os.environ.get("PGHOST", "localhost"),  # Changed from web.railway.internal
+        "host": os.environ.get("PGHOST"),
         "port": os.environ.get("PGPORT", "5432"),
         "database": os.environ.get("PGDATABASE")
     }
@@ -259,15 +259,31 @@ def _configure_database(app_: Flask) -> None:
     logger.info(f"Database: {db_config['database']}")
     logger.info(f"User: {'set' if db_config['user'] else 'not set'}")
     
-    # Construct database URL
+    # Construct database URL with SSL mode
     db_url = (
         f"postgresql://{db_config['user']}:{db_config['password']}"
         f"@{db_config['host']}:{db_config['port']}"
-        f"/{db_config['database']}"
+        f"/{db_config['database']}?sslmode=require"
     )
     
     # Update app configuration
     app_.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    app_.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "pool_timeout": 180,
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": {
+            "connect_timeout": 180,
+            "keepalives": 1,
+            "keepalives_idle": 60,
+            "keepalives_interval": 20,
+            "keepalives_count": 5,
+            "application_name": "flask_app",
+            "sslmode": "require"
+        }
+    }
     
     max_retries = 5
     retry_delay = 3

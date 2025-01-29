@@ -114,7 +114,7 @@ def _init_news() -> bool:
         news_dict = get_news_dict()
         # Fetch the lowest user_id from the User table
         from src.models.auth_model.auth_mod import User
-        lowest_user_id = server_db_.session.query(User.id).order_by(User.id).first()
+        lowest_user_id = server_db_.session.query(User.id).order_by(User.id).first().id
         
         for _, item_details in news_dict.items():
             news_item = News(

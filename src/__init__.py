@@ -60,6 +60,11 @@ def _configure_server(app_: Flask) -> Flask:
     _configure_dirs(app_)
     _configure_variables(app_)
     
+    # Add healthcheck endpoint
+    @app_.route("/up")
+    def healthcheck():
+        return "OK", 200
+    
     environment = os.environ.get("FLASK_ENV", "debug").lower()
     if environment == "debug":
         config_obj = DebugConfig()

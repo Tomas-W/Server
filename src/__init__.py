@@ -248,6 +248,7 @@ def _configure_database(app_: Flask) -> None:
                 time.sleep(retry_delay)
             else:
                 logger.critical("All database connection attempts failed!")
+                logger.critical(f"Attempted URL: {app_.config['SQLALCHEMY_DATABASE_URI']}")
                 raise
 
 

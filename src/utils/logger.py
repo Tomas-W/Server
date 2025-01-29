@@ -37,7 +37,10 @@ class ServerLogger:
         # Configure root logger to capture all logs
         root_logger = logging.getLogger()
         root_logger.handlers = []  # Clear any existing handlers
-        root_logger.setLevel(logging.INFO)
+        
+        # Also configure Flask's logger
+        flask_logger = logging.getLogger('flask.app')
+        flask_logger.handlers = []
         
         # Create formatters
         formatter = logging.Formatter(
@@ -46,22 +49,31 @@ class ServerLogger:
         )
 
         # Console handler writing to stdout
-        console_handler = logging.StreamHandler(sys.stdout)  # Explicitly use stdout
-        console_handler.setFormatter(formatter)  # Use non-colored formatter for production
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
         console_handler.addFilter(UserContextFilter())
 
-        # Add handler to both app logger and root logger
+        # Add handler to all loggers
+        root_logger.addHandler(console_handler)
+        flask_logger.addHandler(console_handler)
         app.logger.handlers = []
         app.logger.addHandler(console_handler)
-        root_logger.addHandler(console_handler)
         
-        # Set level from config
+        # Set levels
         level = app.config.get("LOG_LEVEL", "INFO")
-        app.logger.setLevel(level)
         root_logger.setLevel(level)
+        flask_logger.setLevel(level)
+        app.logger.setLevel(level)
         
-        # Ensure propagation to root logger
+        # Critical: ensure propagation
         app.logger.propagate = True
+        flask_logger.propagate = True
+
+        def log_request_info():
+            if has_request_context():
+                app.logger.info(f"Request: {request.method} {request.url}")
+        
+        app.before_request(log_request_info)
 
     def _get_context(self):
         """Get current request context for logging"""
@@ -101,23 +113,22 @@ class ServerLogger:
 
     def _log(self, level, msg, *args, **kwargs):
         """Internal logging method""" 
-        # Always show location and route for warning and above
         show_location = kwargs.pop("location", False) or level >= logging.WARNING
         show_route = kwargs.pop("route", False) or level >= logging.WARNING
 
-        # Add context and log the message
         extra = kwargs.get("extra", {})
-        extra.update(self._get_context())  # Removed is_cli parameter
+        extra.update(self._get_context())
         kwargs["extra"] = extra
         
-        # Build the complete message
         complete_msg = msg % args if args else msg
         if show_location:
             complete_msg += f"\n                     Location: {extra['custom_pathname']}: {extra['custom_function']}: {extra['custom_lineno']}"
         if show_route:
             complete_msg += f"\n                     Route: {extra['method']} {extra['url']} ({extra['remote_addr']}) from {extra['referrer']}"
 
+        # Log to both app logger and root logger
         self.app.logger.log(level, complete_msg, **kwargs)
+        logging.getLogger().log(level, complete_msg, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
         self._log(logging.DEBUG, msg, *args, **kwargs)

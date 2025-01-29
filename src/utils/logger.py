@@ -83,7 +83,7 @@ class ServerLogger:
             root_logger.addHandler(file_handler)
         
         # Set log levels
-        level = app.config.get("LOG_LEVEL", "INFO")
+        level = "DEBUG"
         root_logger.setLevel(level)
         
         # Prevent propagation to avoid duplicate logs
@@ -91,7 +91,7 @@ class ServerLogger:
         flask_logger.propagate = False
 
         # Log startup message
-        env = "Production" if app.config.get("FLASK_ENV") == "deploy" else "Development"
+        env = "Production" if os.environ.get("FLASK_ENV") == "deploy" else "Development"
         root_logger.info(f"Starting logging application in {env} mode")
 
     def _get_context(self):

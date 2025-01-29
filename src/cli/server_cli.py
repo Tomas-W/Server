@@ -77,14 +77,6 @@ def server_cli(app_: Flask) -> None:
         # Set a flag to indicate we're running in CLI
         os.environ["FLASK_CLI"] = "1"
 
-        # Override PGHOST for CLI if using internal hostname
-        if os.environ.get("PGHOST") == "postgres.railway.internal":
-            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
-            if public_db_url:
-                # Extract host from DATABASE_PUBLIC_URL
-                public_host = public_db_url.split("@")[1].split(":")[0]
-                os.environ["PGHOST"] = public_host
-
         try:
             ctx = click.get_current_context()
             ctx.invoke(user.commands['init-user'], v=v, c=c)

@@ -275,6 +275,16 @@ def _configure_database(app_: Flask) -> None:
             os.environ["RAILWAY_PRIVATE_DOMAIN"] = public_host
     else:
         logger.info("FLASK_CLI = 0")
+    
+    logger.info("AFTER AFTER")
+    logger.info("Environment Variables:")
+    logger.info(f"PGUSER: {os.environ.get('PGUSER')}")
+    logger.info(f"PGPASSWORD: {'*' * len(os.environ.get('PGPASSWORD', ''))}")  # Mask password
+    logger.info(f"PGHOST: {os.environ.get('PGHOST')}")
+    logger.info(f"PGPORT: {os.environ.get('PGPORT', '5432')}")
+    logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE')}")
+    logger.info(f"DATABASE_PUBLIC_URL: {os.environ.get('DATABASE_PUBLIC_URL')}")
+    logger.info(f"RAILWAY_PRIVATE_DOMAIN: {os.environ.get('RAILWAY_PRIVATE_DOMAIN')}")
 
     # Get connection details from Railway's environment variables
     db_config = {

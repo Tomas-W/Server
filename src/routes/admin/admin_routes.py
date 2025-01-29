@@ -198,25 +198,41 @@ def verify_email(token):
     """
     Verifies AuthenticationToken for email verification.
     """
-    email = confirm_authentication_token(token, SERVER.EMAIL_VERIFICATION)
-    if email:
-        user: User = get_user_by_email(email, new_email=True)
-
-        if user:
-            user.set_email(email)
-            user.reset_new_email()
-            user.set_email_verified(True)
-            delete_authentication_token(SERVER.EMAIL_VERIFICATION, token)
-            session["flash_type"] = "authentication"
-            flash(MESSAGE.EMAIL_VERIFIED)
+    try:
+        email = confirm_authentication_token(token, SERVER.EMAIL_VERIFICATION)
+        if not email:
+            logger.error(f"[AUTH] Invalid or expired verification token: {token}")
+            session["flash_type"] = "verify"
+            flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
             return redirect(url_for(REDIRECT.USER_ADMIN))
-    
-    session["flash_type"] = "verify"
-    flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
 
-    return redirect(url_for(
-        REDIRECT.USER_ADMIN,
-    ))
+        user: User | None = get_user_by_email(email, new_email=True)
+        if not user:
+            logger.error(f"[AUTH] No user found for verified email: {email}")
+            session["flash_type"] = "verify"
+            flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
+            return redirect(url_for(REDIRECT.USER_ADMIN))
+
+        user.set_email(email)
+        user.reset_new_email()
+        user.set_email_verified(True)
+        delete_authentication_token(SERVER.EMAIL_VERIFICATION, token)
+        
+        logger.info(f"[AUTH] Email verified successfully for user: {user.username}")
+        session["flash_type"] = "authentication"
+        flash(MESSAGE.EMAIL_VERIFIED)
+        return redirect(url_for(REDIRECT.USER_ADMIN))
+
+    except Exception as e:
+        logger.error(
+            f"[AUTH] Error during email verification: {str(e)}",
+            exc_info=True,
+            location=True,
+            route=True
+        )
+        session["flash_type"] = "verify"
+        flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
+        return redirect(url_for(REDIRECT.USER_ADMIN))
 
 
 @admin_bp.route("/admin/profile-icon/<filename>")

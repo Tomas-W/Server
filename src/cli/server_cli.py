@@ -73,30 +73,40 @@ def server_cli(app_: Flask) -> None:
         """
         Initializes the Server.
         Initializes the User, Bakery, News, Schedule, and Employees Tables.
-
-        Usage: flask server init-server [--v] [--c]
         """
-        # Use DATABASE_PUBLIC_URL for local execution
-        public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
-        if public_db_url:
-            # Temporarily use the public URL
-            original_db_uri = app_.config["SQLALCHEMY_DATABASE_URI"]
-            if public_db_url.startswith("postgres://"):
-                public_db_url = public_db_url.replace("postgres://", "postgresql://", 1)
-            app_.config["SQLALCHEMY_DATABASE_URI"] = public_db_url
-            
-            try:
-                ctx = click.get_current_context()
-                ctx.invoke(user.commands['init-user'], v=v, c=c)
-                ctx.invoke(news.commands['init-news'], v=v, c=c)
-                ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
-                ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
-                ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
-            finally:
-                # Restore original database URI
-                app_.config["SQLALCHEMY_DATABASE_URI"] = original_db_uri
+        # Override database configuration for CLI
+        if os.environ.get("PGHOST") == "postgres.railway.internal":
+            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
+            if public_db_url:
+                # Store original values
+                original_pghost = os.environ.get("PGHOST")
+                original_db_url = os.environ.get("DATABASE_URL")
+                
+                # Set environment variables to use public URL
+                os.environ["PGHOST"] = public_db_url.split("@")[1].split(":")[0]
+                os.environ["DATABASE_URL"] = public_db_url
+                
+                try:
+                    ctx = click.get_current_context()
+                    ctx.invoke(user.commands['init-user'], v=v, c=c)
+                    ctx.invoke(news.commands['init-news'], v=v, c=c)
+                    ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
+                    ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
+                    ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
+                finally:
+                    # Restore original environment variables
+                    os.environ["PGHOST"] = original_pghost
+                    os.environ["DATABASE_URL"] = original_db_url
+            else:
+                click.echo("Error: DATABASE_PUBLIC_URL not found")
+                return
         else:
-            click.echo("Error: DATABASE_PUBLIC_URL not found. Make sure you're running with 'railway run'")
-            return
+            # Normal execution when not using internal hostname
+            ctx = click.get_current_context()
+            ctx.invoke(user.commands['init-user'], v=v, c=c)
+            ctx.invoke(news.commands['init-news'], v=v, c=c)
+            ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
+            ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
+            ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
 
     app_.cli.add_command(server)

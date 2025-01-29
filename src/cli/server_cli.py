@@ -74,39 +74,26 @@ def server_cli(app_: Flask) -> None:
         Initializes the Server.
         Initializes the User, Bakery, News, Schedule, and Employees Tables.
         """
+        # Set a flag to indicate we're running in CLI
+        os.environ["FLASK_CLI"] = "1"
+
         # Override PGHOST for CLI if using internal hostname
         if os.environ.get("PGHOST") == "postgres.railway.internal":
             public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
             if public_db_url:
                 # Extract host from DATABASE_PUBLIC_URL
                 public_host = public_db_url.split("@")[1].split(":")[0]
-                
-                # Store original PGHOST
-                original_pghost = os.environ.get("PGHOST")
-                
-                # Set PGHOST to use public host
                 os.environ["PGHOST"] = public_host
-                
-                try:
-                    ctx = click.get_current_context()
-                    ctx.invoke(user.commands['init-user'], v=v, c=c)
-                    ctx.invoke(news.commands['init-news'], v=v, c=c)
-                    ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
-                    ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
-                    ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
-                finally:
-                    # Restore original PGHOST
-                    os.environ["PGHOST"] = original_pghost
-            else:
-                click.echo("Error: DATABASE_PUBLIC_URL not found")
-                return
-        else:
-            # Normal execution when not using internal hostname
+
+        try:
             ctx = click.get_current_context()
             ctx.invoke(user.commands['init-user'], v=v, c=c)
             ctx.invoke(news.commands['init-news'], v=v, c=c)
             ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
             ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
             ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
+        finally:
+            # Clean up the environment variable
+            del os.environ["FLASK_CLI"]
 
     app_.cli.add_command(server)

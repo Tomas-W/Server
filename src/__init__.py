@@ -254,7 +254,19 @@ def _test_network_connection(host, port):
 def _configure_database(app_: Flask) -> None:
     """Configure database connection with network test"""
     logger.info("Starting database configuration...")
-    
+
+    # Check if we're running in CLI context
+    if os.environ.get("FLASK_CLI") == "1":
+        logger.info("FLASK_CLI = 1")
+        # Override PGHOST if using internal hostname
+        if os.environ.get("PGHOST") == "postgres.railway.internal":
+            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
+            if public_db_url:
+                # Extract host from DATABASE_PUBLIC_URL
+                public_host = public_db_url.split("@")[1].split(":")[0]
+                logger.info(f"Overriding PGHOST to {public_host}")
+                os.environ["PGHOST"] = public_host
+
     # Get connection details from Railway's environment variables
     db_config = {
         "user": os.environ.get("PGUSER"),

@@ -76,6 +76,7 @@ def server_cli(app_: Flask) -> None:
         """
         # Set a flag to indicate we're running in CLI
         os.environ["FLASK_CLI"] = "1"
+        os.environ.set()
 
         try:
             # Call _configure_database here instead of in get_app()

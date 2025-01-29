@@ -262,19 +262,6 @@ def _configure_database(app_: Flask) -> None:
     logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE')}")
     logger.info(f"DATABASE_PUBLIC_URL: {os.environ.get('DATABASE_PUBLIC_URL')}")
     logger.info(f"RAILWAY_PRIVATE_DOMAIN: {os.environ.get('RAILWAY_PRIVATE_DOMAIN')}")
-
-    # Check if we're running in CLI context
-    if os.environ.get("FLASK_CLI") == "1":
-        logger.info("FLASK_CLI = 1")
-        
-        public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
-        if public_db_url:
-            # Extract host from DATABASE_PUBLIC_URL
-            public_host = public_db_url.split("@")[1].split(":")[0]
-            logger.info(f"Setting RAILWAY_PRIVATE_DOMAIN to {public_host}")
-            os.environ["RAILWAY_PRIVATE_DOMAIN"] = public_host
-    else:
-        logger.info("FLASK_CLI = 0")
     
     logger.info("AFTER AFTER")
     logger.info("Environment Variables:")
@@ -349,6 +336,12 @@ def _configure_database(app_: Flask) -> None:
                 
         except Exception as e:
             logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+            logger.info("setting new env")
+            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
+            public_host = public_db_url.split("@")[1].split(":")[0]
+            logger.info(f"Setting RAILWAY_PRIVATE_DOMAIN to {public_host}")
+            os.environ["RAILWAY_PRIVATE_DOMAIN"] = public_host
+
             if attempt < max_retries - 1:
                 logger.info(f"Waiting {retry_delay} seconds before retry...")
                 time.sleep(retry_delay)

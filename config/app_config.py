@@ -24,23 +24,6 @@ class BaseConfig(object):
     if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,
-        "pool_recycle": 300,
-        "pool_timeout": 180,
-        "pool_size": 5,
-        "max_overflow": 2,
-        "connect_args": {
-            "connect_timeout": 180,
-            "keepalives": 1,
-            "keepalives_idle": 60,
-            "keepalives_interval": 20,
-            "keepalives_count": 5,
-            "application_name": "flask_app",
-            "sslmode": "require"  # Required for Railway's Postgres
-        }
-    }
-
     REMEMBER_COOKIE_DURATION = timedelta(hours=12)
 
     MAIL_SERVER = "smtp.gmail.com"
@@ -136,6 +119,23 @@ class DeployConfig(BaseConfig):
     LOG_LEVEL = 'INFO'
     LOG_DIR = '/tmp/logs/production'  # Use /tmp for Railway
     LOG_FILE = 'production.log'
+
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "pool_timeout": 180,
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": {
+            "connect_timeout": 180,
+            "keepalives": 1,
+            "keepalives_idle": 60,
+            "keepalives_interval": 20,
+            "keepalives_count": 5,
+            "application_name": "flask_app",
+            "sslmode": "require"  # Required for Railway's Postgres
+        }
+    }
     
     # Production security settings
     SESSION_COOKIE_HTTPONLY = True

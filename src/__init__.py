@@ -252,6 +252,19 @@ def _configure_database(app_: Flask) -> None:
                 raise
 
 
+def _populate_database(app_: Flask) -> None:
+    from src.models.auth_model.auth_mod_utils import _init_user
+    from src.models.news_model.news_mod_utils import _init_news
+    from src.models.bakery_model.bakery_mod_utils import _init_bakery
+    from src.models.schedule_model.schedule_mod_utils import _init_schedule
+    from src.models.schedule_model.schedule_mod_utils import _init_employees
+    _init_user()
+    _init_news()
+    _init_bakery()
+    _init_schedule()
+    _init_employees()
+
+
 def _configure_url_rules(app_: Flask) -> None:
     app_.add_url_rule("/uploads/profile_icons/<filename>",
                       endpoint="profile_icons_folder",

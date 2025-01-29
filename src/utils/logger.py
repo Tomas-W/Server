@@ -1,11 +1,11 @@
 import logging
 import os
+import sys
 from flask import has_request_context, request, current_app
 from flask_login import current_user
 from logging.handlers import RotatingFileHandler
 import inspect
 import colorlog
-import sys
 
 class UserContextFilter(logging.Filter):
     """Filter that adds user context to log records"""
@@ -25,9 +25,7 @@ class UserContextFilter(logging.Filter):
 
 class ServerLogger:
     def __init__(self):
-        """
-        Initialize the logger without app to set it up in __init__.py.
-        """
+        """Initialize the logger without app to set it up in __init__.py."""
         self.app = None
     
     def _init_app(self, app):
@@ -38,42 +36,63 @@ class ServerLogger:
         root_logger = logging.getLogger()
         root_logger.handlers = []  # Clear any existing handlers
         
-        # Also configure Flask's logger
-        flask_logger = logging.getLogger('flask.app')
+        # Configure Flask's logger
+        flask_logger = logging.getLogger("flask.app")
         flask_logger.handlers = []
         
-        # Create formatters
+        # Create base formatter
         formatter = logging.Formatter(
             "[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S"
         )
 
+        # In development, use colored output for console
+        console_formatter = formatter
+        if app.config.get("FLASK_ENV") != "deploy":
+            console_formatter = colorlog.ColoredFormatter(
+                "%(log_color)s" + formatter._fmt,
+                datefmt="%Y-%m-%d %H:%M:%S",
+                log_colors={
+                    "DEBUG": "cyan",
+                    "INFO": "green",
+                    "WARNING": "yellow", 
+                    "ERROR": "red",
+                    "CRITICAL": "red,bg_white",
+                }
+            )
+
         # Console handler writing to stdout
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
+        console_handler.setFormatter(console_formatter)
         console_handler.addFilter(UserContextFilter())
-
-        # Add handler to all loggers
         root_logger.addHandler(console_handler)
-        flask_logger.addHandler(console_handler)
-        app.logger.handlers = []
-        app.logger.addHandler(console_handler)
         
-        # Set levels
+        # In development, also log to file with non-colored output
+        if app.config.get("FLASK_ENV") != "deploy":
+            log_dir = app.config.get("LOG_DIR", "logs")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            
+            file_handler = RotatingFileHandler(
+                os.path.join(log_dir, app.config["LOG_FILE"]),
+                maxBytes=10 * 1024 * 1024,  # 10MB
+                backupCount=5
+            )
+            file_handler.setFormatter(formatter)  # Use non-colored formatter for files
+            file_handler.addFilter(UserContextFilter())
+            root_logger.addHandler(file_handler)
+        
+        # Set log levels
         level = app.config.get("LOG_LEVEL", "INFO")
         root_logger.setLevel(level)
-        flask_logger.setLevel(level)
-        app.logger.setLevel(level)
         
-        # Critical: ensure propagation
-        app.logger.propagate = True
-        flask_logger.propagate = True
+        # Prevent propagation to avoid duplicate logs
+        app.logger.propagate = False
+        flask_logger.propagate = False
 
-        def log_request_info():
-            if has_request_context():
-                app.logger.info(f"Request: {request.method} {request.url}")
-        
-        app.before_request(log_request_info)
+        # Log startup message
+        env = "Production" if app.config.get("FLASK_ENV") == "deploy" else "Development"
+        root_logger.info(f"Starting logging application in {env} mode")
 
     def _get_context(self):
         """Get current request context for logging"""
@@ -98,16 +117,20 @@ class ServerLogger:
             except Exception:
                 pass
 
-        # Shorten pathname to Server/..
-        caller_frame = inspect.currentframe().f_back.f_back.f_back
-        full_path = caller_frame.f_code.co_filename
-        context["custom_lineno"] = caller_frame.f_lineno
-        context["custom_function"] = caller_frame.f_code.co_name
-        server_index = full_path.find("Server\\")
-        if server_index != -1:
-            context["custom_pathname"] = full_path[server_index:]
-        else:
-            context["custom_pathname"] = full_path
+        # Get caller information
+        try:
+            caller_frame = inspect.currentframe().f_back.f_back.f_back
+            full_path = caller_frame.f_code.co_filename
+            context["custom_lineno"] = caller_frame.f_lineno
+            context["custom_function"] = caller_frame.f_code.co_name
+            
+            # Shorten pathname to Server/..
+            server_index = full_path.find("Server\\")
+            context["custom_pathname"] = (
+                full_path[server_index:] if server_index != -1 else full_path
+            )
+        except Exception:
+            pass
         
         return context
 
@@ -122,12 +145,17 @@ class ServerLogger:
         
         complete_msg = msg % args if args else msg
         if show_location:
-            complete_msg += f"\n                     Location: {extra['custom_pathname']}: {extra['custom_function']}: {extra['custom_lineno']}"
+            complete_msg += (
+                f"\n                     Location: "
+                f"{extra['custom_pathname']}: {extra['custom_function']}: {extra['custom_lineno']}"
+            )
         if show_route:
-            complete_msg += f"\n                     Route: {extra['method']} {extra['url']} ({extra['remote_addr']}) from {extra['referrer']}"
+            complete_msg += (
+                f"\n                     Route: {extra['method']} {extra['url']} "
+                f"({extra['remote_addr']}) from {extra['referrer']}"
+            )
 
-        # Log to both app logger and root logger
-        self.app.logger.log(level, complete_msg, **kwargs)
+        # Log only to root logger to avoid duplication
         logging.getLogger().log(level, complete_msg, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
@@ -146,5 +174,5 @@ class ServerLogger:
         self._log(logging.CRITICAL, msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
-        kwargs['exc_info'] = True
+        kwargs["exc_info"] = True
         self._log(logging.ERROR, msg, *args, **kwargs)

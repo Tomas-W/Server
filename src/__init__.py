@@ -217,6 +217,7 @@ def _configure_cli(app_: Flask) -> None:
 def _configure_database(app_: Flask) -> None:
     """Configure database connection with network test"""
     logger.info("Starting database configuration...")
+<<<<<<< HEAD
     logger.info(f"Host: {os.environ.get("PGHOST")}")
     logger.info(f"Port: {os.environ.get("PGPORT")}")
     logger.info(f"Database: {os.environ.get("PGDATABASE")}")
@@ -224,6 +225,77 @@ def _configure_database(app_: Flask) -> None:
     
     cli = False
     max_retries = 3
+=======
+    logger.info("Environment Variables:")
+    logger.info(f"PGUSER: {os.environ.get('PGUSER')}")
+    logger.info(f"PGPASSWORD: {'*' * len(os.environ.get('PGPASSWORD', ''))}")  # Mask password
+    logger.info(f"PGHOST: {os.environ.get('PGHOST')}")
+    logger.info(f"PGPORT: {os.environ.get('PGPORT', '5432')}")
+    logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE')}")
+    logger.info(f"DATABASE_PUBLIC_URL: {os.environ.get('DATABASE_PUBLIC_URL')}")
+    logger.info(f"RAILWAY_PRIVATE_DOMAIN: {os.environ.get('RAILWAY_PRIVATE_DOMAIN')}")
+    
+    logger.info("AFTER AFTER")
+    logger.info("Environment Variables:")
+    logger.info(f"PGUSER: {os.environ.get('PGUSER')}")
+    logger.info(f"PGPASSWORD: {'*' * len(os.environ.get('PGPASSWORD', ''))}")  # Mask password
+    logger.info(f"PGHOST: {os.environ.get('PGHOST')}")
+    logger.info(f"PGPORT: {os.environ.get('PGPORT', '5432')}")
+    logger.info(f"PGDATABASE: {os.environ.get('PGDATABASE')}")
+    logger.info(f"DATABASE_PUBLIC_URL: {os.environ.get('DATABASE_PUBLIC_URL')}")
+    logger.info(f"RAILWAY_PRIVATE_DOMAIN: {os.environ.get('RAILWAY_PRIVATE_DOMAIN')}")
+
+    # Get connection details from Railway's environment variables
+    db_config = {
+        "user": os.environ.get("PGUSER"),
+        "password": os.environ.get("PGPASSWORD"),
+        "host": os.environ.get("PGHOST"),
+        "port": os.environ.get("PGPORT", "5432"),
+        "database": os.environ.get("PGDATABASE")
+    }
+    
+    # Validate required environment variables
+    required_vars = ["PGUSER", "PGPASSWORD", "PGHOST", "PGDATABASE"]
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    if missing_vars:
+        logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
+        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
+    # Log configuration (masked)
+    logger.info(f"Database Configuration:")
+    logger.info(f"Host: {db_config['host']}")
+    logger.info(f"Port: {db_config['port']}")
+    logger.info(f"Database: {db_config['database']}")
+    logger.info(f"User: {'set' if db_config['user'] else 'not set'}")
+    
+    # Construct database URL with SSL mode
+    db_url = (
+        f"postgresql://{db_config['user']}:{db_config['password']}"
+        f"@{db_config['host']}:{db_config['port']}"
+        f"/{db_config['database']}?sslmode=require"
+    )
+    
+    # Update app configuration
+    app_.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    app_.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "pool_timeout": 180,
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": {
+            "connect_timeout": 180,
+            "keepalives": 1,
+            "keepalives_idle": 60,
+            "keepalives_interval": 20,
+            "keepalives_count": 5,
+            "application_name": "flask_app",
+            "sslmode": "require"
+        }
+    }
+    
+    max_retries = 5
+>>>>>>> f0f465305382b8ac800e94e0ab56803def26bfd2
     retry_delay = 3
     for attempt in range(max_retries):
         try:
@@ -242,6 +314,12 @@ def _configure_database(app_: Flask) -> None:
             cli = True
         except Exception as e:
             logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+            logger.info("setting new env")
+            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
+            public_host = public_db_url.split("@")[1].split(":")[0]
+            logger.info(f"Setting RAILWAY_PRIVATE_DOMAIN to {public_host}")
+            os.environ["RAILWAY_PRIVATE_DOMAIN"] = public_host
+
             if attempt < max_retries - 1:
                 logger.info(f"Waiting {retry_delay} seconds before retry...")
                 cli = False

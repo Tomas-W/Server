@@ -38,4 +38,4 @@ ENV FLASK_ENV=deploy
 ENV PYTHONUNBUFFERED=1
 
 # Run the application
-CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:8080", "--timeout", "180", "--workers", "1", "--log-level", "info", "--access-logfile", "-", "--error-logfile", "-"] 
+CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:8080", "--timeout", "180", "--workers", "1", "--log-level", "info", "--capture-output", "--access-logfile", "-", "--error-logfile", "-", "--enable-stdio-inheritance"] 

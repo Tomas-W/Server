@@ -331,4 +331,12 @@ def get_app() -> Flask:
             # Run migrations
             upgrade()  # This applies all migrations
 
+    @app_.route("/test-log")
+    def test_log():
+        app_.logger.debug("This is a debug message")
+        app_.logger.info("This is an info message")
+        app_.logger.warning("This is a warning message")
+        app_.logger.error("This is an error message")
+        return "Logs generated"
+
     return app_

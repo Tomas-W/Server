@@ -5,6 +5,7 @@ from flask_login import current_user
 from logging.handlers import RotatingFileHandler
 import inspect
 import colorlog
+import sys
 
 class UserContextFilter(logging.Filter):
     """Filter that adds user context to log records"""
@@ -35,6 +36,7 @@ class ServerLogger:
         
         # Configure root logger to capture all logs
         root_logger = logging.getLogger()
+        root_logger.handlers = []  # Clear any existing handlers
         root_logger.setLevel(logging.INFO)
         
         # Create formatters
@@ -43,45 +45,23 @@ class ServerLogger:
             datefmt="%Y-%m-%d %H:%M:%S"
         )
 
-        color_formatter = colorlog.ColoredFormatter(
-            "%(log_color)s" + formatter._fmt,
-            datefmt="%Y-%m-%d %H:%M:%S",
-            log_colors={
-                "DEBUG": "cyan",
-                "INFO": "green", 
-                "WARNING": "yellow",
-                "ERROR": "purple",
-                "CRITICAL": "red",
-            }
-        )
-
-        # Console handler (with colors) writing to stderr
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(color_formatter)
+        # Console handler writing to stdout
+        console_handler = logging.StreamHandler(sys.stdout)  # Explicitly use stdout
+        console_handler.setFormatter(formatter)  # Use non-colored formatter for production
         console_handler.addFilter(UserContextFilter())
 
-        # Clear existing handlers and add console handler
+        # Add handler to both app logger and root logger
         app.logger.handlers = []
         app.logger.addHandler(console_handler)
+        root_logger.addHandler(console_handler)
         
         # Set level from config
         level = app.config.get("LOG_LEVEL", "INFO")
         app.logger.setLevel(level)
+        root_logger.setLevel(level)
         
-        # Only create file handler if not in production
-        if app.config.get("FLASK_ENV") != "deploy":
-            log_dir = app.config.get("LOG_DIR", "logs")
-            if not os.path.exists(log_dir):
-                os.makedirs(log_dir)
-            
-            file_handler = RotatingFileHandler(
-                os.path.join(log_dir, app.config["LOG_FILE"]),
-                maxBytes=10 * 1024 * 1024,  # 10MB
-                backupCount=5
-            )
-            file_handler.setFormatter(formatter)
-            file_handler.addFilter(UserContextFilter())
-            app.logger.addHandler(file_handler)
+        # Ensure propagation to root logger
+        app.logger.propagate = True
 
     def _get_context(self):
         """Get current request context for logging"""

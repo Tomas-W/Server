@@ -150,5 +150,13 @@ class DeployConfig(BaseConfig):
         'Content-Security-Policy': "default-src 'self' https: data:; img-src 'self' https: data:; style-src 'self' https: 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; script-src 'self' https: 'unsafe-inline' 'unsafe-eval';"
     }
 
+    # Logging configuration
+    LOG_LEVEL = "INFO"
+    LOGGER_HANDLER_POLICY = "always"  # Always use the configured handlers
+    PROPAGATE_EXCEPTIONS = True
+    
+    # Ensure Werkzeug logs also appear
+    WERKZEUG_LOGGER_HANDLER_POLICY = "always"
+
     def config_name(self):
         return self.CONFIG_NAME

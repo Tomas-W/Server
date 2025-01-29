@@ -30,24 +30,14 @@ class ServerLogger:
         self.app = None
     
     def _init_app(self, app):
-        """
-        Set up logger with Flask app
-        
-        Debug and info show only:
-        [YYYY-MM-DD HH:MM:SS] LEVELNAME USER - MESSAGE
-
-        Warning, error and critical also show:
-        Location: FILE - FUNCTION - LINENO
-        Route: METHOD - URL - (REMOTE_ADDR) from REFERER
-
-        Location and route can be added to any log level by passing location=True or route=True
-        """
+        """Set up logger with Flask app"""
         self.app = app
         
-        log_dir = app.config.get("LOG_DIR", "logs")
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
-
+        # Configure root logger to capture all logs
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.INFO)
+        
+        # Create formatters
         formatter = logging.Formatter(
             "[%(asctime)s] %(levelname)-8s %(user)-15s - %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S"
@@ -57,37 +47,41 @@ class ServerLogger:
             "%(log_color)s" + formatter._fmt,
             datefmt="%Y-%m-%d %H:%M:%S",
             log_colors={
-                "DEBUG":    "cyan",
-                "INFO":     "green",
+                "DEBUG": "cyan",
+                "INFO": "green", 
                 "WARNING": "yellow",
-                "ERROR":   "purple",
+                "ERROR": "purple",
                 "CRITICAL": "red",
             }
         )
 
-        # File handler (no colors)
-        file_handler = RotatingFileHandler(
-            os.path.join(log_dir, app.config["LOG_FILE"]),
-            maxBytes=10 * 1024 * 1024,  # 10MB
-            backupCount=5
-        )
-        file_handler.setFormatter(formatter)
-
-        # Console handler (with colors)
+        # Console handler (with colors) writing to stderr
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(color_formatter)
+        console_handler.addFilter(UserContextFilter())
 
-        # Add user context filter
-        user_filter = UserContextFilter()
-        file_handler.addFilter(user_filter)
-        console_handler.addFilter(user_filter)
-
-        level = app.config.get('LOG_LEVEL', 'INFO')
+        # Clear existing handlers and add console handler
+        app.logger.handlers = []
+        app.logger.addHandler(console_handler)
+        
+        # Set level from config
+        level = app.config.get("LOG_LEVEL", "INFO")
         app.logger.setLevel(level)
         
-        app.logger.handlers = []
-        app.logger.addHandler(file_handler)
-        app.logger.addHandler(console_handler)
+        # Only create file handler if not in production
+        if app.config.get("FLASK_ENV") != "deploy":
+            log_dir = app.config.get("LOG_DIR", "logs")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            
+            file_handler = RotatingFileHandler(
+                os.path.join(log_dir, app.config["LOG_FILE"]),
+                maxBytes=10 * 1024 * 1024,  # 10MB
+                backupCount=5
+            )
+            file_handler.setFormatter(formatter)
+            file_handler.addFilter(UserContextFilter())
+            app.logger.addHandler(file_handler)
 
     def _get_context(self):
         """Get current request context for logging"""

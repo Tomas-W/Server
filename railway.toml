@@ -1,7 +1,0 @@
-[build]
-builder = "dockerfile"
-
-[deploy]
-startCommand = "gunicorn run:app --bind 0.0.0.0:8080"
-healthcheckPath = "/up"
-restartPolicyType = "on_failure" 

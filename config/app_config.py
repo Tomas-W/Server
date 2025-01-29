@@ -116,10 +116,10 @@ class DeployConfig(BaseConfig):
     ASSETS_DEBUG = False
     
     # Logging configuration
-    LOG_LEVEL = 'INFO'
-    LOG_DIR = '/tmp/logs/production'  # Use /tmp for Railway
-    LOG_FILE = 'production.log'
-
+    LOG_LEVEL = "INFO"
+    LOG_DIR = "/tmp/logs/production"  # Though we won't use this in production
+    LOG_FILE = "production.log"       # Though we won't use this in production
+    
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
         "pool_recycle": 300,

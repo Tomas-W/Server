@@ -112,6 +112,10 @@ def _init_news() -> bool:
     """
     if not server_db_.session.query(News).count():
         news_dict = get_news_dict()
+        # Fetch the lowest user_id from the User table
+        from src.models.auth_model.auth_mod import User
+        lowest_user_id = server_db_.session.query(User.id).order_by(User.id).first()
+        
         for _, item_details in news_dict.items():
             news_item = News(
                 header=item_details["header"],
@@ -123,7 +127,7 @@ def _init_news() -> bool:
                 info_cols=item_details["info_cols"],
                 info_rows=item_details["info_rows"],
                 author=item_details["author"],
-                user_id=current_user.id if current_user else 1,
+                user_id=lowest_user_id,
             )
             server_db_.session.add(news_item)
         server_db_.session.commit()

@@ -1,4 +1,5 @@
 import click
+import os
 
 from flask import (
     Flask,
@@ -75,12 +76,27 @@ def server_cli(app_: Flask) -> None:
 
         Usage: flask server init-server [--v] [--c]
         """
-        ctx = click.get_current_context()
-
-        ctx.invoke(user.commands['init-user'], v=v, c=c)
-        ctx.invoke(news.commands['init-news'], v=v, c=c)
-        ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
-        ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
-        ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
+        # Use DATABASE_PUBLIC_URL for local execution
+        public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
+        if public_db_url:
+            # Temporarily use the public URL
+            original_db_uri = app_.config["SQLALCHEMY_DATABASE_URI"]
+            if public_db_url.startswith("postgres://"):
+                public_db_url = public_db_url.replace("postgres://", "postgresql://", 1)
+            app_.config["SQLALCHEMY_DATABASE_URI"] = public_db_url
+            
+            try:
+                ctx = click.get_current_context()
+                ctx.invoke(user.commands['init-user'], v=v, c=c)
+                ctx.invoke(news.commands['init-news'], v=v, c=c)
+                ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
+                ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
+                ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
+            finally:
+                # Restore original database URI
+                app_.config["SQLALCHEMY_DATABASE_URI"] = original_db_uri
+        else:
+            click.echo("Error: DATABASE_PUBLIC_URL not found. Make sure you're running with 'railway run'")
+            return
 
     app_.cli.add_command(server)

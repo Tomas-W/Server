@@ -226,23 +226,21 @@ def _configure_database(app_: Flask) -> None:
             with app_.app_context():
                 if cli:
                     app_.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_PUBLIC_URL")
+                    url = "DATABASE_PUBLIC_URL"
+                else:
+                    app_.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+                    url = "DATABASE_URL"
 
-                logger.info(f"Attempting DATABASE_URL connection (attempt {attempt + 1}/{max_retries})...")
+                logger.info(f"Attempting {url} connection (attempt {attempt + 1}/{max_retries})...")
                 server_db_.engine.connect()
                 logger.info("Database connection successful!")
                 return
         
         except OperationalError as e:
             logger.error(f"Detected OperationalError: {e}")
-            logger.info(f"Switching to DATABASE_PUBLIC_URL connection...")
             cli = True
         except Exception as e:
             logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
-            logger.info("setting new env")
-            public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
-            public_host = public_db_url.split("@")[1].split(":")[0]
-            logger.info(f"Setting RAILWAY_PRIVATE_DOMAIN to {public_host}")
-            os.environ["RAILWAY_PRIVATE_DOMAIN"] = public_host
 
             if attempt < max_retries - 1:
                 logger.info(f"Waiting {retry_delay} seconds before retry...")

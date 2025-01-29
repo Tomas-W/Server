@@ -74,24 +74,12 @@ def server_cli(app_: Flask) -> None:
         Initializes the Server.
         Initializes the User, Bakery, News, Schedule, and Employees Tables.
         """
-        # Set a flag to indicate we're running in CLI
-        os.environ["FLASK_CLI"] = "1"
-        os.environ.set()
+        ctx = click.get_current_context()
+        ctx.invoke(user.commands['init-user'], v=v, c=c)
+        ctx.invoke(news.commands['init-news'], v=v, c=c)
+        ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
+        ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
+        ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
 
-        try:
-            # Call _configure_database here instead of in get_app()
-            from src import _configure_database
-            _configure_database(current_app)
-
-            ctx = click.get_current_context()
-            logger.info("got current context")
-            ctx.invoke(user.commands['init-user'], v=v, c=c)
-            ctx.invoke(news.commands['init-news'], v=v, c=c)
-            ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)
-            ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
-            ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
-        finally:
-            # Clean up the environment variable
-            del os.environ["FLASK_CLI"]
 
     app_.cli.add_command(server)

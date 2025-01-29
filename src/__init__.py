@@ -91,6 +91,7 @@ def _configure_server(app_: Flask) -> Flask:
     }
     
     _configure_database(app_)
+    _populate_database(app_)
     _configure_url_rules(app_)
     _configure_jinja(app_)
 
@@ -258,11 +259,26 @@ def _populate_database(app_: Flask) -> None:
     from src.models.bakery_model.bakery_mod_utils import _init_bakery
     from src.models.schedule_model.schedule_mod_utils import _init_schedule
     from src.models.schedule_model.schedule_mod_utils import _init_employees
-    _init_user()
-    _init_news()
-    _init_bakery()
-    _init_schedule()
-    _init_employees()
+    if _init_user():
+        logger.info("User table empty. Initializing user...")
+    else:
+        logger.info("User table not empty. Skipping user initialization.")
+    if _init_news():
+        logger.info("News table empty. Initializing news...")
+    else:
+        logger.info("News table not empty. Skipping news initialization.")
+    if _init_bakery():
+        logger.info("Bakery table empty. Initializing bakery...")
+    else:
+        logger.info("Bakery table not empty. Skipping bakery initialization.")
+    if _init_schedule():
+        logger.info("Schedule table empty. Initializing schedule...")
+    else:
+        logger.info("Schedule table not empty. Skipping schedule initialization.")
+    if _init_employees():
+        logger.info("Employees table empty. Initializing employees...")
+    else:
+        logger.info("Employees table not empty. Skipping employees initialization.")
 
 
 def _configure_url_rules(app_: Flask) -> None:

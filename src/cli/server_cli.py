@@ -78,7 +78,12 @@ def server_cli(app_: Flask) -> None:
         os.environ["FLASK_CLI"] = "1"
 
         try:
+            # Call _configure_database here instead of in get_app()
+            from src import _configure_database
+            _configure_database(current_app)
+
             ctx = click.get_current_context()
+            logger.info("got current context")
             ctx.invoke(user.commands['init-user'], v=v, c=c)
             ctx.invoke(news.commands['init-news'], v=v, c=c)
             ctx.invoke(bakery.commands['init-bakery'], v=v, c=c)

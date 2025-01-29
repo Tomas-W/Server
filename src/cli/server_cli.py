@@ -74,17 +74,18 @@ def server_cli(app_: Flask) -> None:
         Initializes the Server.
         Initializes the User, Bakery, News, Schedule, and Employees Tables.
         """
-        # Override database configuration for CLI
+        # Override PGHOST for CLI if using internal hostname
         if os.environ.get("PGHOST") == "postgres.railway.internal":
             public_db_url = os.environ.get("DATABASE_PUBLIC_URL")
             if public_db_url:
-                # Store original values
-                original_pghost = os.environ.get("PGHOST")
-                original_db_url = os.environ.get("DATABASE_URL")
+                # Extract host from DATABASE_PUBLIC_URL
+                public_host = public_db_url.split("@")[1].split(":")[0]
                 
-                # Set environment variables to use public URL
-                os.environ["PGHOST"] = public_db_url.split("@")[1].split(":")[0]
-                os.environ["DATABASE_URL"] = public_db_url
+                # Store original PGHOST
+                original_pghost = os.environ.get("PGHOST")
+                
+                # Set PGHOST to use public host
+                os.environ["PGHOST"] = public_host
                 
                 try:
                     ctx = click.get_current_context()
@@ -94,9 +95,8 @@ def server_cli(app_: Flask) -> None:
                     ctx.invoke(schedule.commands['init-schedule'], v=v, c=c)
                     ctx.invoke(schedule.commands['init-employees'], v=v, c=c)
                 finally:
-                    # Restore original environment variables
+                    # Restore original PGHOST
                     os.environ["PGHOST"] = original_pghost
-                    os.environ["DATABASE_URL"] = original_db_url
             else:
                 click.echo("Error: DATABASE_PUBLIC_URL not found")
                 return

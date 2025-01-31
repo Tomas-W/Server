@@ -1,9 +1,10 @@
 import click
 
 from flask import Flask
+
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.news_model.news_mod import (

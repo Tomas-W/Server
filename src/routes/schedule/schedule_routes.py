@@ -13,7 +13,7 @@ from flask import (
 )
 from flask_login import current_user, login_required
 
-from src.extensions import logger
+from loguru import logger
 
 from src.models.schedule_model.schedule_mod import Schedule
 from src.models.schedule_model.schedule_mod_utils import (
@@ -72,8 +72,6 @@ def personal(date: str = None):
     personal_hours_per_week = get_personal_hours_per_week(personal_schedule_dicts)
 
     current_week_num = _week_from_date(_now())
-
-    logger.info(f"{DIR.SERVER=}")
 
     return render_template(
         TEMPLATE.PERSONAL,

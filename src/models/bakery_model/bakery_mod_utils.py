@@ -6,8 +6,8 @@ from sqlalchemy import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.bakery_model.bakery_mod import BakeryItem

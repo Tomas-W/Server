@@ -11,12 +11,13 @@ from datetime import (
 from unidecode import unidecode
 
 from flask import current_app
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.extensions import logger, server_db_
+from src.extensions import server_db_, logger
 
 from src.utils.misc_utils import crop_name
 from src.utils.selenium_utils import (
@@ -233,10 +234,10 @@ def save_schedule_to_json(date: str, names: list[str], hours: list[str],
         logger.info(f"[ADD] Saved encrypted schedule to json for week: {week_number}")
 
     except PermissionError:
-        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {schedule_path}")
+        logger.exception(f"[SYS] PERMISSION DENIED when accessing: {schedule_path}")
         return
-    except Exception as e:
-        logger.warning(f"[ERROR] UNEXPECTED ERROR saving schedule to json: {str(e)}")
+    except Exception:
+        logger.exception(f"[ERROR] UNEXPECTED ERROR saving schedule to json")
         return
 
 
@@ -271,10 +272,10 @@ def add_employee_json(name: str, email: str = None, is_verified: bool = None) ->
         with open(PATH.EMPLOYEES, "wb") as json_file:
             json_file.write(encrypted_data)
     except PermissionError:
-        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
+        logger.exception(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return
-    except Exception as e:
-        logger.warning(f"[ERROR] UNEXPECTED ERROR adding Employees to json: {str(e)}")
+    except Exception:
+        logger.exception(f"[ERROR] UNEXPECTED ERROR adding Employees to json")
         return
 
 
@@ -334,10 +335,10 @@ def update_employee_json(name: str, email: str | None = None,
         with open(PATH.EMPLOYEES, "wb") as json_file:
             json_file.write(encrypted_data)
     except PermissionError:
-        logger.critical(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
+        logger.exception(f"[SYS] PERMISSION DENIED when accessing: {PATH.EMPLOYEES}")
         return
-    except Exception as e:
-        logger.warning(f"[ERROR] UNEXPECTED ERROR updating Employees in json: {str(e)}")
+    except Exception:
+        logger.exception(f"[ERROR] UNEXPECTED ERROR updating Employees in json")
         return
 
 

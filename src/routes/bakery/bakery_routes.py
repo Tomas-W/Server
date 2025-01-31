@@ -9,8 +9,6 @@ from flask import (
 )
 from flask_login import login_required
 
-from src.extensions import logger
-
 from src.models.auth_model.auth_mod_utils import admin_required
 from src.models.bakery_model.bakery_mod_utils import (
     delete_item_by_id,

@@ -13,7 +13,6 @@ from sqlalchemy.orm import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
 )
 

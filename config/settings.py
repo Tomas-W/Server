@@ -103,6 +103,7 @@ class Directory:
     CONFIG: os.path = os.path.join(SERVER, "config")
     DB: os.path = os.path.join(SERVER, "db")
     WEBASSETS: os.path = os.path.join(SRC, "static", ".webassets-cache")
+    LOGS: os.path = os.path.join(SERVER, "logs")
     # Images
     IMAGES: os.path = os.path.join(SRC, "static", "images")
     UPLOAD: os.path = os.path.join(SRC, "uploads")

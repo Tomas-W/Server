@@ -36,10 +36,10 @@ from werkzeug.routing import BuildError
 from hmac import compare_digest
 
 from src.extensions import (
-    logger,
     mail_,
     get_serializer,
     server_db_,
+    logger,
 )
 
 from src.routes.errors.error_route_utils import (
@@ -197,8 +197,8 @@ def send_authentication_email(email: str, token_type: str, token: str) -> None:
 def get_authentication_url(endpoint: str, **values: Any) -> str:
     try:
         return url_for(endpoint, **values)
-    except (BuildError, KeyError, ValueError) as e:
-        logger.error(f"[VALIDATION] ERROR GENERATING URL: {e}")
+    except (BuildError, KeyError, ValueError):
+        logger.exception("[VALIDATION] ERROR GENERATING URL")
         raise Abort500()
 
 
@@ -206,21 +206,21 @@ def get_authentication_email_template(template_name: str, **context: Any) -> str
     try:
         return render_template(template_name, **context)
     except (TemplateNotFound, TemplateSyntaxError, UndefinedError) as e:
-        logger.error(f"[VALIDATION] ERROR RENDERING EMAIL TEMPLATE: {e}")
+        logger.exception("[VALIDATION] ERROR RENDERING EMAIL TEMPLATE")
         raise Abort500()
 
 
 def send_email(message: Message) -> None:
     try:
         mail_.send(message)
-    except SMTPRecipientsRefused as e:
-        logger.info(f"[VALIDATION] RECIPIENTS REFUSED: {e}")
+    except SMTPRecipientsRefused:
+        logger.exception("[VALIDATION] RECIPIENTS REFUSED")
         raise Abort500()
-    except SMTPSenderRefused as e:
-        logger.critical(f"[VALIDATION] SENDER REFUSED: {e}")
+    except SMTPSenderRefused:
+        logger.exception("[VALIDATION] SENDER REFUSED")
         raise Abort500()
-    except Exception as e:
-        logger.error(f"[VALIDATION] ERROR SENDING VERIFICATION: {e}")
+    except Exception:
+        logger.exception("[VALIDATION] ERROR SENDING VERIFICATION")
         raise Abort500()
 
 def confirm_authentication_token(token: str, token_type: str,
@@ -239,7 +239,7 @@ def confirm_authentication_token(token: str, token_type: str,
     }
     salt = salt_map.get(token_type)
     if not salt:
-        logger.critical("[VALIDATION] SALT NOT FOUND for token: {token_type}")
+        logger.critical(f"[VALIDATION] SALT NOT FOUND for token: {token_type}")
         raise Abort500()
 
     try:

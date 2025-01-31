@@ -61,7 +61,6 @@ class BaseConfig(object):
     LOG_DIR = "logs"
     LOG_FILE = "app.log"
     LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    LOG_LEVEL = 'INFO'
     LOG_MAX_BYTES =  8 * 1024 * 1024  # 8MB
     LOG_BACKUP_COUNT = 5
     LOG_DATE_FORMAT = "%d-%m %H:%M:%S"

@@ -126,13 +126,13 @@ def process_profile_picture(form: FlaskForm) -> bool:
         
     except FileNotFoundError:
         flash(MESSAGE.PROFILE_PICTURE_ERROR)
-        logger.error("[USER] Profile picture folder not found")
+        logger.exception("[USER] Profile picture folder not found")
         
-    except PermissionError as e:
-        logger.critical(f"[SYS] PROFILE PICTURE PERMISSION ERROR: {e}")
+    except PermissionError:
+        logger.exception("[SYS] PROFILE PICTURE PERMISSION ERROR")
         raise Abort500()
-    except Exception as e:
-        logger.error(f"[SYS] PROFILE PICTURE ERROR: {e}")
+    except Exception:
+        logger.exception("[SYS] PROFILE PICTURE ERROR")
         raise Abort500()
     
     if "profile_picture" in form._fields:

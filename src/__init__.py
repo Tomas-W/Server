@@ -1,7 +1,6 @@
 import os
 import time
-
-from itsdangerous import URLSafeTimedSerializer
+import sys
 from flask import (
     Flask,
     send_from_directory,
@@ -16,14 +15,13 @@ from datetime import timedelta
 from flask_session import Session
 from flask_migrate import upgrade
 from sqlalchemy import inspect
-from urllib.parse import urlparse
 
 from src.extensions import (
     compress_,
     csrf_,
     limiter_,
-    login_manager_,
     logger,
+    login_manager_,
     mail_,
     migrater_,
     serializer_,
@@ -103,18 +101,17 @@ def _configure_dirs(app_: Flask) -> None:
         if not os.path.exists(folder):
             os.makedirs(folder)
 
+
 def _configure_variables(app_: Flask) -> None:
     try:
         app_.ENV = Environ.from_env()
     except ValueError as e:
         raise SystemExit(1)
-
     app_.config["SECRET_KEY"] = app_.ENV.FLASK_KEY.get_secret_value()
     app_.config["MAIL_USERNAME"] = app_.ENV.GMAIL_EMAIL.get_secret_value()
     app_.config["MAIL_PASSWORD"] = app_.ENV.GMAIL_PASS.get_secret_value()
 
 def _configure_extensions(app_: Flask) -> None:
-    logger._init_app(app_)
     server_db_.init_app(app_)
     
     # Configure cache
@@ -191,13 +188,13 @@ def _configure_requests(app_: Flask) -> None:
     def manage_db_sessions(exception=None):
         if exception:
             server_db_.session.rollback()
-            app_.logger.error(f"Database error: {exception}")
+            logger.exception(f"Database error: {exception}")
         else:
             try:
                 server_db_.session.commit()
-            except SQLAlchemyError as e:
+            except SQLAlchemyError:
                 server_db_.session.rollback()
-                app_.logger.error(f"Database commit failed: {e}")
+                logger.exception(f"Database commit failed")
             finally:
                 server_db_.session.remove()
 
@@ -237,11 +234,11 @@ def _configure_database(app_: Flask) -> None:
                 logger.info("Database connection successful!")
                 return
         
-        except OperationalError as e:
-            logger.error(f"Detected OperationalError: {e}")
+        except OperationalError:
+            logger.exception("Detected OperationalError")
             cli = True
-        except Exception as e:
-            logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+        except Exception:
+            logger.exception(f"Database connection attempt {attempt + 1} failed")
 
             if attempt < max_retries - 1:
                 logger.info(f"Waiting {retry_delay} seconds before retry...")
@@ -330,13 +327,5 @@ def get_app() -> Flask:
         if not inspect(server_db_.engine).has_table('flask'):
             # Run migrations
             upgrade()  # This applies all migrations
-
-    @app_.route("/test-log")
-    def test_log():
-        app_.logger.debug("This is a debug message")
-        app_.logger.info("This is an info message")
-        app_.logger.warning("This is a warning message")
-        app_.logger.error("This is an error message")
-        return "Logs generated"
 
     return app_

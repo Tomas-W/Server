@@ -223,13 +223,8 @@ def verify_email(token):
         flash(MESSAGE.EMAIL_VERIFIED)
         return redirect(url_for(REDIRECT.USER_ADMIN))
 
-    except Exception as e:
-        logger.error(
-            f"[AUTH] Error during email verification: {str(e)}",
-            exc_info=True,
-            location=True,
-            route=True
-        )
+    except Exception:
+        logger.exception("[AUTH] Error during email verification")
         session["flash_type"] = "verify"
         flash(MESSAGE.AUTHENTICATION_LINK_ERROR)
         return redirect(url_for(REDIRECT.USER_ADMIN))

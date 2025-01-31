@@ -5,6 +5,7 @@ from argon2.exceptions import (
 )
 from flask import (
     Response,
+    current_app,
     redirect,
     session,
     url_for,
@@ -14,6 +15,7 @@ from flask_login import (
     login_user,
     logout_user,
 )
+
 from src.extensions import (
     argon2_,
     logger,
@@ -37,7 +39,7 @@ from config.settings import (
 )
 
 
-def handle_user_login(user: User, remember: bool = False, fresh: bool = True, login_type: str = SERVER.NORMAL_LOGIN) -> None:
+def handle_user_login(user: User, login_type: str, remember: bool = False, fresh: bool = True) -> None:
     """
     Logs in user and sets up the session.
     Session is NOT fresh or permanent unless specified (fast_login).
@@ -51,6 +53,7 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True, lo
     session["user_id"] = user.id
     if login_type == SERVER.FAST_LOGIN:
         logger.info(f"[AUTH] FAST LOG IN")
+        logger.info(f"[AUTH] FAST LOG IN", user="CLI")
     elif login_type == SERVER.GOOGLE_LOGIN:
         logger.info(f"[AUTH] GOOGLE LOG IN")
     else:
@@ -59,11 +62,7 @@ def handle_user_login(user: User, remember: bool = False, fresh: bool = True, lo
 
 def handle_user_logout() -> None:
     """Logs out user and removes session data."""
-    logger.debug("[AUTH] NORMAL LOG IN", location=True)
-    logger.info("[AUTH] NORMAL LOG IN")
-    logger.warning("[AUTH] NORMAL LOG IN")
-    logger.error("[AUTH] NORMAL LOG IN")
-    logger.critical("[AUTH] NORMAL LOG IN")
+    logger.info("logout ye")
     logout_user()
     session.clear()
 
@@ -83,7 +82,7 @@ def fast_login(login_form: FastLoginForm) -> tuple[Response | None, str | None]:
 
     try:
         if argon2_.verify(user.fast_code, login_form.fast_code.data):
-            handle_user_login(user, login_type=FORM.FAST_LOGIN)
+            handle_user_login(user, login_type=SERVER.FAST_LOGIN)
             next_url = session.pop("next", None)
             if next_url:
                 return redirect(next_url), None
@@ -111,7 +110,7 @@ def normal_login(login_form: LoginForm) -> tuple[Response | None, str | None]:
     try:
         if argon2_.verify(user.password, login_form.password.data):
             remember = login_form.remember.data
-            handle_user_login(user, remember=remember, fresh=True)
+            handle_user_login(user, login_type=SERVER.NORMAL_LOGIN, remember=remember, fresh=True)
             next_url = session.pop("next", None)
             if next_url:
                 return redirect(next_url), None
@@ -129,6 +128,6 @@ def handle_argon2_exception(e: Exception) -> str:
     if isinstance(e, VerifyMismatchError):
         return MESSAGE.CREDENTIALS_ERROR
     if isinstance(e, (VerificationError, InvalidHashError)):
-        logger.warning(f"[AUTH] VERIFICATION ERROR: {e}")
+        logger.exception("[AUTH] VERIFICATION ERROR")
         return MESSAGE.VERIFICATION_ERROR
     return MESSAGE.UNEXPECTED_ERROR

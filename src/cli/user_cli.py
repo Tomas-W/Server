@@ -4,8 +4,8 @@ from flask import Flask
 from sqlalchemy import inspect
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.auth_model.auth_mod import User

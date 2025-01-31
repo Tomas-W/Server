@@ -16,8 +16,8 @@ from sqlalchemy.orm import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.utils.schedule import (

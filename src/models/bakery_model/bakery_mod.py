@@ -15,8 +15,8 @@ from sqlalchemy.orm import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from config.settings import SERVER
@@ -179,9 +179,8 @@ class BakeryItem(server_db_.Model):
             if keys:
                 return {key: all_data[key] for key in keys if key in all_data}
             return all_data
-        except KeyError as e:
-            errors = f"KeyError: {e} - {logger.get_log_info()}"
-            logger.error(errors)
+        except KeyError:
+            logger.exception(f"ERROR GETTING BAKERY ITEM: {self.id=} {self.name=}")
             return {}
 
     def __repr__(self) -> str:

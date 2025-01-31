@@ -26,8 +26,8 @@ from wtforms.validators import ValidationError
 
 from src.extensions import (
     argon2_,
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.mod_utils import (
@@ -268,11 +268,11 @@ class User(server_db_.Model, UserMixin):
                 os.remove(file_path)
         except FileNotFoundError:
             return
-        except PermissionError as e:
-            logger.critical(f"[SYS] PERMISSION ERROR while removing profile picture: {str(e)}", exc_info=True)
+        except PermissionError:
+            logger.exception(f"[SYS] PERMISSION ERROR while removing profile picture")
             return
-        except Exception as e:
-            logger.error(f"[SYS] UNEXPECTED ERROR while setting profile picture: {str(e)}", exc_info=True)
+        except Exception:
+            logger.exception(f"[SYS] UNEXPECTED ERROR while setting profile picture")
             return
         self.profile_picture = profile_picture
 
@@ -433,8 +433,8 @@ class User(server_db_.Model, UserMixin):
     def _get_hash(plain_password: str) -> str:
         try:
             return argon2_.hash(plain_password)
-        except Exception as e:
-            logger.critical(f"[SYS] ERROR HASHING PASSWORD: {e}")
+        except Exception:
+            logger.exception("[SYS] ERROR HASHING PASSWORD")
             raise Abort500()
 
     def __repr__(self) -> str:

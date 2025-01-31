@@ -10,7 +10,7 @@ if /I "%userInput%"=="Y" (
     cd C:\Coding\Projects\Server
     set FLASK_APP=run:get_app
     set FLASK_ENV=debug
-    set PORT=8080
+    set PORT=5000
     echo Running Flask server in debug mode on port %PORT%...
     python run.py
 

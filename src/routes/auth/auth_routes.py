@@ -1,6 +1,4 @@
-import os
 import requests
-
 from functools import wraps
 from flask import (
     Blueprint,
@@ -24,8 +22,8 @@ from sqlalchemy import select
 
 from src.extensions import (
     flow_,
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.auth_model.auth_mod import User
@@ -104,6 +102,7 @@ def index():
     """Serves home page when logged in, else login page."""
     if current_user.is_authenticated:
         return redirect(url_for(REDIRECT.HOME_PAGE))
+
     return redirect(url_for(REDIRECT.LOGIN))
 
 
@@ -166,8 +165,8 @@ def callback():
     except GoogleAuthError as e:
         flash(MESSAGE.TOKEN_ERROR)
         return redirect(url_for(REDIRECT.LOGIN))
-    except Exception as e:
-        logger.warning(f"[AUTH] OAUTH ERROR {e}")
+    except Exception:
+        logger.exception("[AUTH] OAUTH ERROR")
         flash(MESSAGE.TOKEN_ERROR)
         return redirect(url_for(REDIRECT.LOGIN))
 
@@ -175,7 +174,7 @@ def callback():
     oauth_state = get_and_delete_oauth_state(state_in_request)
 
     if not oauth_state:
-        logger.error(f"[AUTH] WRONG OAUTH STATE")
+        logger.exception("[AUTH] WRONG OAUTH STATE")
         flash(MESSAGE.STATE_ERROR)
         return redirect(url_for(REDIRECT.LOGIN))
 
@@ -194,8 +193,8 @@ def callback():
     except GoogleAuthError as e:
         flash(MESSAGE.TOKEN_ERROR)
         return redirect(url_for(REDIRECT.LOGIN))
-    except ValueError as e:
-        logger.error(f"[AUTH] OAUTH TOKEN VALIDATION ERROR: {credentials.id_token[:20]}.. {e}")
+    except ValueError:
+        logger.exception("[AUTH] OAUTH TOKEN VALIDATION ERROR")
         flash(MESSAGE.TOKEN_ERROR)
         return redirect(url_for(REDIRECT.LOGIN))
     
@@ -206,7 +205,7 @@ def callback():
         session["email"] = email
         return redirect(url_for(REDIRECT.SET_PASSWORD))
 
-    handle_user_login(user, remember=False)
+    handle_user_login(user, remember=False, login_type=SERVER.GOOGLE_LOGIN)
     return redirect(url_for(REDIRECT.ALL_NEWS))
 
 
@@ -238,7 +237,7 @@ def set_password():
                 password=set_password_form.password.data,
             )
             if user:
-                handle_user_login(user, remember=False)
+                handle_user_login(user, login_type=SERVER.NORMAL_LOGIN, remember=False)
                 return redirect(url_for(REDIRECT.ALL_NEWS))
             else:
                 flash(MESSAGE.UNEXPECTED_ERROR)
@@ -276,7 +275,7 @@ def register():
                 password=register_form.password.data,
             )
             if new_user:
-                handle_user_login(new_user, remember=False)
+                handle_user_login(new_user, login_type=SERVER.NORMAL_LOGIN, remember=False)
                 return redirect(url_for(REDIRECT.ALL_NEWS))
             else:
                 flash(MESSAGE.UNEXPECTED_ERROR)
@@ -354,7 +353,7 @@ def reset_password(token):
             user.set_password(reset_password_form.password.data)
             user.set_email_verified(True)
             delete_authentication_token(SERVER.PASSWORD_VERIFICATION, token)
-            handle_user_login(user, remember=False)
+            handle_user_login(user, login_type=SERVER.NORMAL_LOGIN, remember=False)
             
             flash(MESSAGE.PASSWORD_UPDATE)
             session["flash_type"] = "authentication"

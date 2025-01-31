@@ -1,18 +1,14 @@
-import logging
 from logging.config import fileConfig
 
 from flask import current_app
 
 from alembic import context
 
+from src.utils.logger import logger
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
 
 
 def get_engine():
@@ -89,8 +85,8 @@ def run_migrations_online() -> None:
             with context.begin_transaction():
                 context.run_migrations()
             logger.info("Migrations completed successfully")
-        except Exception as e:
-            logger.error(f"Error during migrations: {e}")
+        except Exception:
+            logger.exception("Error during migrations")
             raise
 
 

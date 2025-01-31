@@ -5,8 +5,6 @@ from flask_wtf import FlaskForm
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
-from src.extensions import logger
-
 from src.models.schedule_model.schedule_mod import Employees
 
 from src.utils.misc_utils import crop_name

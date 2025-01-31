@@ -13,8 +13,6 @@ from flask_login import (
 )
 from werkzeug.datastructures import MultiDict
 
-from src.extensions import logger
-
 from src.models.news_model.news_mod_utils import (
     add_new_comment,
     add_news_message,

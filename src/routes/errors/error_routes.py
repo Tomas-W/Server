@@ -23,7 +23,7 @@ errors_bp = Blueprint("errors", __name__)
 
 @errors_bp.app_errorhandler(SQLAlchemyError)
 def handle_sqlalchemy_error(error):
-    logger.error(f"[SQL] ERROR HANDLER: {error}")
+    logger.exception(f"[SQL] ERROR HANDLER: {error}")
     return render_template(
         TEMPLATE.E_500
         ), 500
@@ -81,8 +81,7 @@ def not_found(error):
 @errors_bp.app_errorhandler(500)
 def internal_server_error(error):
     error_msg, go_to, extra_info = get_error_params(error)
-    logger.error(f"[500] ERROR HANDLER: {error}", exc_info=True)
-    print(f"[500] ERROR HANDLER: {error}")
+    logger.exception(f"[500] ERROR HANDLER: {error}")
     return render_template(
         TEMPLATE.E_500,
         error_msg=error_msg,

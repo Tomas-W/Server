@@ -4,8 +4,8 @@ from flask import session
 from flask_login import current_user
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.models.news_model.news_mod import (
@@ -69,9 +69,7 @@ def delete_comment_by_id(id_: int, cli: bool = False) -> bool:
         server_db_.session.commit()
         if not cli:
             logger.warning(deleted_message)
-        logger.debug("TRUE")
         return True
-    logger.debug("FALSE")
     return False
 
 

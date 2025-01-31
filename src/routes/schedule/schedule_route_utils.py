@@ -8,8 +8,6 @@ from datetime import (
 from flask import request
 from flask_login import current_user
 
-from src.extensions import logger
-
 from src.routes.errors.error_routes import Abort400
 
 

@@ -1,5 +1,4 @@
 import click
-import os
 
 from flask import (
     Flask,
@@ -7,8 +6,8 @@ from flask import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
+    logger,
 )
 
 from src.cli.bakery_cli import bakery

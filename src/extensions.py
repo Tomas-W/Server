@@ -1,23 +1,22 @@
 import json
 import os
-
+import sys
 from argon2 import PasswordHasher
 from flask import current_app
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_mail import Mail
 from flask_migrate import Migrate
-from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from google_auth_oauthlib.flow import Flow
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import MetaData
 
-from src.utils.logger import ServerLogger
+from src.utils.logger import Logger
+
 from src.utils.encryption_utils import decrypt_data
 
 from config.settings import (
@@ -25,9 +24,7 @@ from config.settings import (
     PATH,
 )
 
-
-logger = ServerLogger()
-
+logger = Logger()
 server_db_ = SQLAlchemy()
 
 mail_: Mail = Mail()

@@ -13,9 +13,9 @@ from src.models.schedule_model.schedule_mod import (
 )
 
 from src.extensions import (
-    logger,
     server_db_,
     cache_,
+    logger,
 )
 
 from src.models.auth_model.auth_mod_utils import get_user_by_employee_name
@@ -119,10 +119,10 @@ def _init_employees() -> bool:
                 encrypted_data = json_file.read()
                 employees_data = json.loads(decrypt_data(encrypted_data).decode())
         except FileNotFoundError:
-            logger.critical(f"[SYS] FILE {PATH.EMPLOYEES} NOT FOUND")
+            logger.exception(f"[SYS] FILE {PATH.EMPLOYEES} NOT FOUND")
             return False
         except json.JSONDecodeError:
-            logger.critical(f"[SYS] ERROR DECODING JSON FROM FILE {PATH.EMPLOYEES}")
+            logger.exception(f"[SYS] ERROR DECODING JSON FROM FILE {PATH.EMPLOYEES}")
             return False
     
         for employee, _ in employees_data.items():
@@ -151,10 +151,10 @@ def _init_schedule() -> bool:
                     encrypted_data = json_file.read()
                     schedule_data = json.loads(decrypt_data(encrypted_data).decode())
             except FileNotFoundError:
-                logger.critical(f"[SYS] FILE {path} NOT FOUND")
+                logger.exception(f"[SYS] FILE {path} NOT FOUND")
                 return False
             except json.JSONDecodeError:
-                logger.critical(f"[SYS] ERROR DECODING JSON FROM FILE {path}")
+                logger.exception(f"[SYS] ERROR DECODING JSON FROM FILE {path}")
                 return False
             
             for week_number, week_data in schedule_data.items():

@@ -1,4 +1,5 @@
 import os
+from flask import session
 
 
 if os.environ.get("FLASK_ENV") != "deploy":

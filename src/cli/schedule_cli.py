@@ -3,7 +3,10 @@ import json
 
 from flask import Flask
 
-from src.extensions import logger, server_db_
+from src.extensions import (
+    server_db_,
+    logger,
+)
 
 from src.models.auth_model.auth_mod import User
 from src.models.schedule_model.schedule_mod import Employees

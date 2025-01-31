@@ -40,8 +40,8 @@ profile_pictures/
 playground.py
 
 # Ignore logs
-logs/
-*.log
+# logs/
+# *.log
 
 # Ignore instance files
 instance/

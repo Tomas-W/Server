@@ -97,7 +97,7 @@ def _configure_server(app_: Flask) -> Flask:
 
 
 def _configure_dirs(app_: Flask) -> None:
-    for folder in [DIR.DB, DIR.UPLOAD, DIR.PROFILE_PICS, DIR.PROFILE_ICONS, DIR.LOGS]:
+    for folder in [DIR.DB, DIR.UPLOAD, DIR.PROFILE_PICS, DIR.PROFILE_ICONS]:
         if not os.path.exists(folder):
             os.makedirs(folder)
 

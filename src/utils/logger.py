@@ -20,6 +20,16 @@ class Logger:
         Configure file logging.
         """
         file_path = PATH.LOGS
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
+        print(file_path)
         if not os.path.exists(file_path):
             open(file_path, "w").close()
         self.logger.add(

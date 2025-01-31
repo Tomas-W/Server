@@ -130,7 +130,7 @@ class Directory:
 @dataclass
 class Path:
     DB: os.path = os.path.join(Directory.DB, "server.db")
-    LOGS: os.path = os.path.join(Directory.LOGS, "app.ansi")
+    LOGS: os.path = os.path.join(Directory.LOGS, "logs.ansi")
     CLIENTS_SECRETS: os.path = os.path.join(Directory.CONFIG, "client_secret.json")
     EMPLOYEES: os.path = os.path.join(Directory.SCHEDULE, "employees.json")
 

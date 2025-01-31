@@ -12,24 +12,17 @@ class Logger:
     def __init__(self, logger):
         self.logger = logger
         self.logger.remove()
-        self._configure_file_logging()
+        if os.environ.get("FLASK_ENV") != "deploy":
+            self._configure_file_logging()
+        
         self._configure_console_logging()
+
 
     def _configure_file_logging(self):
         """
         Configure file logging.
         """
         file_path = PATH.LOGS
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
-        print(file_path)
         if not os.path.exists(file_path):
             open(file_path, "w").close()
         self.logger.add(

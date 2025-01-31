@@ -71,6 +71,10 @@ def program(program: int):
 @bakery_bp.route("/bakery/info/<id_>")
 @login_required
 def info(id_: int):
+    if not isinstance(id_, int):
+        description = f"Bakery item with ID {id_} not found"
+        raise Abort404(description=description)
+    
     bakery_item_dict = get_item_by_id_dict(id_)
     if not bakery_item_dict:
         description = f"Bakery item with ID {id_} not found"

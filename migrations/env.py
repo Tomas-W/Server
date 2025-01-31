@@ -4,7 +4,7 @@ from flask import current_app
 
 from alembic import context
 
-from src.utils.logger import logger
+from src.extensions import logger
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

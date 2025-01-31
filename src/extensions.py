@@ -15,6 +15,7 @@ from flask_wtf import CSRFProtect
 from google_auth_oauthlib.flow import Flow
 from itsdangerous import URLSafeTimedSerializer
 
+from loguru import logger
 from src.utils.logger import Logger
 
 from src.utils.encryption_utils import decrypt_data
@@ -24,7 +25,8 @@ from config.settings import (
     PATH,
 )
 
-logger = Logger()
+loguru_logger = logger
+logger = Logger(loguru_logger)
 server_db_ = SQLAlchemy()
 
 mail_: Mail = Mail()

@@ -114,6 +114,14 @@ def login():
     
     - LoginForm
     """
+    logger.trace("TRACE")
+    logger.debug("DEBUG")
+    logger.info("INFO")
+    logger.success("SUCCESS")
+    logger.warning("WARNING")
+    logger.error("ERROR")
+    logger.critical("CRITICAL")
+    
     login_form = LoginForm()
     fast_login_form = FastLoginForm()
     fast = session.pop("fast_login", False)

@@ -130,6 +130,7 @@ class Directory:
 @dataclass
 class Path:
     DB: os.path = os.path.join(Directory.DB, "server.db")
+    LOGS: os.path = os.path.join(Directory.LOGS, "app.ansi")
     CLIENTS_SECRETS: os.path = os.path.join(Directory.CONFIG, "client_secret.json")
     EMPLOYEES: os.path = os.path.join(Directory.SCHEDULE, "employees.json")
 
@@ -161,8 +162,7 @@ class Server:
     )
     TOKEN_EXPIRATION: int = 3600
 
-    LOG_ROUTE = "route"
-    LOG_LOCATION = "location"
+    CET = pytz.timezone("Europe/Amsterdam")
 
     VERIFIED_ROLE: str = "verified"
     ADMIN_ROLE: str = "admin"
@@ -187,6 +187,19 @@ class Server:
     BANNED_CHARS: list[str] = field(
         default_factory=lambda: ["|"]
     )
+
+
+@dataclass
+class Color:
+    RESET = "\033[0m"       
+    TRACE = "\033[36m"        # Cyan
+    DEBUG = "\033[34m"        # Blue
+    INFO = "\033[92m"         # Green
+    SUCCESS = "\033[42m"      # Background green
+    WARNING = "\033[33m"      # Yellow
+    ERROR = "\x1b[91m"        # Pink
+    CRITICAL = "\033[35m"     # Red
+    EXCEPTION = "\033[41m"    # Background red
 
 
 @dataclass
@@ -401,6 +414,7 @@ class Form:
 DIR = Directory()
 PATH = Path()
 SERVER = Server()
+COLOR = Color()
 TEMPLATE = Template()
 REDIRECT = Redirect()
 MESSAGE = Message()

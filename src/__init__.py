@@ -179,10 +179,17 @@ def _configure_requests(app_: Flask) -> None:
             response.cache_control.max_age = 3600 * 24 * 7
             response.expires = 3600 * 24 * 7
         elif "text/html" in content_type or "text/css" in content_type:
-            response.cache_control.no_store = True
-            response.cache_control.no_cache = True
-            response.cache_control.max_age = 0
-            response.expires = 0
+            if os.environ.get("FLASK_ENV") != "deploy":
+                response.cache_control.no_store = False
+                response.cache_control.no_cache = False
+                response.cache_control.max_age = 3600 * 24 * 7
+                response.expires = 3600 * 24 * 7
+            else:
+                response.cache_control.no_store = True
+                response.cache_control.no_cache = True
+                response.cache_control.max_age = 0
+                response.expires = 0
+
         return response
     
     def manage_db_sessions(exception=None):

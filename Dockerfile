@@ -29,13 +29,24 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY --chown=appuser:appuser . .
 
-# Create necessary directories
+# Create necessary directories with proper permissions
 RUN mkdir -p db src/uploads/profile_pictures src/uploads/profile_icons
 
 # Set environment variables
 ENV FLASK_APP=run:get_app
 ENV FLASK_ENV=deploy
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
-# Run the application with adjusted logging
-CMD ["gunicorn", "run:app", "--bind=0.0.0.0:8080", "--timeout=180", "--workers=1", "--log-level=error", "--access-logfile=/dev/null", "--error-logfile=-", "--capture-output"] 
+# Use gunicorn with optimized settings
+CMD ["gunicorn", "run:app", \
+     "--bind=0.0.0.0:8080", \
+     "--workers=4", \
+     "--threads=2", \
+     "--worker-class=gthread", \
+     "--worker-tmp-dir=/dev/shm", \
+     "--timeout=180", \
+     "--keep-alive=5", \
+     "--access-logfile=-", \
+     "--error-logfile=-", \
+     "--log-level=error"] 

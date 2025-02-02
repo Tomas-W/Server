@@ -1,1 +1,0 @@
-web: gunicorn run:app --bind 0.0.0.0:8080 --timeout 180 --workers 1 --log-level debug

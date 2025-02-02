@@ -1,5 +1,5 @@
 import os
-from flask import session
+import logging
 
 
 if os.environ.get("FLASK_ENV") != "deploy":
@@ -8,9 +8,12 @@ if os.environ.get("FLASK_ENV") != "deploy":
     load_dotenv('.flaskenv')
 
 
+# Only disable Flask/Werkzeug logs
+logging.getLogger("werkzeug").disabled = True
+logging.getLogger("gunicorn.access").disabled = True
+
 from src import get_app
 app = get_app()
-
 
 if __name__ == "__main__":
     env = os.environ.get("FLASK_ENV", "debug").lower()

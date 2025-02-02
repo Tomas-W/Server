@@ -9,6 +9,8 @@ from flask import (
 )
 from flask_login import login_required
 
+from src.extensions import logger
+
 from src.models.auth_model.auth_mod_utils import admin_required
 from src.models.bakery_model.bakery_mod_utils import (
     delete_item_by_id,
@@ -54,7 +56,7 @@ def programs():
     )
 
 
-@bakery_bp.route("/bakery/program/<program>")
+@bakery_bp.route("/bakery/program/<int:program>")
 @login_required
 def program(program: int):
     bakery_items_dicts = get_program_items_dicts(program)
@@ -68,9 +70,10 @@ def program(program: int):
     )
 
 
-@bakery_bp.route("/bakery/info/<id_>")
+@bakery_bp.route("/bakery/info/<int:id_>")
 @login_required
 def info(id_: int):
+    logger.debug(f"id_: {id_} of type {type(id_)}")
     if not isinstance(id_, int):
         description = f"Bakery item with ID {id_} not found"
         raise Abort404(description=description)
@@ -162,7 +165,7 @@ def add():
         TEMPLATE.BAKERY,
     )
 
-@bakery_bp.route("/bakery/delete/<id_>")
+@bakery_bp.route("/bakery/delete/<int:id_>")
 @admin_required
 @login_required
 def delete(id_: int):

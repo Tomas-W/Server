@@ -51,7 +51,7 @@ Programs
                 {% for item in bakery_programs_info %}
                 <div class="grid-item">
                 <!-- Clickable items -->
-                    <a href="{{ url_for(REDIRECT.PROGRAMS,
+                    <a href="{{ url_for(REDIRECT.PROGRAM,
                         program=item.program) }}">
                         <p class="item-name">Program {{ item.program }}</p>
                         <img class="grid-item-image" 
